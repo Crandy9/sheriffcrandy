@@ -50,6 +50,7 @@ install pgadmin4 desktop tool for DB management (https://www.pgadmin.org/downloa
 Note: need to create empty DB in either psql shell or pgadmin tool before running python manage.py makemigrations and python manage.py migrate
 - create new Django project:
 django-admin startproject yourprojectname
+- run python manage.py runserver to start django backend development server on localhost:8000
 
 
 Vue.js setup:
@@ -78,3 +79,4 @@ CSS pre-processors
 npm install axios
 - install bulma (css framework)
 npm install bulma
+- run npm run server to start frontend dev server on localhost:8080
