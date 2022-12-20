@@ -79,4 +79,5 @@ CSS pre-processors
 npm install axios
 - install bulma (css framework)
 npm install bulma
-- run npm run server to start frontend dev server on localhost:8080
+- run vue app on dev server on localhost:8080 
+npm run serve

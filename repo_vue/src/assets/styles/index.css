@@ -1,0 +1,140 @@
+
+
+html, body, form, main {
+    height: 100%;
+} 
+
+body {
+    height: 100%;
+    background: center center no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 100%;
+    background-image: url("../images/bg.jpg");
+
+    /* in case hamburger menu animation overflows */
+    overflow-x: hidden;
+}
+
+/* header */
+.primary-header {
+    /* align the nav items with the logo */
+    align-items: center;
+    /* push items to the end of line */
+    justify-content: space-between;
+}
+
+/* remove hamburger button when screen is full */
+.mobile-nav-toggle {
+    display: none;
+}
+
+/* logo */
+.logo {
+    margin: 2rem;
+}
+
+/* ul */
+.primary-navigation {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* li items router-link component renders as an a-tag*/
+.primary-navigation a {
+    text-decoration: none;
+}
+
+/* for the span numbers. Not sure why needed */
+.primary-navigation a > [aria-hidden="true"] {
+    font-weight: 700;
+    margin-inline-end: .75em;
+}
+
+@media(max-width: 767px) {
+    .primary-navigation {
+        /* space out the items, see line 74 */
+        --gap: 3em;
+        position: fixed;
+        z-index: 1000;
+        /* amount of screen space that the menu will take up 
+            top, right, bottom, left
+        */
+        inset: 0 0 0 0;
+        /* stack li on top of each other */
+        flex-direction: column;
+        /* place nav items centrally and slightly left*/
+        padding: min(30vh, 10rem) 4em;
+        /* menu background color */
+        background:rgba(0, 0, 0, 0.7);
+        /* blur */
+        /* backdrop-filter: blur(1.5rem); */
+        transform: translateX(100%);
+        transition: transform 350ms ease-out;
+    }
+
+    /* open nav bar */
+    .primary-navigation[data-visible="true"] {
+        transform: translateX(0%);
+    }
+
+
+    .primary-navigation a {
+        text-decoration: none;
+        color: rgb(255, 255, 255);
+        font-weight: 700;
+        font-size: xx-large;
+    }
+
+    .primary-navigation a:hover {
+        color: aqua;
+    }
+
+    /* hamburger button */
+    .mobile-nav-toggle {
+        /* show hamburger button  */
+        display: block;
+        position: absolute;
+        /* z-index makes button appear to be within the hamburger menu */
+        z-index: 9999;
+        background: url('../images/menu-rounded.png');
+        background-repeat: no-repeat;
+        width: 3rem;
+        border: 0;
+        aspect-ratio: 1;
+        top: 2rem;
+        right: 2rem;
+    }
+}
+
+
+
+/* flex class for navbar items or general purpose*/
+.flex {
+    display: flex;
+    gap: var(--gap, 1rem);
+}
+
+/* footer */
+.footer_text {
+	color: rgb(203, 255, 255);
+    text-align: center;
+}
+
+/* give shadow to footer */
+.my-footer {
+	box-shadow: 0 0 7px rgba(0, 204, 255, 0.6);
+    background-color: black;
+    /* make footer stick to bottom */
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+}
+
+a.company_link {
+	color:bisque;
+}
+a.company_link:hover {
+	color:rgb(60, 200, 255);
+}

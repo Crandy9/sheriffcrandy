@@ -1,0 +1,37 @@
+    <!-- bulma navbar -->
+    <nav class="navbar is-dark">
+      <!-- logo on navbar-->
+      <div class="navbar-brand">
+        <router-link to="/" class="navbar-item">
+          <strong>Sheriff Crandy</strong>
+        </router-link>
+        <!-- hamburger menu for mobile -->
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+          <!-- hamburger menu lines -->
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <!-- navbar items -->
+      <div class="navbar-menu" id="navbar-menu">
+        <!-- make hamburger at right side of navbar -->
+        <div class="navbar-end">
+          <!-- navbar items -->
+          <router-link to="/about" class="navbar-item">About</router-link>
+          <router-link to="/contact" class="navbar-item">Contact</router-link>
+
+          <div class="navbar-item">
+            <div class="buttons">
+              <router-link to="/login" class="button is-light">Log in</router-link>
+              <router-link to="/cart" class="button is-success">
+                <!-- shopping cart icon -->
+                <span class="icon"><i class="fas fa-shopping-cart"></i></span>
+                <span>Cart</span>
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <!-- end bulma navbar -->
