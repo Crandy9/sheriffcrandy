@@ -126,31 +126,26 @@ body {
 
 /* navbar menu animation */
 @media screen and (max-width: 1023px) {
-    .navbar-menu.is-active {
-        display: block; 
-        opacity: 1;
-        transform: none;
-        pointer-events: auto;
-        /* menu background color */
-        background-color:rgba(0, 0, 0, 0.8);
-        position: fixed;
-        /* space out the items, see line 74 */
-        --gap: 3em;
-        z-index: 1000;
-        /* amount of screen space that the menu will take up 
-            top, right, bottom, left
-        */
-        inset: 0 0 0 0;
-        /* stack li on top of each other */
-        flex-direction: column;
-        /* place nav items centrally and slightly left*/
-        padding: min(30vh, 10rem) 4em;
-        /* blur */
-        backdrop-filter: blur(1rem);
-        /* transform: translateY(100%) !important;
-        transition: transform 450ms ease-out !important; */
+    .navbar-menu {
+       
+        /* determines how much screen the menu will fill */
+        /* transform: translateX(100%) !important;*/
     }
-
+    .navbar-menu.is-active {
+        opacity: 1;
+        /* transform: none; */
+        /* ensures entire screen is filled */
+        position: fixed;
+        /* menu background color */
+        background-color:rgba(0, 0, 0, 0.8) !important;
+        /* bg blur */
+        backdrop-filter: blur(1rem) !important;
+        /* amount of screen space that the menu will take up */
+        inset: 0 0 0 0 !important;
+        /* place nav items centrally and slightly left*/
+        padding: min(30vh, 10rem) 4em !important;
+    }
+    /* ensure burger button shows inside navbar menu */
     .navbar-burger.is-active {
         z-index: 9999;
     }
@@ -165,74 +160,6 @@ body {
         color: rgb(255, 217, 0) !important;
     }
 }
-
-
-
-@media(max-width: 767px) {
-    .primary-navigation {
-        /* space out the items, see line 74 */
-        --gap: 3em;
-        position: fixed;
-        z-index: 1000;
-        /* amount of screen space that the menu will take up 
-            top, right, bottom, left
-        */
-        inset: 0 0 0 0;
-        /* stack li on top of each other */
-        flex-direction: column;
-        /* place nav items centrally and slightly left*/
-        padding: min(30vh, 10rem) 4em;
-        /* menu background color */
-        background:rgba(0, 0, 0, 0.8);
-        /* blur */
-        /* backdrop-filter: blur(1.5rem); */
-        transform: translateX(100%);
-        transition: transform 550ms ease-out;
-    }
-
-    /* open nav bar */
-    .primary-navigation[data-visible="true"] {
-        transform: translateX(0%);
-    }
-
-
-    .primary-navigation a {
-        text-decoration: none;
-        color: rgb(255, 255, 255);
-        font-weight: 700;
-        font-size: xx-large;
-    }
-
-    .primary-navigation a:hover {
-        color: aqua;
-    }
-
-    /* hamburger button */
-
-    .carlton {
-        /* show hamburger button  */
-        display: block;
-        position: absolute;
-        /* z-index makes button appear to be within the hamburger menu */
-        z-index: 9999;
-        /* background: url('../images/menu-rounded.png'); */
-        background-repeat: no-repeat;
-        width: 3rem;
-        border: 0;
-        aspect-ratio: 1;
-        top: 2rem;
-        right: 2rem;
-    }
-}
-
-
-
-
-
-
-
-
-
 
 /* footer */
 .footer_text {
