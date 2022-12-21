@@ -1,46 +1,46 @@
 <!-- navbar/footer template -->
 <template>
   <div id="wrapper">
-    <!-- header -->
-    <header class="primary-header flex">
-      <!-- logo on navbar-->
-      <div class="logo">
-        <router-link to="/">
-          <strong>Sheriff Crandy</strong>
-        </router-link>
-      </div>
-      <!-- hamburger button -->
-      <button @click="navmenu" class="mobile-nav-toggle" aria-controls="primary-navigation" aria-expanded="false">
-        <span class="sr-only">Menu</span>
-      </button>
+      <!-- bulma navbar -->
+      <nav class="navbar" role="navigation" aria-label="main navigation">
+        <!-- logo on navbar-->
+        <!-- <div class="navbar-brand"> -->
+        <div class="navbar-brand">
+          <router-link to="/" class="logo">
+            <strong>Sheriff Crandy</strong>
+          </router-link>
+          <!-- hamburger menu for mobile -->
+          <!-- @click will change boolean to determine if menu is showed or not: false if true and true if false -->
+          <a @click="showMobileMenu = !showMobileMenu" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu" v-bind:class="{'is-active':showMobileMenu}">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+        <!-- navbar items -->
+        <!-- v-bind is view directive puts "is-active" next to class name -->
+        <div class="navbar-menu" id="navbar-menu" v-bind:class="{'is-active':showMobileMenu}">
+          <!-- make hamburger at right side of navbar -->
+          <div class="navbar-end">
+            <!-- navbar items -->
+            <router-link to="/" class="navbar-item">Home</router-link>
+            <router-link to="/bio" class="navbar-item">Bio</router-link>
+            <router-link to="/contact" class="navbar-item">Contact</router-link>
+            <router-link to="/login" class="navbar-item">Log in</router-link>
 
-      <!-- responsive navbar -->
-      <nav>
-        <!-- data-visible used by nav.js -->
-        <ul id="primary-navigation" data-visible="false"  class="primary-navigation flex">
-          <li class="active">
-            <router-link to="/">
-              <span aria-hidden="true"></span>Home
-            </router-link>
-          </li>
-          <li class="active">
-            <router-link to="/about">
-              <span aria-hidden="true"></span>Bio
-            </router-link>
-          </li>
-          <li class="active">
-            <router-link to="/signin">
-              <span aria-hidden="true"></span>Sign in
-            </router-link>
-          </li>
-          <li class="active">
-            <router-link to="/contact">
-              <span aria-hidden="true"></span>Contact
-            </router-link>
-          </li>
-        </ul>
+            <div class="navbar-item">
+              <div class="buttons">
+                <router-link to="/cart" class="button is-success">
+                  <!-- shopping cart icon -->
+                  <span class="icon"><i class="fas fa-shopping-cart"></i></span>
+                  <span>Cart</span>
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </div>
       </nav>
-    </header>
+        <!-- end bulma navbar -->
 
     
     <!-- main page content -->
@@ -77,21 +77,19 @@
 </style>
 
 <!-- hamburger menu animation -->
-<script setup>
-
-function navmenu() {
-  const primaryNav = document.querySelector('.primary-navigation');
-  const navToggle = document.querySelector('.mobile-nav-toggle');
-  const visibility = primaryNav.getAttribute('data-visible');   
-
-  if (visibility === "false") {
-    primaryNav.setAttribute('data-visible', true);
-    navToggle.setAttribute('aria-expanded', true);
-  }
-  else if (visibility === "true") {
-    primaryNav.setAttribute('data-visible', false);
-    navToggle.setAttribute('aria-expanded', false);
-
+<script>
+// open/close hamburger menu
+export default {
+  data () {
+    return {
+      showMobileMenu: false
+    }
+  },
+  // close menu when nav link is clicked
+  watch: {
+    '$route' () {
+      this.showMobileMenu = false
+    }
   }
 }
-</script>
+</script> 

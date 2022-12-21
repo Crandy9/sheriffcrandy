@@ -16,41 +16,157 @@ body {
     overflow-x: hidden;
 }
 
-/* header */
-.primary-header {
-    /* align the nav items with the logo */
-    align-items: center;
-    /* push items to the end of line */
-    justify-content: space-between;
-}
 
-/* remove hamburger button when screen is full */
-.mobile-nav-toggle {
-    display: none;
-}
 
-/* logo */
+/* navbar color transparent */
+.navbar {
+    background:rgba(0, 0, 0, 0) !important;
+    position: fixed;
+    top:0;
+    width: 100%;
+    z-index: 0;
+  }
+
+/* Sheriff Crandy logo */
 .logo {
     margin: 2rem;
+    color: black;
 }
 
-/* ul */
-.primary-navigation {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  /* remove nav link background */
+.navbar-item {
+    display: flex !important;
+    color: black !important;
+    background: none !important;
 }
 
-/* li items router-link component renders as an a-tag*/
-.primary-navigation a {
-    text-decoration: none;
+.navbar-item:hover {
+    color: rgb(255, 255, 255) !important;
+    background: none !important;
 }
 
-/* for the span numbers. Not sure why needed */
-.primary-navigation a > [aria-hidden="true"] {
-    font-weight: 700;
-    margin-inline-end: .75em;
+.navbar-burger {
+    position: absolute !important;
+    top: 1rem !important;
+    right: 1rem !important;
 }
+
+.navbar-burger:hover {
+    background-color: transparent !important;
+}
+
+/* overwriting bulma hamburger stroke animation */
+/* stroke length and height*/
+.navbar-burger span {
+    background-color: none !important;
+    display: block;
+    height: 1px;
+    left: calc(50% - 8px);
+    position: absolute;
+    transform-origin: center;
+    transition-duration: 86ms;
+    transition-property: background-color, opacity, transform;
+    transition-timing-function: ease-out;
+    width: 25px;
+    height: 2.5px;
+}
+
+/* remove hamburger button background */
+.navbar.is-dark .navbar-burger{
+    background: none;
+}
+/* hamburger button closed */
+.navbar-burger span:first-child {
+    transition-duration: 300ms;
+    top: calc(50% - 7px);
+    color: black;
+}
+.navbar-burger span:nth-child(2) {
+    transition-duration: 300ms;
+    top: calc(50%);
+    color: black;
+
+}
+.navbar-burger span:nth-child(3) {
+    transition-duration: 300ms;
+    top: calc(50% + 7px);
+    color: black;
+}
+
+/* hamburger button opened */
+.navbar-burger.is-active span:first-child {
+    transition-duration: 300ms;
+    transform: translateY(7px) rotate(45deg);
+    color: rgb(255, 255, 255);
+}
+
+.navbar-burger.is-active span:nth-child(2) {
+    opacity: 0;
+    color: rgb(255, 255, 255);
+
+}
+.navbar-burger.is-active span:nth-child(3) {
+    transition-duration: 300ms;
+    transform: translateY(-7px) rotate(-45deg);
+    color: rgb(255, 255, 255);
+
+}
+
+
+/* navbar menu items when not collapsed */
+@media screen and (min-width: 1024px) {
+    .navbar-menu{
+        align-items: stretch;
+        display: flex;
+        position: absolute !important;
+        top: 1rem !important;
+        right: 1rem !important;
+    }
+}
+
+/* navbar menu animation */
+@media screen and (max-width: 1023px) {
+    .navbar-menu.is-active {
+        display: block; 
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+        /* menu background color */
+        background-color:rgba(0, 0, 0, 0.8);
+        position: fixed;
+        /* space out the items, see line 74 */
+        --gap: 3em;
+        z-index: 1000;
+        /* amount of screen space that the menu will take up 
+            top, right, bottom, left
+        */
+        inset: 0 0 0 0;
+        /* stack li on top of each other */
+        flex-direction: column;
+        /* place nav items centrally and slightly left*/
+        padding: min(30vh, 10rem) 4em;
+        /* blur */
+        backdrop-filter: blur(1rem);
+        /* transform: translateY(100%) !important;
+        transition: transform 450ms ease-out !important; */
+    }
+
+    .navbar-burger.is-active {
+        z-index: 9999;
+    }
+
+    .navbar-item {
+        text-decoration: none;
+        color: rgb(255, 255, 255) !important;
+        font-weight: 700;
+        font-size: xx-large;
+    }
+    .navbar-item:hover {
+        color: rgb(255, 217, 0) !important;
+    }
+}
+
+
 
 @media(max-width: 767px) {
     .primary-navigation {
@@ -67,11 +183,11 @@ body {
         /* place nav items centrally and slightly left*/
         padding: min(30vh, 10rem) 4em;
         /* menu background color */
-        background:rgba(0, 0, 0, 0.7);
+        background:rgba(0, 0, 0, 0.8);
         /* blur */
         /* backdrop-filter: blur(1.5rem); */
         transform: translateX(100%);
-        transition: transform 350ms ease-out;
+        transition: transform 550ms ease-out;
     }
 
     /* open nav bar */
@@ -92,13 +208,14 @@ body {
     }
 
     /* hamburger button */
-    .mobile-nav-toggle {
+
+    .carlton {
         /* show hamburger button  */
         display: block;
         position: absolute;
         /* z-index makes button appear to be within the hamburger menu */
         z-index: 9999;
-        background: url('../images/menu-rounded.png');
+        /* background: url('../images/menu-rounded.png'); */
         background-repeat: no-repeat;
         width: 3rem;
         border: 0;
@@ -110,11 +227,12 @@ body {
 
 
 
-/* flex class for navbar items or general purpose*/
-.flex {
-    display: flex;
-    gap: var(--gap, 1rem);
-}
+
+
+
+
+
+
 
 /* footer */
 .footer_text {
