@@ -19,12 +19,20 @@ SHERIFFCRANDY-
                             settings.py
                             urls.py
                             wsqi.py
+                products-
+                        |
+                        __init__.py
+                        admin.py
+                        apps.py
+                        models.py
+                        tests.py
+                        views.py
                 manage.py
             repo_vue-
                     |
-            .gitignore
-            LICENSE
-            README.md
+                    .gitignore
+                    LICENSE
+                    README.md
 
 
 Django backend setup:
@@ -73,7 +81,7 @@ CSS pre-processors
 - hit enter
 - select 'Y' for router history mode and hit enter
 - select Sass/SCSS (with dart-sass) and hit enter
-- place Babel, ESLint, etc. config files in dedicated config files
+- se;lect place Babel, ESLint, etc. config files in dedicated config files
 - Select 'n' for saving this preset for future projects
 - cd to repo_vue and install axios library used to talk to backend:
 npm install axios

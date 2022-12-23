@@ -18,7 +18,7 @@
           </a>
         </div>
         <!-- navbar items -->
-        <!-- v-bind is view directive puts "is-active" next to class name -->
+        <!-- v-bind is view directive which puts "is-active" next to navbar-menu class name. Used to control the nav items -->
         <div class="navbar-menu" id="navbar-menu" v-bind:class="{'is-active':showMobileMenu}">
           <!-- make hamburger at right side of navbar -->
           <div class="navbar-end">
