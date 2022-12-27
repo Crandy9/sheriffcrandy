@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import *
 
-# Register your models here.
+@admin.register(Track)
+class AdminClassName(admin.ModelAdmin):
+    readonly_fields = ['pk']

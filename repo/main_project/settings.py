@@ -1,4 +1,6 @@
 from pathlib import Path
+import os
+
 # environment vars
 import environ
 env = environ.Env()
@@ -33,7 +35,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     # djoser is a REST implementation of Django authentication system
-    'djoser'
+    'djoser',
+    'products'
 ]
 
 # address to frontend. Change to live server address for production
@@ -122,12 +125,16 @@ USE_I18N = True
 
 USE_TZ = True
 
+# URL to use when referring to static files located in STATIC_ROOT.
+STATIC_URL = '/static/'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
+# absolute path where collectstatic will collect static files for deployment
+# STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 
-STATIC_URL = 'static/'
 
+# media dir for images and audio files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
