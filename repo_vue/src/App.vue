@@ -7,7 +7,8 @@
         <!-- <div class="navbar-brand"> -->
         <div class="navbar-brand">
           <router-link to="/" class="logo">
-            <strong>Sheriff Crandy</strong>
+            <!-- <strong>Sheriff Crandy</strong> -->
+            <span class="icon"><i class="fas fa-home"></i></span>
           </router-link>
           <!-- hamburger menu for mobile -->
           <!-- @click will change boolean to determine if menu is showed or not: false if true and true if false -->
@@ -24,7 +25,7 @@
           <div class="navbar-end">
             <!-- navbar items -->
             <router-link to="/" class="navbar-item">Home</router-link>
-            <router-link to="/bio" class="navbar-item">Bio</router-link>
+            <router-link to="/tools" class="navbar-item">Tools I Use</router-link>
             <router-link to="/contact" class="navbar-item">Contact</router-link>
             <router-link to="/login" class="navbar-item">Log in</router-link>
 
@@ -49,15 +50,15 @@
     </section>
 		<!-- Footer -->
 		<footer class="my-footer">
-			<div class="footer_text" style="font-size: small;">
+			<div class="footer_text" style="font-size: small; padding: 1rem;">
 				<!-- Add styling from .net web app -->
 				<div>
 					&copy;
-					2022 - Developed by
+					2023 - Developed by
 						<a class="company_link"
 								href="https://lctechnologies.azurewebsites.net/" target="_blank">
 							LC Technologies
-							<img type="image/png" src="../src/assets/images/lctec_icon.jpg" alt="" width="15px" height="15px">
+							<img class="footer-img" type="image/png" src="../src/assets/images/lctec_icon.jpg">
 						</a> 				
 						- Jesus Christ is King
 				</div>

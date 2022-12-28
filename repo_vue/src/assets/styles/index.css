@@ -5,12 +5,13 @@ html, body, form, main {
 } 
 
 body {
-    height: 100%;
+    width: 100%;
     background: center center no-repeat;
     background-size: cover;
     background-attachment: fixed;
-    height: 100%;
-    background-image: url("../images/bg.jpg");
+    background-color:rgb(95, 95, 95);
+    /* background-image: url("../images/bg.jpg"); */
+    /* background-image: url("../images/sheriff_crandy.jpg"); */
 
     /* in case hamburger menu animation overflows */
     overflow-x: hidden;
@@ -20,11 +21,12 @@ body {
 
 /* navbar color transparent */
 .navbar {
-    background:rgba(0, 0, 0, 0) !important;
+    background:rgba(0, 0, 0,0) !important;
     position: fixed;
     top:0;
     width: 100%;
-    z-index: 0;
+    /* make navbar go over main content */
+    z-index: 9999;
   }
 
 /* Sheriff Crandy logo */
@@ -51,8 +53,14 @@ body {
     right: 1rem !important;
 }
 
+/* remove hamburger button background */
 .navbar-burger:hover {
     background-color: transparent !important;
+}
+
+/* hamburger button span stroke color on hover */
+.navbar-burger:hover span{
+    color: rgb(159, 233, 255);
 }
 
 /* overwriting bulma hamburger stroke animation */
@@ -75,22 +83,23 @@ body {
 .navbar.is-dark .navbar-burger{
     background: none;
 }
+/* hamburger stroke color */
+.navbar-burger span {
+    color: white;
+}
 /* hamburger button closed */
 .navbar-burger span:first-child {
     transition-duration: 300ms;
     top: calc(50% - 7px);
-    color: black;
 }
 .navbar-burger span:nth-child(2) {
     transition-duration: 300ms;
     top: calc(50%);
-    color: black;
 
 }
 .navbar-burger span:nth-child(3) {
     transition-duration: 300ms;
     top: calc(50% + 7px);
-    color: black;
 }
 
 /* hamburger button opened */
@@ -161,12 +170,22 @@ body {
     }
 }
 
+/* homepage */
+.home {
+    padding-top: 2rem;
+}
+
 /* footer */
 .footer_text {
 	color: rgb(203, 255, 255);
     text-align: center;
 }
 
+/* lctec icon */
+.footer-img {
+    height: 15px;
+    width: 15px;
+}
 /* give shadow to footer */
 .my-footer {
 	box-shadow: 0 0 7px rgba(0, 204, 255, 0.6);

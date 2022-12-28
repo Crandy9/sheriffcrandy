@@ -1,7 +1,13 @@
 <template>
-  <div class="home">
-    Home
-</div>
+  <section>
+    <div class="home">
+      <div class="has-text-centered">
+        <figure>
+          <img src="@/assets/images/piano.jpg" alt="">
+        </figure>
+      </div>
+    </div>
+    </section>
 </template>
 
 <script>
