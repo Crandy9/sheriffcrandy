@@ -132,7 +132,7 @@ STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 
 
-# media dir for images and audio files
+# media dir for images and audio files. This dir is created when the first model objects are created (either through admin page or otherwise)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type

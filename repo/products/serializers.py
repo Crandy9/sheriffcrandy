@@ -6,7 +6,7 @@ class TrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track 
         # configure which fields we want to use in frontend. Data is a tuple
-        # don't need to include slug field
+        # will be shown in API
         fields = (
             "id",
             "title",
