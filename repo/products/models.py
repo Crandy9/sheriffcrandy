@@ -73,34 +73,24 @@ class Track(models.Model):
 
     # generate the 30 second splice sample
     # audio file product model check out pydub https://github.com/jiaaro/pydub
+    # also used https://hvitis.dev/how-to-convert-audio-files-with-python-and-django
     def make_sample(self, track):
-        # make a new temp path var to temporarily store the new sample
+        # make a new temp path var to temporarily store the sample
         tmp_path = '/tmp/'
-        print("Full song untouched: " + str(track) + '\n')
-        # restring sample title name
+        # restring song title name
         song_full_path = str(track)
         song_file = song_full_path.replace('tracks/','')
         song_name = song_file.replace('.wav','')
 
-        # open wav file
-        # play runs this and saves in /tmp dir
-        '''
-        Input #0, wav, from '/tmp/tmpf22q16d_.wav':   0KB sq=    0B f=0/0   
-        Duration: 00:03:51.46, bitrate: 2822 kb/s
-        Stream #0:0: Audio: pcm_s32le ([1][0][0][0] / 0x0001), 44100 Hz, 2 channels, s32, 2822 kb/s
-        '''
         full_song = AudioSegment.from_wav(track)
 
         # 50 seconds (in miliseconds)
         if full_song.duration_seconds > 50:
-            print ("Song length: " + str(full_song.duration_seconds))
             song_limit = 50 * 1000
             sample = full_song[:song_limit]
         else:
-            print ("Song length: " + str(full_song.duration_seconds))
             song_limit = 30 * 1000
             sample = full_song[:song_limit]
-
 
         # fade in/out the sample
         faded_sample = sample.fade_in(2000).fade_out(3000)
@@ -111,7 +101,7 @@ class Track(models.Model):
         # export to /tmp path
         faded_sample.export(sample_path, format="mp3")
 
-        # now open that file so Django can read it
+        # now open that sample as a file object so Django can read it
         converted_sample = File(
                 file=open(sample_path, 'rb'),
                 name=Path(sample_path)

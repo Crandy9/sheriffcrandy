@@ -7,6 +7,12 @@ venv/
 .wav
 .mp3
 .aac
+.png
+.jpg
+.jpeg
 *.wav
 *.mp3
 *.aac
+*.png
+*.jpg
+*.jpeg

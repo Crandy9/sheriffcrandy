@@ -8,7 +8,7 @@ urlpatterns = [
     # include muk
     path('api/v1', include('djoser.urls')),
     path('api/v1', include('djoser.urls.authtoken')),
-    # include products urls can check api at http://localhost:8000/api/v1/latest-tracks/
+    # include products app urls --can check api at http://localhost:8000/api/v1/latest-tracks/
     path('api/v1/', include ('products.urls'))
 ] 
 # to use media in frontend, not used in live
