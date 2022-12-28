@@ -4,3 +4,9 @@
 .venv
 venv/
 .vscode
+.wav
+.mp3
+.aac
+*.wav
+*.mp3
+*.aac
