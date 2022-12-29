@@ -1,10 +1,20 @@
 <template>
   <section>
-    <div class="home">
-      <div class="has-text-centered">
-        <figure>
-          <img src="@/assets/images/piano.jpg" alt="">
-        </figure>
+    <div class="fl-bg-img"></div>
+    <div class="content">
+      <!-- hero banner -->
+      <div class="hero-body">
+          <p class="title">
+          </p>
+          <p class="subtitle">
+          </p>
+      </div>
+      <div class="home">
+        <div class="has-text-centered">
+          <figure>
+            <img class="sheriff-crandy-img" src="@/assets/images/sheriff_crandy.jpg" alt="">
+          </figure>
+        </div>
       </div>
     </div>
     </section>

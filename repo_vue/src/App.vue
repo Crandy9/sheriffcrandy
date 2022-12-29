@@ -7,8 +7,8 @@
         <!-- <div class="navbar-brand"> -->
         <div class="navbar-brand">
           <router-link to="/" class="logo">
-            <!-- <strong>Sheriff Crandy</strong> -->
-            <span class="icon"><i class="fas fa-home"></i></span>
+            <strong>Sheriff Crandy</strong>
+            <!-- <span class="icon"><i class="fas fa-home"></i></span> -->
           </router-link>
           <!-- hamburger menu for mobile -->
           <!-- @click will change boolean to determine if menu is showed or not: false if true and true if false -->
@@ -25,7 +25,9 @@
           <div class="navbar-end">
             <!-- navbar items -->
             <router-link to="/" class="navbar-item">Home</router-link>
+            <router-link to="/music" class="navbar-item">Music</router-link>
             <router-link to="/tools" class="navbar-item">Tools I Use</router-link>
+            <router-link to="/bio" class="navbar-item">Bio</router-link>
             <router-link to="/contact" class="navbar-item">Contact</router-link>
             <router-link to="/login" class="navbar-item">Log in</router-link>
 
