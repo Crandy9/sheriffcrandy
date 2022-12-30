@@ -208,7 +208,7 @@ body {
         font-size: xx-large;
     }
     .navbar-item:hover {
-        color: rgb(0, 217, 255) !important;
+        color: rgb(255, 238, 0) !important;
     }
 
     a.navbar-item {
@@ -292,8 +292,16 @@ ul.sns {
     background: transparent;
 }
 
-li.instagram, li.youtube, li.twitter {
+li.instagram, li.youtube, li.twitter, li.gab {
     padding: 0.7rem;
+}
+
+.icon:hover path {    
+    fill: rgb(194, 181, 0);
+}
+
+.gab-svg {
+    overflow: visible;
 }
 
 /* lctec icon */
