@@ -20,26 +20,13 @@ body {
     overflow-x: hidden;
 }
 
-.fl-bg-img {
-    /* position: fixed;
-    margin-top: 2rem;
-    left: 0;
-    right: 0;
-    z-index: 0; */
-    /* display: block; */
-    /* background-image: url("../images/flbg.png"); 
-    filter: blur(2px);
-    width: 100%;
-    height: 100%; */
-}
-
 .content {
     /* keeps sheriff crandy image centered */
-    position:relative;
+    /* position:relative; */
     /* left: 0; */
     /* right: 0;  */
     /* highest z-index second to hamburger menu */
-    z-index: 9998;
+    /* z-index: 9998; */
 }
 
 /* navbar color transparent */
@@ -280,10 +267,33 @@ img.cover-art {
     padding-left: 10px;
     padding-right: 10px;
 }
-/* sns icon color */
-path {
-    fill: aqua;
+.spotify path {
+    fill: rgb(0, 230, 0);
 }
+.apple path {
+    fill: white;
+}
+/* sns colors */
+.instagram path {
+    fill: rgb(255, 0, 157);
+}
+
+.twitter path {
+    fill: rgb(52, 208, 255);
+}
+
+.youtube path {
+    fill: red;
+}
+
+.gab path {
+    fill:#21cf7a;
+}
+
+.amazon path {
+    fill: rgb(255, 166, 0);
+}
+
 /* list items */
 ul.sns {
     display: flex;
@@ -292,14 +302,17 @@ ul.sns {
     background: transparent;
 }
 
-li.instagram, li.youtube, li.twitter, li.gab {
+li.instagram, li.youtube, li.twitter, li.gab, li.apple, li.spotify, li.amazon {
     padding: 0.7rem;
 }
 
 .icon:hover path {    
-    fill: rgb(194, 181, 0);
+    fill: rgb(253, 228, 0);
 }
 
+.amazon-svg {
+    overflow: visible;
+}
 .gab-svg {
     overflow: visible;
 }
@@ -309,14 +322,15 @@ li.instagram, li.youtube, li.twitter, li.gab {
     height: 15px;
     width: 15px;
 }
-/* give shadow to footer */
+/* this keeps footer stuck on the bottom; can also use generic footer div */
+body > .my-footer {
+    position: sticky;
+    top: 100vh;
+  }
+/* footer styling */
 .my-footer {
 	box-shadow: 0 0 7px rgba(0, 204, 255, 0.6);
     background-color: black;
-    /* make footer stick to bottom */
-    bottom: 0px;
-    width: 100%;
-    z-index: 9999;
 }
 
 a.company_link {
