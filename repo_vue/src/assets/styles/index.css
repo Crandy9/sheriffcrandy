@@ -20,15 +20,6 @@ body {
     overflow-x: hidden;
 }
 
-.content {
-    /* keeps sheriff crandy image centered */
-    /* position:relative; */
-    /* left: 0; */
-    /* right: 0;  */
-    /* highest z-index second to hamburger menu */
-    /* z-index: 9998; */
-}
-
 /* navbar color transparent */
 .navbar {
     background:rgba(0, 0, 0,0) !important;
@@ -63,29 +54,54 @@ body {
     background: none !important;
 }
 
-.navbar-burger {
+.my-burger {
+    z-index: 9999;
     position: absolute !important;
+    /* position: relative; */
     top: 1rem !important;
     right: 1rem !important;
+    color: hsl(0deg, 0%, 29%);
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: block;
+    height: 3.25rem;
+    width: 3.25rem;
+    margin-left: auto;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: none;
+    border: none;
+    /* color: currentColor; */
+    font-family: inherit;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
 }
 
 /* remove hamburger button background */
-.navbar-burger:hover {
+.my-burger:hover {
     background-color: transparent !important;
 }
 
 /* hamburger button span stroke color on hover */
-.navbar-burger:hover span{
+.my-burger:hover span{
     color: rgb(197, 197, 197);
 }
 
 /* overwriting bulma hamburger stroke animation */
 /* stroke length and height*/
-.navbar-burger span {
-    background-color: none !important;
+.my-burger span {
+    /* color: white !important; */
+    /* background-color: none !important; */
+    background-color: white;
     display: block;
     height: 1px;
-    left: calc(50% - 8px);
+    left: calc(50% - 12px);
     position: absolute;
     transform-origin: center;
     transition-duration: 86ms;
@@ -96,41 +112,38 @@ body {
 }
 
 /* remove hamburger button background */
-.navbar.is-dark .navbar-burger{
+.navbar.is-dark .my-burger{
     background: none;
 }
-/* hamburger stroke color */
-.navbar-burger span {
-    color: white;
-}
+
 /* hamburger button closed */
-.navbar-burger span:first-child {
+.my-burger span:first-child {
     transition-duration: 300ms;
     top: calc(50% - 7px);
 }
-.navbar-burger span:nth-child(2) {
+.my-burger span:nth-child(2) {
     transition-duration: 300ms;
     top: calc(50%);
 
 }
-.navbar-burger span:nth-child(3) {
+.my-burger span:nth-child(3) {
     transition-duration: 300ms;
     top: calc(50% + 7px);
 }
 
 /* hamburger button opened */
-.navbar-burger.is-active span:first-child {
+.my-burger.is-active span:first-child {
     transition-duration: 300ms;
     transform: translateY(7px) rotate(45deg);
     color: rgb(255, 255, 255);
 }
 
-.navbar-burger.is-active span:nth-child(2) {
+.my-burger.is-active span:nth-child(2) {
     opacity: 0;
     color: rgb(255, 255, 255);
 
 }
-.navbar-burger.is-active span:nth-child(3) {
+.my-burger.is-active span:nth-child(3) {
     transition-duration: 300ms;
     transform: translateY(-7px) rotate(-45deg);
     color: rgb(255, 255, 255);
@@ -145,8 +158,15 @@ body {
 
 
 @media screen and (min-width: 1024px) {
+    .navbar-end {
+        display: flex !important;
+    }
+    .my-burger {
+        display: none !important;
+    }
+
     /* navbar menu items when not collapsed */
-    .navbar-menu{
+    .my-navbar-menu{
         align-items: stretch;
         display: flex;
         position: absolute !important;
@@ -162,29 +182,51 @@ body {
     }
 }
 
-/* navbar menu animation */
+
+/* when navbar menu collapses under hamburger */
 @media screen and (max-width: 1023px) {
-    .navbar-menu {
-       
-        /* determines how much screen the menu will fill */
-        /* transform: translateX(100%) !important;*/
+    /* hide navbar items until hamburger button is clicked */
+    .navbar-end {
+        display: none;
     }
-    .navbar-menu.is-active {
-        opacity: 1;
-        /* transform: none; */
-        /* ensures entire screen is filled */
+
+    /* show bnavbar items when hamburger is clicked */
+    .navbar-end.is-active {
+        display: block;
+        /* position nav items when hamburger opens */
+        padding: 5rem;
+    }
+
+    /* navbar when hamburger button is not clicked */
+    .my-navbar-menu {
+        height: 100%;
+        width: 0;
         position: fixed;
-        /* menu background color */
-        background-color:rgba(0, 0, 0, 0.8) !important;
-        /* bg blur */
-        backdrop-filter: blur(1rem) !important;
-        /* amount of screen space that the menu will take up */
-        inset: 0 0 0 0 !important;
-        /* place nav items centrally and slightly left*/
-        padding: min(30vh, 10rem) 4em !important;
+        z-index: 1;
+        top: 0;
+        right: 0;
+        background-color:rgba(0, 0, 0, 0.8);
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
     }
+    /* navbar when hamburger is opened */
+    .my-navbar-menu.is-active {
+        /* end at width 100% */
+        /* left: 0px; */
+        /* inset: 0 0 0 0; */
+        /* display: block; */
+        height: 100%;
+        position: fixed;
+        z-index: 999;
+        background-color:rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(1rem);
+        overflow-x: hidden;
+        transition: 0.5s;
+    }
+
     /* ensure burger button shows inside navbar menu */
-    .navbar-burger.is-active {
+    .my-burger.is-active {
         z-index: 9999;
     }
 
@@ -192,7 +234,8 @@ body {
         text-decoration: none;
         color: rgb(255, 255, 255) !important;
         font-weight: 700;
-        font-size: xx-large;
+        font-size: 5.5vmin;
+
     }
     .navbar-item:hover {
         color: rgb(255, 238, 0) !important;
@@ -244,15 +287,28 @@ body {
     }
 }
 
-/* homepage */
-/* .home {
-    padding-top: 2rem;
-} */
+.section {
+    padding: 1.5rem 1.5rem;
+    /* make section take up page height so footer can be stuck to the bottom */
+    min-height: calc(100vh - 4rem - 4rem);
+}
 
+.banner {
+    margin-bottom: 2rem;
+    margin-left: 3rem;
+}
+/* music page */
+/* make media player items inline */
+.media-player {
+    display: flex;
+}
+/* .media-player div, p, h5, figure {
+    display: flex;
+}  */
 /* track cover art */
 img.cover-art {
-    width: 20%;
-    height: 20%;
+    width: 10rem;
+    height: auto;
 }
 
 
@@ -291,7 +347,7 @@ img.cover-art {
 }
 
 .amazon path {
-    fill: rgb(255, 166, 0);
+    fill: rgb(255, 195, 29);
 }
 
 /* list items */
@@ -322,12 +378,8 @@ li.instagram, li.youtube, li.twitter, li.gab, li.apple, li.spotify, li.amazon {
     height: 15px;
     width: 15px;
 }
-/* this keeps footer stuck on the bottom; can also use generic footer div */
-body > .my-footer {
-    position: sticky;
-    top: 100vh;
-  }
-/* footer styling */
+
+/* footer styling. Footer is fixed at bottom because section div takes up entire page height */
 .my-footer {
 	box-shadow: 0 0 7px rgba(0, 204, 255, 0.6);
     background-color: black;
