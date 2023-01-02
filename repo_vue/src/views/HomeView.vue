@@ -1,27 +1,17 @@
 <template>
-  <section>
-    <!-- bg image -->
-    <div class="fl-bg-img"></div>
-    <div class="content">
-      <!-- hero banner -->
-      <div class="hero-body">
-          <p class="title">
-          </p>
-          <p class="subtitle">
-          </p>
-      </div>
-      <!--  -->
-      <div class="home">
-        <div class="has-text-centered">
-          <figure>
-            <img class="sheriff-crandy-img" src="@/assets/images/sheriff_crandy.jpg" alt="">
-          </figure>
-        </div>
-      </div>
-
+  <div class="home">
+    <div class="banner">
+      <h2 class="subtitle">
+        “Blessed is the man that trusts in the Lord, and whose hope the Lord is."
+       <p><cite>-Jeremiah 17:7 (KJV)</cite></p>
+    </h2>
     </div>
-  </section>
-
+    <div class="has-text-centered">
+      <figure>
+        <img class="sheriff-crandy-img" src="@/assets/images/piano.jpg" alt="">
+      </figure>
+    </div>
+  </div>
 </template>
 
 <script>
