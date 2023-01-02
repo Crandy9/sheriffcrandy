@@ -1,30 +1,23 @@
 <template>
     <!-- music tracks -->
-    <section class="columns is-multiline">
+    <section>
+      <!-- title -->
         <div class="column is-12">
-            <h2 class="is-size-2 has-text-centered">
-            Latest Tracks
+            <h2 class="is-size-2 has-text-centered has-text-white">
+            Singles/Demos
             </h2>
         </div>
         <!-- Vue for loop -->
-        <div 
-            class="colum is-3" 
-            v-for="track in tracks"
-            v-bind:key="track.id"
-            >
+        <div v-for="track in tracks" v-bind:key="track.id" class="media-player">
             <!-- track image -->
-            <div class="box">
-            <figure class="image mb-4">
-                <img class="cover-art" v-bind:src="track.get_cover_art">
-            </figure>
-            <!-- track name -->
-            <h3 class="is-size-4">{{ track.title}}</h3>
-            <!-- price -->
-            <p class="is-size-6 has-text-white">${{track.usd_price}}</p>
-            <p class="is-size-6 has-text-white">¥{{track.jpy_price}}</p>
-
-            View Details
-            </div>
+              <figure>
+                  <img class="cover-art" v-bind:src="track.get_cover_art">
+              </figure>
+              <!-- track name -->
+              <h1 class="is-size-5 has-text-white">{{ track.title}}</h1>
+              <!-- price -->
+              <p class="is-size-6 has-text-white">${{track.usd_price}}</p>
+              <p class="is-size-6 has-text-white">¥{{track.jpy_price}}</p>
         </div>
     </section>
 </template>
