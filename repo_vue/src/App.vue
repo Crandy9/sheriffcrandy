@@ -10,20 +10,6 @@
             <strong>Sheriff Crandy</strong>
             <!-- <span class="icon"><i class="fas fa-home"></i></span> -->
           </router-link>
-          <!-- hamburger button -->
-          <!-- <a @click="showMobileMenu = !showMobileMenu; navMenuToggle;" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu" v-bind:class="{'is-active':showMobileMenu}"> -->
-            <!-- <a 
-              v-on:click="navToggle" 
-              role="button" 
-              class="navbar-burger" 
-              aria-label="menu" 
-              aria-expanded="false" 
-              data-target="navbar-menu" 
-              v-bind:class="{'is-active':hamburgerClicked}">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-          </a> -->
           <a 
               @click="hamburgerClicked = !hamburgerClicked"
               v-on:click="navToggle" 
@@ -56,7 +42,7 @@
             <a href="/tools" class="navbar-item">Tools I Use</a>
             <a href="/bio" class="navbar-item">Bio</a>
             <a href="/contact" class="navbar-item">Contact</a>
-            <a href="/login" class="navbar-item">Log in</a>
+            <a href="/login" class="navbar-item">{{$t('logIn')}}</a>
             <div class="navbar-item">
               <div class="buttons">
                 <a href="/cart" class="button is-success">
@@ -71,6 +57,12 @@
         <!-- end bulma navbar -->
     <!-- main page content -->
     <section class="section">
+      <h2>Welcome!</h2>
+      <p> 
+        Your current location is: {{ city }} 
+        in {{region}}, 
+        {{country}}. 
+      </p>
       <router-view/>
     </section>
   </div>
@@ -273,7 +265,10 @@
 export default {
   data () {
     return {
-      hamburgerClicked: false
+      hamburgerClicked: false,
+      city: "",
+      region: "",
+      country: "",
     }
   },
 

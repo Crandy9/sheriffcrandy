@@ -84,9 +84,12 @@ CSS pre-processors
 - select Sass/SCSS (with dart-sass) and hit enter
 - se;lect place Babel, ESLint, etc. config files in dedicated config files
 - Select 'n' for saving this preset for future projects
-- cd to repo_vue and install axios library used to talk to backend:
+- cd to repo_vue and install axios library used to talk to backend and access data from API:
 npm install axios
 - install bulma (css framework)
 npm install bulma
-- run vue app on dev server on localhost:8080 
+- install i18n for internationalization
+npm install vue-i18n@next
+
+- to run vue app on localhost:8080 
 npm run serve
