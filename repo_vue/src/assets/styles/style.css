@@ -1,0 +1,89 @@
+
+html {
+    overflow: scroll;
+}
+
+html, body, form, main {
+    height: 100%;
+} 
+
+body {
+    width: 100%;
+    background: center center no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-color:rgb(255, 255, 255);
+    box-shadow: inset 0px 0px 2px aqua;
+    overflow-x: hidden;
+}
+
+/* homepage img */
+.sheriff-crandy-img {
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+    border-radius: 6px;
+}
+
+
+@media screen and (min-width: 1024px) {
+    /* sheriff crandy image */
+    .sheriff-crandy-img {
+        height: auto; 
+        width: auto; 
+        max-width: 600px; 
+        max-height: 600px;
+    }
+}
+
+@media screen and (max-width: 1023px) {
+    /* sheriff crandy image mobile */
+    .sheriff-crandy-img {
+        height: auto; 
+        width: auto; 
+        max-width: 500px; 
+        max-height: 500px;
+    }
+}
+
+/* hero banner */
+.hero-body {
+    z-index: -1;
+    /* background-image: url("../images/flbg.png"); */
+    /* -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px); */
+}
+
+.title, .subtitle {
+    color: rgb(0, 0, 0);
+}
+
+
+/* even smaller sheriff crandy image mobile */
+@media screen and (max-width: 570px) {
+    .sheriff-crandy-img {
+        height: auto; 
+        width: auto; 
+        max-width: 400px; 
+        max-height: 400px;
+    }
+}
+
+/* smallest sheriff crandy image mobile */
+@media screen and (max-width: 455px) {
+    .sheriff-crandy-img {
+        height: auto; 
+        width: auto; 
+        max-width: 320px; 
+        max-height: 320px;
+    }
+}
+
+.section {
+    padding: 1.5rem 1.5rem;
+    /* make section take up page height so footer can be stuck to the bottom */
+    min-height: calc(100vh - 4rem - 4rem);
+}
+
+.banner {
+    margin-bottom: 2rem;
+    margin-left: 3rem;
+}

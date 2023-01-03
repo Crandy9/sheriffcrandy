@@ -14,10 +14,10 @@
                   <img class="cover-art" v-bind:src="track.get_cover_art">
               </figure>
               <!-- track name -->
-              <h1 class="is-size-5 has-text-white">{{ track.title}}</h1>
+              <h1 class="track-title">{{ track.title}}</h1>
               <!-- price -->
-              <p class="is-size-6 has-text-white">${{track.usd_price}}</p>
-              <p class="is-size-6 has-text-white">¥{{track.jpy_price}}</p>
+              <p class="price">${{track.usd_price}}</p>
+              <p class="price">¥{{track.jpy_price}}</p>
         </div>
     </section>
 </template>

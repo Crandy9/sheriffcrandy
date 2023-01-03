@@ -1,0 +1,13 @@
+/* music page */
+/* make media player items inline */
+.media-player {
+    display: flex;
+}
+/* .media-player div, p, h5, figure {
+    display: flex;
+}  */
+/* track cover art */
+img.cover-art {
+    width: 10rem;
+    height: auto;
+}

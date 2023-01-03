@@ -1,0 +1,84 @@
+/* 
+    *** FOOTER *** 
+
+
+*/
+
+.footer_text {
+	color: rgb(203, 255, 255);
+    text-align: center;
+}
+
+/* sns div */
+.social-media-div {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.spotify path {
+    fill: rgb(0, 230, 0);
+}
+.apple path {
+    fill: white;
+}
+/* sns colors */
+.instagram path {
+    fill: rgb(255, 0, 157);
+}
+
+.twitter path {
+    fill: rgb(52, 208, 255);
+}
+
+.youtube path {
+    fill: red;
+}
+
+.gab path {
+    fill:#21cf7a;
+}
+
+.amazon path {
+    fill: rgb(255, 195, 29);
+}
+
+/* list items */
+ul.sns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: transparent;
+}
+
+li.instagram, li.youtube, li.twitter, li.gab, li.apple, li.spotify, li.amazon {
+    padding: 0.7rem;
+}
+
+.icon:hover path {    
+    fill: rgb(253, 228, 0);
+}
+
+.amazon-svg {
+    overflow: visible;
+}
+.gab-svg {
+    overflow: visible;
+}
+
+/* lctec icon */
+.footer-img {
+    height: 15px;
+    width: 15px;
+}
+
+/* footer styling. Footer is fixed at bottom because section div takes up entire page height */
+.my-footer {
+	box-shadow: 0 0 7px rgba(0, 204, 255, 0.6);
+    background-color: black;
+}
+
+a.company_link {
+	color:bisque;
+}
+a.company_link:hover {
+	color:rgb(60, 200, 255);
+}

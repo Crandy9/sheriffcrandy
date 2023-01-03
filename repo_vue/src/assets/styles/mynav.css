@@ -1,29 +1,8 @@
-
-html {
-    overflow: scroll;
-}
-
-html, body, form, main {
-    height: 100%;
-} 
-
-body {
-    width: 100%;
-    background: center center no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    background-color:rgb(17, 22, 41);
-    box-shadow: inset 0px 0px 10px rgba(255, 81, 0, 0.5);    /* background-image: url("../images/bg.jpg"); */
-    /* background-image: url("../images/sheriff_crandy.jpg"); */
-    /* background-image: url("../images/flbg.png"); */
-    /* in case hamburger menu animation overflows */
-    overflow-x: hidden;
-}
+/* *** NAVBAR *** */
 
 /* navbar color transparent */
 .navbar {
     background:rgba(0, 0, 0,0) !important;
-    /* position: fixed; */
     top:0;
     width: 100%;
     /* make navbar go over main content */
@@ -33,17 +12,17 @@ body {
 /* Sheriff Crandy logo */
 .logo {
     margin: 2rem;
-    color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
 }
 
 .logo:hover {
-    color: white;
+    color: rgb(0, 0, 0);
 }
 
   /* remove nav link background */
 .navbar-item {
     display: flex !important;
-    color: rgb(255, 255, 255) !important;
+    color: rgb(0, 0, 0) !important;
     font-weight: bold;
     background: none !important;
     border-radius: 1%;
@@ -60,7 +39,6 @@ body {
     /* position: relative; */
     top: 1rem !important;
     right: 1rem !important;
-    color: hsl(0deg, 0%, 29%);
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
@@ -96,9 +74,6 @@ body {
 /* overwriting bulma hamburger stroke animation */
 /* stroke length and height*/
 .my-burger span {
-    /* color: white !important; */
-    /* background-color: none !important; */
-    background-color: white;
     display: block;
     height: 1px;
     left: calc(50% - 12px);
@@ -120,42 +95,36 @@ body {
 .my-burger span:first-child {
     transition-duration: 300ms;
     top: calc(50% - 7px);
+    background-color: black;
 }
 .my-burger span:nth-child(2) {
     transition-duration: 300ms;
     top: calc(50%);
-
+    background-color: black;
 }
 .my-burger span:nth-child(3) {
     transition-duration: 300ms;
     top: calc(50% + 7px);
+    background-color: black;
 }
 
-/* hamburger button opened */
+/* burger opened */
 .my-burger.is-active span:first-child {
     transition-duration: 300ms;
     transform: translateY(7px) rotate(45deg);
-    color: rgb(255, 255, 255);
+    background-color: rgb(255, 255, 255);
 }
 
 .my-burger.is-active span:nth-child(2) {
     opacity: 0;
-    color: rgb(255, 255, 255);
+    background-color: rgb(255, 255, 255);
 
 }
 .my-burger.is-active span:nth-child(3) {
     transition-duration: 300ms;
     transform: translateY(-7px) rotate(-45deg);
-    color: rgb(255, 255, 255);
-
-
+    background-color: rgb(255, 255, 255);
 }
-
-.sheriff-crandy-img {
-	box-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
-    border-radius: 6px;
-}
-
 
 @media screen and (min-width: 1024px) {
     .navbar-end {
@@ -173,13 +142,6 @@ body {
         top: 1rem !important;
         right: 1rem !important;
     }
-    /* sheriff crandy image */
-    .sheriff-crandy-img {
-        height: auto; 
-        width: auto; 
-        max-width: 600px; 
-        max-height: 600px;
-    }
 }
 
 
@@ -190,12 +152,23 @@ body {
         display: none;
     }
 
-    /* show bnavbar items when hamburger is clicked */
     .navbar-end.is-active {
         display: block;
         /* position nav items when hamburger opens */
-        padding: 5rem;
+        padding-left: 6rem;
+        padding-top: 6rem;
+        /* during nav menu transition, the nav items 'jump' into position
+            which makes it look ugly. To remedy that, fade the nav items in
+            after the nav menu has fully transitioned
+        */
+        animation: fadeIn 1s;
     }
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+
 
     /* navbar when hamburger button is not clicked */
     .my-navbar-menu {
@@ -207,22 +180,19 @@ body {
         right: 0;
         background-color:rgba(0, 0, 0, 0.8);
         overflow-x: hidden;
-        transition: 0.5s;
+        transition: 0.6s;
+        /* pushes navbar items down a bit */
         padding-top: 60px;
     }
     /* navbar when hamburger is opened */
     .my-navbar-menu.is-active {
-        /* end at width 100% */
-        /* left: 0px; */
-        /* inset: 0 0 0 0; */
-        /* display: block; */
         height: 100%;
         position: fixed;
         z-index: 999;
         background-color:rgba(0, 0, 0, 0.8);
         backdrop-filter: blur(1rem);
         overflow-x: hidden;
-        transition: 0.5s;
+        transition: 0.6s;
     }
 
     /* ensure burger button shows inside navbar menu */
@@ -234,7 +204,7 @@ body {
         text-decoration: none;
         color: rgb(255, 255, 255) !important;
         font-weight: 700;
-        font-size: 5.5vmin;
+        font-size: 4.5vmin;
 
     }
     .navbar-item:hover {
@@ -244,150 +214,4 @@ body {
     a.navbar-item {
         width: fit-content;
     }
-
-    /* sheriff crandy image mobile */
-    .sheriff-crandy-img {
-        height: auto; 
-        width: auto; 
-        max-width: 500px; 
-        max-height: 500px;
-    }
-}
-
-/* hero banner */
-.hero-body {
-    z-index: -1;
-    /* background-image: url("../images/flbg.png"); */
-    /* -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px); */
-}
-
-.title, .subtitle {
-    color: white;
-}
-
-
-/* even smaller sheriff crandy image mobile */
-@media screen and (max-width: 570px) {
-    .sheriff-crandy-img {
-        height: auto; 
-        width: auto; 
-        max-width: 400px; 
-        max-height: 400px;
-    }
-}
-
-/* smallest sheriff crandy image mobile */
-@media screen and (max-width: 455px) {
-    .sheriff-crandy-img {
-        height: auto; 
-        width: auto; 
-        max-width: 320px; 
-        max-height: 320px;
-    }
-}
-
-.section {
-    padding: 1.5rem 1.5rem;
-    /* make section take up page height so footer can be stuck to the bottom */
-    min-height: calc(100vh - 4rem - 4rem);
-}
-
-.banner {
-    margin-bottom: 2rem;
-    margin-left: 3rem;
-}
-/* music page */
-/* make media player items inline */
-.media-player {
-    display: flex;
-}
-/* .media-player div, p, h5, figure {
-    display: flex;
-}  */
-/* track cover art */
-img.cover-art {
-    width: 10rem;
-    height: auto;
-}
-
-
-/* footer */
-.footer_text {
-	color: rgb(203, 255, 255);
-    text-align: center;
-}
-
-/* sns div */
-.social-media-div {
-    padding-left: 10px;
-    padding-right: 10px;
-}
-.spotify path {
-    fill: rgb(0, 230, 0);
-}
-.apple path {
-    fill: white;
-}
-/* sns colors */
-.instagram path {
-    fill: rgb(255, 0, 157);
-}
-
-.twitter path {
-    fill: rgb(52, 208, 255);
-}
-
-.youtube path {
-    fill: red;
-}
-
-.gab path {
-    fill:#21cf7a;
-}
-
-.amazon path {
-    fill: rgb(255, 195, 29);
-}
-
-/* list items */
-ul.sns {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    background: transparent;
-}
-
-li.instagram, li.youtube, li.twitter, li.gab, li.apple, li.spotify, li.amazon {
-    padding: 0.7rem;
-}
-
-.icon:hover path {    
-    fill: rgb(253, 228, 0);
-}
-
-.amazon-svg {
-    overflow: visible;
-}
-.gab-svg {
-    overflow: visible;
-}
-
-/* lctec icon */
-.footer-img {
-    height: 15px;
-    width: 15px;
-}
-
-/* footer styling. Footer is fixed at bottom because section div takes up entire page height */
-.my-footer {
-	box-shadow: 0 0 7px rgba(0, 204, 255, 0.6);
-    background-color: black;
-}
-
-a.company_link {
-	color:bisque;
-}
-a.company_link:hover {
-	color:rgb(60, 200, 255);
 }

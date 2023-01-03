@@ -261,7 +261,10 @@
 </style>
 <!-- import custom css file -->
 <style>
-  @import '../src/assets/styles/index.css';
+  @import '../src/assets/styles/style.css';
+  @import '../src/assets/styles/mynav.css';
+  @import '../src/assets/styles/footer.css';
+  @import '../src/assets/styles/music.css';
 </style>
 
 <!-- hamburger menu animation -->
