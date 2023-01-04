@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from main_project import settings
 # audio libs
@@ -32,6 +33,10 @@ class Track(models.Model):
     cover_art = models.ImageField(upload_to='cover_art', blank=True, null=True)
     # datetime stamp
     date_added = models.DateTimeField(auto_now_add=True)
+    # check if download is free
+    is_free = models.BooleanField(default=False, blank=True, null=True)
+    # track length
+    song_dur = models.CharField(default='',max_length=255, null=True, blank=True)
 
 
     # order Tracks by title in the backend
@@ -69,6 +74,17 @@ class Track(models.Model):
     def get_cover_art(self):
         if self.cover_art:
             return settings.env('DOMAIN') + self.cover_art.url
+        return ''
+
+    # get the length of the track in mm:ss
+    def get_track_duration(self):
+        if self.song_dur:
+            return self.song_dur
+        else:
+            if self.track:
+                self.song_dur = self.track_duration(self.track)
+                self.save()
+                return self.song_dur
         return ''
 
     # generate the 30 second splice sample
@@ -111,3 +127,18 @@ class Track(models.Model):
         converted_sample.size = os.path.getsize(sample_path)
         
         return converted_sample
+    
+    def track_duration(self, track):
+        full_song = AudioSegment.from_wav(track)
+        song_length = full_song.duration_seconds
+
+        # convert song length to human-readable
+        human_readable_song_length = str(datetime.timedelta(seconds=song_length))
+
+        # min and seconds only
+        if human_readable_song_length[2] == '0':
+            min_secs = human_readable_song_length[3:-7]
+        else:            
+            min_secs = human_readable_song_length[2:-7]
+
+        return min_secs

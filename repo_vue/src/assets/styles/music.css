@@ -1,13 +1,76 @@
-/* music page */
-/* make media player items inline */
-.media-player {
-    display: flex;
+/*** music page ***/
+
+
+/* audio player section */
+.audio-player-section {
+    background-color: rgb(255, 255, 255);
+    padding-left: 2rem;
+    padding-right: 2rem;
 }
-/* .media-player div, p, h5, figure {
-    display: flex;
-}  */
+
 /* track cover art */
 img.cover-art {
-    width: 5rem;
+    width: 6rem;
     height: auto;
+    padding-right: 0.5rem;
+}
+
+@media screen and (max-width:520px) {
+    .track-img {
+        display: none !important;
+    }
+}
+
+/* for each track list item */
+.track-list-item {
+    align-items: center;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-color: rgba(0, 255, 213, 0.2);
+    /* keep everything aligned horizontally */
+    display: flex;
+    flex-flow: row nowrap;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding-top: 9px;
+    padding-right: 5px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+    position: relative;
+    width: 100%;
+}
+
+/* hover track list item */
+.track-list-item:hover {
+    background-color: rgb(241, 254, 255);
+}
+
+.track-number {
+    display: block;
+    width: 31px;
+    color: rgb(0, 0, 0,0.5);
+}
+
+.track-title {
+    color: black;
+    overflow-y: hidden;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    font-size: 14px;
+    align-items: baseline;
+    display: flex;
+    font-size: 1em;
+}
+
+.track-title-inner {
+    padding-right: 1rem;
+}
+.track-dur {
+    color: rgb(61, 61, 61);
+}
+
+.button.is-black:hover {
+    background-color: rgb(255, 217, 0);
+    color: black;
 }

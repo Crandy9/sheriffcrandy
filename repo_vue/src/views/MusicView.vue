@@ -1,24 +1,45 @@
 <template>
     <!-- music tracks -->
     <section>
-      <!-- title -->
+        <!-- title -->
         <div class="column is-12">
-            <h2 class="is-size-2 has-text-centered has-text-white">
-            Singles/Demos
-            </h2>
-        </div>
+          <h2 class="is-size-2 has-text-centered has-text-black">
+          Singles
+          </h2>
+      </div>
+    </section>
+    <section class="audio-player-section">
+      <!-- unordered list of track -->
+      <ul>
         <!-- Vue for loop -->
-        <div v-for="track in tracks" v-bind:key="track.id" class="media-player">
-            <!-- track image -->
-              <figure>
+        <div v-for="track, index in tracks" v-bind:key="track.id" class="media-player">
+            <li class="track-list-item">
+              <span class="track-number">{{++index}}</span>
+              <!-- track image -->
+              <!-- <figure class="track-img">
                   <img class="cover-art" v-bind:src="track.get_cover_art">
-              </figure>
-              <!-- track name -->
-              <h1 class="track-title">{{ track.title}}</h1>
+              </figure> -->
+              <!-- track title -->
+              <div class="track-title">
+                <span class="track-title-inner">
+                  {{ track.title}}
+                </span>
+                <span class="track-dur">{{track.get_track_duration}}</span>
+              </div>
+              <!-- audio player -->
+              <!-- <audio controls>
+                <source v-bind:src="track.get_sample" type="audio/ogg">
+                Your browser does not support the audio element.
+              </audio> -->
               <!-- price -->
-              <p class="price">${{track.usd_price}}</p>
-              <p class="price">¥{{track.jpy_price}}</p>
+              <div>
+                <!-- trigger stripe when this is clicked -->
+                <a class="button is-small is-black" v-if="track.is_free" href="/music">FREE</a>
+                <a class="button is-small is-black" v-else href="/music">${{track.usd_price}}</a>
+              </div>
+            </li>
         </div>
+      </ul>
     </section>
 </template>
 
@@ -37,7 +58,9 @@ export default {
   // data() is a new obj returning tracks list used in for loop above
   data() {
     return {
-      tracks: []
+      tracks: [],
+      // track number
+      trackNumber: 0,
     }
   },
 
@@ -50,6 +73,9 @@ export default {
   },
   // functions defined here
   methods: {
+    increment() {
+      this.trackNumber++;
+    },
     getTracks() {
       // replace the API path with env var
       // .get requests API data from server via HTTP GET

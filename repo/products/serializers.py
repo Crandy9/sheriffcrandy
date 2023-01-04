@@ -18,4 +18,6 @@ class TrackSerializer(serializers.ModelSerializer):
             "get_sample",
             "get_cover_art",
             "date_added",
+            "is_free",
+            "get_track_duration"
         )

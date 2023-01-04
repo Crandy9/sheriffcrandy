@@ -12,7 +12,6 @@
           </router-link>
           <a 
               @click="hamburgerClicked = !hamburgerClicked"
-              v-on:click="navToggle" 
               role="button" 
               class="my-burger" 
               aria-label="menu" 
@@ -59,9 +58,10 @@
     <section class="section">
       <h2>Welcome!</h2>
       <p> 
-        Your current location is: {{ city }} 
-        in {{region}}, 
-        {{country}}. 
+        Your IP address: {{clientIp }}
+      </p>
+      <p>
+        Geolocation data: {{ geoData }}
       </p>
       <router-view/>
     </section>
@@ -266,23 +266,41 @@ export default {
   data () {
     return {
       hamburgerClicked: false,
-      city: "",
-      region: "",
-      country: "",
+      clientIp: '',
+      geoData: '',
     }
+  },
+
+  mounted() {
+    // first get IP address
+    this.getIP(),
+    // then get geodata
+    this.getGeoData()
   },
 
   // methods 
   methods: {
-    navToggle: function () {
+    // get user's IP address using https://www.ipify.org/ api
+    getIP() {
+      fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(response => {
+        this.clientIp = response;
+      });
     },
-    // navbar animation
-    openNav: function() {
-      return {
-        myWidth: "100%"
-      }
+    // get user's geolocation using https://ip-api.com/docs/api:json api
+    getGeoData() {
+      // fetch requests data from a server and returns a Promise
+      fetch('http://ip-api.com/json/' 
+      + this.clientIp 
+      + '?fields=status,message,country,countryCode')
+      // when fetch request completes, the promise is returned 
+      // and resolved into a [object Response]] object which is an API wrapper
+      .then(response => response.json())
+      .then(response => {
+        this.geoData = response;
+      });
     },
-
     closeNav: function() {
       current_width = window.innerWidth;
 
