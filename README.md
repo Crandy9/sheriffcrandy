@@ -6,7 +6,7 @@ Web app for independent music artist Sheriff Crandy. This will be a full stack w
 The site's capabilities will include music streaming, with the option of purchasing and downloading song files. Payment processing will be handled by Stripe.
 
 Basic File Structure:
-
+```
 SHERIFFCRANDY-
             |
             repo-
@@ -34,7 +34,7 @@ SHERIFFCRANDY-
                     LICENSE
                     README.md
 
-
+```
 Django backend setup:
 - make dir on local machine where this project will be stored
 
