@@ -161,8 +161,9 @@
             which makes it look ugly. To remedy that, fade the nav items in
             after the nav menu has fully transitioned
         */
-        animation: fadeIn 0.7s;
+        animation: fadeIn 1.2s;
     }
+    
     @keyframes fadeIn {
         0% { opacity: 0; }
         50% { opacity: 0; }
@@ -188,7 +189,7 @@
         height: 100%;
         position: fixed;
         z-index: 999;
-        background-color:rgba(0, 0, 0, 0.91);
+        background-color:rgba(0, 0, 0,0.94);
         backdrop-filter: blur(1rem);
         overflow-x: hidden;
         transition: 0.6s;
@@ -203,7 +204,7 @@
         text-decoration: none;
         color: rgb(255, 255, 255) !important;
         font-weight: 700;
-        font-size: 4.5vmin;
+        font-size: 4.2vmin;
 
     }
     .navbar-item:hover {

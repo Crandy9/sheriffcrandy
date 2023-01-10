@@ -1,46 +1,73 @@
 <template>
-    <!-- music tracks -->
-    <section>
-        <!-- title -->
-        <div class="column is-12">
-          <h2 class="is-size-2 has-text-centered has-text-black">
-          Singles
-          </h2>
-      </div>
-    </section>
-    <section class="audio-player-section">
-      <!-- unordered list of track -->
-      <ul>
-        <!-- Vue for loop -->
-        <div v-for="track, index in tracks" v-bind:key="track.id" class="media-player">
-            <li class="track-list-item">
-              <span class="track-number">{{++index}}</span>
-              <!-- track image -->
-              <!-- <figure class="track-img">
+  <!-- music tracks -->
+  <section>
+    <!-- title -->
+    <div class="column is-12">
+      <h2 class="is-size-2 has-text-centered has-text-black">
+        Singles
+      </h2>
+    </div>
+  </section>
+  <section class="audio-player-section">
+    <!-- currently playing song -->
+    <!-- unordered list of track -->
+    <ul>
+      <!-- Vue for loop -->
+      <div v-for="track, index in tracks" v-bind:key="track.id" @click="setPlayOrPause(track.id)" class="media-player">
+        <!-- play song if play is true -->
+        <audio class="hidden-player" controls autoplay v-if="play == true && currentTrackPlaying == track.id">
+          <source :src="track.get_sample" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+        <div>
+        </div>
+        <li class="track-list-item" v-bind:id="track.id">
+          <!-- play button -->
+          <a class="play-pause-buttons" href="#">
+            <span v-if="currentTrackPlaying != track.id" class="play-icon-span">
+              <svg class="play-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
+                <polygon points="9.33 6.69 9.33 19.39 19.3 13.04 9.33 6.69" />
+              </svg>
+            </span>
+            <!-- when -->
+            <span v-if="currentTrackPlaying == track.id" class="pause-icon-span" style="display: block !important">
+              <svg class="pause-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                <path
+                  d="M6 3.5 a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z">
+                </path>
+              </svg>
+            </span>
+          </a>
+          <span class="track-number">{{++index}}</span>
+
+          <!-- track image -->
+          <!-- <figure class="track-img">
                   <img class="cover-art" v-bind:src="track.get_cover_art">
               </figure> -->
-              <!-- track title -->
-              <div class="track-title">
-                <span class="track-title-inner">
-                  {{ track.title}}
-                </span>
-                <span class="track-dur">{{track.get_track_duration}}</span>
-              </div>
-              <!-- audio player -->
-              <!-- <audio controls>
+          <!-- track title -->
+          <div class="track-title">
+            <span class="track-title-inner">
+              {{ track.title }}
+              <span class="track-dur">
+                {{ track.get_track_duration }}
+              </span>
+            </span>
+          </div>
+          <!-- audio player -->
+          <!-- <audio controls>
                 <source v-bind:src="track.get_sample" type="audio/ogg">
                 Your browser does not support the audio element.
               </audio> -->
-              <!-- price -->
-              <div>
-                <!-- trigger stripe when this is clicked -->
-                <a class="button is-small is-black" v-if="track.is_free" href="/music">FREE</a>
-                <a class="button is-small is-black" v-else href="/music">${{track.usd_price}}</a>
-              </div>
-            </li>
-        </div>
-      </ul>
-    </section>
+          <!-- price -->
+          <div>
+            <!-- trigger stripe when this is clicked -->
+            <a class="button is-small is-black price-button has-text-weight-medium" v-if="track.is_free" href="/music">FREE</a>
+            <a class="button is-small is-black price-button has-text-weight-medium" v-else href="/music">${{ track.usd_price }}</a>
+          </div>
+        </li>
+      </div>
+    </ul>
+  </section>
 </template>
 
 <script>
@@ -61,6 +88,11 @@ export default {
       tracks: [],
       // track number
       trackNumber: 0,
+      // check whether this track is being played or not
+      play: false,
+      pause: false,
+      stop: false,
+      currentTrackPlaying: 0
     }
   },
 
@@ -73,21 +105,54 @@ export default {
   },
   // functions defined here
   methods: {
+    // number the tracks for UI/UX
     increment() {
       this.trackNumber++;
+    },
+    // for playing/pausing track
+    setPlayOrPause(track) {
+
+      // get the specific track chosen as a JSON Object
+      const currentTrack = this.tracks.filter(x => x.id == track)
+      // get track id
+      const id = currentTrack[0].id
+      // get track id
+      const title = currentTrack[0].title
+
+      // start track
+       if (this.currentTrackPlaying == 0 ) {
+        this.currentTrackPlaying = track
+        console.log("Start track: " + title + ' ' + this.currentTrackPlaying)
+        this.play = true;
+      }
+      // pausing track
+      else if (this.currentTrackPlaying == track) {
+        console.log("Pause track: " + title + ' ' + this.currentTrackPlaying)
+        // set it back to default val of 0
+        this.currentTrackPlaying = 0;
+        this.pause = true;
+      }
+      // stop track and play new track
+      else {
+        console.log("Stop track " + this.currentTrackPlaying);
+        this.stop = true;
+        this.currentTrackPlaying = track;
+        console.log("Start new track: " + title + ' ' + this.currentTrackPlaying);
+        this.play = true
+      }
     },
     getTracks() {
       // replace the API path with env var
       // .get requests API data from server via HTTP GET
       // .then will take the response data and populate the empty tracks list above
       axios.get(process.env.VUE_APP_API_URL)
-      .then(response=> {
-        this.tracks = response.data
-      })
-      .catch(error=>{
-        console.log("ERROR BOYY: " + error)
-        console.log(process.env.VUE_APP_API_URL)
-      })
+        .then(response => {
+          this.tracks = response.data
+        })
+        .catch(error => {
+          console.log("ERROR BOYY: " + error)
+          console.log(process.env.VUE_APP_API_URL)
+        })
     }
   }
 }

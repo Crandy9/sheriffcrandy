@@ -1,11 +1,9 @@
 /*** music page ***/
 
-
 /* audio player section */
 .audio-player-section {
     background-color: rgb(255, 255, 255);
-    padding-left: 2rem;
-    padding-right: 2rem;
+    box-shadow: 0 30px 40px rgba(0,0,0,.1);
 }
 
 /* track cover art */
@@ -19,6 +17,11 @@ img.cover-art {
     .track-img {
         display: none !important;
     }
+}
+
+/* html audio player always hidden (play pause functionality handled by vue) */
+.hidden-player {
+    display: none;
 }
 
 /* for each track list item */
@@ -38,17 +41,65 @@ img.cover-art {
     padding-left: 5px;
     position: relative;
     width: 100%;
+    cursor: pointer;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 /* hover track list item */
 .track-list-item:hover {
-    background-color: rgb(241, 254, 255);
+    background-color: rgb(247, 247, 247);
+    -moz-transition: all .18s ease-in;
+    -o-transition: all .18s ease-in;
+    -webkit-transition: all .18s ease-in;
+    transition: all .18s ease-in;
 }
+
+/* hide track number when hovered*/
+.track-list-item:hover .track-number {
+    display: none;
+}
+
+/* hide play-pause a tags while not selected */
+.play-pause-buttons {
+    display: block;
+}
+
+/* play button */
+.play-icon-span {
+    display: block;
+}
+
+/* show play-pause a tags on track block hover */
+.track-list-item:hover .play-pause-buttons {
+    /* stacks play pause buttons on top of each other */
+    display: block;
+    height: 26px;
+    padding: 0;
+    width: 26px;
+    margin-right: 0.31rem;
+}
+
+
+
+/* play/pause icon fill color */
+.play-icon-svg, .pause-icon-svg {
+    fill: rgb(0, 0, 0) !important;
+}
+
+
 
 .track-number {
     display: block;
     width: 31px;
     color: rgb(0, 0, 0,0.5);
+}
+
+.pause-icon-display {
+    display: block;
+    color: black;
+    width: 31px;
+    height: auto;
 }
 
 .track-title {
@@ -60,7 +111,7 @@ img.cover-art {
     font-size: 14px;
     align-items: baseline;
     display: flex;
-    font-size: 1em;
+    /* font-size: 1em; */
 }
 
 .track-title-inner {
@@ -68,9 +119,15 @@ img.cover-art {
 }
 .track-dur {
     color: rgb(61, 61, 61);
+    padding-left: 0.5rem;
 }
 
-.button.is-black:hover {
-    background-color: rgb(255, 217, 0);
+/* price buttons */
+.button.is-black.price-button:hover {
+    background-color: rgb(255, 197, 6);
     color: black;
+    -moz-transition: all .15s ease-in;
+    -o-transition: all .15s ease-in;
+    -webkit-transition: all .15s ease-in;
+    transition: all .15s ease-in;
 }
