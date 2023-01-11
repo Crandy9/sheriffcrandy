@@ -127,9 +127,12 @@ export default {
       // check whether this track is being played or not
       play: false,
       pause: false,
-      stop: false,
+      stop: true,
       currentTrackPlaying: 0,
-      currentTimer: ''
+      currentTimer: '',
+      currentSeconds: 0,
+      currentInterval: '',
+      timeRemaining: 0
     }
   },
 
@@ -156,48 +159,92 @@ export default {
       // get track id
       const title = currentTrack[0].title
 
-      // if currentTrackPlaying is 0, it means no song is in the queue
-       if (this.currentTrackPlaying == 0 ) {
+      // if currentTrackPlaying is 0, it means no song has been played
+       if (this.currentTrackPlaying == 0 && this.play == false && this.pause == false && this.stop == true) {
+        // set the current track to the track selected by user
         this.currentTrackPlaying = track
-        console.log("Start track: " + title + ' ' + this.currentTrackPlaying)
+        console.log("PLAY: " + title + ' ' + this.currentTrackPlaying)
         this.play = true;
-        this.pause = false;
         this.stop = false;
         // start timer
-        this.currentTimer = setTimeout(() => this.currentTrackPlaying = 0, 51000);
+        this.currentTimer = setTimeout(() => {
+            console.log("FINISHED")
+            this.stop = true; 
+            this.play = false;
+            this.pause = false;
+            this.currentTrackPlaying = 0; 
+          }, 51000);        
+        // print seconds
+        // var i = 0
+        // this.currentInterval = setInterval(function(){ 
+        //   i = i + 1;
+        //   this.currentSeconds = i;
+        //   this.timeRemaining = 51 - this.currentSeconds;
+        //   if (this.timeRemaining == 0) {
+        //     console.log("interval cleared")
+        //     clearInterval(this.currentInterval);
+        //   }
+        //   console.log(this.timeRemaining);
+        // }, 1000);
       }
       // either pausing or resuming track in the queue
       else if (this.currentTrackPlaying == track) {
-
         // if the song is currently playing, pause it
-        if (this.play == true) {
-          console.log("Pause track: " + title + ' ' + this.currentTrackPlaying)
+        if (this.play == true && this.pause == false && this.stop == false) {
+          // stop interval
+          clearInterval(this.currentInterval);
+          console.log("PAUSE: " + title + ' ' + this.currentTrackPlaying)
           this.pause = true;
           this.play = false;
-          this.stop = false;
+          // get how many more seconds the song has to play
+          console.log("time remaining: " + this.timeRemaining)
         }
         // if song is currently paused, resume it
-        else {
+        else if (this.play == false && this.pause == true && this.stop == false){
+          console.log("RESUME: " + title + ' ' + this.currentTrackPlaying)
           this.pause = false;
-          this.stop = false;
           this.play = true;
           // resume timeout
-          // start new timer
-          this.currentTimer = setTimeout(() => this.currentTrackPlaying = 0, 51000);
+          // start new timer and set stop = true if full song plays
+          this.currentTimer = setTimeout(() => {
+            console.log("FINISHED")
+            this.stop = true; 
+            this.play = false;
+            this.pause = false;
+            this.currentTrackPlaying = 0; 
+            console.log("Timer finished");
+            console.log("play: " + this.play)
+            console.log("pause: " + this.pause)
+            console.log("stop: " + this.stop)
+          }, 51000); 
+          console.log("Timer continued")
         }
       }
       // stop current track and play new track
       else {
-        this.stop = true;
-        this.pause = false;
+        console.log("STOPPED")
         // clear the timer that was playing
         clearTimeout(this.currentTimer)
-        console.log("Stop track " + this.currentTrackPlaying);
+        clearInterval(this.currentInterval)
+        // set the new track
         this.currentTrackPlaying = track;
-        console.log("Start new track: " + title + ' ' + this.currentTrackPlaying);
+        console.log("START NEW TRACK: " + title + ' ' + this.currentTrackPlaying);
         this.play = true
+        this.stop = false;
+        this.pause = false;
         // start new timer
-        this.currentTimer = setTimeout(() => this.currentTrackPlaying = 0, 51000);
+        this.currentTimer = setTimeout(() => {
+            console.log("FINISHED")
+            this.stop = true; 
+            this.play = false;
+            this.pause = false;
+            this.currentTrackPlaying = 0; 
+            console.log("Timer finished");
+            console.log("play: " + this.play)
+            console.log("pause: " + this.pause)
+            console.log("stop: " + this.stop)
+          }, 51000);         
+        console.log("New Timer Started For new Song")
       }
     },
     getTracks() {
