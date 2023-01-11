@@ -7,43 +7,79 @@
         Singles
       </h2>
     </div>
+    <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
+      <h4 v-if="currentTrackPlaying == trackDisplay.id">
+        {{ trackDisplay.title }}
+      </h4>
+        <!-- show img thumbnail for current track -->
+      <figure v-if="currentTrackPlaying == trackDisplay.id" class="track-img">
+        <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
+      </figure> 
+    </div>
+    <div class="skip-icons">
+      <a href="#">
+        <i class="fa fa-fast-backward"></i>
+      </a>
+      <a href="#">
+        <i class="fa fa-fast-forward"></i>  
+      </a>
+    </div>
   </section>
   <section class="audio-player-section">
     <!-- currently playing song -->
     <!-- unordered list of track -->
-    <ul>
+    <ul class="audio-player-ul">
       <!-- Vue for loop -->
       <div v-for="track, index in tracks" v-bind:key="track.id" @click="setPlayOrPause(track.id)" class="media-player">
-        <!-- play song if play is true -->
-        <audio class="hidden-player" controls autoplay v-if="play == true && currentTrackPlaying == track.id">
+        <!-- play audio if play is true -->
+        <audio class="hidden-player" controls autoplay v-if="play == true && pause == false && currentTrackPlaying == track.id">
           <source :src="track.get_sample" type="audio/mpeg">
           Your browser does not support the audio element.
         </audio>
         <div>
         </div>
         <li class="track-list-item" v-bind:id="track.id">
-          <!-- play button -->
-          <a class="play-pause-buttons" href="#">
-            <span v-if="currentTrackPlaying != track.id" class="play-icon-span">
-              <svg class="play-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
+          <!-- show play button on all tracks on hover -->
+            <a class="play-button" href="#" v-if="currentTrackPlaying != track.id">
+            <span class="play-icon-span">
+              <svg 
+                class="play-icon-svg" 
+                xmlns="http://www.w3.org/2000/svg" 
+                preserveAspectRatio="xMinYMin meet"
+                viewBox="0 0 26 26">
                 <polygon points="9.33 6.69 9.33 19.39 19.3 13.04 9.33 6.69" />
               </svg>
             </span>
-            <!-- when -->
-            <span v-if="currentTrackPlaying == track.id" class="pause-icon-span" style="display: block !important">
-              <svg class="pause-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          </a>
+          <!-- show play button on paused track -->
+          <a class="play-button-on-pause" href="#" v-if="currentTrackPlaying == track.id && play == false && pause == true">
+            <span class="play-icon-span">
+              <svg 
+                class="play-icon-svg" 
+                xmlns="http://www.w3.org/2000/svg" 
+                preserveAspectRatio="xMinYMin meet"
+                viewBox="0 0 26 26">
+                <polygon points="9.33 6.69 9.33 19.39 19.3 13.04 9.33 6.69" />
+              </svg>
+            </span>
+          </a>
+          <!-- show pause button while playing -->
+          <a class="pause-button" href="#" v-if="currentTrackPlaying == track.id && play == true && pause == false">
+            <!-- show pause button only on track that is currently playing -->
+            <span class="pause-icon-span" style="display: block !important">
+              <svg 
+                class="pause-icon-svg" 
+                xmlns="http://www.w3.org/2000/svg" 
+                preserveAspectRatio="xMinYMin meet"
+                viewBox="0 0 16 16">
                 <path
                   d="M6 3.5 a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z">
                 </path>
               </svg>
             </span>
           </a>
-          <span class="track-number">{{++index}}</span>
-
-          <!-- track image -->
-          <!-- <figure class="track-img">
-                  <img class="cover-art" v-bind:src="track.get_cover_art">
-              </figure> -->
+          <!-- hide track number when track is playing -->
+          <span v-if="currentTrackPlaying != track.id" class="track-number">{{++index}}</span>
           <!-- track title -->
           <div class="track-title">
             <span class="track-title-inner">
@@ -92,7 +128,8 @@ export default {
       play: false,
       pause: false,
       stop: false,
-      currentTrackPlaying: 0
+      currentTrackPlaying: 0,
+      currentTimer: ''
     }
   },
 
@@ -119,26 +156,48 @@ export default {
       // get track id
       const title = currentTrack[0].title
 
-      // start track
+      // if currentTrackPlaying is 0, it means no song is in the queue
        if (this.currentTrackPlaying == 0 ) {
         this.currentTrackPlaying = track
         console.log("Start track: " + title + ' ' + this.currentTrackPlaying)
         this.play = true;
+        this.pause = false;
+        this.stop = false;
+        // start timer
+        this.currentTimer = setTimeout(() => this.currentTrackPlaying = 0, 51000);
       }
-      // pausing track
+      // either pausing or resuming track in the queue
       else if (this.currentTrackPlaying == track) {
-        console.log("Pause track: " + title + ' ' + this.currentTrackPlaying)
-        // set it back to default val of 0
-        this.currentTrackPlaying = 0;
-        this.pause = true;
+
+        // if the song is currently playing, pause it
+        if (this.play == true) {
+          console.log("Pause track: " + title + ' ' + this.currentTrackPlaying)
+          this.pause = true;
+          this.play = false;
+          this.stop = false;
+        }
+        // if song is currently paused, resume it
+        else {
+          this.pause = false;
+          this.stop = false;
+          this.play = true;
+          // resume timeout
+          // start new timer
+          this.currentTimer = setTimeout(() => this.currentTrackPlaying = 0, 51000);
+        }
       }
-      // stop track and play new track
+      // stop current track and play new track
       else {
-        console.log("Stop track " + this.currentTrackPlaying);
         this.stop = true;
+        this.pause = false;
+        // clear the timer that was playing
+        clearTimeout(this.currentTimer)
+        console.log("Stop track " + this.currentTrackPlaying);
         this.currentTrackPlaying = track;
         console.log("Start new track: " + title + ' ' + this.currentTrackPlaying);
         this.play = true
+        // start new timer
+        this.currentTimer = setTimeout(() => this.currentTrackPlaying = 0, 51000);
       }
     },
     getTracks() {

@@ -6,18 +6,85 @@
     box-shadow: 0 30px 40px rgba(0,0,0,.1);
 }
 
-/* track cover art */
-img.cover-art {
-    width: 6rem;
-    height: auto;
-    padding-right: 0.5rem;
+/* media player div */
+section.audio-player-section {
+    transition: width 2s, height 2s, transform 2s;
 }
 
-@media screen and (max-width:520px) {
-    .track-img {
-        display: none !important;
-    }
+/* track cover art */
+img.cover-art {
+    width: 10rem;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    -moz-transition: all .15s ease-in;
+    -o-transition: all .15s ease-in;
+    -webkit-transition: all .15s ease-in;
+    transition: all .15s ease-in;
 }
+
+/* fade cover image in */
+.cover-art {
+    animation: fadeIn ease 1s;
+    -webkit-animation: fadeIn ease 1s;
+    -moz-animation: fadeIn ease 1s;
+    -o-animation: fadeIn ease 1s;
+    -ms-animation: fadeIn ease 1s;
+  }
+  @keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-moz-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-webkit-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-o-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+  
+  @-ms-keyframes fadeIn {
+    0% {opacity:0;}
+    100% {opacity:1;}
+  }
+
+
+/* skip icons */
+.skip-icons {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+/* fa fa-fast-backward */
+.fa-fast-backward {
+    padding-right: 1rem;
+    color: black;
+}
+
+/* fa fa-fast-forward */
+.fa-fast-forward {
+    color: black;
+}
+
+/* change color on hover */
+.fa-fast-forward:hover, .fa-fast-backward:hover {
+    color: rgb(112, 112, 112);
+    -moz-transition: all .15s ease-in;
+    -o-transition: all .15s ease-in;
+    -webkit-transition: all .15s ease-in;
+    transition: all .15s ease-in;
+}
+
 
 /* html audio player always hidden (play pause functionality handled by vue) */
 .hidden-player {
@@ -60,18 +127,29 @@ img.cover-art {
     display: none;
 }
 
-/* hide play-pause a tags while not selected */
-.play-pause-buttons {
+.track-number {
     display: block;
+    width: 31px;
+    color: rgb(0, 0, 0,0.5);
+}
+
+/* pause button */
+.pause-button {
+    display: block;
+    height: 26px;
+    padding: 0;
+    width: 26px;
+    margin-right: 0.31rem;
+
 }
 
 /* play button */
-.play-icon-span {
+/* .play-icon-span {
     display: block;
-}
+} */
 
-/* show play-pause a tags on track block hover */
-.track-list-item:hover .play-pause-buttons {
+/* show play a tags on track block hover */
+.track-list-item:hover .play-button {
     /* stacks play pause buttons on top of each other */
     display: block;
     height: 26px;
@@ -80,27 +158,19 @@ img.cover-art {
     margin-right: 0.31rem;
 }
 
-
+.play-button-on-pause {
+    display: block;
+    height: 26px;
+    padding: 0;
+    width: 26px;
+    margin-right: 0.31rem;
+}
 
 /* play/pause icon fill color */
 .play-icon-svg, .pause-icon-svg {
     fill: rgb(0, 0, 0) !important;
 }
 
-
-
-.track-number {
-    display: block;
-    width: 31px;
-    color: rgb(0, 0, 0,0.5);
-}
-
-.pause-icon-display {
-    display: block;
-    color: black;
-    width: 31px;
-    height: auto;
-}
 
 .track-title {
     color: black;
