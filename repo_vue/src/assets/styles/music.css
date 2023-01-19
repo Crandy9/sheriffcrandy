@@ -11,17 +11,32 @@ section.audio-player-section {
     transition: width 2s, height 2s, transform 2s;
 }
 
+/* track title above image */
+.track-title-img {
+    display: block;
+    margin-left: 3rem;
+    padding-bottom: 1rem;
+    color: black;
+}
+
 /* track cover art */
 img.cover-art {
     width: 10rem;
-    height: auto;
+    /* keep track art img height the same to prevent music player
+    from "jumping" up and down the div. Looks bad
+     */
+    min-height: 7rem !important;
+    max-height: 7rem !important;
     display: block;
-    margin-left: auto;
+    margin-left: 2rem;
     margin-right: auto;
     -moz-transition: all .15s ease-in;
     -o-transition: all .15s ease-in;
     -webkit-transition: all .15s ease-in;
     transition: all .15s ease-in;
+    border-radius: 8%;
+    box-shadow: 0 0px 40px rgba(255, 0, 0, 0.4);
+
 }
 
 /* fade cover image in */
@@ -58,7 +73,7 @@ img.cover-art {
   }
 
 
-/* skip icons */
+/* fast forward/fast backward icons */
 .skip-icons {
     display: flex;
     justify-content: flex-end;
@@ -78,7 +93,7 @@ img.cover-art {
 
 /* change color on hover */
 .fa-fast-forward:hover, .fa-fast-backward:hover {
-    color: rgb(98, 0, 143);
+    color: rgb(53, 53, 53);
     -moz-transition: all .15s ease-in;
     -o-transition: all .15s ease-in;
     -webkit-transition: all .15s ease-in;
@@ -115,7 +130,7 @@ img.cover-art {
 
 /* hover track list item */
 .track-list-item:hover {
-    background-color: rgb(247, 247, 247);
+    background-color: rgb(233, 233, 233);
     -moz-transition: all .18s ease-in;
     -o-transition: all .18s ease-in;
     -webkit-transition: all .18s ease-in;
@@ -144,11 +159,6 @@ img.cover-art {
     margin-right: 0.31rem;
     background-color: rgb(0, 0, 0);
 }
-
-/* play button */
-/* .play-icon-span {
-    background-color: rgb(0, 0, 0);
-} */
 
 /* show play a tags on track block hover */
 .track-list-item:hover .play-button {

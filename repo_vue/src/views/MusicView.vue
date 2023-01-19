@@ -4,15 +4,23 @@
     <!-- title -->
     <div class="column is-12">
       <h2 class="is-size-2 has-text-centered has-text-black">
-        Singles
+        Singles/Covers
       </h2>
     </div>
     <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-      <h4 v-if="currentTrackPlaying == trackDisplay.id">
+      <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id">
         {{ trackDisplay.title }}
-      </h4>
+      </h3>
+      <!-- leave title up after song stops playing -->
+      <h3 class="track-title-img" v-if="lastPlayedTrack == trackDisplay.id && stop == true">
+        {{ trackDisplay.title }}
+      </h3>
         <!-- show img thumbnail for current track -->
       <figure v-if="currentTrackPlaying == trackDisplay.id" class="track-img">
+        <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
+      </figure> 
+      <!-- leave thumbnail shown after song stops-->
+      <figure v-if="lastPlayedTrack == trackDisplay.id && stop == true" class="track-img">
         <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
       </figure> 
     </div>
@@ -129,6 +137,7 @@ export default {
       pause: false,
       stop: true,
       currentTrackPlaying: 0,
+      lastPlayedTrack: 0,
       currentTimer: '',
       currentSeconds: 0,
       currentInterval: '',
@@ -145,7 +154,7 @@ export default {
   },
   // functions defined here
   methods: {
-    // number the tracks for UI/UX
+    // number the tracks for UI/UX media player
     increment() {
       this.trackNumber++;
     },
@@ -153,23 +162,22 @@ export default {
     setPlayOrPause(track) {
 
       // get the specific track chosen as a JSON Object
-      const currentTrack = this.tracks.filter(x => x.id == track)
-      // get track id
-      const id = currentTrack[0].id
-      // get track id
-      const title = currentTrack[0].title
+      // const currentTrack = this.tracks.filter(x => x.id == track)
+      // // get track id
+      // const id = currentTrack[0].id
+      // // get track id
+      // const title = currentTrack[0].title
 
       // if currentTrackPlaying is 0, it means no song has been played
        if (this.currentTrackPlaying == 0 && this.play == false && this.pause == false && this.stop == true) {
         // set the current track to the track selected by user
         this.currentTrackPlaying = track
-        console.log("PLAY: " + title + ' ' + this.currentTrackPlaying)
         this.play = true;
         this.stop = false;
         // start timer
         this.currentTimer = setTimeout(() => {
-            console.log("FINISHED")
             this.stop = true; 
+            this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
             this.currentTrackPlaying = 0; 
@@ -187,64 +195,51 @@ export default {
         //   console.log(this.timeRemaining);
         // }, 1000);
       }
-      // either pausing or resuming track in the queue
+      // either pausing or resuming current track
       else if (this.currentTrackPlaying == track) {
         // if the song is currently playing, pause it
         if (this.play == true && this.pause == false && this.stop == false) {
           // stop interval
           clearInterval(this.currentInterval);
-          console.log("PAUSE: " + title + ' ' + this.currentTrackPlaying)
           this.pause = true;
           this.play = false;
           // get how many more seconds the song has to play
-          console.log("time remaining: " + this.timeRemaining)
         }
         // if song is currently paused, resume it
         else if (this.play == false && this.pause == true && this.stop == false){
-          console.log("RESUME: " + title + ' ' + this.currentTrackPlaying)
           this.pause = false;
           this.play = true;
+          // 
+          clearTimeout(this.currentTimer)
           // resume timeout
           // start new timer and set stop = true if full song plays
           this.currentTimer = setTimeout(() => {
-            console.log("FINISHED")
             this.stop = true; 
+            this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
             this.currentTrackPlaying = 0; 
-            console.log("Timer finished");
-            console.log("play: " + this.play)
-            console.log("pause: " + this.pause)
-            console.log("stop: " + this.stop)
           }, 51000); 
-          console.log("Timer continued")
         }
       }
       // stop current track and play new track
       else {
-        console.log("STOPPED")
         // clear the timer that was playing
         clearTimeout(this.currentTimer)
         clearInterval(this.currentInterval)
         // set the new track
         this.currentTrackPlaying = track;
-        console.log("START NEW TRACK: " + title + ' ' + this.currentTrackPlaying);
         this.play = true
         this.stop = false;
         this.pause = false;
         // start new timer
         this.currentTimer = setTimeout(() => {
-            console.log("FINISHED")
-            this.stop = true; 
+            this.stop = true;
+            this.lastPlayedTrack = this.currentTrackPlaying; 
             this.play = false;
             this.pause = false;
             this.currentTrackPlaying = 0; 
-            console.log("Timer finished");
-            console.log("play: " + this.play)
-            console.log("pause: " + this.pause)
-            console.log("stop: " + this.stop)
           }, 51000);         
-        console.log("New Timer Started For new Song")
       }
     },
     getTracks() {
