@@ -84,11 +84,13 @@ img.cover-art {
 .fa-fast-backward {
     padding-right: 1rem;
     color: black;
+    cursor: pointer;
 }
 
 /* fa fa-fast-forward */
 .fa-fast-forward {
     color: black;
+    cursor: pointer;
 }
 
 /* change color on hover */

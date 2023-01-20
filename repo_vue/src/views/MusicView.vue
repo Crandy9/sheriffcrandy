@@ -25,12 +25,12 @@
       </figure> 
     </div>
     <div class="skip-icons">
-      <a href="#">
+      <span @click="prevTrack()">
         <i class="fa fa-fast-backward"></i>
-      </a>
-      <a href="#">
+      </span>
+      <span @click="nextTrack()">
         <i class="fa fa-fast-forward"></i>  
-      </a>
+      </span>
     </div>
   </section>
   <section class="audio-player-section">
@@ -154,19 +154,77 @@ export default {
   },
   // functions defined here
   methods: {
+
+    // skip track forward
+    nextTrack() {
+      var last_track = this.tracks[this.tracks.length - 1].id
+      // if no songs have been played, skip to second track in playlist 
+      if (this.currentTrackPlaying == 0) {
+        this.currentTrackPlaying = this.tracks[0].id
+        clearInterval(this.currentInterval);
+        this.play = true;
+        this.stop = false;
+        this.pause = false;
+      }
+      // else if this is the last track in the playlist, play the first track
+      else if (this.currentTrackPlaying == last_track) {
+        this.currentTrackPlaying = this.tracks[0].id
+        clearInterval(this.currentInterval);
+        this.play = true;
+        this.stop = false;
+        this.pause = false;
+      }
+      else {
+        // local var containing the current track id needed for function below 
+        var val = this.currentTrackPlaying
+        // get the JSON object index of the current song in the playlist
+        var index = this.tracks.findIndex(function(item){
+          return item.id === val;
+        });
+        // get the id of the next track in the playlist
+        this.currentTrackPlaying = this.tracks[index + 1].id
+
+        clearInterval(this.currentInterval);
+        this.play = true;
+        this.stop = false;
+        this.pause = false;
+      }
+    },
+    prevTrack() {
+      var first_track = this.tracks[0].id
+      var last_track = this.tracks[this.tracks.length - 1].id
+
+      // if no songs have been played or if current track is the first_track, play the last track in the playlist
+      if (this.currentTrackPlaying == 0 || this.currentTrackPlaying == first_track) {
+        this.currentTrackPlaying = last_track
+        clearInterval(this.currentInterval);
+        this.play = true;
+        this.stop = false;
+        this.pause = false;
+      }
+      // skip back to the previous track
+      else {
+        // same setup for nextTrack only reversed
+        var val = this.currentTrackPlaying
+        var index = this.tracks.findIndex(function(item){
+          return item.id === val;
+        });
+        // get the id of the prev track in the playlist
+        this.currentTrackPlaying = this.tracks[index - 1].id
+
+        clearInterval(this.currentInterval);
+        this.play = true;
+        this.stop = false;
+        this.pause = false;
+      }
+
+    },
     // number the tracks for UI/UX media player
     increment() {
       this.trackNumber++;
     },
     // for playing/pausing track
     setPlayOrPause(track) {
-
-      // get the specific track chosen as a JSON Object
-      // const currentTrack = this.tracks.filter(x => x.id == track)
-      // // get track id
-      // const id = currentTrack[0].id
-      // // get track id
-      // const title = currentTrack[0].title
 
       // if currentTrackPlaying is 0, it means no song has been played
        if (this.currentTrackPlaying == 0 && this.play == false && this.pause == false && this.stop == true) {
@@ -182,18 +240,6 @@ export default {
             this.pause = false;
             this.currentTrackPlaying = 0; 
           }, 51000);        
-        // print seconds
-        // var i = 0
-        // this.currentInterval = setInterval(function(){ 
-        //   i = i + 1;
-        //   this.currentSeconds = i;
-        //   this.timeRemaining = 51 - this.currentSeconds;
-        //   if (this.timeRemaining == 0) {
-        //     console.log("interval cleared")
-        //     clearInterval(this.currentInterval);
-        //   }
-        //   console.log(this.timeRemaining);
-        // }, 1000);
       }
       // either pausing or resuming current track
       else if (this.currentTrackPlaying == track) {
