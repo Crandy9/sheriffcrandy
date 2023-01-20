@@ -8,21 +8,15 @@
       </h2>
     </div>
     <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-      <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id">
+      <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
         {{ trackDisplay.title }}
       </h3>
-      <!-- leave title up after song stops playing -->
-      <h3 class="track-title-img" v-if="lastPlayedTrack == trackDisplay.id && stop == true">
-        {{ trackDisplay.title }}
-      </h3>
-        <!-- show img thumbnail for current track -->
-      <figure v-if="currentTrackPlaying == trackDisplay.id" class="track-img">
+      <!-- show img thumbnail for current track -->
+      <!-- or leave title up after song stops playing -->
+      <figure v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)" class="track-img">
         <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
       </figure> 
       <!-- leave thumbnail shown after song stops-->
-      <figure v-if="lastPlayedTrack == trackDisplay.id && stop == true" class="track-img">
-        <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
-      </figure> 
     </div>
     <div class="skip-icons">
       <span @click="prevTrack()">
@@ -60,7 +54,8 @@
             </span>
           </a>
           <!-- show play button on paused track -->
-          <a class="play-button-on-pause" href="#" v-if="currentTrackPlaying == track.id && play == false && pause == true">
+          <a class="play-button-on-pause" href="#" 
+          v-if="(currentTrackPlaying == track.id && play == false && pause == true) || (lastPlayedTrack == track.id && play == false && pause == false && stop == true)">
             <span class="play-icon-span">
               <svg 
                 class="play-icon-svg" 
@@ -132,7 +127,7 @@ export default {
       tracks: [],
       // track number
       trackNumber: 0,
-      // check whether this track is being played or not
+      // player status
       play: false,
       pause: false,
       stop: true,
@@ -141,6 +136,8 @@ export default {
       currentTimer: '',
       currentSeconds: 0,
       currentInterval: '',
+      // play track for 51 seconds 
+      duration: 5100,
       timeRemaining: 0
     }
   },
@@ -161,18 +158,34 @@ export default {
       // if no songs have been played, skip to second track in playlist 
       if (this.currentTrackPlaying == 0) {
         this.currentTrackPlaying = this.tracks[0].id
-        clearInterval(this.currentInterval);
         this.play = true;
         this.stop = false;
         this.pause = false;
+        clearTimeout(this.currentTimer)
+        // start timer
+        this.currentTimer = setTimeout(() => {
+            this.stop = true; 
+            this.lastPlayedTrack = this.currentTrackPlaying;
+            this.play = false;
+            this.pause = false;
+            // this.currentTrackPlaying = 0; 
+          }, this.duration);
       }
       // else if this is the last track in the playlist, play the first track
       else if (this.currentTrackPlaying == last_track) {
         this.currentTrackPlaying = this.tracks[0].id
-        clearInterval(this.currentInterval);
         this.play = true;
         this.stop = false;
         this.pause = false;
+        clearTimeout(this.currentTimer)
+        // start timer
+        this.currentTimer = setTimeout(() => {
+            this.stop = true; 
+            this.lastPlayedTrack = this.currentTrackPlaying;
+            this.play = false;
+            this.pause = false;
+            // this.currentTrackPlaying = 0; 
+          }, this.duration);
       }
       else {
         // local var containing the current track id needed for function below 
@@ -184,10 +197,18 @@ export default {
         // get the id of the next track in the playlist
         this.currentTrackPlaying = this.tracks[index + 1].id
 
-        clearInterval(this.currentInterval);
         this.play = true;
         this.stop = false;
         this.pause = false;
+        clearTimeout(this.currentTimer)
+        // start timer
+        this.currentTimer = setTimeout(() => {
+            this.stop = true; 
+            this.lastPlayedTrack = this.currentTrackPlaying;
+            this.play = false;
+            this.pause = false;
+            // this.currentTrackPlaying = 0; 
+          }, this.duration);
       }
     },
     prevTrack() {
@@ -197,10 +218,18 @@ export default {
       // if no songs have been played or if current track is the first_track, play the last track in the playlist
       if (this.currentTrackPlaying == 0 || this.currentTrackPlaying == first_track) {
         this.currentTrackPlaying = last_track
-        clearInterval(this.currentInterval);
         this.play = true;
         this.stop = false;
         this.pause = false;
+        clearTimeout(this.currentTimer)
+        // start timer
+        this.currentTimer = setTimeout(() => {
+            this.stop = true; 
+            this.lastPlayedTrack = this.currentTrackPlaying;
+            this.play = false;
+            this.pause = false;
+            // this.currentTrackPlaying = 0; 
+          }, this.duration);
       }
       // skip back to the previous track
       else {
@@ -212,10 +241,18 @@ export default {
         // get the id of the prev track in the playlist
         this.currentTrackPlaying = this.tracks[index - 1].id
 
-        clearInterval(this.currentInterval);
         this.play = true;
         this.stop = false;
         this.pause = false;
+        clearTimeout(this.currentTimer)
+        // start timer
+        this.currentTimer = setTimeout(() => {
+            this.stop = true; 
+            this.lastPlayedTrack = this.currentTrackPlaying;
+            this.play = false;
+            this.pause = false;
+            // this.currentTrackPlaying = 0; 
+          }, this.duration);
       }
 
     },
@@ -238,15 +275,13 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            this.currentTrackPlaying = 0; 
-          }, 51000);        
+            // this.currentTrackPlaying = 0; 
+          }, this.duration);        
       }
       // either pausing or resuming current track
       else if (this.currentTrackPlaying == track) {
         // if the song is currently playing, pause it
         if (this.play == true && this.pause == false && this.stop == false) {
-          // stop interval
-          clearInterval(this.currentInterval);
           this.pause = true;
           this.play = false;
           // get how many more seconds the song has to play
@@ -264,15 +299,14 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            this.currentTrackPlaying = 0; 
-          }, 51000); 
+            // this.currentTrackPlaying = 0; 
+          }, this.duration); 
         }
       }
       // stop current track and play new track
       else {
         // clear the timer that was playing
         clearTimeout(this.currentTimer)
-        clearInterval(this.currentInterval)
         // set the new track
         this.currentTrackPlaying = track;
         this.play = true
@@ -284,8 +318,8 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying; 
             this.play = false;
             this.pause = false;
-            this.currentTrackPlaying = 0; 
-          }, 51000);         
+            // this.currentTrackPlaying = 0; 
+          }, this.duration);         
       }
     },
     getTracks() {
