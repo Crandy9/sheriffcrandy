@@ -21,15 +21,16 @@
 
   /* remove nav link background */
 .navbar-item {
+    padding-top: 2rem;
     display: flex !important;
     color: rgb(0, 0, 0) !important;
     font-weight: bold;
     background: none !important;
-    border-radius: 1%;
+    /* border-radius: 1%; */
 }
 
 .navbar-item:hover {
-    color: rgb(194, 181, 0) !important;
+    color: rgb(167, 0, 0) !important;
     background: none !important;
 }
 
@@ -201,6 +202,7 @@
     }
 
     .navbar-item {
+        padding-top: 0.5rem !important;
         text-decoration: none;
         color: rgb(255, 255, 255) !important;
         font-weight: 700;
