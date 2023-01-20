@@ -6,10 +6,14 @@
         <!-- logo on navbar-->
         <!-- <div class="navbar-brand"> -->
         <div class="navbar-brand">
-          <router-link to="/" class="logo">
-            <strong>Sheriff Crandy</strong>
-            <!-- <span class="icon"><i class="fas fa-home"></i></span> -->
-          </router-link>
+          <!-- logo name -->
+          <div class="navbar-brand">
+            <router-link to="/" class="logo">
+              <strong style="display:block">Sheriff</strong> 
+              <strong style="display:block">Crandy</strong>
+              <!-- <span class="icon"><i class="fas fa-home"></i></span> -->
+            </router-link>
+          </div>
           <a 
               @click="hamburgerClicked = !hamburgerClicked"
               role="button" 
