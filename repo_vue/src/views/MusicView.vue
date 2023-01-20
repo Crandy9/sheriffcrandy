@@ -137,7 +137,7 @@ export default {
       currentSeconds: 0,
       currentInterval: '',
       // play track for 51 seconds 
-      duration: 5100,
+      duration: 51000,
       timeRemaining: 0
     }
   },
