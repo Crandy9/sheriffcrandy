@@ -161,7 +161,7 @@
             which makes it look ugly. To remedy that, fade the nav items in
             after the nav menu has fully transitioned
         */
-        animation: fadeIn 1.2s;
+        animation: fadeIn 1.2s ease-in-out;
     }
     
     @keyframes fadeIn {
@@ -204,7 +204,7 @@
         text-decoration: none;
         color: rgb(255, 255, 255) !important;
         font-weight: 700;
-        font-size: 4.2vmin;
+        font-size: 4vmin;
 
     }
     .navbar-item:hover {
@@ -213,5 +213,12 @@
 
     a.navbar-item {
         width: fit-content;
+    }
+}
+
+/* make text a little bit larger on super small mobile devices */
+@media screen and (max-width: 584px) {
+    .navbar-item {
+        font-size: 5vmin;
     }
 }

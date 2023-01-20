@@ -42,14 +42,9 @@
             <a href="/bio" class="navbar-item">Bio</a>
             <a href="/contact" class="navbar-item">Contact</a>
             <a href="/login" class="navbar-item">{{$t('logIn')}}</a>
-            <div class="navbar-item">
-              <div class="buttons">
-                <a href="/cart" class="button is-success">
-                  <span class="icon"><i class="fas fa-shopping-cart"></i></span>
-                  <span>Cart</span>
-                </a>
-              </div>
-            </div>
+            <a href="/cart" class="navbar-item">
+                <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
+            </a>
           </div>
         </div>
       </nav>
