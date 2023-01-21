@@ -16,7 +16,7 @@
     /* darken bg image to accentuate sns links */
     background: 
     linear-gradient(rgba(0, 0, 0, 0.6), 
-    rgba(0, 0, 0, 0.55)), 
+    rgba(0, 0, 0, 0.50)), 
     url("../images/studio_bg_filter.jpg");
     background-size: 100% 50rem;
     background-repeat: no-repeat;
