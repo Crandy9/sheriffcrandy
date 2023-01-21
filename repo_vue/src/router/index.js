@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 
-// add custom vies here
+// add custom views here
 const routes = [
   {
     path: '/',
