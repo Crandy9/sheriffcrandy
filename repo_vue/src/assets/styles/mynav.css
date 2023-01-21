@@ -227,9 +227,7 @@
 }
 
 /* location beacon */
-.locatin-beacon {
-    position: relative;
-}
+
 .circle {
     float:left;
     width: 10px;
