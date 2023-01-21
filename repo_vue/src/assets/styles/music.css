@@ -73,16 +73,21 @@ img.cover-art {
   }
 
 
-/* fast forward/fast backward icons */
-.skip-icons {
+/* fwrapper to position div to right-most top of player*/
+.skip-icons-wrapper {
     display: flex;
     justify-content: flex-end;
+}
+/* space between icons */
+.skip-icons {
+    display: flex;
+    justify-content: space-between;
     padding: 1rem;
+    width: 5rem;
 }
 
 /* fa fa-fast-backward */
 .fa-fast-backward {
-    padding-right: 1rem;
     color: black;
     cursor: pointer;
 }
