@@ -61,7 +61,6 @@
 		<!-- Footer only stays at the bottom in this file, not App.vue-->
 		<footer class="my-footer">
       <div class="location-beacon" style="padding: 1rem;">
-        <div class="ringring"></div>
         <div class="circle"></div>
         <p style="font-size: smaller; padding: 0.2rem; color: white; display:inline-block;">
         Location: {{ geoData.country }}
