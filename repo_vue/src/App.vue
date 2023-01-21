@@ -60,8 +60,8 @@
   </div>
 		<!-- Footer only stays at the bottom in this file, not App.vue-->
 		<footer class="my-footer">
-      <div style="padding: 2rem;">
-        <p style="color: white; background-color: crimson; display:inline-block;">
+      <div style="padding: 1rem;">
+        <p style="font-size: smaller; padding: 0.2rem; color: white; background-color: crimson; display:inline-block;">
         Current location: {{ geoData.country }}
       </p>
       </div>

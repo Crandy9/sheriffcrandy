@@ -20,7 +20,7 @@
     url("../images/studio_bg_filter.jpg");
     background-size: 100% 50rem;
     background-repeat: no-repeat;
-    background-position: 90% 80%;
+    background-position: 90% 20%;
 }
 
 /* footer bg img for mobile */
@@ -39,6 +39,11 @@
     color: rgb(203, 255, 255);
     text-align: center;
     padding-top: 10rem !important; 
+}
+
+/* SNS icons */
+.social-media-div {
+    padding-inline: 6rem;
 }
 
 .spotify path {
@@ -61,7 +66,7 @@
 }
 
 .gab path {
-    fill:#21cf7a;
+    fill:#00d16c;
 }
 
 .amazon path {
