@@ -7,10 +7,10 @@
         <!-- <div class="navbar-brand"> -->
         <div class="navbar-brand">
           <!-- logo name -->
-          <div class="navbar-brand">
+          <div class="navbar-brand" style="background-color:rgba(0,117,158); border-bottom-right-radius: 50%;">
             <router-link to="/" class="logo">
-              <strong style="display:block">Sheriff</strong> 
-              <strong style="display:block">Crandy</strong>
+              <strong style="display:block; color:white;">Sheriff</strong> 
+              <strong style="display:block; color:white;">Crandy</strong>
               <!-- <span class="icon"><i class="fas fa-home"></i></span> -->
             </router-link>
           </div>
@@ -55,18 +55,16 @@
         <!-- end bulma navbar -->
     <!-- main page content -->
     <section class="section">
-      <h2>Welcome!</h2>
-      <p> 
-        Your IP address: {{clientIp }}
-      </p>
-      <p>
-        Geolocation data: {{ geoData }}
-      </p>
       <router-view/>
     </section>
   </div>
 		<!-- Footer only stays at the bottom in this file, not App.vue-->
 		<footer class="my-footer">
+      <div style="padding: 2rem;">
+        <p style="color: white; background-color: crimson; display:inline-block;">
+        Current location: {{ geoData.country }}
+      </p>
+      </div>
 			<div class="footer_text" style="font-size: small; padding: 1rem;">
         <!-- SNS icons -->
         <div class="social-media-div">
