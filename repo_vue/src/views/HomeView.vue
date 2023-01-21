@@ -16,8 +16,6 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-// import { title } from 'process';
 
 // use axios to get api data from backend to frontend
 // axios was installed during initial vue setup. found in package.json

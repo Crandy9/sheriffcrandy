@@ -18,13 +18,15 @@
       </figure> 
       <!-- leave thumbnail shown after song stops-->
     </div>
-    <div class="skip-icons">
-      <span @click="prevTrack()">
-        <i class="fa fa-fast-backward"></i>
-      </span>
-      <span @click="nextTrack()">
-        <i class="fa fa-fast-forward"></i>  
-      </span>
+    <div class="skip-icons-wrapper">
+      <div class="skip-icons">
+        <span @click="prevTrack()">
+          <i class="fa fa-fast-backward"></i>
+        </span>
+        <span @click="nextTrack()">
+          <i class="fa fa-fast-forward"></i>  
+        </span>
+      </div>
     </div>
   </section>
   <section class="audio-player-section">
@@ -111,8 +113,6 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-// import { title } from 'process';
 
 // use axios to get api data from backend to frontend
 // axios was installed during initial vue setup. found in package.json
