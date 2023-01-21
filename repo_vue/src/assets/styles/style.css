@@ -8,17 +8,11 @@ html, body, form, main {
 } 
 
 body {
-    width: 100%;
+    /* width: 100%;
     background: center center no-repeat;
     background-size: cover;
-    background-attachment: fixed;
+    background-attachment: fixed; */
     background-color:rgb(255, 255, 255);
-    /* background: linear-gradient(
-        0deg, rgb(0, 0, 0) 0%, 
-        rgb(0, 36, 53) 85%, 
-        rgb(255, 255, 255) 100%
-    ); */
-    box-shadow: inset 0px 0px 2px aqua;
     overflow-x: hidden;
 }
 
