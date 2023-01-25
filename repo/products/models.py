@@ -10,6 +10,7 @@ import os
 
 
 class Track(models.Model):
+
     # track name
     title = models.CharField(default='', max_length=255)
     # description (not req'd)
@@ -37,6 +38,7 @@ class Track(models.Model):
     is_free = models.BooleanField(default=False, blank=True, null=True)
     # track length
     song_dur = models.CharField(default='',max_length=255, null=True, blank=True)
+    purchase_count = models.IntegerField(default=0, blank=True)
 
 
     # order Tracks by title in the backend
@@ -165,3 +167,31 @@ class Track(models.Model):
             min_secs = human_readable_song_length[2:-7]
 
         return min_secs
+
+class Flp(models.Model):
+
+    flp_name = models.CharField(default='', max_length=255)
+    description = models.CharField(default='', max_length=255, blank=True, null=True)
+    usd_price = models.DecimalField(default =0, max_digits=10, decimal_places=2, blank=True)
+    jpy_price = models.IntegerField(default =0, blank=True)
+    slug = models.SlugField()
+    flp_zip = models.FileField(upload_to='flp_zips', blank=True, null=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+    flp_is_free = models.BooleanField(default=False, blank=True, null=True)
+    purchase_count = models.IntegerField(default=0, blank=True)
+
+
+    class Meta:
+        ordering = ('flp_name',)
+
+    def __str__(self):
+        return self.flp_name
+    
+    def get_absolute_url(self):
+        return f'/{self.slug}/'
+
+    # get flp_zip files
+    def get_zips(self):
+        if self.flp_zip:
+            return settings.env('DOMAIN') + self.flp_zip.url
+        return ''

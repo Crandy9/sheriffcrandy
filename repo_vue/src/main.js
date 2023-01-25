@@ -19,7 +19,7 @@ const i18n = createI18n({
     }
 })
 
-// define API path for axios
+// define API base path for axios
 // process.env is already built in by VUE. Simply create and define .env file in root dir
 axios.defaults.baseURL = (process.env.VUE_APP_BACKEND_URL)
 

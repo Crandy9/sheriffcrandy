@@ -29,11 +29,11 @@
     /* border-radius: 1%; */
 }
 
+/* when items are not under hamburger */
 .navbar-item:hover {
     color: rgb(167, 0, 0) !important;
     background: none !important;
 }
-
 .my-burger {
     z-index: 9999;
     position: absolute !important;
@@ -43,8 +43,7 @@
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
-    background: none;
-    border: none;
+    /* background: none; */
     cursor: pointer;
     display: block;
     height: 3.25rem;
@@ -52,14 +51,17 @@
     margin-left: auto;
     -moz-appearance: none;
     -webkit-appearance: none;
-    appearance: none;
-    background: none;
     border: none;
     /* color: currentColor; */
     font-family: inherit;
     font-size: 1em;
     margin: 0;
     padding: 0;
+    /* background-color:#fff; */
+    /* border: 2px solid rgb(0, 225, 255);    
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius:50%; */
 }
 
 /* remove hamburger button background */

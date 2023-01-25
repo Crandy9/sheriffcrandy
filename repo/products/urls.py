@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 from products import views
 
 urlpatterns = [
-    # serialized track data accessible from api
-    path('latest-tracks/', views.LatestTracksList.as_view()),
+    # serialized track data accessible from api at DOMAIN/api/v1/latest-tracks/
+    path('tracks/', views.TracksList.as_view()),
+    path('flps/', views.FlpsList.as_view()),
 ] 

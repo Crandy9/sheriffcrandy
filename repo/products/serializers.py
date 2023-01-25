@@ -2,11 +2,12 @@
 from rest_framework import serializers
 from .models import *
 
+# audio files
 class TrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track 
         # configure which fields we want to use in frontend. Data is a tuple
-        # will be shown in API
+        # will be shown in API at DOMAIN/api/v1/latest-tracks/
         fields = (
             "id",
             "title",
@@ -19,5 +20,23 @@ class TrackSerializer(serializers.ModelSerializer):
             "get_cover_art",
             "date_added",
             "is_free",
-            "get_track_duration"
+            "get_track_duration",
+            "purchase_count"
+        )
+
+# flps
+class FlpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Flp 
+        fields = (
+            "id",
+            "flp_name",
+            "get_absolute_url",
+            "description",
+            "usd_price",
+            "jpy_price",         
+            "get_zips",
+            "date_added",
+            "flp_is_free",
+            "purchase_count"
         )

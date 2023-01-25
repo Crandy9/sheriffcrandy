@@ -326,13 +326,13 @@ export default {
       // replace the API path with env var
       // .get requests API data from server via HTTP GET
       // .then will take the response data and populate the empty tracks list above
-      axios.get(process.env.VUE_APP_API_URL)
+      axios.get(process.env.VUE_APP_API_TRACKS_URL)
         .then(response => {
           this.tracks = response.data
         })
         .catch(error => {
           console.log("ERROR BOYY: " + error)
-          console.log(process.env.VUE_APP_API_URL)
+          console.log(process.env.VUE_APP_API_TRACKS_URL)
         })
     }
   }
