@@ -3,7 +3,7 @@
   <section>
     <!-- title -->
     <div class="column is-12">
-      <h2 class="is-size-2 has-text-centered has-text-black">
+      <h2 class="is-size-2 has-text-centered has-text-white">
         Singles/Covers
       </h2>
     </div>

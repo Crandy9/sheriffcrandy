@@ -8,11 +8,14 @@ html, body, form, main {
 } 
 
 body {
-    /* width: 100%;
-    background: center center no-repeat;
+    background-repeat: no-repeat;
+    background: 
+    linear-gradient(rgba(0, 0, 0, 0.6), 
+    rgba(0, 0, 0, 0.10)), 
+    url("../images/main_bg.jpg");
     background-size: cover;
-    background-attachment: fixed; */
     background-color:rgb(255, 255, 255);
+    background-position: 90% 50%;
     overflow-x: hidden;
 }
 
@@ -52,7 +55,7 @@ body {
 }
 
 .title, .subtitle {
-    color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
 }
 
 

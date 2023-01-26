@@ -16,7 +16,7 @@ section.audio-player-section {
     display: block;
     margin-left: 3rem;
     padding-bottom: 1rem;
-    color: black;
+    color: rgb(255, 255, 255);
 }
 
 /* track cover art */
@@ -88,13 +88,13 @@ img.cover-art {
 
 /* fa fa-fast-backward */
 .fa-fast-backward {
-    color: black;
+    color: rgb(255, 255, 255);
     cursor: pointer;
 }
 
 /* fa fa-fast-forward */
 .fa-fast-forward {
-    color: black;
+    color: rgb(255, 255, 255);
     cursor: pointer;
 }
 
