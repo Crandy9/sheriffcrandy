@@ -255,6 +255,7 @@
   @import '../src/assets/styles/mynav.css';
   @import '../src/assets/styles/footer.css';
   @import '../src/assets/styles/music.css';
+  @import '../src/assets/styles/index.css';
 </style>
 
 <!-- hamburger menu animation -->

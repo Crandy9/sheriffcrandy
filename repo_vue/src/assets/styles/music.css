@@ -1,15 +1,42 @@
-/*** music page ***/
+/*** 
+    music page 
+
+***/
+
+.main-music-section {
+    background: 
+    linear-gradient(rgba(0, 0, 0, 0.1), 
+    rgba(0, 0, 0, 0.1)), 
+    url("../images/main_bg.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color:rgb(255, 255, 255);
+    background-position: center top 0px;
+    overflow-x: hidden;
+    /* min-height: 100% !important; */
+    /* padding-top: 5rem;*/
+    padding-top: 5rem;
+    padding-left: 20rem;
+    padding-right: 20rem; 
+    padding-bottom: 5rem;
+}
+
+@media screen and (max-width: 1023px) {
+    .main-music-section {
+        padding: 2rem;
+    }
+}
 
 /* audio player section */
-.audio-player-section {
+.music-player-section {
     background-color: rgb(255, 255, 255);
     box-shadow: 0 30px 40px rgba(0,0,0,.1);
 }
 
 /* media player div */
-section.audio-player-section {
+/* section.audio-player-section {
     transition: width 2s, height 2s, transform 2s;
-}
+} */
 
 /* track title above image */
 .track-title-img {

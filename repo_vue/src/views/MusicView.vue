@@ -1,113 +1,119 @@
 <template>
-  <!-- music tracks -->
-  <section>
-    <!-- title -->
-    <div class="column is-12">
-      <h2 class="is-size-2 has-text-centered has-text-white">
-        Singles/Covers
-      </h2>
-    </div>
-    <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-      <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
-        {{ trackDisplay.title }}
-      </h3>
-      <!-- show img thumbnail for current track -->
-      <!-- or leave title up after song stops playing -->
-      <figure v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)" class="track-img">
-        <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
-      </figure> 
-      <!-- leave thumbnail shown after song stops-->
-    </div>
-    <div class="skip-icons-wrapper">
-      <div class="skip-icons">
-        <span @click="prevTrack()">
-          <i class="fa fa-fast-backward"></i>
-        </span>
-        <span @click="nextTrack()">
-          <i class="fa fa-fast-forward"></i>  
-        </span>
+
+  <section class="main-music-section">
+    <!-- music tracks -->
+    <section class="title-art-sfsb-section">
+      <!-- title -->
+      <div class="column is-12">
+        <h2 class="is-size-2 has-text-centered has-text-white">
+          Singles/Covers
+        </h2>
       </div>
-    </div>
-  </section>
-  <section class="audio-player-section">
-    <!-- currently playing song -->
-    <!-- unordered list of track -->
-    <ul class="audio-player-ul">
-      <!-- Vue for loop -->
-      <div v-for="track, index in tracks" v-bind:key="track.id" @click="setPlayOrPause(track.id)" class="media-player">
-        <!-- play audio if play is true -->
-        <audio class="hidden-player" controls autoplay v-if="play == true && pause == false && currentTrackPlaying == track.id">
-          <source :src="track.get_sample" type="audio/mpeg">
-          Your browser does not support the audio element.
-        </audio>
-        <div>
+      <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
+        <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
+          {{ trackDisplay.title }}
+        </h3>
+        <!-- show img thumbnail for current track -->
+        <!-- or leave title up after song stops playing -->
+        <figure v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)" class="track-img">
+          <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
+        </figure> 
+        <!-- leave thumbnail shown after song stops-->
+      </div>
+      <div class="skip-icons-wrapper">
+        <div class="skip-icons">
+          <span @click="prevTrack()">
+            <i class="fa fa-fast-backward"></i>
+          </span>
+          <span @click="nextTrack()">
+            <i class="fa fa-fast-forward"></i>  
+          </span>
         </div>
-        <li class="track-list-item" v-bind:id="track.id">
-          <!-- show play button on all tracks on hover -->
-            <a class="play-button" href="#" v-if="currentTrackPlaying != track.id">
-            <span class="play-icon-span">
-              <svg 
-                class="play-icon-svg" 
-                xmlns="http://www.w3.org/2000/svg" 
-                preserveAspectRatio="xMinYMin meet"
-                viewBox="0 0 26 26">
-                <polygon points="9.33 6.69 9.33 19.39 19.3 13.04 9.33 6.69" />
-              </svg>
-            </span>
-          </a>
-          <!-- show play button on paused track -->
-          <a class="play-button-on-pause" href="#" 
-          v-if="(currentTrackPlaying == track.id && play == false && pause == true) || (lastPlayedTrack == track.id && play == false && pause == false && stop == true)">
-            <span class="play-icon-span">
-              <svg 
-                class="play-icon-svg" 
-                xmlns="http://www.w3.org/2000/svg" 
-                preserveAspectRatio="xMinYMin meet"
-                viewBox="0 0 26 26">
-                <polygon points="9.33 6.69 9.33 19.39 19.3 13.04 9.33 6.69" />
-              </svg>
-            </span>
-          </a>
-          <!-- show pause button while playing -->
-          <a class="pause-button" href="#" v-if="currentTrackPlaying == track.id && play == true && pause == false">
-            <!-- show pause button only on track that is currently playing -->
-            <span class="pause-icon-span" style="display: block !important">
-              <svg 
-                class="pause-icon-svg" 
-                xmlns="http://www.w3.org/2000/svg" 
-                preserveAspectRatio="xMinYMin meet"
-                viewBox="0 0 16 16">
-                <path
-                  d="M6 3.5 a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z">
-                </path>
-              </svg>
-            </span>
-          </a>
-          <!-- hide track number when track is playing -->
-          <span v-if="currentTrackPlaying != track.id" class="track-number">{{++index}}</span>
-          <!-- track title -->
-          <div class="track-title">
-            <span class="track-title-inner">
-              {{ track.title }}
-              <span class="track-dur">
-                {{ track.get_track_duration }}
-              </span>
-            </span>
-          </div>
-          <!-- audio player -->
-          <!-- <audio controls>
-                <source v-bind:src="track.get_sample" type="audio/ogg">
-                Your browser does not support the audio element.
-              </audio> -->
-          <!-- price -->
-          <div>
-            <!-- trigger stripe when this is clicked -->
-            <a class="button is-small is-black price-button has-text-weight-medium" v-if="track.is_free" href="/music">FREE</a>
-            <a class="button is-small is-black price-button has-text-weight-medium" v-else href="/music">${{ track.usd_price }}</a>
-          </div>
-        </li>
       </div>
-    </ul>
+    </section>
+    <section class="music-player-section">
+      <!-- currently playing song -->
+      <!-- unordered list of track -->
+      <ul class="audio-player-ul">
+        <!-- Vue for loop -->
+        <div v-for="track, index in tracks" v-bind:key="track.id" @click="setPlayOrPause(track.id)" class="media-player">
+          <!-- play audio if play is true -->
+          <audio class="hidden-player" controls autoplay v-if="play == true && pause == false && currentTrackPlaying == track.id">
+            <source :src="track.get_sample" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+          <div>
+          </div>
+          <li class="track-list-item" v-bind:id="track.id">
+            <!-- show play button on all tracks on hover -->
+              <a class="play-button" href="#" v-if="currentTrackPlaying != track.id">
+              <span class="play-icon-span">
+                <svg 
+                  class="play-icon-svg" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  preserveAspectRatio="xMinYMin meet"
+                  viewBox="0 0 26 26">
+                  <polygon points="9.33 6.69 9.33 19.39 19.3 13.04 9.33 6.69" />
+                </svg>
+              </span>
+            </a>
+            <!-- show play button on paused track -->
+            <a class="play-button-on-pause" href="#" 
+            v-if="(currentTrackPlaying == track.id && play == false && pause == true) || (lastPlayedTrack == track.id && play == false && pause == false && stop == true)">
+              <span class="play-icon-span">
+                <svg 
+                  class="play-icon-svg" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  preserveAspectRatio="xMinYMin meet"
+                  viewBox="0 0 26 26">
+                  <polygon points="9.33 6.69 9.33 19.39 19.3 13.04 9.33 6.69" />
+                </svg>
+              </span>
+            </a>
+            <!-- show pause button while playing -->
+            <a class="pause-button" href="#" v-if="currentTrackPlaying == track.id && play == true && pause == false">
+              <!-- show pause button only on track that is currently playing -->
+              <span class="pause-icon-span" style="display: block !important">
+                <svg 
+                  class="pause-icon-svg" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  preserveAspectRatio="xMinYMin meet"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M6 3.5 a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z">
+                  </path>
+                </svg>
+              </span>
+            </a>
+            <!-- hide track number when track is playing -->
+            <span v-if="currentTrackPlaying != track.id" class="track-number">{{++index}}</span>
+            <!-- track title -->
+            <div class="track-title">
+              <span class="track-title-inner">
+                {{ track.title }}
+                <span class="track-dur">
+                  {{ track.get_track_duration }}
+                </span>
+              </span>
+            </div>
+            <!-- audio player -->
+            <!-- <audio controls>
+                  <source v-bind:src="track.get_sample" type="audio/ogg">
+                  Your browser does not support the audio element.
+                </audio> -->
+            <!-- price -->
+            <div>
+              <!-- trigger stripe when this is clicked -->
+              <a class="button is-small is-black price-button has-text-weight-medium" v-if="track.is_free" href="/music">FREE</a>
+              <a class="button is-small is-black price-button has-text-weight-medium" v-else href="/music">${{ track.usd_price }}</a>
+            </div>
+          </li>
+        </div>
+      </ul>
+    </section>
+  </section>
+  <section style="padding: 5rem">
+
   </section>
 </template>
 

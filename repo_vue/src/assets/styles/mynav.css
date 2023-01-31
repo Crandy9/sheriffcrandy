@@ -37,13 +37,11 @@
 .my-burger {
     z-index: 9999;
     position: absolute !important;
-    /* position: relative; */
     top: 1rem !important;
-    right: 1rem !important;
+    right: 2rem !important;
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
-    /* background: none; */
     cursor: pointer;
     display: block;
     height: 3.25rem;
@@ -52,16 +50,10 @@
     -moz-appearance: none;
     -webkit-appearance: none;
     border: none;
-    /* color: currentColor; */
     font-family: inherit;
     font-size: 1em;
     margin: 0;
     padding: 0;
-    /* background-color:#fff; */
-    /* border: 2px solid rgb(0, 225, 255);    
-    height: 2.5rem;
-    width: 2.5rem;
-    border-radius:50%; */
 }
 
 /* remove hamburger button background */
@@ -115,18 +107,18 @@
 .my-burger.is-active span:first-child {
     transition-duration: 300ms;
     transform: translateY(7px) rotate(45deg);
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
 }
 
 .my-burger.is-active span:nth-child(2) {
     opacity: 0;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
 
 }
 .my-burger.is-active span:nth-child(3) {
     transition-duration: 300ms;
     transform: translateY(-7px) rotate(-45deg);
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
 }
 
 @media screen and (min-width: 1024px) {
@@ -193,7 +185,7 @@
         height: 100%;
         position: fixed;
         z-index: 999;
-        background-color:rgba(0, 255, 255, 0.9);
+        background-color:rgba(0, 0, 0, 0.9);
         backdrop-filter: blur(1rem);
         overflow-x: hidden;
         transition: 0.6s;
@@ -207,13 +199,13 @@
     .navbar-item {
         padding-top: 0.5rem !important;
         text-decoration: none;
-        color: rgb(0, 0, 0) !important;
+        color: rgb(255, 255, 255) !important;
         font-weight: 700;
         font-size: 4vmin;
 
     }
     .navbar-item:hover {
-        color: rgb(41, 41, 41) !important;
+        color: rgb(0, 238, 255) !important;
     }
 
     a.navbar-item {
@@ -227,34 +219,3 @@
         font-size: 5vmin;
     }
 }
-
-/* location beacon */
-
-.circle {
-    float:left;
-    width: 10px;
-    height: 10px;
-    background-color: #62bd19;
-    border-radius: 50%;
-	/* margin: 10px; */
-	box-shadow: 0 0 0 0 rgb(6, 187, 0);
-	transform: scale(1);
-	animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(51, 217, 178, 0.7);
-    }
-    
-    70% {
-      transform: scale(1);
-      box-shadow: 0 0 0 10px rgba(51, 217, 178, 0);
-    }
-    
-    100% {
-      transform: scale(0.95);
-      box-shadow: 0 0 0 0 rgba(51, 217, 178, 0);
-    }
-  }
