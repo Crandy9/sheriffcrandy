@@ -140,7 +140,7 @@
 
 .my-burger.is-active span:nth-child(2) {
     transition-duration: 300ms;
-    transform: translateY(-4px) rotate(-225deg);
+    transform: translateY(-4px) rotate(315deg);
     background-color: rgb(255, 255, 255);
 }
 

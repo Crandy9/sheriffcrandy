@@ -4,21 +4,22 @@
     <!-- music tracks -->
     <section class="title-art-sfsb-section">
       <!-- title -->
-      <div class="column is-12">
-        <h2 class="is-size-2 has-text-centered has-text-white">
-          Download My Music
+      <div class="column is-12" style="display: inline-block;
+    margin-left: auto;
+    margin-right: auto;">
+        <h2 class="music-title is-size-3 has-text-centered has-text-white">
+          Sheriff Crandy Music
         </h2>
       </div>
       <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-        <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
-          {{ trackDisplay.title }}
-        </h3>
         <!-- show img thumbnail for current track -->
         <!-- or leave title up after song stops playing -->
         <figure v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)" class="track-img">
           <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
         </figure> 
-        <!-- leave thumbnail shown after song stops-->
+        <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
+          Sheriff Crandy - {{ trackDisplay.title }}
+        </h3>
       </div>
       <div class="skip-icons-wrapper">
         <div class="skip-icons">
@@ -96,11 +97,6 @@
                 </span>
               </span>
             </div>
-            <!-- audio player -->
-            <!-- <audio controls>
-                  <source v-bind:src="track.get_sample" type="audio/ogg">
-                  Your browser does not support the audio element.
-                </audio> -->
             <!-- price -->
             <div>
               <!-- trigger stripe when this is clicked -->
@@ -111,6 +107,25 @@
         </div>
       </ul>
     </section>
+    <h2 class="music-guide is-size-5 has-text-centered has-text-warning">
+      Click the links on the right to purchase/download 
+      the .wav audio file for the song you want. 
+      After purchasing the song (or downloading if free), 
+      a download of the .wav file will begin in your browser.
+      Save the .wav file to your computer and enjoy the tunes.
+      <div class="is-size-6" style="padding: 1rem;">
+        <p style="padding:1.2rem;">
+          <a style="color:chartreuse !important; text-decoration: none;" target="blank" href="https://www.wideanglesoftware.com/blog/how-to-transfer-music-from-computer-to-android.php#:~:text=on%20your%20Mac.-,Connect%20your%20Android%20to%20your%20Windows%20PC%20using%20a%20USB,device%20in%20Android%20File%20Transfer.">
+            - Transfer wav files from computer to Android
+          </a>
+        </p>
+        <p style="padding:1.2rem;">
+          <a style="color:chartreuse !important; text-decoration: none;" target="blank" href="https://support.apple.com/guide/itunes/transfer-files-itns32636/windows">
+            - Transfer wav files from computer to iPhone
+          </a>
+        </p>
+      </div>
+    </h2>
   </section>
 </template>
 
@@ -123,7 +138,6 @@
 import axios from 'axios'
 
 export default {
-  name: 'HomeView',
   // data() is a new obj returning tracks list used in for loop above
   data() {
     return {

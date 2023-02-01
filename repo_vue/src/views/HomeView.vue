@@ -21,7 +21,7 @@
 
   <!-- youtube video section -->
   <section class="latest-yt-songs-section">
-      <h3 class="is-size-3 has-text-centered has-text-white" id="yt-section-title">
+      <h3 id="yt-section-title" class="is-size-3 has-text-centered has-text-white" >
         "Simplicity" Out in Music Stores Now!
       </h3>
       <div class="yt-player">

@@ -4,15 +4,6 @@
 ***/
 
 .main-music-section {
-    /* background: 
-    linear-gradient(rgba(0, 0, 0, 0.1), 
-    rgba(0, 0, 0, 0.1)), 
-    url("../images/main_bg.jpg") center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    min-width: 100%;
-    min-height: 100%;
-    overflow-x: hidden; */
     padding-left: 20rem;
     padding-right: 20rem; 
     margin-bottom: 10rem;
@@ -24,16 +15,13 @@
     }
 }
 
-.title-art-sfsb-section {
-    /* background: 
-    linear-gradient(rgba(0, 0, 0, 0.1), 
-    rgba(0, 0, 0, 0.1)), 
-    url("../images/main_bg.jpg") center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    min-width: 100%;
-    min-height: 100%;
-    overflow-x: hidden; */
+.music-title {
+    border: 1px solid rgb(0, 199, 199);
+    padding: 1.2rem;
+}
+
+.music-guide {
+    padding: 1.2rem;
 }
 
 /* audio player section */
@@ -50,9 +38,14 @@
 /* track title above image */
 .track-title-img {
     display: block;
-    margin-left: 3rem;
-    padding-bottom: 1rem;
+    margin-left: 1.5rem;
+    padding-top: 1rem;
     color: rgb(255, 255, 255);
+    font-size: small;
+}
+
+.track-img {
+    padding-top: 1.5rem;
 }
 
 /* track cover art */
