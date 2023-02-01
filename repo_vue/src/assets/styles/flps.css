@@ -14,12 +14,12 @@
     }
 }
 
-.flp-title {
+.flp-main-title {
     border: 1px solid rgb(0, 199, 199);
     padding: 1.2rem;
 }
 
-.music-guide {
+.flp-guide {
     padding: 1.2rem;
 }
 
@@ -46,7 +46,6 @@
     padding-left: 5px;
     position: relative;
     width: 100%;
-    cursor: pointer;
     padding-left: 1rem;
     padding-right: 1rem;
 }

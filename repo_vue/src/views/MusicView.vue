@@ -4,9 +4,7 @@
     <!-- music tracks -->
     <section class="title-art-sfsb-section">
       <!-- title -->
-      <div class="column is-12" style="display: inline-block;
-    margin-left: auto;
-    margin-right: auto;">
+      <div class="column is-12" >
         <h2 class="music-title is-size-3 has-text-centered has-text-white">
           Sheriff Crandy Music
         </h2>

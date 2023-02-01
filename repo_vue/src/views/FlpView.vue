@@ -5,7 +5,7 @@
       <section class="flp-title-section">
         <!-- title -->
         <div class="column is-12">
-          <h2 class="flp-title is-size-3 has-text-centered has-text-white">
+          <h2 class="flp-main-title is-size-3 has-text-centered has-text-white">
             My FLPs
           </h2>
           <p>
@@ -19,7 +19,7 @@
           <!-- Vue for loop -->
           <div v-for="flp, index in flps" v-bind:key="flp.id" class="flp-list-div">
             <li class="flp-list-item" v-bind:id="flp.id">
-                <div>
+                <div class="flp-title">
                     <!-- flp name -->
                     <span class="flp-title-inner">
                         {{ flp.flp_name }}
@@ -27,14 +27,14 @@
                 </div>
                 <div>
                     <!-- trigger stripe when this is clicked -->
-                    <a class="button is-small is-black price-button has-text-weight-medium" v-if="flp.is_free" href="/music">FREE</a>
-                    <a class="button is-small is-black price-button has-text-weight-medium" v-else href="/music">${{ flp.usd_price }}</a>
+                    <a class="button is-small is-black price-button has-text-weight-medium" v-if="flp.is_free" href="/flps">FREE</a>
+                    <a class="button is-small is-black price-button has-text-weight-medium" v-else href="/flps">${{ flp.usd_price }}</a>
                 </div>
             </li>
           </div>
         </ul>
       </section>
-      <h2 class="music-guide is-size-5 has-text-centered has-text-warning">
+      <h2 class="flp-guide is-size-5 has-text-centered has-text-warning">
         Click the links on the right to 
         purchase/download the .zip file containing the 
         FL Studio Project and any audio files used for the song. 
