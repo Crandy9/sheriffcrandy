@@ -4,8 +4,11 @@
     <div class="home">
       <div class="scripture-banner">
         <h4 class="subtitle">
-          “Blessed is the man that trusts in the Lord, and whose hope the Lord is."
-        <p><cite>-Jeremiah 17:7 (KJV)</cite></p>
+          "Make music to the Lord with the harp,
+           with the harp and the sound of melody!
+           With trumpets and the sound of the horn
+           make a joyful noise before the King, the Lord!"
+          <p style="font-size:medium"><cite>-Psalm 89:5-6 (esv)</cite></p>
         </h4>
       </div>
       <div class="has-text-centered">
@@ -18,9 +21,9 @@
 
   <!-- youtube video section -->
   <section class="latest-yt-songs-section">
-      <h2 class="is-size-2 has-text-centered has-text-white" id="yt-section-title">
-        Latest Song
-      </h2>
+      <h3 class="is-size-3 has-text-centered has-text-white" id="yt-section-title">
+        "Simplicity" Out in Music Stores Now!
+      </h3>
       <div class="yt-player">
         <iframe
           class="yt-iframe"

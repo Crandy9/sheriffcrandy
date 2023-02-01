@@ -4,27 +4,36 @@
 ***/
 
 .main-music-section {
-    background: 
+    /* background: 
     linear-gradient(rgba(0, 0, 0, 0.1), 
     rgba(0, 0, 0, 0.1)), 
-    url("../images/main_bg.jpg");
+    url("../images/main_bg.jpg") center;
     background-repeat: no-repeat;
-    background-size: cover;
-    background-color:rgb(255, 255, 255);
-    background-position: center top 0px;
-    overflow-x: hidden;
-    /* min-height: 100% !important; */
-    /* padding-top: 5rem;*/
-    padding-top: 5rem;
+    background-size: contain;
+    min-width: 100%;
+    min-height: 100%;
+    overflow-x: hidden; */
     padding-left: 20rem;
     padding-right: 20rem; 
-    padding-bottom: 5rem;
+    margin-bottom: 10rem;
 }
 
 @media screen and (max-width: 1023px) {
     .main-music-section {
         padding: 2rem;
     }
+}
+
+.title-art-sfsb-section {
+    /* background: 
+    linear-gradient(rgba(0, 0, 0, 0.1), 
+    rgba(0, 0, 0, 0.1)), 
+    url("../images/main_bg.jpg") center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    min-width: 100%;
+    min-height: 100%;
+    overflow-x: hidden; */
 }
 
 /* audio player section */

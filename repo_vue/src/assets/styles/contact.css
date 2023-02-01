@@ -1,0 +1,26 @@
+/* 
+    CONTACT VIEW
+*/
+
+
+.contact-section {
+    padding-bottom: 10rem;
+}
+
+.contact-title-div {
+    padding: 2rem;
+}
+
+.contact-title {
+    text-align: center;
+    font-size: x-large;
+    word-wrap: break-word;
+}
+
+.email-link {
+    color: white !important;
+}
+
+.email-link:hover {
+    color: rgb(0, 255, 242) !important;
+}

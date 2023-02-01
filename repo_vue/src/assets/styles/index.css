@@ -10,8 +10,9 @@
 }
 
 .scripture-banner {
-    margin-bottom: 2rem;
-    margin-left: 3rem;
+    padding: 2rem;
+    /* margin-bottom: 2rem;
+    margin-left: 3rem; */
 }
 
 .title, .subtitle {
@@ -43,8 +44,8 @@
         max-height: 500px;
     }
     .yt-iframe {
-        width: 410px !important;
-        height: 247px !important;
+        width: 510px !important;
+        height: 347px !important;
         margin:auto;
         display:block;
     }
@@ -58,12 +59,14 @@
         max-width: 400px; 
         max-height: 400px;
     }
+
     .yt-iframe {
-        width: 310px !important;
+        width: 390px !important;
         height: 247px !important;
         margin:auto;
         display:block;
     }
+
 }
 
 /* smallest sheriff crandy image mobile */
@@ -74,6 +77,12 @@
         max-width: 320px; 
         max-height: 320px;
     }
+    .yt-iframe {
+        width: 290px !important;
+        height: 247px !important;
+        margin:auto;
+        display:block;
+    }
 }
 
 /* latest-songs section */
@@ -83,15 +92,16 @@
     display:inline-block !important;
  }
 
- #yt-section-title {
-    padding: 2rem;
- }
-
  .yt-player {
     display: block;
     width: 100%;
     height: 100%;
-    padding: 1rem;
+    /* padding: 1rem; */
+    padding-bottom: 10rem;
+ }
+
+ #yt-section-title {
+    padding: 2rem;
  }
 
 .yt-iframe {

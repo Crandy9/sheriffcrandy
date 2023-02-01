@@ -6,7 +6,7 @@
       <!-- title -->
       <div class="column is-12">
         <h2 class="is-size-2 has-text-centered has-text-white">
-          Singles/Covers
+          Download My Music
         </h2>
       </div>
       <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
@@ -111,9 +111,6 @@
         </div>
       </ul>
     </section>
-  </section>
-  <section style="padding: 5rem">
-
   </section>
 </template>
 

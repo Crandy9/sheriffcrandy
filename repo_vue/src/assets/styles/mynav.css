@@ -86,8 +86,8 @@
     background: none;
 }
 
-/* hamburger button closed */
-.my-burger span:first-child {
+/* hamburger button closed 3 strokes*/
+/* .my-burger span:first-child {
     transition-duration: 300ms;
     top: calc(50% - 7px);
     background-color: rgb(255, 255, 255);
@@ -103,7 +103,6 @@
     background-color: rgb(255, 255, 255);
 }
 
-/* burger opened */
 .my-burger.is-active span:first-child {
     transition-duration: 300ms;
     transform: translateY(7px) rotate(45deg);
@@ -119,7 +118,32 @@
     transition-duration: 300ms;
     transform: translateY(-7px) rotate(-45deg);
     background-color: rgb(255, 255, 255);
+} */
+
+/* hamburger button closed/open 2 strokes*/
+.my-burger span:first-child {
+    transition-duration: 300ms;
+    top: calc(50% - 4px);
+    background-color: rgb(255, 255, 255);
 }
+.my-burger span:nth-child(2) {
+    transition-duration: 300ms;
+    top: calc(50% + 4px);
+    background-color: rgb(255, 255, 255);
+}
+
+.my-burger.is-active span:first-child {
+    transition-duration: 300ms;
+    transform: translateY(4px) rotate(45deg);
+    background-color: rgb(255, 255, 255);
+}
+
+.my-burger.is-active span:nth-child(2) {
+    transition-duration: 300ms;
+    transform: translateY(-4px) rotate(-225deg);
+    background-color: rgb(255, 255, 255);
+}
+
 
 @media screen and (min-width: 1024px) {
     .navbar-end {

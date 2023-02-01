@@ -15,8 +15,8 @@
     object-fit: contain;
     /* darken bg image to accentuate sns links */
     background: 
-    linear-gradient(rgba(0, 0, 0, 0.6), 
-    rgba(0, 0, 0, 0.50)), 
+    linear-gradient(rgba(0, 0, 0, 0.65), 
+    rgba(0, 0, 0, 0.65)), 
     url("../images/studio_bg_filter.jpg");
     background-size: 100% 50rem;
     background-repeat: no-repeat;
@@ -65,16 +65,13 @@
   }
 
 /* SNS icons and company brand */
-.footer_text {
-    /* padding of SNS and lctec links. Depends on height */
-    color: rgb(203, 255, 255);
-    text-align: center;
-    padding-top: 10rem !important; 
-}
 
 /* SNS icons */
 .social-media-div {
-    padding-inline: 6rem;
+    /* padding-inline: 6rem; */
+    padding-top: 12rem !important;
+    padding-right: 3rem;
+    padding-left: 3rem;
 }
 
 .spotify path {
@@ -129,9 +126,15 @@ li.instagram, li.youtube, li.twitter, li.gab, li.apple, li.spotify, li.amazon {
     overflow: visible;
 }
 
+
 /* padding of company link */
 .lctec-brand {
-    padding-top: 11rem;
+    color: rgb(173, 236, 255);
+    text-align: center;
+    padding-top: 10rem !important; 
+    /* padding-top: 11rem; */
+    /* font-size: small; */
+    /* font-weight: bold; */
 }
 
 /* lctec icon */
@@ -141,7 +144,7 @@ li.instagram, li.youtube, li.twitter, li.gab, li.apple, li.spotify, li.amazon {
 }
 
 a.company_link {
-	color:bisque;
+	color: bisque;
 }
 a.company_link:hover {
 	color:rgb(60, 200, 255);

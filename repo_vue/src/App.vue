@@ -22,9 +22,11 @@
               aria-expanded="false" 
               data-target="my-navbar-menu" 
               v-bind:class="{'is-active':hamburgerClicked}">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
+             <!-- top stroke of hamburger button -->
+              <span aria-hidden="true"></span>
+              <!-- middle stroke. Uncomment for three stroke icon, leave as is for two stroke -->
+              <!-- <span aria-hidden="true"></span> -->
+              <span aria-hidden="true"></span>
           </a>
         </div>
         <!-- navbar items -->
@@ -42,6 +44,7 @@
             <!-- navbar items -->
             <a href="/" class="navbar-item">Home</a>
             <a href="/music" class="navbar-item">Music</a>
+            <a href="/flps" class="navbar-item">FLPs</a>
             <a href="/tools" class="navbar-item">Tools I Use</a>
             <a href="/bio" class="navbar-item">Bio</a>
             <a href="/contact" class="navbar-item">Contact</a>
@@ -64,9 +67,12 @@
         <div class="circle"></div>
         <p style="font-size: smaller; padding: 0.2rem; color: white; display:inline-block;">
         Location: {{ geoData.country }}
+        <p>
+          IP: {{ clientIp }}
+        </p>
       </p>
       </div>
-			<div class="footer_text" style="font-size: small; padding: 1rem;">
+			<div style="font-size: small; padding: 1rem;">
         <!-- SNS icons -->
         <div class="social-media-div">
           <ul class="sns">
@@ -256,6 +262,8 @@
   @import '../src/assets/styles/footer.css';
   @import '../src/assets/styles/music.css';
   @import '../src/assets/styles/index.css';
+  @import '../src/assets/styles/contact.css';
+  @import '../src/assets/styles/flps.css';
 </style>
 
 <!-- hamburger menu animation -->
@@ -284,21 +292,20 @@ export default {
       fetch('https://api.ipify.org?format=json')
       .then(response => response.json())
       .then(response => {
-        this.clientIp = response;
-      });
+        this.clientIp = response.ip;
+        console.log("ipify data: " + JSON.stringify(response))
+      }).catch(error => console.log("GET IP API Error: " + error));
     },
     // get user's geolocation using https://ip-api.com/docs/api:json api
     getGeoData() {
       // fetch requests data from a server and returns a Promise
-      fetch('http://ip-api.com/json/' 
-      + this.clientIp 
-      + '?fields=status,message,country,countryCode')
+      fetch('http://ip-api.com/json/' + this.clientIp + '?fields=status,message,country,countryCode')
       // when fetch request completes, the promise is returned 
       // and resolved into a [object Response]] object which is an API wrapper
       .then(response => response.json())
       .then(response => {
         this.geoData = response;
-      });
+      }).catch(error => console.log("GeoData API Error: " + error));
     },
     closeNav: function() {
       current_width = window.innerWidth;
