@@ -14,4 +14,13 @@
         </h4>
     </section>
 </template>
-  
+
+<script>
+
+export default {
+    name: 'Contact',
+    data() {
+        
+    }
+}
+</script>

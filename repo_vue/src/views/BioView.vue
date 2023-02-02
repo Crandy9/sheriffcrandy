@@ -10,3 +10,13 @@
     </section>
 </template>
   
+
+<script>
+
+export default {
+    name: 'Bio',
+    data() {
+        
+    }
+}
+</script>

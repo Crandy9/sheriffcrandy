@@ -1,44 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-
+import FlpView from '../views/FlpView.vue'
 // add custom views here
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: HomeView
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  },
-  {
     path: '/music',
-    name: 'music',
+    name: 'Music',
+    // can also import components/views here using Arrow function expressions
     component: () => import('../views/MusicView.vue')
   },
   {
     path: '/flps',
-    name: 'flps',
-    component: () => import('../views/FlpView.vue')
+    name: 'Flps',
+    component: FlpView
   },
   {
     path: '/contact',
-    name: 'contact',
+    name: 'Contact',
     component: () => import('../views/ContactView.vue')
   },
   {
     path: '/tools',
-    name: 'tools',
+    name: 'Tools',
     component: () => import('../views/ToolsView.vue')
   },
   {
     path: '/bio',
-    name: 'bio',
+    name: 'Bio',
     component: () => import('../views/BioView.vue')
   },
 

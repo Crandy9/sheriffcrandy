@@ -141,6 +141,7 @@
 import axios from 'axios'
 
 export default {
+  name: 'Music',
   // data() is a new obj returning tracks list used in for loop above
   data() {
     return {

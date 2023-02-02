@@ -9,4 +9,13 @@
         </h4>
     </section>
 </template>
-  
+
+<script>
+
+export default {
+    name: 'Tools',
+    data() {
+        
+    }
+}
+</script>
