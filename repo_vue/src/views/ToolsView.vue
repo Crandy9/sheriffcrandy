@@ -1,7 +1,7 @@
 <template>
-    <section class="contact-section">
-        <div class="contact-title-div">
-            <h3 class="contact-title has-text-white">
+    <section class="tools-section">
+        <div class="tools-title-div">
+            <h3 class="tools-title has-text-white">
                 Tools I use
             </h3>
         </div>

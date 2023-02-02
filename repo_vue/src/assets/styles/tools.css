@@ -1,0 +1,19 @@
+/* 
+    TOOLS VIEW STYLING
+*/
+
+/* push footer to bottom of page */
+.tools-section {
+    padding-bottom: 25rem;
+}
+
+.tools-title-div {
+    padding: 2rem;
+
+}
+
+.tools-title {
+    text-align: center;
+    font-size: x-large;
+    word-wrap: break-word;
+}

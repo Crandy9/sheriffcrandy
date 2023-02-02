@@ -94,13 +94,13 @@
         // replace the API path with env var
         // .get requests API data from server via HTTP GET
         // .then will take the response data and populate the empty tracks list above
-        axios.get(process.env.VUE_APP_API_FLPS_URL)
+        axios.get(process.env.VUE_APP_FLPS_API__URL)
           .then(response => {
             this.flps = response.data
           })
           .catch(error => {
             console.log("ERROR BOYY: " + error)
-            console.log(process.env.VUE_APP_API_FLPS_URL)
+            console.log(process.env.VUE_APP_FLPS_API__URL)
           })
       }
     }

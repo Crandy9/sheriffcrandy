@@ -1,7 +1,7 @@
 <template>
-    <section class="contact-section">
-        <div class="contact-title-div">
-            <h3 class="contact-title has-text-white">
+    <section class="bio-section">
+        <div class="bio-title-div">
+            <h3 class="bio-title has-text-white">
                 Bio
             </h3>
         </div>

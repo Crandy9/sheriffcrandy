@@ -1,0 +1,19 @@
+/* 
+    BIO VIEW STYLING
+*/
+
+/* push footer to bottom of page */
+.bio-section {
+    padding-bottom: 25rem;
+}
+
+.bio-title-div {
+    padding: 2rem;
+
+}
+
+.bio-title {
+    text-align: center;
+    font-size: x-large;
+    word-wrap: break-word;
+}

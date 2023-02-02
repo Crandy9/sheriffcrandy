@@ -264,6 +264,8 @@
   @import '../src/assets/styles/index.css';
   @import '../src/assets/styles/contact.css';
   @import '../src/assets/styles/flps.css';
+  @import '../src/assets/styles/tools.css';
+  @import '../src/assets/styles/bio.css';
 </style>
 
 <!-- hamburger menu animation -->

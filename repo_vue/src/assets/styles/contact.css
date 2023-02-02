@@ -1,14 +1,15 @@
 /* 
-    CONTACT VIEW
+    CONTACT VIEW STYLING
 */
 
-
+/* push footer to bottom of page */
 .contact-section {
-    padding-bottom: 10rem;
+    padding-bottom: 15.5rem;
 }
 
 .contact-title-div {
     padding: 2rem;
+
 }
 
 .contact-title {
