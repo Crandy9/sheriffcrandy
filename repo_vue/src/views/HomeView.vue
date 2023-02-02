@@ -22,9 +22,12 @@
   <!-- youtube video section -->
   <section class="latest-yt-songs-section">
       <h3 id="yt-section-title" class="is-size-3 has-text-centered has-text-white" >
-        "Simplicity" Out in Music Stores Now!
+        <u>Latest Songs/Covers</u>
       </h3>
       <div class="yt-player">
+        <h3 id="yt-section-title" class="is-size-4 has-text-centered has-text-white" >
+          "Simplicity"
+        </h3>
         <iframe
           class="yt-iframe"
           src="https://www.youtube.com/embed/CNSDBPqTANo" 
@@ -32,6 +35,20 @@
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
         </iframe>
+        <h3 id="yt-section-title" class="is-size-4 has-text-centered has-text-white" >
+          "The Streets of Whiterun"
+          <p class="is-size-5">[Sheriff Crandy cover]</p>
+        </h3>
+        <iframe
+          class="yt-iframe"
+          src="https://www.youtube.com/embed/UJkRxT4gb6A" 
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+        </iframe>
+        <h3 class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
+          Purchase/download my songs<a class="music-links" href="/music"> here</a>!
+        </h3>
       </div>
   </section>
 </template>

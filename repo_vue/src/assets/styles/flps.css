@@ -97,3 +97,12 @@
     -webkit-transition: all .15s ease-in;
     transition: all .15s ease-in;
 }
+
+.flp-file-links {
+    color:chartreuse !important; 
+    text-decoration: none;
+}
+
+.flp-file-links:hover {
+    color: white !important;
+}

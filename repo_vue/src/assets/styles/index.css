@@ -111,3 +111,13 @@
     margin:auto;
     display:block;
 }
+
+/* navigate to music view */
+.music-links {
+    color:rgb(255, 166, 0) !important; 
+    text-decoration: none;
+}
+
+.music-links:hover {
+    color: white !important;
+}

@@ -15,13 +15,24 @@
     }
 }
 
-.music-title {
+/* main title banner on top of page */
+/* .music-title {
     border: 1px solid rgb(0, 199, 199);
+    padding: 1.2rem;
+} */
+
+/* file download procedures */
+.music-guide {
     padding: 1.2rem;
 }
 
-.music-guide {
-    padding: 1.2rem;
+.file-links {
+    color:chartreuse !important; 
+    text-decoration: none;
+}
+
+.file-links:hover {
+    color: white !important;
 }
 
 /* audio player section */
@@ -35,10 +46,10 @@
     transition: width 2s, height 2s, transform 2s;
 } */
 
-/* track title above image */
+/* track title below image */
 .track-title-img {
     display: block;
-    margin-left: 1.5rem;
+    margin-left: 2.2rem;
     padding-top: 1rem;
     color: rgb(255, 255, 255);
     font-size: small;
@@ -128,13 +139,16 @@ img.cover-art {
 }
 
 /* change color on hover */
-.fa-fast-forward:hover, .fa-fast-backward:hover {
-    color: rgb(53, 53, 53);
-    -moz-transition: all .15s ease-in;
-    -o-transition: all .15s ease-in;
-    -webkit-transition: all .15s ease-in;
-    transition: all .15s ease-in;
+@media screen and (min-width: 1024px) {
+    .fa-fast-forward:hover, .fa-fast-backward:hover {
+        color: rgb(136, 136, 136);
+        -moz-transition: all .15s ease-in;
+        -o-transition: all .15s ease-in;
+        -webkit-transition: all .15s ease-in;
+        transition: all .15s ease-in;
+    }
 }
+
 
 
 /* html audio player always hidden (play pause functionality handled by vue) */

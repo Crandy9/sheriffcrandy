@@ -37,13 +37,32 @@
       <h2 class="flp-guide is-size-5 has-text-centered has-text-warning">
         Click the links on the right to 
         purchase/download the .zip file containing the 
-        FL Studio Project and any audio files used for the song. 
+        FL Studio Project, a text file with a list of required plugins, and any audio files used for the song. 
         After purchasing the project (or downloading if free), 
         a download of the .zip file will begin in your browser.
         Save the .zip file to your computer, extract/unzip the file's contents and that's it!
-        Your .flp file is ready to be opened in your FL Studio DAW to start experimenting!
+        Your .flp project is ready to be opened up in your FL Studio DAW to start experimenting!
         Enjoy.
       </h2>
+      <p class="flp-guide has-text-danger">
+        WARNING: 
+        <p class="flp-guide has-text-white">
+        An FL Studio "Fruity Edition" license 
+        or greater is required in order to open and use 
+        these .flp project files. The FL Studio free 
+        trial version will not allow you to open or save 
+        these .flp files. Purchase an FL Studio Edition 
+        license <a target="blank"  class="flp-file-links" href="https://www.image-line.com/fl-studio/compare-editions/">here</a> 
+        if you do not already have one.
+        </p>
+      </p>
+      <div class="is-size-6" style="padding: 1rem;">
+        <p style="padding:1.2rem;">
+          <a class="flp-file-links" target="blank" href="https://www.homemusicmaker.com/open-flp-files-fl-studio-demo">
+            - Opening FLP files in FL Studio
+          </a>
+        </p>
+      </div>
     </section>
   </template>
   

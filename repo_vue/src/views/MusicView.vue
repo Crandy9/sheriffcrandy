@@ -29,6 +29,11 @@
           </span>
         </div>
       </div>
+      <div>
+        <h3 style="padding: 1rem; color: aqua;" v-if="currentTrackPlaying == 0" class="is-size-4">
+          Click on a song to hear a sample!
+        </h3>
+      </div>
     </section>
     <section class="music-player-section">
       <!-- currently playing song -->
@@ -113,12 +118,12 @@
       Save the .wav file to your computer and enjoy the tunes.
       <div class="is-size-6" style="padding: 1rem;">
         <p style="padding:1.2rem;">
-          <a style="color:chartreuse !important; text-decoration: none;" target="blank" href="https://www.wideanglesoftware.com/blog/how-to-transfer-music-from-computer-to-android.php#:~:text=on%20your%20Mac.-,Connect%20your%20Android%20to%20your%20Windows%20PC%20using%20a%20USB,device%20in%20Android%20File%20Transfer.">
+          <a class="file-links" target="blank" href="https://www.wideanglesoftware.com/blog/how-to-transfer-music-from-computer-to-android.php#:~:text=on%20your%20Mac.-,Connect%20your%20Android%20to%20your%20Windows%20PC%20using%20a%20USB,device%20in%20Android%20File%20Transfer.">
             - Transfer wav files from computer to Android
           </a>
         </p>
         <p style="padding:1.2rem;">
-          <a style="color:chartreuse !important; text-decoration: none;" target="blank" href="https://support.apple.com/guide/itunes/transfer-files-itns32636/windows">
+          <a class="file-links" target="blank" href="https://support.apple.com/guide/itunes/transfer-files-itns32636/windows">
             - Transfer wav files from computer to iPhone
           </a>
         </p>

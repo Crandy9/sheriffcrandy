@@ -8,10 +8,10 @@ html, body, form, main {
 } 
 
 body {
-    background-repeat: no-repeat;
+    /* background-repeat: no-repeat;
     background-size: cover;
-    background-color:rgb(19, 19, 19);
-    background-position: 90% 50%;
+    background-position: 90% 50%; */
+    background-color:rgb(34, 34, 34);
     overflow-x: hidden;
 }
 /* remove bulma default padding for all sections */
