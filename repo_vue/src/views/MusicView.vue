@@ -19,6 +19,11 @@
           Sheriff Crandy - {{ trackDisplay.title }}
         </h3>
       </div>
+      <div>
+        <h3 style="padding: 1rem; color: aqua;" v-if="currentTrackPlaying == 0" class="is-size-4">
+          Click on a song to hear a sample!
+        </h3>
+      </div>
       <div class="skip-icons-wrapper">
         <div class="skip-icons">
           <span @click="prevTrack()">
@@ -29,18 +34,13 @@
           </span>
         </div>
       </div>
-      <div>
-        <h3 style="padding: 1rem; color: aqua;" v-if="currentTrackPlaying == 0" class="is-size-4">
-          Click on a song to hear a sample!
-        </h3>
-      </div>
     </section>
     <section class="music-player-section">
       <!-- currently playing song -->
       <!-- unordered list of track -->
       <ul class="audio-player-ul">
         <!-- Vue for loop -->
-        <div v-for="track, index in tracks" v-bind:key="track.id" @click="setPlayOrPause(track.id)" class="media-player">
+        <div v-for="track, index in tracks" v-bind:key="track.id" class="media-player">
           <!-- play audio if play is true -->
           <audio class="hidden-player" controls autoplay v-if="play == true && pause == false && currentTrackPlaying == track.id">
             <source :src="track.get_sample" type="audio/mpeg">
@@ -48,9 +48,9 @@
           </audio>
           <div>
           </div>
-          <li class="track-list-item" v-bind:id="track.id">
+          <li @click="setPlayOrPause(track.id)" class="track-list-item" v-bind:id="track.id">
             <!-- show play button on all tracks on hover -->
-              <a class="play-button" href="#" v-if="currentTrackPlaying != track.id">
+            <a class="play-button" href="#" v-if="currentTrackPlaying != track.id">
               <span class="play-icon-span">
                 <svg 
                   class="play-icon-svg" 
@@ -62,8 +62,8 @@
               </span>
             </a>
             <!-- show play button on paused track -->
-            <a class="play-button-on-pause" href="#" 
-            v-if="(currentTrackPlaying == track.id && play == false && pause == true) || (lastPlayedTrack == track.id && play == false && pause == false && stop == true)">
+            <a class="play-button-on-pause" href="#"
+              v-if="(currentTrackPlaying == track.id && play == false && pause == true) || (lastPlayedTrack == track.id && play == false && pause == false && stop == true)">
               <span class="play-icon-span">
                 <svg 
                   class="play-icon-svg" 
@@ -101,10 +101,23 @@
               </span>
             </div>
             <!-- price -->
-            <div>
-              <!-- trigger stripe when this is clicked -->
-              <a class="button is-small is-black price-button has-text-weight-medium" v-if="track.is_free" href="/music">FREE</a>
-              <a class="button is-small is-black price-button has-text-weight-medium" v-else href="/music">${{ track.usd_price }}</a>
+            <div class="field has-addons">
+              <div class="control">
+                <!-- add track to cart. click.stop prevents the parent click even from firing
+                  doesn't play/pause the song, adds this item to cart only
+                -->
+                <a class="button is-small is-black price-button has-text-weight-medium" 
+                  v-if="track.is_free" 
+                  @click.stop="addTrackToCart(track.id)">
+                  FREE
+                </a>
+                <!-- set var for jpy/usd -->
+                <a class="button is-small is-black price-button has-text-weight-medium" 
+                  v-else 
+                  @click.stop="addTrackToCart(track.id)">
+                  ${{ track.usd_price }}
+                </a>
+              </div>
             </div>
           </li>
         </div>
@@ -159,7 +172,7 @@ export default {
       currentInterval: '',
       // play track for 51 seconds 
       duration: 51000,
-      timeRemaining: 0
+      timeRemaining: 0,
     }
   },
 
@@ -355,7 +368,17 @@ export default {
           console.log("ERROR BOYY: " + error)
           console.log(process.env.VUE_APP_TRACKS_API_URL)
         })
-    }
+    },
+
+    // add to cart
+    addTrackToCart(track) {
+
+      // get specific track added to cart
+      const item = this.tracks.find(item => item.id === track)
+
+      // calls store/index.js addToCart function
+      this.$store.commit('addToCart', item)
+    },
   }
 }
 </script>

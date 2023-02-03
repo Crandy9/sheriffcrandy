@@ -51,7 +51,10 @@
             <a href="/login" class="navbar-item">{{$t('logIn')}}</a>
             <a href="/cart" class="navbar-item">
                 <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
+                <!-- cart item count -->
+                <span v-if="this.cartCount >= 1">({{ cartTotalLength }})</span>
             </a>
+            <p>{{ this.cartCount }}</p>
           </div>
         </div>
       </nav>
@@ -277,7 +280,14 @@ export default {
       hamburgerClicked: false,
       clientIp: '',
       geoData: '',
+      cartCount: 0,
     }
+  },
+  // initialize the store. First method that is called for cart
+  beforeCreate() {
+    console.log("beforeCreate App.vue clicked")
+    // commit calls initializeStore function in mutations in store/index.js
+    this.$store.commit('initializeStore') 
   },
 
   mounted() {
@@ -285,6 +295,17 @@ export default {
     this.getIP(),
     // then get geodata
     this.getGeoData()
+    // mount cart
+    this.cart = this.$store.state.cart
+  },
+  // get number of items in cart and incremenet/decrement them when 
+  // added/subtracted 
+  computed: {
+    cartTotalLength() {
+        this.cartCount++;
+
+        return this.cartCount;
+      }
   },
 
   // methods 
@@ -295,7 +316,6 @@ export default {
       .then(response => response.json())
       .then(response => {
         this.clientIp = response.ip;
-        console.log("ipify data: " + JSON.stringify(response))
       }).catch(error => console.log("GET IP API Error: " + error));
     },
     // get user's geolocation using https://ip-api.com/docs/api:json api
