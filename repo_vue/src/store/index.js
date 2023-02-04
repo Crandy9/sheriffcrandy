@@ -56,6 +56,7 @@ export default createStore({
 
         if (isTrack) {
           console.log("Track " + item.id + ' already added to cart')
+          // decrement cart count
         }
         else if (is_flp) {
           console.log("Flp " + item.id + ' already added to cart')
@@ -66,12 +67,10 @@ export default createStore({
           if (isTrack) {
           console.log("Adding track " + item.id + ' to cart')
           state.cart.itemsInCart.push(item)
-
           }
           else if (is_flp) {
             console.log("Adding flp " + item.id + ' to cart')
             state.cart.itemsInCart.push(item)
-
           }
 
        }

@@ -52,9 +52,9 @@
             <a href="/cart" class="navbar-item">
                 <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
                 <!-- cart item count -->
-                <span v-if="this.cartCount >= 1">({{ cartTotalLength }})</span>
+                <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
             </a>
-            <p>{{ this.cartCount }}</p>
+            <!-- <p>{{ this.cartCount }}</p> -->
           </div>
         </div>
       </nav>
@@ -281,11 +281,13 @@ export default {
       clientIp: '',
       geoData: '',
       cartCount: 0,
+      cart: {
+        itemsInCart: []
+      },
     }
   },
   // initialize the store. First method that is called for cart
   beforeCreate() {
-    console.log("beforeCreate App.vue clicked")
     // commit calls initializeStore function in mutations in store/index.js
     this.$store.commit('initializeStore') 
   },
@@ -298,13 +300,15 @@ export default {
     // mount cart
     this.cart = this.$store.state.cart
   },
-  // get number of items in cart and incremenet/decrement them when 
-  // added/subtracted 
+  // whenever cart changes, cart count will automatically update
   computed: {
     cartTotalLength() {
-        this.cartCount++;
+        let totalLength = this.cart.itemsInCart.length;
 
-        return this.cartCount;
+        // for (let i = 0; i < this.cart.itemsInCart.length; i++) {
+        //   totalLength+= i
+        // }
+        return totalLength;
       }
   },
 
