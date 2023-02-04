@@ -47,33 +47,40 @@ export default createStore({
         is_flp = true;   
       }
 
-      // check if this item is already in the cart
-      // will be either '[]' if not in cart.items, or '[proxy]'
-      const pendingCartItem = state.cart.itemsInCart.filter(i => i.id === item.id)
-      // if pendingCartItem already exists
-      // TODO: what to do if attempted duplicate cart item
-      if (pendingCartItem.length) {
 
-        if (isTrack) {
-          console.log("Track " + item.id + ' already added to cart')
-          // decrement cart count
+      // check if this track is already in the cart
+      // will be either '[]' if not in cart.items, or '[proxy]'
+      if (isTrack) {
+        const pendingTrackCartItem = state.cart.itemsInCart.filter(i => i.title === item.title)
+        // if pendingCartItem already exists
+        // TODO: what to do if attempted duplicate cart item
+        if (pendingTrackCartItem.length) {
+            console.log("Track " + item.title + ' already added to cart')
         }
-        else if (is_flp) {
-          console.log("Flp " + item.id + ' already added to cart')
+        // else if it doesn't exist push this track/flp to the cart
+        else {
+              console.log("Adding track " + item.title + ' to cart')
+              state.cart.itemsInCart.push(item)
+              console.log("Total items in cart: " + state.cart.itemsInCart.length)
+        }
+
+      }
+      // check if this flp is already in the cart
+      else if (is_flp) {
+        const pendingFlpCartItem = state.cart.itemsInCart.filter(i => i.flp_name === item.flp_name)
+        // TODO: what to do if attempted duplicate cart item
+        if (pendingFlpCartItem.length) {
+            console.log("Flp " + item.flp_name + ' already added to cart')
+          }
+        // else if it doesn't exist push this track/flp to the cart
+        else {
+              console.log("Adding flp " + item.flp_name + ' to cart')
+              state.cart.itemsInCart.push(item)
+              console.log("Total items in cart: " + state.cart.itemsInCart.length)
         }
       }
-      // else if it doesn't exist push this track/flp to the cart
-       else {
-          if (isTrack) {
-          console.log("Adding track " + item.id + ' to cart')
-          state.cart.itemsInCart.push(item)
-          }
-          else if (is_flp) {
-            console.log("Adding flp " + item.id + ' to cart')
-            state.cart.itemsInCart.push(item)
-          }
 
-       }
+
       // save items to cart in browser local storage
       localStorage.setItem('cart', JSON.stringify(state.cart))
     }

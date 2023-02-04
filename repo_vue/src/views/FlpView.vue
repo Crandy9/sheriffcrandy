@@ -27,8 +27,15 @@
                 </div>
                 <div>
                     <!-- trigger stripe when this is clicked -->
-                    <a class="button is-small is-black price-button has-text-weight-medium" v-if="flp.is_free" href="/flps">FREE</a>
-                    <a class="button is-small is-black price-button has-text-weight-medium" v-else href="/flps">${{ flp.usd_price }}</a>
+                    <a class="button is-small is-black price-button has-text-weight-medium" 
+                      v-if="flp.is_free"
+                      @click="addFlpToCart(flp.id)">
+                      FREE</a>
+                    <a class="button is-small is-black price-button has-text-weight-medium" 
+                      v-else 
+                      @click="addFlpToCart(flp.id)">
+                      ${{ flp.usd_price }}
+                    </a>
                 </div>
             </li>
           </div>
@@ -103,7 +110,15 @@
             console.log("ERROR BOYY: " + error)
             console.log(process.env.VUE_APP_FLPS_API__URL)
           })
-      }
+      },
+          // add to cart
+    addFlpToCart(flp) {
+      // get specific track added to cart
+      const item = this.flps.find(item => item.id === flp)
+
+      // calls store/index.js addToCart function
+      this.$store.commit('addToCart', item)
+    },
     }
   }
   </script>
