@@ -14,6 +14,12 @@
               <!-- <span class="icon"><i class="fas fa-home"></i></span> -->
             </router-link>
           </div>
+          <!-- only display cart if items are in the cart -->
+          <a v-if="cartTotalLength >= 1" href="/cart" class="outside-cart">
+            <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
+            <!-- cart item count -->
+            <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
+          </a>
           <a 
               @click="hamburgerClicked = !hamburgerClicked"
               role="button" 
@@ -270,6 +276,7 @@
   @import '../src/assets/styles/tools.css';
   @import '../src/assets/styles/bio.css';
   @import '../src/assets/styles/mymodal.css';
+  @import '../src/assets/styles/myToast.css';
 </style>
 
 <!-- hamburger menu animation -->

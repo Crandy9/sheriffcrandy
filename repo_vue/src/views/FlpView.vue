@@ -116,7 +116,9 @@
   // axios was installed during initial vue setup. found in package.json
   // need to import axios in main.js as well
   import axios from 'axios'
-  
+  // for pop up notifying user about added item to cart
+  import { toast } from 'bulma-toast'
+
   export default {
     name: 'Flps',
     data() {
@@ -172,6 +174,17 @@
 
       // calls store/index.js addToCart function
       this.$store.commit('addToCart', item)
+      // show toast msg to user https://www.npmjs.com/package/bulma-toast
+      // toast fadein/out animation requires animate.css. See README
+      toast({
+        message: ' \"' + item.flp_name + '\" FLP added to cart!',
+        type: 'is-info',
+        dismissible: true,
+        pauseOnHover: true,
+        duration: 3500,
+        position: 'bottom-right',
+        animate: { in: 'fadeIn', out: 'fadeOut' },
+      })
     },
     }
   }

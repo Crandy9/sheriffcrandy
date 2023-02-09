@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import { createI18n } from 'vue-i18n'
+import 'animate.css'
 
 // all translations will be placed here
 // const i18n is a plugin that vue can use in the views/components

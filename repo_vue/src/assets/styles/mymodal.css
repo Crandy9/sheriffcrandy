@@ -4,16 +4,22 @@
 
 /* modal div */
 .modal {
-    padding: 4rem;
+    padding: 3rem;
 }
 
-/* sets the screen background color when modal is opened */
-.modal-background {
-    transition: all 3s;
-
-    /* background-color: red; */
+.modal-card-head {
+    padding: 2rem;
 }
 
-.modal-card {
-    background-color: blue;
+.modal-card-title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    /* overflow: auto; */
+}
+
+.modal-card-foot {
+    /* flex-grow: 1;
+    flex-shrink: 1;
+    overflow: auto; */
+    padding: 2rem;
 }

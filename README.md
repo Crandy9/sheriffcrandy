@@ -102,6 +102,8 @@ npm install bulma
 npm install bulma-toast
 - install bulma modal-fx
 npm i bulma-modal-fx
+- install animate.css
+npm install animate.css
 - install i18n for internationalization (translating website)
 npm install vue-i18n@next
 

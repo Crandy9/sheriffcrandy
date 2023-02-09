@@ -16,12 +16,8 @@
 /* Sheriff Crandy logo */
 .logo {
     margin: 2rem;
-    color: rgb(0, 0, 0);
 }
 
-.logo:hover {
-    color: rgb(0, 0, 0);
-}
 
   /* remove nav link background */
 .navbar-item {
@@ -38,6 +34,11 @@
     color: rgb(0, 225, 255) !important;
     background: none !important;
 }
+
+.outside-cart {
+    display: none;
+}
+
 .my-burger {
     z-index: 9999;
     position: absolute !important;
@@ -232,6 +233,31 @@
         font-size: 4vmin;
 
     }
+
+    /* place cart outside the hamburger menu */
+    .outside-cart {   
+        z-index: 9999;
+        position: absolute !important;
+        top: 2rem !important;
+        right: 6.5rem !important;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+        display: block;
+        margin-left: auto;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        margin: 0;
+        padding: 0;
+        z-index: 9999;
+        text-decoration: none;
+        color: rgb(255, 255, 255) !important;
+        font-weight: 700;
+    }
+    a.outside-cart {
+        width: fit-content;
+    }
     .navbar-item:hover {
         color: rgb(0, 238, 255) !important;
     }
@@ -245,5 +271,9 @@
 @media screen and (max-width: 584px) {
     .navbar-item {
         font-size: 5vmin;
+    }
+
+    .outside-cart {
+        /* font-size: 4vmin; */
     }
 }

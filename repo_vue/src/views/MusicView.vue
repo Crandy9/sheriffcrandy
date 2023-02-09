@@ -210,6 +210,8 @@
 // axios was installed during initial vue setup. found in package.json
 // need to import axios in main.js as well
 import axios from 'axios'
+// for pop up notifying user about added item to cart
+import { toast } from 'bulma-toast'
 
 export default {
   name: 'Music',
@@ -229,10 +231,12 @@ export default {
       currentTimer: '',
       currentSeconds: 0,
       currentInterval: '',
-      // play track for 51 seconds 
+      // play sample for 51 seconds 
       duration: 51000,
       timeRemaining: 0,
+      // pass trackid to modal
       setTrack: ''
+
     }
   },
 
@@ -453,6 +457,22 @@ export default {
 
       // calls store/index.js addToCart function
       this.$store.commit('addToCart', item)
+
+      // show toast msg to user https://www.npmjs.com/package/bulma-toast
+      // toast fadein/out animation requires animate.css. See README
+      toast({
+        message: ' \"' + item.title + '\" added to cart!',
+        type: 'is-info',
+        dismissible: true,
+        pauseOnHover: true,
+        duration: 4500,
+        position: 'bottom-right',
+        animate: { in: 'fadeIn', out: 'fadeOut' },
+        // offsetTop: 1,
+        // offsetBottom: 1,
+        offsetLeft: 1,
+        // offsetRight: 1
+      })
     },
   }
 }
