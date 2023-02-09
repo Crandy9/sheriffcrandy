@@ -258,7 +258,7 @@
 <style lang="scss">
   @import '../node_modules/bulma';
 </style>
-<!-- import custom css file -->
+<!-- import custom css files -->
 <style>
   @import '../src/assets/styles/style.css';
   @import '../src/assets/styles/mynav.css';
@@ -269,6 +269,7 @@
   @import '../src/assets/styles/flps.css';
   @import '../src/assets/styles/tools.css';
   @import '../src/assets/styles/bio.css';
+  @import '../src/assets/styles/mymodal.css';
 </style>
 
 <!-- hamburger menu animation -->

@@ -1,6 +1,7 @@
 <template>
 
   <section class="main-music-section">
+
     <!-- music tracks -->
     <section class="title-art-sfsb-section">
       <!-- title -->
@@ -103,18 +104,17 @@
             <!-- price -->
             <div class="field has-addons">
               <div class="control">
-                <!-- add track to cart. click.stop prevents the parent click even from firing
+                <!-- open modal. click.stop prevents the parent click even from firing
                   doesn't play/pause the song, adds this item to cart only
                 -->
                 <a class="button is-small is-black price-button has-text-weight-medium" 
                   v-if="track.is_free" 
-                  @click.stop="addTrackToCart(track.id)">
+                  @click.stop="modalOpened = true; setTrackId(track.id);" data-target="my-modal-id">
                   FREE
                 </a>
-                <!-- set var for jpy/usd -->
                 <a class="button is-small is-black price-button has-text-weight-medium" 
                   v-else 
-                  @click.stop="addTrackToCart(track.id)">
+                  @click.stop="modalOpened = true; setTrackId(track.id);" data-target="my-modal-id">
                   ${{ track.usd_price }}
                 </a>
               </div>
@@ -123,6 +123,49 @@
         </div>
       </ul>
     </section>
+    <!-- modal -->
+    <Transition>
+      <div v-if="modalOpened" id="my-modal-id" class="modal" v-bind:class="{'is-active':modalOpened}">
+        <div class="modal-background"></div>
+
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Proceed to checkout?</p>
+              <button @click="modalOpened = false" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+              Do you want to buy this track now or add it to your cart and continue shopping?
+            </section>
+            <footer class="modal-card-foot">
+              <!-- trigger stripe payment on this item only -->
+              <button @click="modalOpened = false" class="button is-success">Buy Now</button>
+              <!-- if adding to cart, add the item to cart and close modal -->
+              <button @click.stop="addTrackToCart(setTrack); modalOpened = false" class="button">Add to Cart</button>
+            </footer>
+          </div>
+      </div>
+    </Transition>
+    <!-- end modal -->
+
+
+    <!-- item already in modal -->
+    <!-- <div id="my-modal-id" class="modal" v-bind:class="{'is-active':modalOpened}">
+      <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Add to Cart?</p>
+            <button @click="modalOpened = false" class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            Do you want to add this item to your cart or proceed to checkout?
+          </section>
+          <footer class="modal-card-foot">
+            <button @click.stop="addTrackToCart(setTrack); modalOpened = false" class="button is-success">Add to cart</button>
+            <button @click="modalOpened = false" class="button">Proceed to checkout</button>
+          </footer>
+        </div>
+    </div> -->
+    <!-- end modal -->
     <h2 class="music-guide is-size-5 has-text-centered has-text-warning">
       Click the links on the right to purchase/download 
       the .wav audio file for the song you want. 
@@ -145,6 +188,21 @@
   </section>
 </template>
 
+
+<!-- modal animation fade-in/out -->
+<style>
+  .v-enter-active,
+  .v-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .v-enter-from,
+  .v-leave-to {
+    opacity: 0;
+  }
+</style>
+
+
 <script>
 // @ is an alias to /src
 
@@ -158,6 +216,7 @@ export default {
   // data() is a new obj returning tracks list used in for loop above
   data() {
     return {
+      modalOpened: false,
       tracks: [],
       // track number
       trackNumber: 0,
@@ -173,6 +232,7 @@ export default {
       // play track for 51 seconds 
       duration: 51000,
       timeRemaining: 0,
+      setTrack: ''
     }
   },
 
@@ -181,10 +241,25 @@ export default {
   // Vue lifecycle hook mounted() is called when this component is added to the DOM
   // so I guess on page load, getTracks() is called  
   mounted() {
-    this.getTracks()
+    this.getTracks();
+    document.addEventListener('click', this.closeModalOnWindowClick);
   },
   // functions defined here
   methods: {
+
+    setTrackId(track) {
+      this.setTrack = track;
+    },
+
+    closeModalOnWindowClick() {
+      if (this.modalOpened === false) {
+
+      }
+      else if (this.modalOpened === true) {
+        this.modalOpened = false;
+
+      }
+    },
 
     // skip track forward
     nextTrack() {

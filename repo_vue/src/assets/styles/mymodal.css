@@ -1,0 +1,19 @@
+/* 
+    MY MODAL
+*/
+
+/* modal div */
+.modal {
+    padding: 4rem;
+}
+
+/* sets the screen background color when modal is opened */
+.modal-background {
+    transition: all 3s;
+
+    /* background-color: red; */
+}
+
+.modal-card {
+    background-color: blue;
+}

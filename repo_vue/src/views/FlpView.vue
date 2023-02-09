@@ -26,14 +26,15 @@
                     </span>
                 </div>
                 <div>
-                    <!-- trigger stripe when this is clicked -->
+                    <!-- trigger modal with options to proceed to checkout, or add item to cart -->
                     <a class="button is-small is-black price-button has-text-weight-medium" 
                       v-if="flp.is_free"
-                      @click="addFlpToCart(flp.id)">
-                      FREE</a>
+                      @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
+                      FREE
+                    </a>
                     <a class="button is-small is-black price-button has-text-weight-medium" 
                       v-else 
-                      @click="addFlpToCart(flp.id)">
+                      @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
                       ${{ flp.usd_price }}
                     </a>
                 </div>
@@ -41,6 +42,28 @@
           </div>
         </ul>
       </section>
+    <!-- modal -->
+    <Transition>
+      <div v-if="modalOpened" id="my-modal-id" class="modal" v-bind:class="{'is-active':modalOpened}">
+        <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Proceed to checkout?</p>
+              <button @click="modalOpened = false" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+              Do you want to buy this FLP now or add it to your cart and continue shopping?
+            </section>
+            <footer class="modal-card-foot">
+              <!-- trigger stripe payment on this item only -->
+              <button @click="modalOpened = false" class="button is-success">Buy Now</button>
+              <!-- if adding to cart, add the item to cart and close modal -->
+              <button @click.stop="addFlpToCart(setFlp); modalOpened = false" class="button">Add to Cart</button>
+            </footer>
+          </div>
+      </div>
+    </Transition>
+    <!-- end modal -->
       <h2 class="flp-guide is-size-5 has-text-centered has-text-warning">
         Click the links on the right to 
         purchase/download the .zip file containing the 
@@ -72,6 +95,19 @@
       </div>
     </section>
   </template>
+
+<!-- modal animation fade-in/out -->
+<style>
+  .v-enter-active,
+  .v-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .v-enter-from,
+  .v-leave-to {
+    opacity: 0;
+  }
+</style>
   
   <script>
   // @ is an alias to /src
@@ -85,7 +121,9 @@
     name: 'Flps',
     data() {
       return {
+        modalOpened: false,
         flps: [],
+        setFlp: ''
       }
     },
   
@@ -94,10 +132,26 @@
     // Vue lifecycle hook mounted() is called when this component is added to the DOM
     // so I guess on page load, getFlps() is called  
     mounted() {
-      this.getFlps()
+      this.getFlps();
+      document.addEventListener('click', this.closeModalOnWindowClick);
     },
     // functions defined here
     methods: {
+
+      setFlpId(flp) {
+        this.setFlp = flp;
+        console.log(this.setFlp)
+      },
+
+      closeModalOnWindowClick() {
+        if (this.modalOpened === false) {
+
+        }
+        else if (this.modalOpened === true) {
+          this.modalOpened = false;
+
+        }
+      },
       getFlps() {
         // replace the API path with env var
         // .get requests API data from server via HTTP GET
