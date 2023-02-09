@@ -1,70 +1,77 @@
 <!-- navbar/footer template -->
 <template>
   <div id="wrapper">
-      <!-- bulma navbar -->
-      <nav class="navbar" role="navigation" aria-label="main navigation">
-        <!-- logo on navbar-->
-        <!-- <div class="navbar-brand"> -->
-        <div class="navbar-brand">
-          <!-- logo name -->
-          <div class="navbar-brand" style="background-color:rgba(0,117,158); border-bottom-right-radius: 50%;">
-            <router-link to="/" class="logo">
-              <strong style="display:block; color:white;">Sheriff</strong> 
-              <strong style="display:block; color:white;">Crandy</strong>
-              <!-- <span class="icon"><i class="fas fa-home"></i></span> -->
-            </router-link>
-          </div>
-          <!-- only display cart if items are in the cart -->
-          <a v-if="cartTotalLength >= 1" href="/cart" class="outside-cart">
-            <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
-            <!-- cart item count -->
-            <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
-          </a>
-          <a 
-              @click="hamburgerClicked = !hamburgerClicked"
-              role="button" 
-              class="my-burger" 
-              aria-label="menu" 
-              aria-expanded="false" 
-              data-target="my-navbar-menu" 
-              v-bind:class="{'is-active':hamburgerClicked}">
-             <!-- top stroke of hamburger button -->
-              <span aria-hidden="true"></span>
-              <!-- middle stroke. Uncomment for three stroke icon, leave as is for two stroke -->
-              <!-- <span aria-hidden="true"></span> -->
-              <span aria-hidden="true"></span>
-          </a>
+    <!-- bulma navbar -->
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <!-- logo on navbar-->
+      <!-- <div class="navbar-brand"> -->
+      <div class="navbar-brand">
+        <!-- logo name -->
+        <div class="navbar-brand" style="background-color:rgba(0,117,158); border-bottom-right-radius: 50%;">
+          <router-link to="/" class="logo">
+            <strong style="display:block; color:white;">Sheriff</strong> 
+            <strong style="display:block; color:white;">Crandy</strong>
+            <!-- <span class="icon"><i class="fas fa-home"></i></span> -->
+          </router-link>
         </div>
-        <!-- navbar items -->
-        <!-- v-bind is view directive which puts "is-active" next to navbar-menu class name. Used to control the nav items -->
-        <!-- as soon as this collapses, set my-navbar-menu  padding: min(30vh, 10rem) 4em; -->
-        <div 
-          class="my-navbar-menu" 
-          id="my-navbar-menu" 
-          v-bind:class="{'is-active':hamburgerClicked}"
-          :style="hamburgerClicked === true ? 'width: 100%' : 'width: ' + closeNav">
-          <!-- make hamburger at right side of navbar -->
-          <div 
-            class="navbar-end" 
+        <!-- only display cart if items are in the cart -->
+        <a v-if="cartTotalLength >= 1 && hamburgerClicked == false" href="/cart" class="outside-cart">
+          <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
+          <!-- cart item count -->
+          <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
+        </a>
+        <a 
+            @click="hamburgerClicked = !hamburgerClicked"
+            role="button" 
+            class="my-burger" 
+            aria-label="menu" 
+            aria-expanded="false" 
+            data-target="my-navbar-menu" 
             v-bind:class="{'is-active':hamburgerClicked}">
-            <!-- navbar items -->
-            <a href="/" class="navbar-item">Home</a>
-            <a href="/music" class="navbar-item">Music</a>
-            <a href="/flps" class="navbar-item">FLPs</a>
-            <a href="/tools" class="navbar-item">Tools I Use</a>
-            <a href="/bio" class="navbar-item">Bio</a>
-            <a href="/contact" class="navbar-item">Contact</a>
-            <a href="/login" class="navbar-item">{{$t('logIn')}}</a>
-            <a href="/cart" class="navbar-item">
-                <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
-                <!-- cart item count -->
-                <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
-            </a>
-            <!-- <p>{{ this.cartCount }}</p> -->
-          </div>
+            <!-- top stroke of hamburger button -->
+            <span aria-hidden="true"></span>
+            <!-- middle stroke. Uncomment for three stroke icon, leave as is for two stroke -->
+            <!-- <span aria-hidden="true"></span> -->
+            <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <!-- navbar items -->
+      <!-- v-bind is view directive which puts "is-active" next to navbar-menu class name. Used to control the nav items -->
+      <!-- as soon as this collapses, set my-navbar-menu  padding: min(30vh, 10rem) 4em; -->
+      <div 
+        class="my-navbar-menu" 
+        id="my-navbar-menu" 
+        v-bind:class="{'is-active':hamburgerClicked}"
+        :style="hamburgerClicked === true ? 'width: 100%' : 'width: ' + closeNav">
+        <!-- make hamburger at right side of navbar -->
+        <div 
+          class="navbar-end" 
+          v-bind:class="{'is-active':hamburgerClicked}">
+          <!-- navbar items -->
+          <a href="/" class="navbar-item">Home</a>
+          <a href="/music" class="navbar-item">Music</a>
+          <a href="/flps" class="navbar-item">FLPs</a>
+          <a href="/tools" class="navbar-item">Tools I Use</a>
+          <a href="/bio" class="navbar-item">Bio</a>
+          <a href="/contact" class="navbar-item">Contact</a>
+          <a href="/login" class="navbar-item">{{$t('logIn')}}</a>
+          <a href="/cart" class="navbar-item">
+              <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
+              <!-- cart item count -->
+              <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
+          </a>
+          <!-- <p>{{ this.cartCount }}</p> -->
         </div>
-      </nav>
-        <!-- end bulma navbar -->
+      </div>
+    </nav>
+    <!-- end bulma navbar -->
+
+    <!-- loading bar when fetching api data -->
+    <div class="is-loading-bar has-text-centered" v-bind:class="{'is-loading': $store.state.isLoading}">
+      <div class="lds-dual-ring"></div>
+
+    </div>
+
     <!-- main page content -->
     <section class="section">
       <router-view/>
@@ -263,6 +270,41 @@
 <!-- import bulma -->
 <style lang="scss">
   @import '../node_modules/bulma';
+
+  // loading bar styling UNTESTED
+  .lds-dual-ring {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #ccc;
+    border-color: #ccc transparent #ccc transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .is-loading-bar {
+    height: 0;
+    overflow: hidden;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    &.is-loading {
+      height: 80px;
+    }
+  }
 </style>
 <!-- import custom css files -->
 <style>

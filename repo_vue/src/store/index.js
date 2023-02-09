@@ -83,6 +83,22 @@ export default createStore({
 
       // save items to cart in browser local storage
       localStorage.setItem('cart', JSON.stringify(state.cart))
+    },
+
+    // remove items from cart
+    removeFromCart(state, item) {
+
+    },
+
+    // remove all data from cart
+    clearCart() {
+      console.log('clearing cart')
+      localStorage.clear();
+    },
+
+    // set a loading bar 
+    setIsLoading(state, status) {
+      state.isLoading = status;
     }
   },
   // asynchronous vars

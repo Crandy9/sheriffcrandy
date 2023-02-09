@@ -21,6 +21,9 @@ export default {
     name: 'Contact',
     data() {
         
+    },
+    mounted() {
+      document.title = 'Contact' 
     }
 }
 </script>

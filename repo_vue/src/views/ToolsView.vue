@@ -16,6 +16,9 @@ export default {
     name: 'Tools',
     data() {
         
+    },
+    mounted() {
+      document.title = 'Tools' 
     }
 }
 </script>

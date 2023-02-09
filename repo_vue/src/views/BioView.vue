@@ -17,6 +17,9 @@ export default {
     name: 'Bio',
     data() {
         
+    },
+    mounted() {
+      document.title = 'Bio' 
     }
 }
 </script>

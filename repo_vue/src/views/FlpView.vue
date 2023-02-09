@@ -154,18 +154,29 @@
 
         }
       },
-      getFlps() {
+
+      // make this method async and axios.get to await to make sure setIsLoading isn't set to false
+      // until axios finished fetching api data
+      async getFlps() {
+
+        // loading bar while api data is getting fetched
+        this.$store.commit('setIsLoading', true);
+
         // replace the API path with env var
         // .get requests API data from server via HTTP GET
         // .then will take the response data and populate the empty tracks list above
-        axios.get(process.env.VUE_APP_FLPS_API__URL)
+        await axios.get(process.env.VUE_APP_FLPS_API__URL)
           .then(response => {
             this.flps = response.data
+            document.title = 'Flps'
           })
           .catch(error => {
             console.log("ERROR BOYY: " + error)
             console.log(process.env.VUE_APP_FLPS_API__URL)
           })
+
+        // stop loading bar after api data is fetched
+        this.$store.commit('setIsLoading', false);
       },
           // add to cart
     addFlpToCart(flp) {
@@ -181,7 +192,7 @@
         type: 'is-info',
         dismissible: true,
         pauseOnHover: true,
-        duration: 3500,
+        duration: 4500,
         position: 'bottom-right',
         animate: { in: 'fadeIn', out: 'fadeOut' },
       })

@@ -19,6 +19,7 @@
     </div>
   </section>
 
+
   <!-- youtube video section -->
   <section class="latest-yt-songs-section">
       <h3 id="yt-section-title" class="is-size-3 has-text-centered has-text-white" >
@@ -58,7 +59,10 @@
 export default {
     name: 'Home',
     data() {
-        
-    }
+    },
+    mounted() {
+      document.title = 'Home' 
+    },
+
 }
 </script>
