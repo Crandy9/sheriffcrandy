@@ -35,16 +35,23 @@ SHERIFFCRANDY-
                     README.md
 
 ```
-Django backend setup:
-- make dir on local machine where this project will be stored
 
-- clone this repo from github
+**** 
+        Django setup:
+****
+- make dir on local machine where this project will be located
 
-- Create and activate python virtual environment on local machine: 
+- clone this repo from github (ssh or https)
+
+- Create python virtual environment on local machine: 
 
 python3 -m venv env
 
-- Once your venv is activated, install Django and other dependencies:
+- Activate python virtual environment on local machine: 
+
+. env/bin/activate (you'll see '(env)' on the left-most side the terminal signature when activated)
+
+- Once your env is activated, install Django and other dependencies:
 
 pip install django (the backend framework)
 pip install django-rest-framework (creating the backend API)
@@ -56,25 +63,28 @@ pip install django-environ (for environment variables)
 pip install stripe (payment processor for handling secure payments)
 pip install psycopg2 (database adapter for PostgreSQL DB)
 install pgadmin4 desktop tool for DB management (https://www.pgadmin.org/download/)
+
 Note: need to create empty DB in either psql shell or pgadmin tool before running python manage.py makemigrations and python manage.py migrate
 - create new Django project:
 django-admin startproject yourprojectname
 - run python manage.py runserver to start django backend development server on localhost:8000
 
 
-Vue.js setup:
+****   
+        Vue.js setup:
+****
 
 - open a new terminal and cd to yourprojectname dir and install vue cli:
 npm install -g @vue/cli (if you get a bunch of permission errors, run again with sudo)
 - check installation:
 vue --version
 
-- in main dir (enter 'ls' and you should see LICENSE  README.md  repo) create vue project:
+- in main dir (enter 'ls' and you should see LICENSE, README.md, repo) create vue project:
 create vue_repo
 - select manually select features:
 Babel
 Router
-Vuex
+Vuex (for cart implementation)
 CSS pre-processors
 - unselect Linter/formatter (idk why, that's what they did in the tutorial lol)
 - hit enter
@@ -82,14 +92,20 @@ CSS pre-processors
 - hit enter
 - select 'Y' for router history mode and hit enter
 - select Sass/SCSS (with dart-sass) and hit enter
-- se;lect place Babel, ESLint, etc. config files in dedicated config files
+- select 'place Babel, ESLint, etc. config files in dedicated config files'
 - Select 'n' for saving this preset for future projects
-- cd to repo_vue and install axios library used to talk to backend and access data from API:
+- cd to repo_vue and install axios library used to access Django API data:
 npm install axios
 - install bulma (css framework)
 npm install bulma
-- install i18n for internationalization
+- install toast pop when adding items to cart
+npm install bulma-toast
+- install bulma modal-fx
+npm i bulma-modal-fx
+- install i18n for internationalization (translating website)
 npm install vue-i18n@next
+
+
 
 - to run vue app on localhost:8080 
 npm run serve
