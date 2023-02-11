@@ -104,19 +104,30 @@
             <!-- price -->
             <div class="field has-addons">
               <div class="control">
+                <!-- check if this item is already in the cart -->
+                <a class="button is-small is-black price-button has-text-weight-medium" 
+                  v-if="checkIfTrackIsInCart(track)" 
+                  @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
+                  IN CART
+                </a>
                 <!-- open modal. click.stop prevents the parent click even from firing
                   doesn't play/pause the song, adds this item to cart only
                 -->
                 <a class="button is-small is-black price-button has-text-weight-medium" 
-                  v-if="track.is_free" 
-                  @click.stop="modalOpened = true; setTrackId(track.id);" data-target="my-modal-id">
+                  v-else-if="track.is_free" 
+                  @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
                   FREE
                 </a>
                 <a class="button is-small is-black price-button has-text-weight-medium" 
-                  v-else 
-                  @click.stop="modalOpened = true; setTrackId(track.id);" data-target="my-modal-id">
+                  v-else-if="track.usd_price"
+                  @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
                   ${{ track.usd_price }}
                 </a>
+                <!-- <a class="button is-small is-black price-button has-text-weight-medium" 
+                  v-else-if="track.jpy_price"
+                  @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
+                  ${{ track.jpy_price }}
+                </a> -->
               </div>
             </div>
           </li>
@@ -130,17 +141,17 @@
 
           <div class="modal-card">
             <header class="modal-card-head">
-              <p class="modal-card-title">Proceed to checkout?</p>
+              <p class="modal-card-title">Buy now?</p>
               <button @click="modalOpened = false" class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
-              Do you want to buy this track now or add it to your cart and continue shopping?
+              Do you want to purchase "{{ setTrackTitle }}" now or add it to your cart and continue shopping?
             </section>
             <footer class="modal-card-foot">
               <!-- trigger stripe payment on this item only -->
               <button @click="modalOpened = false" class="button is-success">Buy Now</button>
               <!-- if adding to cart, add the item to cart and close modal -->
-              <button @click.stop="addTrackToCart(setTrack); modalOpened = false" class="button">Add to Cart</button>
+              <button @click.stop="addTrackToCart(setTrackID); modalOpened = false" class="button">Add to Cart</button>
             </footer>
           </div>
       </div>
@@ -235,8 +246,8 @@ export default {
       duration: 51000,
       timeRemaining: 0,
       // pass trackid to modal
-      setTrack: ''
-
+      setTrackID: '',
+      setTrackTitle: '',
     }
   },
 
@@ -251,8 +262,11 @@ export default {
   // functions defined here
   methods: {
 
-    setTrackId(track) {
-      this.setTrack = track;
+    setTrack(track) {
+      // set track name as well to show in modal popup
+      const item = this.tracks.find(item => item.id === track)
+      this.setTrackTitle = item.title;
+      this.setTrackID = track;
     },
 
     closeModalOnWindowClick() {
@@ -461,10 +475,10 @@ export default {
     },
 
     // add to cart
-    addTrackToCart(track) {
+    addTrackToCart(addTrackIdToCart) {
 
       // get specific track added to cart
-      const item = this.tracks.find(item => item.id === track)
+      const item = this.tracks.find(item => item.id === addTrackIdToCart)
 
       // calls store/index.js addToCart function
       this.$store.commit('addToCart', item)
@@ -481,6 +495,19 @@ export default {
         animate: { in: 'fadeIn', out: 'fadeOut' },
       })
     },
+    // check if an item clicked is already in the cart
+    checkIfTrackIsInCart(track) {
+      const pendingTrackCartItem = 
+      this.
+      $store.
+      state.
+      cart.
+      itemsInCart.
+      filter(i => i.title === track.title)
+        if (pendingTrackCartItem.length) {
+          return true;
+        }
+    }
   }
 }
 </script>

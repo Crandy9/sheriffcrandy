@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+// import components/views here
 import HomeView from '../views/HomeView.vue'
 import FlpView from '../views/FlpView.vue'
 // add custom views here
@@ -33,6 +34,11 @@ const routes = [
     path: '/bio',
     name: 'Bio',
     component: () => import('../views/BioView.vue')
+  },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: () => import('../views/CartView.vue')
   },
 
 ]

@@ -258,7 +258,7 @@
 						<a class="company_link"
 								href="https://lctechnologies.azurewebsites.net/" target="_blank">
 							LC Technologies
-							<img class="lctec-icon" type="image/png" src="lctec_icon.jpg">
+							<img class="lctec-icon" type="image/png" src="../src/assets/images/lctec_icon_rounded.png">
 						</a> 				
 						- Jesus Christ is King
 				</div>
@@ -308,17 +308,18 @@
 </style>
 <!-- import custom css files -->
 <style>
-  @import '../src/assets/styles/style.css';
-  @import '../src/assets/styles/mynav.css';
-  @import '../src/assets/styles/footer.css';
-  @import '../src/assets/styles/music.css';
-  @import '../src/assets/styles/index.css';
-  @import '../src/assets/styles/contact.css';
-  @import '../src/assets/styles/flps.css';
-  @import '../src/assets/styles/tools.css';
-  @import '../src/assets/styles/bio.css';
-  @import '../src/assets/styles/mymodal.css';
-  @import '../src/assets/styles/myToast.css';
+  @import '../src/assets/styles/my-style.css';
+  @import '../src/assets/styles/my-nav.css';
+  @import '../src/assets/styles/my-footer.css';
+  @import '../src/assets/styles/my-music.css';
+  @import '../src/assets/styles/my-index.css';
+  @import '../src/assets/styles/my-contact.css';
+  @import '../src/assets/styles/my-flps.css';
+  @import '../src/assets/styles/my-tools.css';
+  @import '../src/assets/styles/my-bio.css';
+  @import '../src/assets/styles/my-modal.css';
+  @import '../src/assets/styles/my-toast.css';
+  @import '../src/assets/styles/my-cart.css';
 </style>
 
 <!-- hamburger menu animation -->

@@ -26,17 +26,23 @@
                     </span>
                 </div>
                 <div>
-                    <!-- trigger modal with options to proceed to checkout, or add item to cart -->
-                    <a class="button is-small is-black price-button has-text-weight-medium" 
-                      v-if="flp.is_free"
-                      @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
-                      FREE
-                    </a>
-                    <a class="button is-small is-black price-button has-text-weight-medium" 
-                      v-else 
-                      @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
-                      ${{ flp.usd_price }}
-                    </a>
+                  <!-- check if this item is already in the cart -->
+                  <a class="button is-small is-black price-button has-text-weight-medium" 
+                    v-if="checkIfFlpIsInCart(flp)" 
+                    @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
+                    IN CART
+                  </a>
+                  <!-- trigger modal with options to proceed to checkout, or add item to cart -->
+                  <a class="button is-small is-black price-button has-text-weight-medium" 
+                    v-else="flp.flp_is_free"
+                    @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
+                    FREE
+                  </a>
+                  <a class="button is-small is-black price-button has-text-weight-medium" 
+                    v-else 
+                    @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
+                    ${{ flp.usd_price }}
+                  </a>
                 </div>
             </li>
           </div>
@@ -48,17 +54,17 @@
         <div class="modal-background"></div>
           <div class="modal-card">
             <header class="modal-card-head">
-              <p class="modal-card-title">Proceed to checkout?</p>
+              <p class="modal-card-title">Buy now?</p>
               <button @click="modalOpened = false" class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
-              Do you want to buy this FLP now or add it to your cart and continue shopping?
+              Do you want to purchase "{{ FlpName }}" now or add it to your cart and continue shopping?
             </section>
             <footer class="modal-card-foot">
               <!-- trigger stripe payment on this item only -->
               <button @click="modalOpened = false" class="button is-success">Buy Now</button>
               <!-- if adding to cart, add the item to cart and close modal -->
-              <button @click.stop="addFlpToCart(setFlp); modalOpened = false" class="button">Add to Cart</button>
+              <button @click.stop="addFlpToCart(FlpID); modalOpened = false" class="button">Add to Cart</button>
             </footer>
           </div>
       </div>
@@ -125,7 +131,8 @@
       return {
         modalOpened: false,
         flps: [],
-        setFlp: ''
+        FlpID: '',
+        FlpName: '',
       }
     },
   
@@ -139,10 +146,12 @@
     },
     // functions defined here
     methods: {
-
+      // called in modal popup on FREE or price button click
       setFlpId(flp) {
-        this.setFlp = flp;
-        console.log(this.setFlp)
+        // set flp name as well to show in modal popup
+        const item = this.flps.find(item => item.id === flp)
+        this.FlpName = item.flp_name;
+        this.FlpID = flp;
       },
 
       closeModalOnWindowClick() {
@@ -164,7 +173,7 @@
 
         // replace the API path with env var
         // .get requests API data from server via HTTP GET
-        // .then will take the response data and populate the empty tracks list above
+        // .then will take the response data and populate the empty flps list above
         await axios.get(process.env.VUE_APP_FLPS_API__URL)
           .then(response => {
             this.flps = response.data
@@ -180,7 +189,7 @@
       },
           // add to cart
     addFlpToCart(flp) {
-      // get specific track added to cart
+      // get specific flp added to cart
       const item = this.flps.find(item => item.id === flp)
 
       // calls store/index.js addToCart function
@@ -197,6 +206,19 @@
         animate: { in: 'fadeIn', out: 'fadeOut' },
       })
     },
+    // check if an item clicked is already in the cart
+    checkIfFlpIsInCart(flp) {
+      const pendingFlpCartItem = 
+      this.
+      $store.
+      state.
+      cart.
+      itemsInCart.
+      filter(i => i.flp_name === flp.flp_name)
+        if (pendingFlpCartItem.length) {
+          return true;
+        }
+    }
     }
   }
   </script>

@@ -1,0 +1,31 @@
+/* 
+
+    CART STYLING
+
+*/
+
+/* mobile */
+@media screen and (max-width: 1024px)    {
+
+    .cart-title {
+        padding: 4rem;
+    }
+    .table-div {
+        padding-bottom: 4rem;
+        padding-right:2rem;
+        padding-left: 2rem;
+    }
+    table {
+        border: 1px solid #CCC;
+        border-spacing: 0px;    }
+    
+    td {
+        padding: 0;
+    }
+
+    .remove {
+        display: flex;
+        gap: 1rem;
+    }
+}
+

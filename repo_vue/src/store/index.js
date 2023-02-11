@@ -11,7 +11,9 @@ export default createStore({
     // used for login
     token: '',
     // show loading bar for cart
-    isLoading: false
+    isLoading: false,
+    // trackItemsInCart: [],
+    // flpItemsInCart: [],
   },
   getters: {
   },
@@ -52,16 +54,17 @@ export default createStore({
       // will be either '[]' if not in cart.items, or '[proxy]'
       if (isTrack) {
         const pendingTrackCartItem = state.cart.itemsInCart.filter(i => i.title === item.title)
-        // if pendingCartItem already exists
+        // if track already exists
         // TODO: what to do if attempted duplicate cart item
         if (pendingTrackCartItem.length) {
             console.log("Track " + item.title + ' already added to cart')
         }
-        // else if it doesn't exist push this track/flp to the cart
+        // else if it doesn't exist push this track to the cart
         else {
-              console.log("Adding track " + item.title + ' to cart')
+              // push to cart
               state.cart.itemsInCart.push(item)
-              console.log("Total items in cart: " + state.cart.itemsInCart.length)
+              // push to track array
+              // state.trackItemsInCart.push(item)
         }
 
       }
@@ -74,14 +77,14 @@ export default createStore({
           }
         // else if it doesn't exist push this track/flp to the cart
         else {
-              console.log("Adding flp " + item.flp_name + ' to cart')
+              // push flp to cart
               state.cart.itemsInCart.push(item)
-              console.log("Total items in cart: " + state.cart.itemsInCart.length)
+              // push flp to flp array
+              // state.flpItemsInCart.push(item)
         }
       }
 
-
-      // save items to cart in browser local storage
+      // save cart storage data
       localStorage.setItem('cart', JSON.stringify(state.cart))
     },
 
