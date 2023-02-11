@@ -1,4 +1,20 @@
 /* bulma toast position */
 .notification {
-    margin: 3rem !important;
+    display: block !important;
+    margin-right: 3rem !important;
+    width: 35% !important;
+    background-color: aqua !important;
+    color: black !important;
+    text-align: center !important;
+}
+
+@media screen and (max-width: 1024px) {
+    .notification {
+        display: block !important;
+        margin-right: 3rem !important;
+        width: 75% !important;
+        background-color: aqua !important;
+        color: black !important;
+        text-align: center !important;
+    }
 }

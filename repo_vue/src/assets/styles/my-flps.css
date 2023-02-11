@@ -88,7 +88,20 @@
     padding-left: 0.5rem;
 }
 
+.flp-file-links {
+    color:chartreuse !important; 
+    text-decoration: none;
+}
+
+.flp-file-links:hover {
+    color: white !important;
+}
+
+
 /* price buttons */
+.button.is-black.price-button {
+    animation: fadeIn 1s;
+}
 .button.is-black.price-button:hover {
     background-color: rgb(255, 197, 6);
     color: black;
@@ -98,11 +111,20 @@
     transition: all .15s ease-in;
 }
 
-.flp-file-links {
-    color:chartreuse !important; 
-    text-decoration: none;
+.flps-in-cart-button {
+    /* button color */
+    background-color: rgb(6, 255, 201);
+    /* text color */
+    color: rgb(0, 0, 0);
+    animation: fadeIn 1s;
 }
 
-.flp-file-links:hover {
-    color: white !important;
+/* in cart button */
+.flps-in-cart-button:hover {
+    background-color: rgb(255, 197, 6);
+    color: black;
+    -moz-transition: all .15s ease-in;
+    -o-transition: all .15s ease-in;
+    -webkit-transition: all .15s ease-in;
+    transition: all .15s ease-in;
 }

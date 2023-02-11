@@ -27,14 +27,14 @@
                 </div>
                 <div>
                   <!-- check if this item is already in the cart -->
-                  <a class="button is-small is-black price-button has-text-weight-medium" 
+                  <a class="flps-in-cart-button button is-small price-button has-text-weight-medium" 
                     v-if="checkIfFlpIsInCart(flp)" 
                     @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
-                    IN CART
+                    Added to Cart!
                   </a>
                   <!-- trigger modal with options to proceed to checkout, or add item to cart -->
                   <a class="button is-small is-black price-button has-text-weight-medium" 
-                    v-else="flp.flp_is_free"
+                    v-else-if="flp.flp_is_free"
                     @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
                     FREE
                   </a>
@@ -201,7 +201,7 @@
         type: 'is-info',
         dismissible: true,
         pauseOnHover: true,
-        duration: 4500,
+        duration: 3000,
         position: 'bottom-right',
         animate: { in: 'fadeIn', out: 'fadeOut' },
       })

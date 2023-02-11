@@ -21,7 +21,7 @@
         </h3>
       </div>
       <div>
-        <h3 style="padding: 1rem; color: aqua;" v-if="currentTrackPlaying == 0" class="is-size-4">
+        <h3 style="padding: 1rem;" v-if="currentTrackPlaying == 0" class="is-size-5 has-text-warning">
           Click on a song to hear a sample!
         </h3>
       </div>
@@ -105,10 +105,10 @@
             <div class="field has-addons">
               <div class="control">
                 <!-- check if this item is already in the cart -->
-                <a class="button is-small is-black price-button has-text-weight-medium" 
+                <a class="music-in-cart-button button is-small price-button has-text-weight-medium" 
                   v-if="checkIfTrackIsInCart(track)" 
                   @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
-                  IN CART
+                  Added to Cart!
                 </a>
                 <!-- open modal. click.stop prevents the parent click even from firing
                   doesn't play/pause the song, adds this item to cart only
@@ -490,7 +490,7 @@ export default {
         type: 'is-info',
         dismissible: true,
         pauseOnHover: true,
-        duration: 4500,
+        duration: 3000,
         position: 'bottom-right',
         animate: { in: 'fadeIn', out: 'fadeOut' },
       })
