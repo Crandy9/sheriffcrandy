@@ -14,14 +14,14 @@
           <!-- loop through all items in cart -->
           <tr class="my-table-row" v-for="item in cart.itemsInCart">
             <!-- get image (for tracks only) -->
-            <td v-if="item.image" class="my-row-image">
-              <img src={{ item.image }} alt="">
+            <td v-if="item.get_cover_art" class="my-row-image">
+              <img v-bind:src="item.get_cover_art" alt="">
             </td>
             <td class="my-col-item-details" colspan="3">
               <div class="my-item-description">
                 <!-- track/flp title -->
-                <h2 class="my-item-name" v-if="item.title"><router-link :to="item.get_absolute_url">{{ item.title }} (track)</router-link></h2>
-                <h2 class="my-item-name" v-else><router-link :to="item.get_absolute_url">{{ item.flp_name }} (flp)</router-link></h2>
+                <h2 class="my-item-name" v-if="item.title">{{ item.title }} (wav audio file)</h2>
+                <h2 class="my-item-name" v-else>{{ item.flp_name }} (FLP zip file)</h2>
                 <div v-if="item.title" class="my-cart-item-desc">
                   Track download
                 </div>
@@ -30,8 +30,8 @@
                 </div>
               </div>
               <div class="my-cart-item-actions">
-                <div class="my-item-quantity">1</div>
-                <a class="my-remove-button remove">remove<button class="delete"></button></a>
+                <!-- <div class="my-item-quantity">1</div> -->
+                <a class="my-remove-button">remove<button class="delete"></button></a>
                   <div class="my-cart-price" v-if="item.is_free == true || item.flp_is_free == true">FREE</div>
                     <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false)">${{ item.usd_price }}</div>
                     <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false)">¥{{ item.jpy_price }}</div>                
@@ -40,12 +40,12 @@
           </tr>
         </tbody>
       </table>
-      <p v-else style="color:white">Your cart is empty :(</p>
+      <p v-else style="color:white; padding: 2rem;" >Your cart is empty :(</p>
     </div>
     <!-- end cart body -->
 
     <!-- cart footer -->
-    <footer class="my-cart-footer">
+    <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
       <p class="my-subtotal">
         <span>Subtotal</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ subTotal }}</span>

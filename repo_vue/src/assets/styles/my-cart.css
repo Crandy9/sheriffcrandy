@@ -58,9 +58,9 @@
     border-width: 0 0 1px;
     border-style: solid;
     border-color: rgb(109, 109, 109);
-    vertical-align: top;
-    box-sizing: border-box;
+    vertical-align: inherit;
 }
+
 
 .my-row-image img {
     width: 76px;
@@ -69,12 +69,22 @@
     display: block;
     box-sizing: border-box;
     border: 0;
+    overflow-clip-margin: content-box;
+    overflow: clip;
+}
+
+/* space between image and details */
+td {
+    /* white-space:nowrap; */
+    width: 12%;
 }
 
 .my-col-item-details {
     width: 100%;
     max-width: 1px;
-    padding: 1em 0 1em 1em!important;    
+    padding: 1 rem !important;    
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     text-align: left;
     border-width: 0 0 1px;
     border-style: solid;
@@ -119,7 +129,6 @@
 }
 
 .my-cart-item-actions {
-    margin-top: 0.25em;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -143,6 +152,10 @@
     text-align: left;
 }
 
+.my-remove-button:hover {
+    color: rgb(0, 255, 13);
+}
+
 .my-cart-price {
     margin-left: auto;
     text-align: right;
@@ -154,7 +167,7 @@
 .my-cart-footer {
     text-align: center;
     display: block;
-    padding: 0 24px;
+    padding: 2rem;
 }
 
 .my-subtotal {
@@ -215,7 +228,7 @@
         border-spacing: 0px;    }
     
     td {
-        padding: 0;
+        width: 20%;
     }
 
     .remove {
@@ -224,3 +237,21 @@
     }
 }
 
+/* even smaller screens when image is shown*/
+@media screen and (max-width: 610px) {
+    td {
+        width: 30%;
+    }
+}
+
+@media screen and (max-width: 458px) {
+    td {
+        width: 35%;
+    }
+}
+
+@media screen and (max-width: 390px) {
+    td {
+        width: 38%;
+    }
+}
