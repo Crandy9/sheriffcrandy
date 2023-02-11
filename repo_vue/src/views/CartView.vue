@@ -1,45 +1,60 @@
 <template>
-  <section>
-    <div class="page-cart">
-      <div class="columns is-multiline">
-        <div>
-          <h1 class="title cart-title">My Cart</h1>
-        </div>
-        <!-- show cart items -->
-        <div class="table-div">
-          <table class="table is-fullwidth" v-if="cartTotalLength">
-            <thead>
-              <tr>
-                <th>Tracks/FLPs</th>
-                <th>Price</th>
-                <th></th>
-              </tr>
-            </thead>
-
-              <tbody>
-                <tr class="rows" v-for="item in cart.itemsInCart">
-                    <!-- for tracks -->
-                    <td class="table-title" v-if="item.title"><router-link :to="item.get_absolute_url">{{ item.title }} (track)</router-link></td>
-                    <td class="table-title" v-else><router-link :to="item.get_absolute_url">{{ item.flp_name }} (flp)</router-link></td>
-                    <!-- for flps -->
-                    <!-- gotta check for free tracks.flps -->
-                    <td v-if="item.is_free == true || item.flp_is_free == true" class="table-price" >FREE</td>
-                    <td v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false)" class="table-price" >${{ item.usd_price }}</td>
-                    <td v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false)" class="table-price" >¥{{ item.jpy_price }}</td>
-                    <td class="remove">remove<button class="delete"></button></td>
-                </tr>
-                <tr>
-                  <th>
-                    Subtotal <span>{{ subTotal }}</span>
-                  </th>
-                </tr>
-              </tbody>
-          </table>
-          <p v-else style="color:white">Your cart is empty :(</p>
-        </div>
+  <!-- section -->
+  <section class="my-cart-section">
+    <!-- cart body -->
+    <div class="my-cart-body">
+      <!-- cart header -->
+      <div class="my-cart-content">
+        <h2 class="my-cart-title">
+          <span>Your cart</span>
+        </h2>
       </div>
-
+      <table class="my-cart-items-table" v-if="cartTotalLength">
+        <tbody class="my-cart-items">
+          <!-- loop through all items in cart -->
+          <tr class="my-table-row" v-for="item in cart.itemsInCart">
+            <!-- get image (for tracks only) -->
+            <td v-if="item.image" class="my-row-image">
+              <img src={{ item.image }} alt="">
+            </td>
+            <td class="my-col-item-details" colspan="3">
+              <div class="my-item-description">
+                <!-- track/flp title -->
+                <h2 class="my-item-name" v-if="item.title"><router-link :to="item.get_absolute_url">{{ item.title }} (track)</router-link></h2>
+                <h2 class="my-item-name" v-else><router-link :to="item.get_absolute_url">{{ item.flp_name }} (flp)</router-link></h2>
+                <div v-if="item.title" class="my-cart-item-desc">
+                  Track download
+                </div>
+                <div v-else class="my-cart-item-desc">
+                  FLP download
+                </div>
+              </div>
+              <div class="my-cart-item-actions">
+                <div class="my-item-quantity">1</div>
+                <a class="my-remove-button remove">remove<button class="delete"></button></a>
+                  <div class="my-cart-price" v-if="item.is_free == true || item.flp_is_free == true">FREE</div>
+                    <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false)">${{ item.usd_price }}</div>
+                    <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false)">¥{{ item.jpy_price }}</div>                
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else style="color:white">Your cart is empty :(</p>
     </div>
+    <!-- end cart body -->
+
+    <!-- cart footer -->
+    <footer class="my-cart-footer">
+      <p class="my-subtotal">
+        <span>Subtotal</span>
+        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ subTotal }}</span>
+      </p>
+      <div class="my-checkout-button-div">
+        <a rel="noindex" class="my-checkout-button" href="#">Checkout</a>
+      </div>
+    </footer>
+    <!-- end cart footer -->
   </section>
 </template>
 
