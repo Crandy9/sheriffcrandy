@@ -3,8 +3,7 @@
     display: block !important;
     margin-right: 3rem !important;
     width: 35% !important;
-    background-color: rgb(255, 187, 0) !important;
-    color: black !important;
+    /* color: rgb(255, 255, 255) !important; */
     text-align: center !important;
 }
 
@@ -13,7 +12,7 @@
         display: block !important;
         margin-right: 3rem !important;
         width: 75% !important;
-        color: black !important;
+        /* color: black !important; */
         text-align: center !important;
     }
 }

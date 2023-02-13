@@ -46,6 +46,7 @@
 
     <!-- cart footer -->
     <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
+      <a class="my-clear-cart-button" @click="clearCart()">Clear Cart</a>
       <!-- <p class="my-subtotal">
         <span>Total:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTotal }}</span>
@@ -113,6 +114,9 @@ export default {
         const item = this.cart.itemsInCart.find(item => item.id === removeItemID)
         // pass entire json track/flp obj to removeFromCart function
         this.$store.commit('removeFromCart', item)
+      },
+      clearCart() {
+        this.$store.commit('clearCart')
       }
     },
 

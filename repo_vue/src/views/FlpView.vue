@@ -26,10 +26,10 @@
                     </span>
                 </div>
                 <div>
-                  <!-- check if this item is already in the cart -->
+                  <!-- check if this item is already in the cart; remove it if clicked -->
                   <a class="flps-in-cart-button button is-small price-button has-text-weight-medium" 
                     v-if="checkIfFlpIsInCart(flp)" 
-                    @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
+                    @click.stop="modalOpened = false; removeFromCart(flp.id)" data-target="my-modal-id">
                     Added to Cart!
                   </a>
                   <!-- trigger modal with options to proceed to checkout, or add item to cart -->
@@ -199,6 +199,22 @@
       toast({
         message: ' \"' + item.flp_name + '\" FLP added to cart!',
         type: 'is-info',
+        dismissible: true,
+        pauseOnHover: true,
+        duration: 3000,
+        position: 'bottom-right',
+        animate: { in: 'fadeIn', out: 'fadeOut' },
+      })
+    },
+    // remove from cart
+    removeFromCart(removeItemID) {
+      // get specific track added to cart
+      const item = this.flps.find(item => item.id === removeItemID)
+      // pass entire json track/flp obj to removeFromCart function
+      this.$store.commit('removeFromCart', item)
+      toast({
+        message: ' \"' + item.flp_name + '\" removed from cart!',
+        type: 'is-danger',
         dismissible: true,
         pauseOnHover: true,
         duration: 3000,

@@ -107,7 +107,7 @@
                 <!-- check if this item is already in the cart -->
                 <a class="music-in-cart-button button is-small price-button has-text-weight-medium" 
                   v-if="checkIfTrackIsInCart(track)" 
-                  @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
+                  @click.stop="modalOpened = false; removeFromCart(track.id)" data-target="my-modal-id">
                   Added to Cart!
                 </a>
                 <!-- open modal. click.stop prevents the parent click even from firing
@@ -488,6 +488,22 @@ export default {
       toast({
         message: ' \"' + item.title + '\" added to cart!',
         type: 'is-info',
+        dismissible: true,
+        pauseOnHover: true,
+        duration: 3000,
+        position: 'bottom-right',
+        animate: { in: 'fadeIn', out: 'fadeOut' },
+      })
+    },
+    // remove from cart
+    removeFromCart(removeItemID) {
+      // get specific track added to cart
+      const item = this.tracks.find(item => item.id === removeItemID)
+      // pass entire json track/flp obj to removeFromCart function
+      this.$store.commit('removeFromCart', item)
+      toast({
+        message: ' \"' + item.title + '\" removed from cart!',
+        type: 'is-danger',
         dismissible: true,
         pauseOnHover: true,
         duration: 3000,

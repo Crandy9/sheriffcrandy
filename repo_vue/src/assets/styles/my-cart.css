@@ -143,6 +143,16 @@
     color: white;
 }
 
+.my-clear-cart-button {
+    padding: 0.4rem;
+    background-color: rgb(255, 0, 0);
+    color: rgb(255, 255, 255);
+    box-sizing: border-box;
+    font-size: medium !important;
+    text-decoration: none;
+    text-align: left;
+}
+
 .my-remove-button {
     color: gold;
     box-sizing: border-box;

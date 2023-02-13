@@ -157,9 +157,12 @@ export default createStore({
     },
 
     // remove all data from cart
-    clearCart() {
+    clearCart(state) {
       console.log('clearing cart')
-      localStorage.clear();
+
+      state.cart.itemsInCart = [];
+      // update local storage
+      localStorage.setItem('cart', JSON.stringify(state.cart))
     },
 
     // set a loading bar 
