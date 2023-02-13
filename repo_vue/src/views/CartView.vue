@@ -31,7 +31,7 @@
               </div>
               <div class="my-cart-item-actions">
                 <!-- <div class="my-item-quantity">1</div> -->
-                <a class="my-remove-button">remove<button class="delete"></button></a>
+                <a @click="removeFromCart(item.id)" class="my-remove-button">remove<button class="delete"></button></a>
                   <div class="my-cart-price" v-if="item.is_free == true || item.flp_is_free == true">FREE</div>
                     <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false)">${{ item.usd_price }}</div>
                     <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false)">¥{{ item.jpy_price }}</div>                
@@ -106,56 +106,66 @@ export default {
       document.title = 'Cart' 
     },
 
+    methods: {
+
+      removeFromCart(removeItemID) {
+        // get specific track added to cart
+        const item = this.cart.itemsInCart.find(item => item.id === removeItemID)
+        // pass entire json track/flp obj to removeFromCart function
+        this.$store.commit('removeFromCart', item)
+      }
+    },
+
     computed: {
 
       // display cart only if there are items in the cart, 
-        cartTotalLength() {
-          let totalLength = this.cart.itemsInCart.length;
-          return totalLength;
-        },
+      cartTotalLength() {
+        let totalLength = this.cart.itemsInCart.length;
+        return totalLength;
+      },
 
-        // USD TOTAL
-        calculateUsdTotal() {
-          let sum = 0;
-          for(let i = 0; i < this.cart.itemsInCart.length; i++){
-            sum += (parseFloat(this.cart.itemsInCart[i].usd_price));
-          }
+      // USD TOTAL
+      calculateUsdTotal() {
+        let sum = 0;
+        for(let i = 0; i < this.cart.itemsInCart.length; i++){
+          sum += (parseFloat(this.cart.itemsInCart[i].usd_price));
+        }
 
-          this.totalUsdPrice = sum.toFixed(2);
+        this.totalUsdPrice = sum.toFixed(2);
 
-          return this.totalUsdPrice;
-        },
-        calculateUsdTaxes() {
-          var taxAmount = (parseFloat(this.usdTaxRate * this.totalUsdPrice))
-          this.usdTax = taxAmount.toFixed(2);
-          return this.usdTax
-        },
-        calculateUsdSubtotal() {
-          // prepending unary operator to these values to treat them as numbers
-          // instead of strings for tax calc
-          this.usdSubTotal = parseFloat(((+this.totalUsdPrice) + (+this.usdTax))).toFixed(2);
-          return this.usdSubTotal;
-        },
+        return this.totalUsdPrice;
+      },
+      calculateUsdTaxes() {
+        var taxAmount = (parseFloat(this.usdTaxRate * this.totalUsdPrice))
+        this.usdTax = taxAmount.toFixed(2);
+        return this.usdTax
+      },
+      calculateUsdSubtotal() {
+        // prepending unary operator to these values to treat them as numbers
+        // instead of strings for tax calc
+        this.usdSubTotal = parseFloat(((+this.totalUsdPrice) + (+this.usdTax))).toFixed(2);
+        return this.usdSubTotal;
+      },
 
 
-        // JPY TOTAL
-        calculateJpyTotal () {
-          let sum = 0;
-          for(let i = 0; i < this.cart.itemsInCart.length; i++){
-            sum += (this.cart.itemsInCart[i].jpy_price);
-          }
-          this.totalJpyPrice = sum;
+      // JPY TOTAL
+      calculateJpyTotal () {
+        let sum = 0;
+        for(let i = 0; i < this.cart.itemsInCart.length; i++){
+          sum += (this.cart.itemsInCart[i].jpy_price);
+        }
+        this.totalJpyPrice = sum;
 
-          return this.totalJpyPrice;
-        },
-        calculateJpyTaxes() {
-          var taxAmount = (parseFloat(this.jpyTaxRate * this.totalJpyPrice))
-          this.jpyTax = taxAmount;
-          return this.jpyTax
-        },
-        calculateJpySubtotal() {
-          return parseFloat((this.totalJpyPrice + this.jpyTax));
-        },
+        return this.totalJpyPrice;
+      },
+      calculateJpyTaxes() {
+        var taxAmount = (parseFloat(this.jpyTaxRate * this.totalJpyPrice))
+        this.jpyTax = taxAmount;
+        return this.jpyTax
+      },
+      calculateJpySubtotal() {
+        return parseFloat((this.totalJpyPrice + this.jpyTax));
+      },
     }
 }
 </script>
