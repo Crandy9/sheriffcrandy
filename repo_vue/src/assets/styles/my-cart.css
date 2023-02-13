@@ -1,21 +1,28 @@
-/* 
+/**** 
 
     CART STYLING
 
-*/
+****/
 
+
+/* for larger screens */
+@media screen and (min-width: 1024px) {
+    .my-cart-section {
+        /* padding-top: 8rem; */
+        padding-bottom: 8rem;
+        padding-left: 10rem;
+        padding-right: 10rem;
+    
+    }
+    /* space between image and details large screen */
+    td {
+        /* white-space:nowrap; */
+        width: 16%;
+    }
+}
 
 .my-cart-section {
-    width: 100vw;
-    width: var(--cart-summary-width);
-    z-index: 9901;
-    animation-name: openNewCart;
-    animation-delay: 0;
-    animation-duration: .4s;
-    display: flex;
-    flex-direction: column;
-    padding: var(--section-padding-x-small) 0;
-
+    /* padding: 2rem; */
 }
 
 .my-cart-content {
@@ -25,15 +32,13 @@
 }
 
 .my-cart-title {
-    flex: 1 1;
-    margin: 0;
-    font-size: 1.875em;
-    line-height: 1.35;
-    word-wrap: break-word;
     color: white;
     display: block;
-    font-size: 1.5em;
+    font-size: 2em;
     font-weight: bold;
+    text-decoration: underline;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 .my-cart-body {
@@ -71,12 +76,6 @@
     border: 0;
     overflow-clip-margin: content-box;
     overflow: clip;
-}
-
-/* space between image and details */
-td {
-    /* white-space:nowrap; */
-    width: 12%;
 }
 
 .my-col-item-details {
@@ -176,40 +175,44 @@ td {
     color: white;
     margin: 1em 0;
     display: block;
-    margin-block-start: 1em;
-    margin-block-end: 1em;
-    margin-inline-start: 0px;
-    margin-inline-end: 0px;
-}
-
-.my-checkout-button-div {
-    box-sizing: border-box;
-    text-align: right;
-    display: block;
+    /* padding-right: 1rem; */
 }
 
 .my-checkout-button {
-    background-color: aliceblue;
+    background-color: rgb(255, 250, 190);
     color: black;
     border: 1px solid transparent;
     border-radius: 0;
-    box-sizing: border-box;
     width: 100%;
-    padding-left: 12px;
-    padding-right: 12px;
+    /* makes button span the entire width */
     display: inline-flex;
+    /* center button text */
     justify-content: center;
-    align-items: center;
-    text-align: center;
-    line-height: 1.4;
     padding: 9px 20px;
     cursor: pointer;
     font-weight: normal;
     font-size: 14px;
     text-transform: uppercase;
+    /* give padding between chars */
     letter-spacing: 1px;
     white-space: nowrap;
-    text-decoration: none;
+    margin-bottom: 10rem;
+}
+
+.my-checkout-button:hover {
+    background-color: rgb(0, 15, 56);
+    color: white;
+    -moz-transition: all .14s ease-in;
+    -o-transition: all .14s ease-in;
+    -webkit-transition: all .14s ease-in;
+    transition: all .14s ease-in;
+}
+
+/* larger screens */
+@media screen and (min-width: 1024px) {
+    .my-checkout-button {
+        width: 45%;
+    }
 }
 
 /* mobile */

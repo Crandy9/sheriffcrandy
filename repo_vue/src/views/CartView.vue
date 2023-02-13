@@ -46,9 +46,29 @@
 
     <!-- cart footer -->
     <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
+      <!-- <p class="my-subtotal">
+        <span>Total:</span>
+        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTotal }}</span>
+      </p>
       <p class="my-subtotal">
-        <span>Subtotal</span>
-        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ subTotal }}</span>
+        <span>Tax:</span>
+        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTaxes }}</span>
+      </p>
+      <p class="my-subtotal">
+        <span>Subtotal:</span>
+        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpySubtotal }}</span>
+      </p> -->
+      <p class="my-subtotal">
+        <span>Total:</span>
+        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
+      </p>
+      <p class="my-subtotal">
+        <span>Tax:</span>
+        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTaxes }}</span>
+      </p>
+      <p class="my-subtotal">
+        <span>Subtotal:</span>
+        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
       </p>
       <div class="my-checkout-button-div">
         <a rel="noindex" class="my-checkout-button" href="#">Checkout</a>
@@ -70,7 +90,14 @@ export default {
         cart: {
           itemsInCart: [],
         },
-        subTotal: ''
+        totalUsdPrice: '',
+        totalJpyPrice: '',
+        usdTaxRate: .0,
+        jpyTaxRate: 0.1,
+        usdTax: '',
+        jpyTax: '',
+        usdSubTotal: '',
+        jpySubtotal:''
       }
     },
     mounted() {
@@ -80,18 +107,55 @@ export default {
     },
 
     computed: {
+
+      // display cart only if there are items in the cart, 
         cartTotalLength() {
           let totalLength = this.cart.itemsInCart.length;
           return totalLength;
         },
-        // whenever cart changes, cart count will automatically update
-        calculateSubtotal() {
 
-          for (let i = 0; i < this.cart.itemsInCart.length; i++) {
-            this.subTotal+= i
+        // USD TOTAL
+        calculateUsdTotal() {
+          let sum = 0;
+          for(let i = 0; i < this.cart.itemsInCart.length; i++){
+            sum += (parseFloat(this.cart.itemsInCart[i].usd_price));
           }
-          return totalLength;
-        }
+
+          this.totalUsdPrice = sum.toFixed(2);
+
+          return this.totalUsdPrice;
+        },
+        calculateUsdTaxes() {
+          var taxAmount = (parseFloat(this.usdTaxRate * this.totalUsdPrice))
+          this.usdTax = taxAmount.toFixed(2);
+          return this.usdTax
+        },
+        calculateUsdSubtotal() {
+          // prepending unary operator to these values to treat them as numbers
+          // instead of strings for tax calc
+          this.usdSubTotal = parseFloat(((+this.totalUsdPrice) + (+this.usdTax))).toFixed(2);
+          return this.usdSubTotal;
+        },
+
+
+        // JPY TOTAL
+        calculateJpyTotal () {
+          let sum = 0;
+          for(let i = 0; i < this.cart.itemsInCart.length; i++){
+            sum += (this.cart.itemsInCart[i].jpy_price);
+          }
+          this.totalJpyPrice = sum;
+
+          return this.totalJpyPrice;
+        },
+        calculateJpyTaxes() {
+          var taxAmount = (parseFloat(this.jpyTaxRate * this.totalJpyPrice))
+          this.jpyTax = taxAmount;
+          return this.jpyTax
+        },
+        calculateJpySubtotal() {
+          return parseFloat((this.totalJpyPrice + this.jpyTax));
+        },
     }
 }
 </script>

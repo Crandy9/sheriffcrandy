@@ -62,9 +62,9 @@
             </section>
             <footer class="modal-card-foot">
               <!-- trigger stripe payment on this item only -->
-              <button @click="modalOpened = false" class="button is-success">Buy Now</button>
+              <button @click="modalOpened = false" class="my-modal-button-buy-now button">Buy Now</button>
               <!-- if adding to cart, add the item to cart and close modal -->
-              <button @click.stop="addFlpToCart(FlpID); modalOpened = false" class="button">Add to Cart</button>
+              <button @click.stop="addFlpToCart(FlpID); modalOpened = false" class="my-modal-button-add-to-cart button">Add to Cart</button>
             </footer>
           </div>
       </div>
