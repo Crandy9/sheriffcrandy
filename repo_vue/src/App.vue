@@ -55,6 +55,7 @@
           <a href="/bio" class="navbar-item">Bio</a>
           <a href="/contact" class="navbar-item">Contact</a>
           <a href="/login" class="navbar-item">{{$t('logIn')}}</a>
+          <a href="/signup" class="navbar-item">Sign Up</a>
           <a href="/cart" class="navbar-item">
               <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
               <!-- cart item count -->
@@ -320,6 +321,8 @@
   @import '../src/assets/styles/my-modal.css';
   @import '../src/assets/styles/my-toast.css';
   @import '../src/assets/styles/my-cart.css';
+  @import '../src/assets/styles/my-login.css';
+  @import '../src/assets/styles/my-signup.css';
 </style>
 
 <!-- hamburger menu animation -->

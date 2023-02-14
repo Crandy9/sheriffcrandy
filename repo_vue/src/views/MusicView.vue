@@ -144,7 +144,10 @@
               <p class="modal-card-title">Buy now?</p>
               <button @click="modalOpened = false" class="delete" aria-label="close"></button>
             </header>
-            <section class="modal-card-body">
+            <section v-if="isFree" class="modal-card-body">
+              Do you want to download "{{ setTrackTitle }}" for free now or add it to your cart and continue shopping?
+            </section>
+            <section v-else class="modal-card-body">
               Do you want to purchase "{{ setTrackTitle }}" now or add it to your cart and continue shopping?
             </section>
             <footer class="modal-card-foot">
@@ -248,6 +251,7 @@ export default {
       // pass trackid to modal
       setTrackID: '',
       setTrackTitle: '',
+      isFree: ''
     }
   },
 
@@ -266,6 +270,7 @@ export default {
       // set track name as well to show in modal popup
       const item = this.tracks.find(item => item.id === track)
       this.setTrackTitle = item.title;
+      this.isFree = item.is_free;
       this.setTrackID = track;
     },
 

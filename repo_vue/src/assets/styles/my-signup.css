@@ -1,0 +1,33 @@
+/* 
+
+    MIX of sign-up/log-in styles
+
+*/
+
+
+/* sign up only */
+
+.my-signup-section {
+    /* padding-top: 4rem;
+    padding-bottom: 10rem;
+
+    padding-right: 30rem;
+    padding-left: 30rem; */
+}
+
+/* both signup/log in */
+label {
+    color: white;
+}
+
+/* both signup/log in */
+.my-errors {
+    padding-top: 2rem;
+}
+
+@media screen and (max-width: 624px) {
+    form {
+        padding-right: 2rem;
+        padding-left: 2rem;
+    }
+}

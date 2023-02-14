@@ -57,7 +57,10 @@
               <p class="modal-card-title">Buy now?</p>
               <button @click="modalOpened = false" class="delete" aria-label="close"></button>
             </header>
-            <section class="modal-card-body">
+            <section v-if="isFree" class="modal-card-body">
+              Do you want to download "{{ FlpName }}" for free now or add it to your cart and continue shopping?
+            </section>
+            <section v-else class="modal-card-body">
               Do you want to purchase "{{ FlpName }}" now or add it to your cart and continue shopping?
             </section>
             <footer class="modal-card-foot">
@@ -133,6 +136,7 @@
         flps: [],
         FlpID: '',
         FlpName: '',
+        isFree: ''
       }
     },
   
@@ -148,9 +152,10 @@
     methods: {
       // called in modal popup on FREE or price button click
       setFlpId(flp) {
-        // set flp name as well to show in modal popup
+        // set flp name and whether it is free well to show in modal popup
         const item = this.flps.find(item => item.id === flp)
         this.FlpName = item.flp_name;
+        this.isFree = item.flp_is_free;
         this.FlpID = flp;
       },
 

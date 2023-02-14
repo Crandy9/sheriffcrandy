@@ -10,6 +10,7 @@
         </h2>
       </div>
       <table class="my-cart-items-table" v-if="cartTotalLength">
+        <a class="my-clear-cart-button" @click="clearCart()">Clear Cart</a>
         <tbody class="my-cart-items">
           <!-- loop through all items in cart -->
           <tr class="my-table-row" v-for="item in cart.itemsInCart">
@@ -46,7 +47,6 @@
 
     <!-- cart footer -->
     <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
-      <a class="my-clear-cart-button" @click="clearCart()">Clear Cart</a>
       <!-- <p class="my-subtotal">
         <span>Total:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTotal }}</span>

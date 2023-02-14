@@ -181,7 +181,7 @@
         display: block;
         /* position nav items when hamburger opens */
         padding-left: 6rem;
-        padding-top: 6rem;
+        padding-top: 3rem;
         /* during nav menu transition, the nav items 'jump' into position
             which makes it look ugly. To remedy that, fade the nav items in
             after the nav menu has fully transitioned

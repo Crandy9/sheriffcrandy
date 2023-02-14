@@ -144,8 +144,8 @@
 }
 
 .my-clear-cart-button {
-    padding: 0.4rem;
-    background-color: rgb(255, 0, 0);
+    padding: 0.5rem;
+    background-color: rgb(99, 0, 99);
     color: rgb(255, 255, 255);
     box-sizing: border-box;
     font-size: medium !important;
