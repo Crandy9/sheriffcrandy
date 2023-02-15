@@ -4,30 +4,60 @@
 
 */
 
+/* section */
+.my-login-signup-section {
+    padding-top: 4rem;
 
-/* sign up only */
+}
 
-.my-signup-section {
-    /* padding-top: 4rem;
-    padding-bottom: 10rem;
+/* mobile screen */
+@media screen and (max-width: 1024px) {
+    .my-login-signup-section {
+        padding-top: 4rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        padding-bottom: 2rem;
 
-    padding-right: 30rem;
-    padding-left: 30rem; */
+    }
 }
 
 /* both signup/log in */
 label {
     color: white;
 }
+/* padding between each field */
+.control {
+    padding-bottom: 1rem;
+}
 
 /* both signup/log in */
 .my-errors {
-    padding-top: 2rem;
+    padding-top: 0.5rem;
 }
 
-@media screen and (max-width: 624px) {
-    form {
-        padding-right: 2rem;
-        padding-left: 2rem;
+@media screen and (max-width: 768px) {
+    .my-signup-section {
+        padding: 3rem;
     }
+}
+
+/* signup login button */
+.login-signup-button {
+    /* button color */
+    background-color: rgb(0, 128, 107);
+    /* button text color */
+    color: white;
+}
+
+/* signup login button */
+.login-signup-button:hover {
+    /* button color */
+    background-color: rgb(0, 90, 75);
+    /* button text color */
+    color: white;
+}
+
+.signup-login-reroute {
+    color: rgb(255, 230, 0);
+    padding-bottom: 15rem;
 }
