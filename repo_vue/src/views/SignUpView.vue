@@ -19,7 +19,7 @@
                             <label for="">Username</label>
                             <div class="control">
                                 <!-- v-model connects the data var defined below -->
-                                <input type="text" class="input" v-model="username">
+                                <input type="text" name="username" class="input" v-model="username">
                             </div>
                             <!-- email errors-->
                             <div v-if="errors.emailErrors.length">
@@ -32,6 +32,16 @@
                             <div class="control">
                                 <input type="text" class="input" v-model="email">
                             </div>
+                            <!-- firstname -->
+                            <label for="">First Name (not required)</label>
+                            <div class="control">
+                                <input type="text" class="input" v-model="firstname">
+                            </div>
+                            <!-- lastname -->
+                            <label for="">Last Name (not required)</label>
+                            <div class="control">
+                                <input type="text" class="input" v-model="lastname">
+                            </div>
                             <!-- password errors-->
                             <div v-if="errors.passwordErrors.length">
                                 <p class="my-errors" style="color:red" v-for="error in errors.passwordErrors" v-bind:key="error">
@@ -43,7 +53,7 @@
                             <div class="field has-addons">
                                 <div class="control is-expanded">
                                     <input v-if="showPassword" type="text" class="input" v-model="password" />
-                                    <input v-else type="password" class="input" v-model="password">
+                                    <input v-else type="password" name="password" class="input" v-model="password">
                                 </div>
                                 <div class="control">
                                     <button class="button" @click.prevent="toggleShowPassword"><span class="icon is-small is-right">
@@ -100,6 +110,8 @@ export default {
         return {
             username: '',
             email: '',
+            firstname: null,
+            lastname: null,
             password: '',
             re_enter_password: '',
             errors: {
@@ -116,16 +128,18 @@ export default {
     },
     methods: {
         submitForm() {
-            console.log('submitform clicked')
             // reset errors
             this.errors.usernameErrors = []
             this.errors.emailErrors = []
             this.errors.passwordErrors = []
             this.errors.re_enter_passwordErrors = []
+            // var to hold post data
+            const signUpFormData = {}
 
 
-            // validate fields
+            // client side validation
             // USERNAME
+            // if username is empty
             if (this.username === '') {
                 this.errors.usernameErrors.push('Username is required')
             }
@@ -133,6 +147,8 @@ export default {
             if (this.email === '') {
                 this.errors.emailErrors.push('Email is required. Please enter a valid email address')
             }
+            // if email is already used
+
             // PASSWORD
             if (this.password === '') {
                 this.errors.passwordErrors.push('Password field cannot be empty. Please enter a strong password')
@@ -145,6 +161,58 @@ export default {
             if (this.password !== this.re_enter_password) {
                 this.errors.passwordErrors.push('Passwords do not match')
 
+            }
+
+
+
+            // if no errors, submit the form and authenticate user
+            if (!this.errors.usernameErrors.length && !this.errors.emailErrors.length && !this.errors.passwordErrors.length && !this.errors.re_enter_passwordErrors.length) {
+                console.log('form is valid')
+
+                // if firstname and last name were not entered
+                if (this.firstname === null && this.lastname === null) {
+                    // send data to server
+                    signUpFormData = {
+                        username: this.username,
+                        email: this.email,
+                        password: this.password
+                    }
+
+                    // post data to backend server
+                }
+                // if only firstname was entered
+                else if (this.firstname !== null && this.lastname === null) {
+                    signUpFormData = {
+                        username: this.username,
+                        firstname: this.firstname,
+                        email: this.email,
+                        password: this.password
+                    }
+                }
+                // if only lastname was entered
+                else if (this.firstname === null && this.lastname !== null) {
+                    signUpFormData = {
+                        username: this.username,
+                        lastname: this.lastname,
+                        email: this.email,
+                        password: this.password
+                    }
+                }
+                // if lastname and lastname were entered
+                else if (this.firstname !== null && this.lastname !== null) {
+                    signUpFormData = {
+                        username: this.username,
+                        firstname: this.firstname,
+                        lastname: this.lastname,
+                        email: this.email,
+                        password: this.password
+                    }
+                }
+                // send post data to backend server
+                // axios.post("")
+            }
+            else {
+                console.log('form is invalid, errors')
             }
 
         },

@@ -54,7 +54,10 @@ python3 -m venv env
 - Once your env is activated, install Django and other dependencies:
 
 pip install django (the backend framework)
-pip install django-rest-framework (creating the backend API)
+pip install django-rest-framework (creating the backend API, creates djangorestframework dir as well)
+pip install djangorestframework-simplejwt (Simple JWT provides a JSON Web Token authentication backend for the Django REST Framework. Updated framework from djangorestframework-jwt which is now deprecated)
+pip install pyjwt (Python library which allows you to encode and decode JSON Web Tokens JWT)
+pip install social-auth-app-django (for 3rd party auth Facebook, Google, LinkedIn, etc.)
 pip install django-cors-headers (provides security between backend and API)
 pip install pip install djoser (assists with user auth)
 pip install pillow (image processing)

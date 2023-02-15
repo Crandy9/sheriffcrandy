@@ -4,7 +4,7 @@
             <div class="columns">
                 <div class="column is-6 is-offset-3">
                     <h1 class="title">
-                        Login cuz!
+                        Login
                     </h1>
                     <!-- sign up form prevent default action -->
                     <form @submit.prevent="submitForm">
@@ -46,27 +46,7 @@
                                         </span>
                                     </button>
                                 </div>
-                            </div>  
-                            <!-- re-enter password errors-->
-                            <div class="my-errors" v-if="errors.re_enter_passwordErrors.length">
-                                <p style="color:red" v-for="error in errors.re_enter_passwordErrors" v-bind:key="error">
-                                <span style="color:red !important">*</span> {{ error }}
-                                </p>                           
                             </div>
-                            <!--re-enter password -->
-                            <label for="">Re-enter Password</label>
-                            <div class="field has-addons">
-                                <div class="control is-expanded">
-                                    <input v-if="showReEnterPassword" type="text" class="input" v-model="re_enter_password" />
-                                    <input v-else type="password" class="input" v-model="re_enter_password">
-                                </div>
-                                <div class="control">
-                                    <button class="button" @click.prevent="toggleShowReEnterPassword"><span class="icon is-small is-right">
-                                        <i class="fas" :class="{ 'fa-eye-slash': showReEnterPassword, 'fa-eye': !showReEnterPassword }"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>  
                             <!-- errors need to make them specific for each field-->
                             <div class="notification is-danger" v-if="errors.length">
                                 <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
@@ -99,15 +79,12 @@ export default {
         return {
             username_or_email: '',
             password: '',
-            re_enter_password: '',
             errors: {
                 usernameErrors: [],
                 emailErrors: [],
                 passwordErrors: [],
-                re_enter_passwordErrors: [],
             },            
             showPassword: false,
-            showReEnterPassword: false,
         }
     },
     methods: {
@@ -116,7 +93,6 @@ export default {
             this.errors.usernameErrors = []
             this.errors.emailErrors = []
             this.errors.passwordErrors = []
-            this.errors.re_enter_passwordErrors = []
 
 
             // validate fields
@@ -128,16 +104,9 @@ export default {
             if (this.password === '') {
                 this.errors.passwordErrors.push('Please enter your password')
             }
-            // RE-ENTER PASSWORD
-            if (this.re_enter_password === '') {
-                this.errors.re_enter_passwordErrors.push('Please re-enter your password')
-            }
         },
         toggleShowPassword() {
             this.showPassword = !this.showPassword;
-        },
-        toggleShowReEnterPassword() {
-            this.showReEnterPassword = !this.showReEnterPassword;
         },
     }
 }

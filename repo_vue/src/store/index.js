@@ -2,27 +2,38 @@ import { createStore } from 'vuex'
 // cart implementation, authentication, etc.
 // 
 export default createStore({
-  // state are vars
+  // state are vars that persist
   state: {
+
+    // web token used for authentication
+    token: '',
+    isAuthenticated: false,
+    // set up cart state
     cart: {
         itemsInCart: [],
     },
-    isAuthenticated: false,
-    // used for login
-    token: '',
     // show loading bar for cart
     isLoading: false,
-    // trackItemsInCart: [],
-    // flpItemsInCart: [],
   },
   getters: {
   },
-  // synchronous vars; add functionality
+  // synchronous functions; change states
   mutations: {
 
-    // called
+    // called on app load/page refresh in App.vue entry point
     initializeStore(state) {
-      // check if item exists in local browser storage
+
+      // check if user has a web token (logged in)
+      if (localStorage.getItem('token')) {
+        state.token = localStorage.getItem('token')
+        state.isAuthenticated = true
+      }
+      else {
+        state.token = ''
+        state.isAuthenticated = false
+      }
+
+      // check if cart exists in local browser storage
       if (localStorage.getItem('cart')) {
           // get obj from storage if it exists
           state.cart = JSON.parse(localStorage.getItem('cart'))
@@ -32,6 +43,19 @@ export default createStore({
           localStorage.setItem('cart', JSON.stringify(state.cart))
       }
     },
+
+    // set web token
+    setToken(state, token) {
+      state.token = token
+      state.isAuthenticated = true
+    },
+
+    // remove token for logout
+    removeToke(state, token) {
+      state.token = ''
+      state.isAuthenticated = false
+    },
+
     // add items to cart
     addToCart(state, item) {
 

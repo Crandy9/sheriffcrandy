@@ -327,6 +327,9 @@
 
 <!-- hamburger menu animation -->
 <script>
+
+// import axios for retrieving web token from backend api
+import axios from 'axios'
 // change hamburger clicked boolean
 export default {
   data () {
@@ -340,10 +343,22 @@ export default {
       },
     }
   },
-  // initialize the store. First method that is called for cart
+  // initialize the store. First method that is called when app is loaded/page refreshed
   beforeCreate() {
-    // commit calls initializeStore function in mutations in store/index.js
+    // commit calls initializeStore function in mutations in store/index.js to setup cart/web token
     this.$store.commit('initializeStore') 
+
+    // get the web token from store
+    const token = this.$store.state.token
+
+    if (token) {
+      // set web token if it exists for api
+      axios.defaults.headers.common['Authorization'] = "Token " + token
+    }
+    // else set token to nothing (not authenticated; returns 402 response)
+    else {
+      axios.defaults.headers.common['Authorization'] = ''
+    }
   },
 
   mounted() {

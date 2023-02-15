@@ -1,6 +1,9 @@
 # manually created serializers.py file created to turn DB data into JSON to be used by frontend
 from rest_framework import serializers
 from .models import *
+# import User
+from django.contrib.auth.models import User
+
 
 # audio files
 class TrackSerializer(serializers.ModelSerializer):

@@ -1,0 +1,12 @@
+django rest framework commands to test api is working
+from terminal:
+- make sure django server is running/env is activated
+python manage.py runserver
+
+--login: 
+curl -X POST http://127.0.0.1:8000/sc/api/v1/token/login --data 'username=USERNAME&password=PASSWORD'
+
+-- will return token if creds are valid
+
+-- access api data with token retrieved in above step:
+curl -LX GET http://127.0.0.1:8000/your/api/path -H 'Authorization: Token TOKEN'

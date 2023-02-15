@@ -20,6 +20,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# rest framework global settings
+# authentication classes: https://www.django-rest-framework.org/api-guide/settings/#default_authentication_classes
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    # permission policy: https://www.django-rest-framework.org/api-guide/permissions/#setting-the-permission-policy
+    # can override these in main view
+    'DEFAULT_PERMISSION_CLASSES': (
+        # 'rest_framework.permissions.AllowAny', # allow anyone to access api data
+        'rest_framework.permissions.IsAuthenticated', # do not allow anyone to access API endpoints unless user is authenticated
+
+    )
+}
+
 
 # Application definition
 
@@ -34,12 +49,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    # djoser is a REST implementation of Django authentication system
+    # djoser is a REST implementation of Django authentication system. Provides token based authentication
     'djoser',
     'products'
 ]
 
-# address to frontend. Change to live server address for production
+# frontend server. Change to live server address for production
 ADDRESS = env('ALLOWED_ORIGINS')
 CORS_ALLOWED_ORIGINS = [
     ADDRESS, 

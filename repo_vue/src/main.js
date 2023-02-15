@@ -20,8 +20,10 @@ const i18n = createI18n({
     }
 })
 
-// define API server path for axios
+// define backend API server path for axios
 // process.env is already built in by VUE. Simply create and define .env file in root dir
+//  for VUE JS env vars, need to have `VUE_APP` prepended
+//  to variable name
 axios.defaults.baseURL = (process.env.VUE_APP_BACKEND_URL)
 
 createApp(App).use(store).use(router, axios).use(i18n).mount('#app')
