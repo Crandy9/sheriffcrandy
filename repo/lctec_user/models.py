@@ -49,9 +49,9 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(db_index=True, max_length=64, unique=True)
 
     # non-req'd fields
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    favorite_color = models.CharField(max_length=20)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    favorite_color = models.CharField(max_length=20, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
     # if user is allowed access to admin site. 

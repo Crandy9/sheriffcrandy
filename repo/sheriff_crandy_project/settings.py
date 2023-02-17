@@ -70,6 +70,8 @@ AUTH_USER_MODEL = 'lctec_user.Lctec_User'
 
 # add custom backend, if it fails, Django will use default backend
 # also may be needed for admin page
+#  to set custom backend, use this syntax:
+# appname.backendfile.pyname.modelname
 AUTHENTICATION_BACKENDS = (
     'sheriff_crandy_project.lctec_backend.Lctec_Backend',
     # 'django.contrib.auth.backends.ModelBackend',

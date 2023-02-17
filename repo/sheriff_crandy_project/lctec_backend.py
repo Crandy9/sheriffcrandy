@@ -10,11 +10,8 @@ MyUser = get_user_model()
 
 
 class Lctec_Backend(object):
-    def authenticate(self, username=None, password=None, **kwargs):
-        # if '@' in username:
-        #     kwargs = {'email': username}
-        # else:
-        #      kwargs = {'username': username}
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        print("backend accessed")
         try:
             # Try to fetch the user by searching the username or email field
             user = MyUser.objects.get(Q(username=username)|Q(email=username))
