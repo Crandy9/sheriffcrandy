@@ -67,10 +67,14 @@ pip install stripe (payment processor for handling secure payments)
 pip install psycopg2 (database adapter for PostgreSQL DB)
 install pgadmin4 desktop tool for DB management (https://www.pgadmin.org/download/)
 
-Note: need to create empty DB in either psql shell or pgadmin tool before running python manage.py makemigrations and python manage.py migrate
-- create new Django project:
+*** Note: You need to create empty DB in either psql shell or pgadmin tool before running python manage.py makemigrations and python manage.py migrate (If you want to use custom user model, DO NOT RUN python manage.py makemigrations/migrate until you have created your custom user model, otherwise Django will revert to its default User Model. Changing from Django's default user model to a custom user model is possible, but unsupported and prone to many errors. Do this first before anything else if that's what you want for your app)
+- activate env
+(linux) . env/bin.activate
+- create new Django project (make sure you are in dir you want project to be created):
 django-admin startproject yourprojectname
 - run python manage.py runserver to start django backend development server on localhost:8000
+- create app (sub projects; make sure you are in project root directory)
+python manage.py startapp my app name
 
 
 ****   

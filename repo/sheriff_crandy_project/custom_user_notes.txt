@@ -1,0 +1,27 @@
+***
+
+If you want to use custom user model, 
+DO NOT RUN python manage.py makemigrations/migrate until 
+you have created your custom user model, 
+otherwise Django will revert to its default User Model. 
+Changing from Django's default user model to a 
+custom user model is possible, but unsupported 
+and prone to many errors. Do this first before anything 
+else if that's what you want for your app
+
+***
+
+in root dir:
+
+- activate env
+(linux) . env/bin/activate
+- create your user app
+python manage.py startapp your_custom_user_app_name
+- go to your main project's settings.py file and in the INSTALLED_APPS dictionary add this app:
+'your_custom_user_app_name'
+see src for model/view/urls setup. Modify as desired.
+
+- When you are satisfied with your user, run:
+python manage.py makemigrations
+- and then:
+python manage.py migrate
