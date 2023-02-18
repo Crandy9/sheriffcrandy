@@ -6,7 +6,7 @@ export default createStore({
   state: {
 
     // web token used for authentication
-    token: '',
+    sf_auth_bearer: '',
     isAuthenticated: false,
     // set up cart state
     cart: {
@@ -24,12 +24,12 @@ export default createStore({
     initializeStore(state) {
 
       // check if user has a web token (logged in)
-      if (localStorage.getItem('token')) {
-        state.token = localStorage.getItem('token')
+      if (localStorage.getItem('sf_auth_bearer')) {
+        state.sf_auth_bearer = localStorage.getItem('sf_auth_bearer')
         state.isAuthenticated = true
       }
       else {
-        state.token = ''
+        state.sf_auth_bearer = ''
         state.isAuthenticated = false
       }
 
@@ -45,14 +45,14 @@ export default createStore({
     },
 
     // set web token
-    setToken(state, token) {
-      state.token = token
+    setToken(state, sf_auth_bearer) {
+      state.sf_auth_bearer = sf_auth_bearer
       state.isAuthenticated = true
     },
 
     // remove token for logout
-    removeToke(state, token) {
-      state.token = ''
+    removeToken(state, sf_auth_bearer) {
+      state.sf_auth_bearer = ''
       state.isAuthenticated = false
     },
 
@@ -81,7 +81,6 @@ export default createStore({
         // if track already exists
         // TODO: what to do if attempted duplicate cart item
         if (pendingTrackCartItem.length) {
-            console.log("Track " + item.title + ' already added to cart')
         }
         // else if it doesn't exist push this track to the cart
         else {
@@ -97,7 +96,6 @@ export default createStore({
         const pendingFlpCartItem = state.cart.itemsInCart.filter(i => i.flp_name === item.flp_name)
         // TODO: what to do if attempted duplicate cart item
         if (pendingFlpCartItem.length) {
-            console.log("Flp " + item.flp_name + ' already added to cart')
           }
         // else if it doesn't exist push this track/flp to the cart
         else {
@@ -145,11 +143,9 @@ export default createStore({
           state.cart.itemsInCart.splice(index, 1);
           // save cart storage data
           localStorage.setItem('cart', JSON.stringify(state.cart))
-          console.log("Track " + item.title + ' removed from cart')
         }
         // else if it doesn't exist just return
         else {
-          console.log('item not in cart')
           return
         }
 
@@ -170,11 +166,9 @@ export default createStore({
           state.cart.itemsInCart.splice(index, 1);
           // save cart storage data
           localStorage.setItem('cart', JSON.stringify(state.cart))
-          console.log("Flp " + item.flp_name + ' removed from cart')
         }
         // else if it doesn't exist just return
         else {
-          console.log('item not in cart')
           return
         }
       }
@@ -182,7 +176,6 @@ export default createStore({
 
     // remove all data from cart
     clearCart(state) {
-      console.log('clearing cart')
 
       state.cart.itemsInCart = [];
       // update local storage

@@ -10,3 +10,5 @@ curl -X POST http://127.0.0.1:8000/sc/api/v1/token/login --data 'username=USERNA
 
 -- access api data with token retrieved in above step:
 curl -LX GET http://127.0.0.1:8000/your/api/path -H 'Authorization: Token TOKEN'
+
+-- users will be located at sc/api/v1/users/

@@ -17,7 +17,7 @@ in root dir:
 (linux) . env/bin/activate
 - create your user app
 python manage.py startapp your_custom_user_app_name
-- go to your main project's settings.py file and in the INSTALLED_APPS dictionary add this app:
+- go to your main project's settings.py file and in the INSTALLED_APPS dictionary add your user app:
 'your_custom_user_app_name'
 see src for model/view/urls setup. Modify as desired.
 

@@ -179,14 +179,14 @@
         // replace the API path with env var
         // .get requests API data from server via HTTP GET
         // .then will take the response data and populate the empty flps list above
-        await axios.get(process.env.VUE_APP_FLPS_API__URL)
+        await axios.get(process.env.VUE_APP_FLPS_API_URL)
           .then(response => {
             this.flps = response.data
             document.title = 'Flps'
           })
           .catch(error => {
             console.log("ERROR BOYY: " + error)
-            console.log(process.env.VUE_APP_FLPS_API__URL)
+            console.log(process.env.VUE_APP_FLPS_API_URL)
           })
 
         // stop loading bar after api data is fetched

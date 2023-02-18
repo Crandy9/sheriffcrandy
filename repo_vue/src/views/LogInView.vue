@@ -10,14 +10,8 @@
                     <form @submit.prevent="submitForm">
                         <div class="field">
                             <!-- username/email errors-->
-                            <div class="my-errors" v-if="errors.usernameErrors.length">
-                                <p style="color:red" v-for="error in errors.usernameErrors" v-bind:key="error">
-                                <span style="color:red !important">*</span> {{ error }}
-                                </p>                           
-                            </div>
-                            <!-- username/email errors-->
-                            <div class="my-errors" v-else-if="errors.emailErrors.length">
-                                <p style="color:red" v-for="error in errors.emailErrors" v-bind:key="error">
+                            <div class="my-errors" v-if="errors.usernameOrEmailErrors.length">
+                                <p style="color:red" v-for="error in errors.usernameOrEmailErrors" v-bind:key="error">
                                 <span style="color:red !important">*</span> {{ error }}
                                 </p>                           
                             </div>
@@ -80,8 +74,7 @@ export default {
             username_or_email: '',
             password: '',
             errors: {
-                usernameErrors: [],
-                emailErrors: [],
+                usernameOrEmailErrors: [],
                 passwordErrors: [],
             },            
             showPassword: false,
@@ -90,19 +83,59 @@ export default {
     methods: {
         submitForm() {
             // reset errors
-            this.errors.usernameErrors = []
-            this.errors.emailErrors = []
+            this.errors.usernameOrEmailErrors = []
             this.errors.passwordErrors = []
 
 
             // validate fields
             // USERNAME/EMAIL
             if (this.username_or_email === '') {
-                this.errors.usernameErrors.push('Please enter your username or email address to login')
+                this.errors.usernameOrEmailErrors.push('Please enter your username or email address to login')
             }
             // PASSWORD
             if (this.password === '') {
                 this.errors.passwordErrors.push('Please enter your password')
+            }
+            // if no errors, submit the form and authenticate user
+            if (!this.errors.usernameOrEmailErrors.length && !this.errors.passwordErrors.length ) {
+                // var to hold post data
+                // keys must be same strings as model fields in backend api user model
+                // values can be named whatever
+                const loginFormData = {
+                    username: this.username_or_email,
+                    password: this.password,
+                }
+
+                // send post data to backend server
+                axios
+                    .post(process.env.VUE_APP_AUTHENTICATE_USERS_API_URL, loginFormData)
+                    .then(response => {
+
+                        // if it works, re-route to login 
+                        // set auth token
+                        const token = response.data.auth_token
+                        // set token in store which sets is_authenticated var to true
+                        this.$store.commit('setToken', token)
+                        // setting token in axios header
+                        axios.defaults.headers.common['Authorization'] = 'Token ' + token
+                        // 
+                        localStorage.setItem("sf_auth_bearer", token)
+                        // re-route to homepage
+                        this.$router.push('/')
+                    })
+                    .catch(error => {
+
+                        // need to push server errors to frontend
+                        // 
+                        // {"non_field_errors":[
+                            // "Unable to log in with provided credentials."
+                            //     ]
+                            // }
+                        console.log("Didn't work bic boii: " + JSON.stringify(error.response.data))
+                    })
+            }
+            else {
+                console.log('form is invalid')
             }
         },
         toggleShowPassword() {

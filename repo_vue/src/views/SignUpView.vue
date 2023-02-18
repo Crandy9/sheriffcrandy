@@ -30,17 +30,23 @@
                             <!-- email -->
                             <label for="">Email Address</label>
                             <div class="control">
-                                <input type="text" class="input" v-model="email">
+                                <input type="email" name="email" class="input" v-model="email">
                             </div>
-                            <!-- firstname -->
+                            <!-- not required fields -->
+                            <!-- first_name -->
                             <label for="">First Name (not required)</label>
                             <div class="control">
-                                <input type="text" class="input" v-model="firstname">
+                                <input type="text" class="input" v-model="first_name">
                             </div>
                             <!-- lastname -->
                             <label for="">Last Name (not required)</label>
                             <div class="control">
-                                <input type="text" class="input" v-model="lastname">
+                                <input type="text" class="input" v-model="last_name">
+                            </div>
+                            <!-- fav color -->
+                            <label for="">Favorite Color (not required)</label>
+                            <div class="control">
+                                <input type="text" class="input" v-model="favorite_color">
                             </div>
                             <!-- password errors-->
                             <div v-if="errors.passwordErrors.length">
@@ -110,10 +116,11 @@ export default {
         return {
             username: '',
             email: '',
-            firstname: null,
-            lastname: null,
+            first_name: '',
+            last_name: '',
             password: '',
             re_enter_password: '',
+            favorite_color: '',
             errors: {
                 usernameErrors: [],
                 emailErrors: [],
@@ -133,8 +140,6 @@ export default {
             this.errors.emailErrors = []
             this.errors.passwordErrors = []
             this.errors.re_enter_passwordErrors = []
-            // var to hold post data
-            const signUpFormData = {}
 
 
             // client side validation
@@ -143,73 +148,68 @@ export default {
             if (this.username === '') {
                 this.errors.usernameErrors.push('Username is required')
             }
+
             // EMAIL
             if (this.email === '') {
                 this.errors.emailErrors.push('Email is required. Please enter a valid email address')
             }
-            // if email is already used
 
             // PASSWORD
             if (this.password === '') {
                 this.errors.passwordErrors.push('Password field cannot be empty. Please enter a strong password')
             }
+
             // RE-ENTER PASSWORD
             if (this.re_enter_password === '') {
                 this.errors.re_enter_passwordErrors.push('Please re-enter your password')
             }
 
+            // if passwords don't match
             if (this.password !== this.re_enter_password) {
                 this.errors.passwordErrors.push('Passwords do not match')
-
             }
 
 
 
             // if no errors, submit the form and authenticate user
             if (!this.errors.usernameErrors.length && !this.errors.emailErrors.length && !this.errors.passwordErrors.length && !this.errors.re_enter_passwordErrors.length) {
-                console.log('form is valid')
+                // var to hold post data
+                // keys must be same strings as model fields in backend api
+                // values can be named whatever
+                const signUpFormData = {
+                    username: this.username,
+                    email: this.email,
+                    first_name: this.first_name,
+                    last_name: this.last_name,
+                    favorite_color: this.favorite_color,
+                    password: this.password,
+                }
 
-                // if firstname and last name were not entered
-                if (this.firstname === null && this.lastname === null) {
-                    // send data to server
-                    signUpFormData = {
-                        username: this.username,
-                        email: this.email,
-                        password: this.password
-                    }
-
-                    // post data to backend server
-                }
-                // if only firstname was entered
-                else if (this.firstname !== null && this.lastname === null) {
-                    signUpFormData = {
-                        username: this.username,
-                        firstname: this.firstname,
-                        email: this.email,
-                        password: this.password
-                    }
-                }
-                // if only lastname was entered
-                else if (this.firstname === null && this.lastname !== null) {
-                    signUpFormData = {
-                        username: this.username,
-                        lastname: this.lastname,
-                        email: this.email,
-                        password: this.password
-                    }
-                }
-                // if lastname and lastname were entered
-                else if (this.firstname !== null && this.lastname !== null) {
-                    signUpFormData = {
-                        username: this.username,
-                        firstname: this.firstname,
-                        lastname: this.lastname,
-                        email: this.email,
-                        password: this.password
-                    }
-                }
                 // send post data to backend server
-                // axios.post("")
+                axios
+                    .post(process.env.VUE_APP_CREATE_USERS_API_URL, signUpFormData)
+                    .then(response => {
+
+                        // if it works, re-route to login 
+                        this.$router.push('/login')
+                    })
+                    // catch the error data, strip it down to category, and push
+                    // each error to the appropraite error array
+                    // errors look like this:
+
+                    /** 
+                    {"password":
+                        [
+                            "The password is too similar to the username.",
+                            "This password is too short. It must contain at least 8 characters.",
+                            "This password is too common.",
+                            "The password is too similar to the email.",
+                        ]
+                    }
+                    **/
+                    .catch(error => {
+                        console.log("Didn't work bic boii: " + JSON.stringify(error.response.data))
+                    })
             }
             else {
                 console.log('form is invalid, errors')

@@ -5,19 +5,22 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 # custom user manager
 class Lctec_CustomUserManager(BaseUserManager):
 
-    # private method to save user to db
-    def _create_user(self, email, username, password, first_name, last_name, favorite_color, **extra_fields):
+
+
+    # called when creating user through terminal and presumably drf
+    # only pass in req params, all other unrequired params like
+    # first/lastname, favorite color, etc. will be held in **extra_fields param
+    def create_user(self, email, username, password, **extra_fields):
+        
+        print('\n\n\nCREATING USER \n\n\n')
         if not email:
             raise ValueError("Email must be provided")
-        if not password:
-            raise ValueError('Password is not provided')
+        if not username:
+            raise ValueError("Username must be provided")
 
         user = self.model(
             email = self.normalize_email(email),
             username = username,
-            first_name = first_name,
-            last_name = last_name,
-            favorite_color = favorite_color,
             **extra_fields
         )
 
@@ -25,19 +28,16 @@ class Lctec_CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    # called when creating user through terminal and presumably drf
-    def create_user(self, email, username, password, first_name, last_name, favorite_color, **extra_fields):
-        extra_fields.setdefault('is_staff',False)
-        extra_fields.setdefault('is_active',True)
-        extra_fields.setdefault('is_superuser',False)
-        return self._create_user(email, username, password, first_name, last_name, favorite_color, **extra_fields)
-
     # called when creating superuser through terminal and presumably drf
-    def create_superuser(self, email, username, password, first_name, last_name, favorite_color, **extra_fields):
+    def create_superuser(self, email, username, password, **extra_fields):
+
         extra_fields.setdefault('is_staff',True)
-        extra_fields.setdefault('is_active',True)
         extra_fields.setdefault('is_superuser',True)
-        return self._create_user(email, username, password, first_name, last_name, favorite_color, **extra_fields)
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+        return self.create_user(email, username, password, **extra_fields)
     
 
 # Custom User Model; define fields you want to be included in User Model, can be updated changed later

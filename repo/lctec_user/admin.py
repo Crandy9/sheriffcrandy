@@ -9,3 +9,4 @@ class CustomUserAdmin(admin.ModelAdmin):
         # put all other fields you want to be shown in listing
         'username',
     )
+    readonly_fields = ['id',]

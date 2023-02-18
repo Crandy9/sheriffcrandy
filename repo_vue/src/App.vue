@@ -54,6 +54,8 @@
           <a href="/tools" class="navbar-item">Tools I Use</a>
           <a href="/bio" class="navbar-item">Bio</a>
           <a href="/contact" class="navbar-item">Contact</a>
+          <!-- check if user is logged in or not -->
+          <!-- <a v-if="$store.isAuthenticated === true" href="/logout" class="navbar-item">{{$t('logout')}}</a> -->
           <a href="/login" class="navbar-item">{{$t('logIn')}}</a>
           <a href="/signup" class="navbar-item">Sign Up</a>
           <a href="/cart" class="navbar-item">

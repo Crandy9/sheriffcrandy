@@ -2,20 +2,21 @@
 from rest_framework import serializers
 from .models import *
 # import Lctec_user
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 
+User = get_user_model()
+class LcTecSerializer(serializers.ModelSerializer):
 
-# audio files
-# class LcTecSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = User
+        fields = (
+            'username, password'
+        )
+        extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
-#     password = serializers.CharField(
-#         min_length=6, write_only=True, required=True)
-    
-#     class Meta:
-#         model = User
-#         fields = (
-#             'id', 'email', 'password', 'is_staff',
-#             'is_active', 'date_joined')
-
-#     def create(self, validated_data):
-#         return User.objects.create_user(**validated_data)
+    # def create(self, response, validated_data):
+    #     print('\n\n\nCREATING USER \n\n\n')
+    #     User = get_user_model()
+    #     user = User.objects.create_user(response, **validated_data)
+    #     return user
