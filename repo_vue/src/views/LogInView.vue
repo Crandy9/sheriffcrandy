@@ -9,6 +9,12 @@
                     <!-- sign up form prevent default action -->
                     <form @submit.prevent="submitForm">
                         <div class="field">
+                            <!-- general errors-->
+                            <div class="my-errors" v-if="errors.generalErrors.length">
+                                <p style="color:red" v-for="error in errors.generalErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                           
+                            </div>
                             <!-- username/email errors-->
                             <div class="my-errors" v-if="errors.usernameOrEmailErrors.length">
                                 <p style="color:red" v-for="error in errors.usernameOrEmailErrors" v-bind:key="error">
@@ -74,6 +80,7 @@ export default {
             username_or_email: '',
             password: '',
             errors: {
+                generalErrors: [],
                 usernameOrEmailErrors: [],
                 passwordErrors: [],
             },            
@@ -83,6 +90,7 @@ export default {
     methods: {
         submitForm() {
             // reset errors
+            this.errors.generalErrors = []
             this.errors.usernameOrEmailErrors = []
             this.errors.passwordErrors = []
 
@@ -124,14 +132,14 @@ export default {
                         this.$router.push('/')
                     })
                     .catch(error => {
-
-                        // need to push server errors to frontend
-                        // 
-                        // {"non_field_errors":[
-                            // "Unable to log in with provided credentials."
-                            //     ]
-                            // }
-                        console.log("Didn't work bic boii: " + JSON.stringify(error.response.data))
+                        if (error.response) {
+                            this.errors.generalErrors.push("username and/or password is invalid")
+                        } 
+                        
+                        else if (error.message) {
+                            this.errors.generalErrors.push('Oops! Something went wrong, please try again later.')
+                            console.log("Didn't work bic boii: " + JSON.stringify(error.response.data))
+                        }
                     })
             }
             else {

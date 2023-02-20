@@ -129,21 +129,29 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
+'''
 AUTH_PASSWORD_VALIDATORS = [
+
+    
     {
+        # checks if the user name/password is similiar to password
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
+        # minimum length of a password. Don't really need this for my website
+        # warn user in frontend to change password but don't force it
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
+        # checks against commonly used passwords
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
-    {
+        # prevents password from being entirely numeric
+    {   
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+'''
 
 
 # Internationalization

@@ -9,6 +9,12 @@
                     <!-- sign up form prevent default action -->
                     <form @submit.prevent="submitForm">
                         <div class="field">
+                            <!-- general errors -->
+                            <div v-if="errors.generalErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.generalErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                            </div>
                             <!-- username errors-->
                             <div v-if="errors.usernameErrors.length">
                                 <p class="my-errors" style="color:red" v-for="error in errors.usernameErrors" v-bind:key="error">
@@ -122,6 +128,7 @@ export default {
             re_enter_password: '',
             favorite_color: '',
             errors: {
+                generalErrors: [],
                 usernameErrors: [],
                 emailErrors: [],
                 passwordErrors: [],
@@ -136,6 +143,7 @@ export default {
     methods: {
         submitForm() {
             // reset errors
+            this.errors.generalErrors = []
             this.errors.usernameErrors = []
             this.errors.emailErrors = []
             this.errors.passwordErrors = []
@@ -168,6 +176,14 @@ export default {
             if (this.password !== this.re_enter_password) {
                 this.errors.passwordErrors.push('Passwords do not match')
             }
+            // if password is similiar to username
+            if (this.username.includes(this.password) && this.re_enter_password !== '') {
+                this.errors.passwordErrors.push('Password is too similar to username')
+            }
+            // if password is similiar to username
+            if (this.email.includes(this.password) && this.re_enter_password !== '') {
+                this.errors.passwordErrors.push('Password is too similar to email')
+            }
 
 
 
@@ -190,25 +206,47 @@ export default {
                     .post(process.env.VUE_APP_CREATE_USERS_API_URL, signUpFormData)
                     .then(response => {
 
-                        // if it works, re-route to login 
+                        // add toast message
+                        toast({
+                            message: 'Account created. Please log in!',
+                            type: 'is-success',
+                            dismissible: true,
+                            pauseOnHover: true,
+                            duration: 3000,
+                            position: 'bottom-right',
+                            animate: { in: 'fadeIn', out: 'fadeOut' },
+                        })
+
+                        // if account was created, re-route to login 
                         this.$router.push('/login')
                     })
                     // catch the error data, strip it down to category, and push
                     // each error to the appropraite error array
-                    // errors look like this:
-
-                    /** 
-                    {"password":
-                        [
-                            "The password is too similar to the username.",
-                            "This password is too short. It must contain at least 8 characters.",
-                            "This password is too common.",
-                            "The password is too similar to the email.",
-                        ]
-                    }
-                    **/
+                    
                     .catch(error => {
-                        console.log("Didn't work bic boii: " + JSON.stringify(error.response.data))
+
+                        if (error.response) {
+                            for (const property in error.response.data) {
+                                // disabled server side password validation
+                                // if (property === 'password') {
+                                //     this.errors.passwordErrors.push(`${error.response.data[property]}`)
+                                // }
+                                
+                                // check if username is already taken
+                                if (property === 'username') {
+                                    this.errors.usernameErrors.push('username already exists')
+                                }
+                                console.log(property)
+                                // check if username is already taken
+                                if (property === 'email') {
+                                    this.errors.emailErrors.push('email already exists')
+                                }
+                                console.log(property)
+                            }
+
+                        } else if (error.message) {
+                            this.errors.generalErrors.push('Oops! Something went wrong, please try again later.')
+                        }
                     })
             }
             else {
