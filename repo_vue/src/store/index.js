@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+
 // cart implementation, authentication, etc.
 // 
 export default createStore({
@@ -14,6 +15,7 @@ export default createStore({
     },
     // show loading bar for cart
     isLoading: false,
+    username: '',
   },
   getters: {
   },
@@ -51,7 +53,7 @@ export default createStore({
     },
 
     // remove token for logout
-    removeToken(state, sf_auth_bearer) {
+    removeToken(state) {
       state.sf_auth_bearer = ''
       state.isAuthenticated = false
     },

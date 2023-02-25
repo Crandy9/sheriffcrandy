@@ -27,12 +27,18 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     # permission policy: https://www.django-rest-framework.org/api-guide/permissions/#setting-the-permission-policy
-    # can override these in main view
+    # can override these in views. Don't forget to add a comma
     'DEFAULT_PERMISSION_CLASSES': (
-        # 'rest_framework.permissions.AllowAny', # allow anyone to access api data
-        'rest_framework.permissions.IsAuthenticated', # do not allow anyone to access API endpoints unless user is authenticated
-
-    )
+        # allow anyone to access api data
+        # 'rest_framework.permissions.AllowAny', 
+        # do not allow anyone to access API endpoints unless user is authenticated
+        # 'rest_framework.permissions.IsAuthenticated', 
+        # allow full access to authenticated users, but allow read-only access to unauthenticated users
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer', # makes api views JSON data only
+    ),
 }
 
 

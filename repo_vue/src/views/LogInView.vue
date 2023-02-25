@@ -119,17 +119,34 @@ export default {
                     .post(process.env.VUE_APP_AUTHENTICATE_USERS_API_URL, loginFormData)
                     .then(response => {
 
-                        // if it works, re-route to login 
+                        console.log(JSON.stringify(response))
                         // set auth token
                         const token = response.data.auth_token
                         // set token in store which sets is_authenticated var to true
                         this.$store.commit('setToken', token)
                         // setting token in axios header
                         axios.defaults.headers.common['Authorization'] = 'Token ' + token
-                        // 
+                        // set token in localstorage
                         localStorage.setItem("sf_auth_bearer", token)
+
+                        // get user's username
+                        // const currentUsername = response.data.username
+
+                        // add toast message
+                        toast({
+                            message: 'Welcome back ' + this.username_or_email + '!',
+                            type: 'is-success',
+                            dismissible: true,
+                            pauseOnHover: true,
+                            duration: 3000,
+                            position: 'top-center',
+                            animate: { in: 'fadeIn', out: 'fadeOut' },
+                        })
+                        // check if there is a pending route to be redirected to
+                        // else go to home
+                        const toPath = this.$route.query.to || '/'
                         // re-route to homepage
-                        this.$router.push('/')
+                        this.$router.push(toPath)
                     })
                     .catch(error => {
                         if (error.response) {

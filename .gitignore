@@ -10,9 +10,11 @@ venv/
 .png
 .jpg
 .jpeg
+.zip
 *.wav
 *.mp3
 *.aac
 *.png
 *.jpg
 *.jpeg
+*.zip

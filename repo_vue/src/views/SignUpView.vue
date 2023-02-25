@@ -213,7 +213,7 @@ export default {
                             dismissible: true,
                             pauseOnHover: true,
                             duration: 3000,
-                            position: 'bottom-right',
+                            position: 'top-center',
                             animate: { in: 'fadeIn', out: 'fadeOut' },
                         })
 

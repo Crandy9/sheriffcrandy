@@ -103,7 +103,8 @@
             </div>
             <!-- price -->
             <div class="field has-addons">
-              <div class="control">
+              <!-- had to change class name because 'control' was being used by login/signup forms -->
+              <div class="sheriff-crandy-music-ctrl-panel">
                 <!-- check if this item is already in the cart -->
                 <a class="music-in-cart-button button is-small price-button has-text-weight-medium" 
                   v-if="checkIfTrackIsInCart(track)" 

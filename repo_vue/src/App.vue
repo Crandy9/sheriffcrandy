@@ -54,10 +54,12 @@
           <a href="/tools" class="navbar-item">Tools I Use</a>
           <a href="/bio" class="navbar-item">Bio</a>
           <a href="/contact" class="navbar-item">Contact</a>
+          <!-- show my account link if user is authenticated -->
+          <a v-if="$store.state.isAuthenticated" href="/myaccount" class="navbar-item">My Account</a>
           <!-- check if user is logged in or not -->
-          <!-- <a v-if="$store.isAuthenticated === true" href="/logout" class="navbar-item">{{$t('logout')}}</a> -->
-          <a href="/login" class="navbar-item">{{$t('logIn')}}</a>
-          <a href="/signup" class="navbar-item">Sign Up</a>
+          <a v-if="$store.state.isAuthenticated" href="/logout" class="navbar-item">Log Out</a>
+          <a v-if="!$store.state.isAuthenticated" href="/login" class="navbar-item">{{$t('logIn')}}</a>
+          <a v-if="!$store.state.isAuthenticated" href="/signup" class="navbar-item">Sign Up</a>
           <a href="/cart" class="navbar-item">
               <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
               <!-- cart item count -->

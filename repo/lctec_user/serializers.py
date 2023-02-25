@@ -1,3 +1,6 @@
+'''
+DON'T THINK I EVEN NEED TO REGISTER THIS USERS SERIALIZERS
+
 # manually created serializers.py file created to turn DB data into JSON to be used by frontend
 from rest_framework import serializers
 from .models import *
@@ -15,8 +18,4 @@ class LcTecSerializer(serializers.ModelSerializer):
         )
         extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
-    # def create(self, response, validated_data):
-    #     print('\n\n\nCREATING USER \n\n\n')
-    #     User = get_user_model()
-    #     user = User.objects.create_user(response, **validated_data)
-    #     return user
+'''

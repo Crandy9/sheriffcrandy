@@ -112,7 +112,14 @@ export default {
       removeFromCart(removeItemID) {
         // get specific track added to cart
         const item = this.cart.itemsInCart.find(item => item.id === removeItemID)
-        // pass entire json track/flp obj to removeFromCart function
+          if (JSON.stringify(item.flp_name) == undefined) {
+            console.log('track ' + JSON.stringify(item.title) + ' removed from cart')
+          }
+          else {
+            console.log('flp ' + JSON.stringify(item.flp_name) + ' removed from cart')
+          }
+
+          // pass entire json track/flp obj to removeFromCart function
         this.$store.commit('removeFromCart', item)
       },
       clearCart() {
