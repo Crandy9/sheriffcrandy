@@ -47,18 +47,6 @@
 
     <!-- cart footer -->
     <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
-      <!-- <p class="my-subtotal">
-        <span>Total:</span>
-        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTotal }}</span>
-      </p>
-      <p class="my-subtotal">
-        <span>Tax:</span>
-        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTaxes }}</span>
-      </p>
-      <p class="my-subtotal">
-        <span>Subtotal:</span>
-        <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpySubtotal }}</span>
-      </p> -->
       <p class="my-subtotal">
         <span>Total:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
@@ -72,13 +60,175 @@
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
       </p>
       <div class="my-checkout-button-div">
-        <a rel="noindex" class="my-checkout-button" href="#">Checkout</a>
+        <a @click="modalOpened = true;" rel="noindex" class="my-checkout-button" v-if="cartTotalLength >= 1" >Checkout</a>
       </div>
     </footer>
     <!-- end cart footer -->
   </section>
+
+  <!-- stripe payment modal -->
+  <Transition>
+      <div style="z-index: 9999;" v-if="modalOpened" id="my-modal-id" class="modal" v-bind:class="{'is-active':modalOpened}">
+        <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Checkout</p>
+              <button @click="modalOpened = false" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+              <div class="page-checkout">
+                <div class="columns is-multiline">
+                    <div class="column is-12 box">
+                      <h2 style= "text-align: center;" class="subtitle has-text-black has-text-center is-underlined">Payment Details</h2>
+                      <h2 class="subtitle has-text-black">Billing Address</h2>
+                      <!-- <p class="has-text-danger mb-4">* All fields are required</p> -->
+                      <div class="columns is-multiline">
+                        <div class="column is-6">
+                          <!-- name errors-->
+                          <div v-if="errors.nameErrors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.nameErrors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                          </div>
+                          <div class="field">
+                            <label class="has-text-black">Name</label>
+                            <div class="control">
+                                <input type="text" class="input" placeholder="ex) John Smith" v-model="name">
+                            </div>
+                          </div>
+                          <!-- email errors-->
+                          <div v-if="errors.emailErrors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.emailErrors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                          </div>
+                          <div class="field">
+                            <label class="has-text-black">Email</label>
+                            <div class="control">
+                                <input type="email" class="input" placeholder="123@my-email.com" v-model="email">
+                            </div>
+                          </div>
+                          <!-- phone errors-->
+                          <div v-if="errors.phoneErrors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.phoneErrors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                          </div>
+                          <div class="field">
+                            <label class="has-text-black">Phone Number</label>
+                            <div class="control">
+                                <input type="text" class="input" placeholder="ex) xxx-xxx-xxxx" v-model="phone">
+                            </div>
+                          </div>
+                          <!-- address1 errors-->
+                          <div v-if="errors.address1Errors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.address1Errors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                          </div>
+                          <div class="field">
+                            <label class="has-text-black">Street 1</label>
+                            <div class="control">
+                                <input type="text" class="input" placeholder="ex) 123 My Street" v-model="address1">
+                            </div>
+                          </div>
+                            <!-- address2 errors-->
+                            <div v-if="errors.address2Errors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.address2Errors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                          </div>
+                          <div class="field">
+                            <label class="has-text-black">Street 2 (if applicable)</label>
+                            <div class="control">
+                                <input type="text" class="input" placeholder="ex) apt. #101"  v-model="address2">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="column is-6">
+                            <!-- statepref errors-->
+                            <div v-if="errors.statePrefErrors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.statePrefErrors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                            </div>
+                            <div class="field">
+                              <label class="has-text-black">State</label>
+                              <div class="control">
+                                  <input type="text" class="input" placeholder="Chicago" v-model="statePref">
+                              </div>
+                            </div>
+                            <!-- country errors-->
+                            <div v-if="errors.countryErrors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.countryErrors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                            </div>
+                            <div class="field">
+                              <label class="has-text-black">Country</label>
+                              <div class="control">
+                                  <input type="text" class="input" placeholder="ex) United States, Japan, etc."  v-model="country">
+                              </div>
+                            </div>
+                            <!-- post code errors-->
+                            <div v-if="errors.zipcodeErrors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.zipcodeErrors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                            </div>
+                            <div class="field">
+                              <label class="has-text-black">Postal Code</label>
+                              <div class="control">
+                                  <input type="text" class="input" placeholder="ex) 12345 or 12312-1234" v-model="zipcode">
+                              </div>
+                            </div>
+                            <!-- place errors-->
+                            <div v-if="errors.placeErrors.length">
+                              <p class="my-errors" style="color:red" v-for="error in errors.placeErrors" v-bind:key="error">
+                              <span style="color:red !important">*</span> {{ error }}
+                              </p>                        
+                            </div>
+                            <div class="field">
+                                <label class="has-text-black">Place</label>
+                                <div class="control">
+                                    <input type="text" class="input" v-model="place">
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+
+                    <div id="card-element" class="mb-5 has-text-black">
+                      <h2 class="subtitle has-text-black">Card Information</h2>
+                    </div>
+                </div>
+              </div>
+            </section>
+            <footer class="modal-card-foot">
+              <button @click="submitForm()" class="my-modal-button-buy-now button">Pay</button>
+              <!-- if adding to cart, add the item to cart and close modal -->
+              <button @click="modalOpened = false; clearFields();" class="my-modal-button-cancel button">Cancel</button>
+            </footer>
+          </div>
+      </div>
+    </Transition>
+
 </template>
 
+
+<!-- modal animation fade-in/out -->
+<style>
+  .v-enter-active,
+  .v-leave-active {
+    transition: opacity 0.3s ease;
+  }
+
+  .v-enter-from,
+  .v-leave-to {
+    opacity: 0;
+  }
+</style>
 
 <script>
 import axios from 'axios'
@@ -88,6 +238,7 @@ export default {
     name: 'Cart',
     data() {
       return {
+        modalOpened: false,
         cart: {
           itemsInCart: [],
         },
@@ -98,7 +249,31 @@ export default {
         usdTax: '',
         jpyTax: '',
         usdSubTotal: '',
-        jpySubtotal:''
+        jpySubtotal:'',
+        // stripe stuff
+        stripe: {},
+        card: {},
+        name: '',
+        email: '',
+        phone: '',
+        address1: '',
+        address2:'',
+        statePref: '',
+        country: '',
+        zipcode: '',
+        place: '',
+        errors: {
+                generalErrors: [],
+                nameErrors: [],
+                emailErrors: [],
+                phoneErrors: [],
+                address1Errors: [],
+                address2Errors: [],
+                statePrefErrors: [],
+                countryErrors: [],
+                zipcodeErrors: [],
+                placeErrors: []
+            },      
       }
     },
     mounted() {
@@ -108,6 +283,98 @@ export default {
     },
 
     methods: {
+
+      clearFields() {
+        this.name = ''
+        this.email = ''
+        this.phone = ''
+        this.address1 = ''
+        this.address2 = ''
+        this.zipcode = ''
+        this.statePref = '',
+        this.country = '',
+        this.place = ''
+        this.errors.generalErrors = []
+        this.errors.nameErrors = []
+        this.errors.emailErrors = []
+        this.errors.phoneErrors = []
+        this.errors.address1Errors = []
+        this.errors.address2Errors = []
+        this.errors.statePrefErrors = []
+        this.errors.countryErrors = []
+        this.errors.zipcodeErrors = []
+        this.errors.placeErrors = []
+      },
+
+      submitForm() {
+        this.errors.generalErrors = []
+        this.errors.nameErrors = []
+        this.errors.emailErrors = []
+        this.errors.phoneErrors = []
+        this.errors.address1Errors = []
+        this.errors.address2Errors = []
+        this.errors.statePrefErrors = []
+        this.errors.countryErrors = []
+        this.errors.zipcodeErrors = []
+        this.errors.placeErrors = []
+
+        if (this.name === '') {
+            this.errors.nameErrors.push('The name field is missing!')
+        }
+        if (this.email === '') {
+            this.errors.emailErrors.push('The email field is missing!')
+        }
+        if (this.phone === '') {
+            this.errors.phoneErrors.push('The phone field is missing!')
+        }
+        if (this.address1 === '') {
+            this.errors.address1Errors.push('The address field is missing!')
+        }
+        // if (this.address2 === '') {
+        //     this.errors.address2Errors.push('The address field is missing!')
+        // }
+        if (this.statePref === '') {
+            this.errors.statePrefErrors.push('The state field is missing!')
+        }        
+        if (this.country === '') {
+            this.errors.countryErrors.push('The country field is missing!')
+        }
+        if (this.zipcode === '') {
+            this.errors.zipcodeErrors.push('The zip code field is missing!')
+        }
+        if (this.place === '') {
+            this.errors.placeErrors.push('The place field is missing!')
+        }
+
+        if (
+            !this.errors.nameErrors.length &&
+            !this.errors.emailErrors.length &&
+            !this.errors.phoneErrors.length &&
+            !this.errors.address1Errors.length &&
+            !this.errors.address2Errors.length &&
+            !this.errors.statePrefErrors.length &&
+            !this.errors.countryErrors.length &&
+            !this.errors.zipcodeErrors.length &&
+            !this.errors.placeErrors.length
+          ) 
+          {
+          console.log('no errors')
+                // this.$store.commit('setIsLoading', true)
+                // this.stripe.createToken(this.card).then(result => {                    
+                //     if (result.error) {
+                //         this.$store.commit('setIsLoading', false)
+                //         this.errors.push('Something went wrong with Stripe. Please try again')
+                //         console.log(result.error.message)
+                //     } else {
+                //         this.stripeTokenHandler(result.token)
+                //     }
+                // })
+            }
+      },
+
+      stripePaymentModal() {
+
+      },
 
       removeFromCart(removeItemID) {
         // get specific track added to cart
@@ -119,7 +386,7 @@ export default {
             console.log('flp ' + JSON.stringify(item.flp_name) + ' removed from cart')
           }
 
-          // pass entire json track/flp obj to removeFromCart function
+        // pass entire json track/flp obj to removeFromCart function
         this.$store.commit('removeFromCart', item)
       },
       clearCart() {
@@ -175,7 +442,8 @@ export default {
         return this.jpyTax
       },
       calculateJpySubtotal() {
-        return parseFloat((this.totalJpyPrice + this.jpyTax));
+        this.jpySubtotal = parseFloat((this.totalJpyPrice + this.jpyTax));
+        return this.jpySubtotal
       },
     }
 }

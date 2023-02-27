@@ -79,6 +79,15 @@ const routes = [
       requiresAuthAccount: true
     }
   },
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: () => import('../views/CheckoutView.vue'),
+    // prevent users from accessing the logout page if they are not logged in
+    meta: {
+      readyForCheckout: true
+    }
+  },
 
 ]
 
@@ -110,6 +119,13 @@ router.beforeEach((to,from,next) => {
     })
     next({name:'LogIn', query: {to:to.path}});
   }
+
+  // check if user is authenticated before proceeding to checkout page
+  if (to.matched.some(record => record.meta.readyForCheckout) && !store.state.isAuthenticated){
+    next({ path: '/' });
+  }
+
+
   else {
     next()
   }

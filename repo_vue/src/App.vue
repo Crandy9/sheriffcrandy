@@ -65,6 +65,7 @@
               <!-- cart item count -->
               <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
           </a>
+          <a v-if="cartTotalLength >= 1" href="/checkout" class="navbar-item">Checkout</a>
           <!-- <p>{{ this.cartCount }}</p> -->
         </div>
       </div>
