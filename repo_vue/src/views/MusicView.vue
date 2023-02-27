@@ -51,7 +51,7 @@
           </div>
           <li @click="setPlayOrPause(track.id)" class="track-list-item" v-bind:id="track.id">
             <!-- show play button on all tracks on hover -->
-            <a class="play-button" href="#" v-if="currentTrackPlaying != track.id">
+            <a class="play-button" href="#" v-if="currentTrackPlaying != track.id"> 
               <span class="play-icon-span">
                 <svg 
                   class="play-icon-svg" 
@@ -204,7 +204,7 @@
 </template>
 
 
-<!-- modal animation fade-in/out -->
+<!-- cart modal animation fade-in/out -->
 <style>
   .v-enter-active,
   .v-leave-active {
@@ -301,7 +301,6 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            // this.currentTrackPlaying = 0; 
           }, this.duration);
       }
       // else if this is the last track in the playlist, play the first track
@@ -317,7 +316,6 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            // this.currentTrackPlaying = 0; 
           }, this.duration);
       }
       else {
@@ -340,7 +338,6 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            // this.currentTrackPlaying = 0; 
           }, this.duration);
       }
     },
@@ -361,7 +358,6 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            // this.currentTrackPlaying = 0; 
           }, this.duration);
       }
       // skip back to the previous track
@@ -384,7 +380,6 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            // this.currentTrackPlaying = 0; 
           }, this.duration);
       }
 
@@ -408,10 +403,9 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            // this.currentTrackPlaying = 0; 
           }, this.duration);        
       }
-      // either pausing or resuming current track
+      // either pausing, resuming, or playing current track again
       else if (this.currentTrackPlaying == track) {
         // if the song is currently playing, pause it
         if (this.play == true && this.pause == false && this.stop == false) {
@@ -432,7 +426,21 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying;
             this.play = false;
             this.pause = false;
-            // this.currentTrackPlaying = 0; 
+          }, this.duration); 
+        }
+        //  else if the song played all the way through and the user clicks it again, play it again
+        else {
+          this.pause = false;
+          this.play = true;
+          this.stop = false;
+          clearTimeout(this.currentTimer)
+          // resume timeout
+          // start new timer and set stop = true if full song plays
+          this.currentTimer = setTimeout(() => {
+            this.stop = true; 
+            this.lastPlayedTrack = this.currentTrackPlaying;
+            this.play = false;
+            this.pause = false;
           }, this.duration); 
         }
       }
@@ -451,7 +459,6 @@ export default {
             this.lastPlayedTrack = this.currentTrackPlaying; 
             this.play = false;
             this.pause = false;
-            // this.currentTrackPlaying = 0; 
           }, this.duration);         
       }
     },
