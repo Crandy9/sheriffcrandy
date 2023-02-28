@@ -6,12 +6,11 @@
       <!-- cart header -->
       <div class="my-cart-content">
         <h2 class="my-cart-title">
-          <span>Your cart</span>
+          <span>Your Cart</span>
         </h2>
       </div>
       <table class="my-cart-items-table" v-if="cartTotalLength">
-        <a class="my-clear-cart-button" @click="clearCart()">Clear Cart</a>
-        <tbody class="my-cart-items">
+        <tbody id="testid" class="my-cart-items">
           <!-- loop through all items in cart -->
           <tr class="my-table-row" v-for="item in cart.itemsInCart">
             <!-- get image (for tracks only) -->
@@ -43,10 +42,12 @@
       </table>
       <p v-else style="color:white; padding: 2rem;" >Your cart is empty :(</p>
     </div>
+
     <!-- end cart body -->
 
     <!-- cart footer -->
     <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
+      <a class="my-clear-cart-button" @click="clearCart()">Clear Cart</a>
       <p class="my-subtotal">
         <span>Total:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
@@ -73,7 +74,7 @@
           <div class="modal-card">
             <header class="modal-card-head">
               <p class="modal-card-title">Checkout</p>
-              <button @click="modalOpened = false" class="delete" aria-label="close"></button>
+              <button @click="modalOpened = false; clearFields();" class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body">
               <div class="page-checkout">
@@ -83,6 +84,12 @@
                       <h2 class="subtitle has-text-black">Billing Address</h2>
                       <!-- <p class="has-text-danger mb-4">* All fields are required</p> -->
                       <div class="columns is-multiline">
+                        <!-- general errors -->
+                        <div v-if="errors.generalErrors.length">
+                            <p class="my-errors" style="color:red" v-for="error in errors.generalErrors" v-bind:key="error">
+                            <span style="color:red !important">*</span> {{ error }}
+                            </p>                        
+                        </div>
                         <div class="column is-6">
                           <!-- name errors-->
                           <div v-if="errors.nameErrors.length">
@@ -182,28 +189,18 @@
                                   <input type="text" class="input" placeholder="ex) 12345 or 12312-1234" v-model="zipcode">
                               </div>
                             </div>
-                            <!-- place errors-->
-                            <div v-if="errors.placeErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.placeErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                            </div>
-                            <div class="field">
-                                <label class="has-text-black">Place</label>
-                                <div class="control">
-                                    <input type="text" class="input" v-model="place">
-                                </div>
-                            </div>
                         </div>
                       </div>
                     </div>
                     <hr>
 
-                    <div id="card-element" class="mb-5 has-text-black">
+                    <div class="mb-5 has-text-black">
                       <h2 class="subtitle has-text-black">Card Information</h2>
                     </div>
                 </div>
               </div>
+              <label for="card-element">Card</label>
+              <div id="card-element" class="mb-5 control"></div>
             </section>
             <footer class="modal-card-foot">
               <button @click="submitForm()" class="my-modal-button-buy-now button">Pay</button>
@@ -213,7 +210,6 @@
           </div>
       </div>
     </Transition>
-
 </template>
 
 
@@ -232,6 +228,7 @@
 
 <script>
 import axios from 'axios'
+import { TypedChainedSet } from 'webpack-chain'
 
 export default {
 
@@ -261,7 +258,6 @@ export default {
         statePref: '',
         country: '',
         zipcode: '',
-        place: '',
         errors: {
                 generalErrors: [],
                 nameErrors: [],
@@ -272,10 +268,13 @@ export default {
                 statePrefErrors: [],
                 countryErrors: [],
                 zipcodeErrors: [],
-                placeErrors: []
             },      
+        // check if this a USD or JPY payment
+        isUsd: true,
       }
     },
+
+    
     mounted() {
       // get all cart items
       this.cart = this.$store.state.cart
@@ -293,7 +292,6 @@ export default {
         this.zipcode = ''
         this.statePref = '',
         this.country = '',
-        this.place = ''
         this.errors.generalErrors = []
         this.errors.nameErrors = []
         this.errors.emailErrors = []
@@ -303,7 +301,6 @@ export default {
         this.errors.statePrefErrors = []
         this.errors.countryErrors = []
         this.errors.zipcodeErrors = []
-        this.errors.placeErrors = []
       },
 
       submitForm() {
@@ -316,7 +313,6 @@ export default {
         this.errors.statePrefErrors = []
         this.errors.countryErrors = []
         this.errors.zipcodeErrors = []
-        this.errors.placeErrors = []
 
         if (this.name === '') {
             this.errors.nameErrors.push('The name field is missing!')
@@ -342,10 +338,8 @@ export default {
         if (this.zipcode === '') {
             this.errors.zipcodeErrors.push('The zip code field is missing!')
         }
-        if (this.place === '') {
-            this.errors.placeErrors.push('The place field is missing!')
-        }
 
+        // if there are no form validation errors, process payment
         if (
             !this.errors.nameErrors.length &&
             !this.errors.emailErrors.length &&
@@ -355,25 +349,86 @@ export default {
             !this.errors.statePrefErrors.length &&
             !this.errors.countryErrors.length &&
             !this.errors.zipcodeErrors.length &&
-            !this.errors.placeErrors.length
-          ) 
-          {
-          console.log('no errors')
-                // this.$store.commit('setIsLoading', true)
-                // this.stripe.createToken(this.card).then(result => {                    
-                //     if (result.error) {
-                //         this.$store.commit('setIsLoading', false)
-                //         this.errors.push('Something went wrong with Stripe. Please try again')
-                //         console.log(result.error.message)
-                //     } else {
-                //         this.stripeTokenHandler(result.token)
-                //     }
-                // })
-            }
+            !this.errors.generalErrors.length
+          ) {
+            console.log('no errors. Attempting to process payment with Stripe')
+            // set loading animation icon
+            this.$store.commit('setIsLoading', true)
+
+            // create stripe token based on user card input
+            this.stripe.createToken(this.card).then(result => {                    
+                if (result.error) {
+                    this.$store.commit('setIsLoading', false)
+                    this.errors.generalErrors.push('Something went wrong with Stripe. Please try again')
+                    console.log(result.error.message)
+                } 
+                // if there are no stripe processing errors
+                else {
+                    this.stripeTokenHandler(result.token)
+                }
+            })
+          }
       },
 
-      stripePaymentModal() {
+      async stripeTokenHandler(token) {
 
+        const items = []
+        const flp_quantity = 0
+        const track_quantity = 0
+
+        for (let i = 0; i < this.cart.itemsInCart.length; i++) {
+          const item = this.cart.itemsInCart[i];
+          // for tracks
+          if ('title' in item) {
+            const track_obj = {
+              track: item.track.id,
+              track_quantity: track_quantity++,
+              flp_quantity: flp_quantity,
+              price: (isUsd === true ? item.track.usd_price : item.track.jpy_price)
+            }
+            items.push(track_obj)
+
+          }
+          if ('flp_name' in item) {
+            const flp_obj = {
+              track: item.flp.id,
+              flp_quantity: flp_quantity++,
+              track_quantity: track_quantity,
+              price: (isUsd === true ? item.flp.usd_price : item.flp.jpy_price)            }
+            items.push(flp_obj)
+          }
+        }
+
+        // get user billing data as well as stripe token in an obj
+        const data = {
+          'name': this.name,
+          'email': this.email,
+          'phone': this.phone,
+          'address1': this.address1,
+          'address2': this.address2,
+          'statePref': this.statePref,
+          'country': this.country,
+          'zipcode': this.zipcode,
+          'items': items,
+          'stripe_token': token.id
+        }
+
+        // post data to server
+        await axios
+        .post(process.env.VUE_APP_CHECKOUT_API_URL, data)
+        .then(response => {
+          // if response was successful, clear the cart
+          this.$store.commit('clearCart')
+          // naviaget to thank you page
+          this.$router.push('/thankyou')
+        })
+        .catch(error => {
+          console.log('django server error')
+          console.log(error)
+          this.errors.generalErrors.push('Something went wrong. Please try again later')
+        })
+
+        this.$store.commit('setIsLoading', false)
       },
 
       removeFromCart(removeItemID) {

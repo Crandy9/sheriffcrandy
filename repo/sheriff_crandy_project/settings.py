@@ -15,6 +15,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 
+# can find the endpoint's secret by running `stripe listen` in CLI
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
+
+# stripe data
+STRIPE_PK = env("STRIPEPK")
+STRIPE_SK = env("STRIPESK")
+STRIPE_DOMAIN = env("STRIPE_DOMAIN")
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -62,6 +71,8 @@ INSTALLED_APPS = [
     'tracks_app',
     # custom user app
     'lctec_user',
+    # order app
+    'order_app',
 ]
 
 # frontend server. Change to live server address for production

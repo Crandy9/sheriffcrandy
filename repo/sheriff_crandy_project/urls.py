@@ -11,6 +11,7 @@ urlpatterns = [
     # include tracks app urls --can check api at http://localhost:8000/api/v1/latest-tracks/
     path('sc/api/v1/', include ('tracks_app.urls')),
     path('sc/api/v1/', include ('flps_app.urls')),
+    path('sc/api/v1/', include ('order_app.urls'))
     # path('sc/api/v1/', include ('lctec_user.urls')),
 ] 
 

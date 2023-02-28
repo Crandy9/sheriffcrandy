@@ -145,12 +145,13 @@
 
 .my-clear-cart-button {
     padding: 0.5rem;
-    background-color: rgb(99, 0, 99);
+    background-color: rgb(221, 0, 92);
     color: rgb(255, 255, 255);
     box-sizing: border-box;
     font-size: medium !important;
     text-decoration: none;
     text-align: left;
+    float: left;
 }
 
 .my-remove-button {
@@ -268,3 +269,4 @@
         width: 38%;
     }
 }
+

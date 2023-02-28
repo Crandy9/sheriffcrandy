@@ -328,6 +328,8 @@
   @import '../src/assets/styles/my-cart.css';
   @import '../src/assets/styles/my-login.css';
   @import '../src/assets/styles/my-signup.css';
+  @import '../src/assets/styles/my-checkout-modal.css';
+  @import '../src/assets/styles/my-thankyou.css';
 </style>
 
 <!-- hamburger menu animation -->
