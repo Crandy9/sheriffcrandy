@@ -1,0 +1,98 @@
+/**** 
+
+    CHECKOUT FORM STYLING in CartView.vue
+
+****/
+
+/* from 0px to 769px style the checkout modal form 
+for mobile */
+@media screen and (max-width: 769px) {
+    
+    .my-checkout-div {
+        padding: 1rem !important;
+        margin-bottom: 10rem !important;
+    }
+    .card {
+        padding: 2rem;
+    }
+
+    /* header */
+    .card-head {
+        padding-bottom: 1.5rem !important;
+        padding-right: 1rem !important;
+        padding-left: 1rem !important;
+    }
+    /* title */
+    .card-title {
+        font-size: 2rem;
+        display: inline-block !important;
+    }
+    .close-button {
+        float: right;
+    }
+    /*  popup */
+    /* .modal {
+        padding: 1.5rem;
+    } */
+    /* control form fields */
+    .control {
+        padding-bottom: 0.3rem;
+    }
+    /* subtitle */
+    .subtitle:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+
+    /* pay cancel buttons */
+    .card-foot {
+        text-align: center;
+    }
+    .my-button-buy-now {
+        background-color: rgb(0, 77, 112) !important;
+        color: white;
+        margin-right: 1rem;
+    }
+    
+    .my-button-buy-now:hover {
+        background-color: rgb(255, 217, 0) !important;
+        color: rgba(0, 0, 0);
+    }
+}
+
+.my-checkout-div {
+    padding-left: 7rem;
+    padding-right: 7rem;
+    margin-bottom: 10rem;
+}
+
+.card {
+    padding: 2rem;
+}
+.card-head {
+    padding-bottom: 1.5rem;
+    padding-right: 3rem;
+    padding-left: 3rem;
+}
+.card-title {
+    font-size: 2rem;
+    display: inline-block !important;
+}
+
+.close-button {
+    float: right;
+}
+.card-foot {
+    text-align: center;
+}
+
+.my-button-buy-now {
+    background-color: rgb(0, 77, 112) !important;
+    color: white;
+    margin-right: 1rem;
+}
+
+.my-button-buy-now:hover {
+    background-color: rgb(255, 217, 0) !important;
+    color: rgba(0, 0, 0);
+}
+

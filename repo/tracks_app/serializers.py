@@ -18,11 +18,11 @@ class TrackSerializer(serializers.ModelSerializer):
             "description",
             "usd_price",
             "jpy_price",         
-            "get_track",
+            # "get_track",
             "get_sample",
             "get_cover_art",
             "date_added",
             "is_free",
             "get_track_duration",
-            "purchase_count"
+            # "purchase_count"
         )

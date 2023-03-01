@@ -42,9 +42,7 @@
       </table>
       <p v-else style="color:white; padding: 2rem;" >Your cart is empty :(</p>
     </div>
-
     <!-- end cart body -->
-
     <!-- cart footer -->
     <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
       <a class="my-clear-cart-button" @click="clearCart()">Clear Cart</a>
@@ -61,159 +59,160 @@
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
       </p>
       <div class="my-checkout-button-div">
-        <a @click="modalOpened = true;" rel="noindex" class="my-checkout-button" v-if="cartTotalLength >= 1" >Checkout</a>
+        <a v-if="cartTotalLength >= 1" @click="show = true; checkoutClicked = true;"  rel="noindex" class="my-checkout-button" >Checkout</a>
       </div>
     </footer>
     <!-- end cart footer -->
-  </section>
 
-  <!-- stripe payment modal -->
-  <Transition>
-      <div style="z-index: 9999;" v-if="modalOpened" id="my-modal-id" class="modal" v-bind:class="{'is-active':modalOpened}">
-        <div class="modal-background"></div>
-          <div class="modal-card">
-            <header class="modal-card-head">
-              <p class="modal-card-title">Checkout</p>
-              <button @click="modalOpened = false; clearFields();" class="delete" aria-label="close"></button>
-            </header>
-            <section class="modal-card-body">
-              <div class="page-checkout">
-                <div class="columns is-multiline">
-                    <div class="column is-12 box">
-                      <h2 style= "text-align: center;" class="subtitle has-text-black has-text-center is-underlined">Payment Details</h2>
-                      <h2 class="subtitle has-text-black">Billing Address</h2>
-                      <!-- <p class="has-text-danger mb-4">* All fields are required</p> -->
-                      <div class="columns is-multiline">
-                        <!-- general errors -->
-                        <div v-if="errors.generalErrors.length">
-                            <p class="my-errors" style="color:red" v-for="error in errors.generalErrors" v-bind:key="error">
-                            <span style="color:red !important">*</span> {{ error }}
-                            </p>                        
-                        </div>
-                        <div class="column is-6">
-                          <!-- name errors-->
-                          <div v-if="errors.nameErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.nameErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Name</label>
-                            <div class="control">
-                                <input type="text" class="input" placeholder="ex) John Smith" v-model="name">
-                            </div>
-                          </div>
-                          <!-- email errors-->
-                          <div v-if="errors.emailErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.emailErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Email</label>
-                            <div class="control">
-                                <input type="email" class="input" placeholder="123@my-email.com" v-model="email">
-                            </div>
-                          </div>
-                          <!-- phone errors-->
-                          <div v-if="errors.phoneErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.phoneErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Phone Number</label>
-                            <div class="control">
-                                <input type="text" class="input" placeholder="ex) xxx-xxx-xxxx" v-model="phone">
-                            </div>
-                          </div>
-                          <!-- address1 errors-->
-                          <div v-if="errors.address1Errors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.address1Errors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Street 1</label>
-                            <div class="control">
-                                <input type="text" class="input" placeholder="ex) 123 My Street" v-model="address1">
-                            </div>
-                          </div>
-                            <!-- address2 errors-->
-                            <div v-if="errors.address2Errors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.address2Errors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Street 2 (if applicable)</label>
-                            <div class="control">
-                                <input type="text" class="input" placeholder="ex) apt. #101"  v-model="address2">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="column is-6">
-                            <!-- statepref errors-->
-                            <div v-if="errors.statePrefErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.statePrefErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
+    <!-- checkout form initially hidden -->
+    <!-- stripe payment form -->
+    <transition>
+      <div style="z-index: 9999;" class="my-checkout-div"
+        :style="styleObject()" v-bind:class="{'is-active': checkoutClicked}">
+          <!-- <div class="modal-background"></div> -->
+            <div class="card">
+              <header class="card-head">
+                <p class="card-title">Checkout</p>
+                <button class="delete close-button" @click="show = false; clearFields(); checkoutClicked = false;" aria-label="close"></button>
+              </header>
+              <section class="card-body">
+                <div class="page-checkout">
+                  <div class="columns is-multiline">
+                      <div class="column is-12 box">
+                        <h2 style= "text-align: center;" class="subtitle has-text-black has-text-center is-underlined">Payment Details</h2>
+                        <h2 class="subtitle has-text-black">Billing Address</h2>
+                        <!-- <p class="has-text-danger mb-4">* All fields are required</p> -->
+                        <div class="columns is-multiline">
+                          <div class="column is-6">
+                            <!-- name errors-->
+                            <div v-if="errors.nameErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.nameErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">State</label>
+                              <label class="has-text-black">Name</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="Chicago" v-model="statePref">
+                                  <input type="text" class="input" placeholder="ex) John Smith" v-model="name">
                               </div>
                             </div>
-                            <!-- country errors-->
-                            <div v-if="errors.countryErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.countryErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
+                            <!-- email errors-->
+                            <div v-if="errors.emailErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.emailErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Country</label>
+                              <label class="has-text-black">Email</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="ex) United States, Japan, etc."  v-model="country">
+                                  <input type="email" class="input" placeholder="123@my-email.com" v-model="email">
                               </div>
                             </div>
-                            <!-- post code errors-->
-                            <div v-if="errors.zipcodeErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.zipcodeErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
+                            <!-- phone errors-->
+                            <div v-if="errors.phoneErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.phoneErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Postal Code</label>
+                              <label class="has-text-black">Phone Number</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="ex) 12345 or 12312-1234" v-model="zipcode">
+                                  <input type="text" class="input" placeholder="ex) xxx-xxx-xxxx" v-model="phone">
                               </div>
                             </div>
+                            <!-- address1 errors-->
+                            <div v-if="errors.address1Errors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.address1Errors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                            </div>
+                            <div class="field">
+                              <label class="has-text-black">Street 1</label>
+                              <div class="control">
+                                  <input type="text" class="input" placeholder="ex) 123 My Street" v-model="address1">
+                              </div>
+                            </div>
+                              <!-- address2 errors-->
+                              <div v-if="errors.address2Errors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.address2Errors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                            </div>
+                            <div class="field">
+                              <label class="has-text-black">Street 2 (if applicable)</label>
+                              <div class="control">
+                                  <input type="text" class="input" placeholder="ex) apt. #101"  v-model="address2">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="column is-6">
+                              <!-- statepref errors-->
+                              <div v-if="errors.statePrefErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.statePrefErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                              </div>
+                              <div class="field">
+                                <label class="has-text-black">State</label>
+                                <div class="control">
+                                    <input type="text" class="input" placeholder="Chicago" v-model="statePref">
+                                </div>
+                              </div>
+                              <!-- country errors-->
+                              <div v-if="errors.countryErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.countryErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                              </div>
+                              <div class="field">
+                                <label class="has-text-black">Country</label>
+                                <div class="control">
+                                    <input type="text" class="input" placeholder="ex) United States, Japan, etc."  v-model="country">
+                                </div>
+                              </div>
+                              <!-- post code errors-->
+                              <div v-if="errors.zipcodeErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.zipcodeErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                              </div>
+                              <div class="field">
+                                <label class="has-text-black">Postal Code</label>
+                                <div class="control">
+                                    <input type="text" class="input" placeholder="ex) 12345 or 12312-1234" v-model="zipcode">
+                                </div>
+                              </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <hr>
-
-                    <div class="mb-5 has-text-black">
-                      <h2 class="subtitle has-text-black">Card Information</h2>
-                    </div>
+                      <hr>
+                      <!-- general errors -->
+                      <div v-if="errors.generalErrors.length">
+                          <p class="my-errors" style="text-align: center; color:red; padding-bottom: 1rem; padding-inline: 2.2rem;" v-for="error in errors.generalErrors" v-bind:key="error">
+                          <span style="color:red !important">*</span> {{ error }}
+                          </p>                        
+                      </div>
+                      <div class="mb-5 has-text-black">
+                        <h2 class="subtitle has-text-black">Card Information</h2>
+                      </div>
+                  </div>
                 </div>
-              </div>
-              <label for="card-element">Card</label>
-              <div id="card-element" class="mb-5 control"></div>
-            </section>
-            <footer class="modal-card-foot">
-              <button @click="submitForm()" class="my-modal-button-buy-now button">Pay</button>
-              <!-- if adding to cart, add the item to cart and close modal -->
-              <button @click="modalOpened = false; clearFields();" class="my-modal-button-cancel button">Cancel</button>
-            </footer>
-          </div>
+                <div class="stripe-card-div">
+                  <label for="has-text-black">Card</label>
+                  <div id="card-element" class="mb-5 control"></div>
+                </div>
+              </section>
+              <footer class="card-foot">
+                <button @click="submitForm();" class="my-button-buy-now button">Pay ${{ totalUsdPrice }}</button>
+                <!-- if adding to cart, add the item to cart and close modal -->
+                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">Cancel</button>
+              </footer>
+            </div>
       </div>
-    </Transition>
+    </transition>
+  </section>
 </template>
 
-
-<!-- modal animation fade-in/out -->
 <style>
   .v-enter-active,
   .v-leave-active {
@@ -235,7 +234,8 @@ export default {
     name: 'Cart',
     data() {
       return {
-        modalOpened: false,
+        checkoutClicked: false,
+        show: false,
         cart: {
           itemsInCart: [],
         },
@@ -279,30 +279,15 @@ export default {
       // get all cart items
       this.cart = this.$store.state.cart
       document.title = 'Cart' 
+      if (this.cart.itemsInCart.length > 0) {
+          this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'})
+          const elements = this.stripe.elements();
+          this.card = elements.create('card', { hidePostalCode: true })
+          this.card.mount('#card-element')
+      }
     },
 
     methods: {
-
-      clearFields() {
-        this.name = ''
-        this.email = ''
-        this.phone = ''
-        this.address1 = ''
-        this.address2 = ''
-        this.zipcode = ''
-        this.statePref = '',
-        this.country = '',
-        this.errors.generalErrors = []
-        this.errors.nameErrors = []
-        this.errors.emailErrors = []
-        this.errors.phoneErrors = []
-        this.errors.address1Errors = []
-        this.errors.address2Errors = []
-        this.errors.statePrefErrors = []
-        this.errors.countryErrors = []
-        this.errors.zipcodeErrors = []
-      },
-
       submitForm() {
         this.errors.generalErrors = []
         this.errors.nameErrors = []
@@ -351,7 +336,6 @@ export default {
             !this.errors.zipcodeErrors.length &&
             !this.errors.generalErrors.length
           ) {
-            console.log('no errors. Attempting to process payment with Stripe')
             // set loading animation icon
             this.$store.commit('setIsLoading', true)
 
@@ -371,35 +355,45 @@ export default {
       },
 
       async stripeTokenHandler(token) {
-
         const items = []
-        const flp_quantity = 0
-        const track_quantity = 0
+        var flp_quantity = 0
+        var track_quantity = 0
+
 
         for (let i = 0; i < this.cart.itemsInCart.length; i++) {
           const item = this.cart.itemsInCart[i];
           // for tracks
           if ('title' in item) {
+            track_quantity++;
             const track_obj = {
-              track: item.track.id,
+              // track_id: item.id,
+              track: item.id,
               track_quantity: track_quantity++,
-              flp_quantity: flp_quantity,
-              price: (isUsd === true ? item.track.usd_price : item.track.jpy_price)
+              usd_track_price: item.usd_price,
+              jpy_track_price: item.jpy_price
             }
             items.push(track_obj)
 
           }
+          // for flps
           if ('flp_name' in item) {
+            flp_quantity++;
             const flp_obj = {
-              track: item.flp.id,
-              flp_quantity: flp_quantity++,
-              track_quantity: track_quantity,
-              price: (isUsd === true ? item.flp.usd_price : item.flp.jpy_price)            }
+              // flp_id: item.id,
+              flp: item.id,
+              flp_quantity: flp_quantity,
+              usd_flp_price: item.usd_price,        
+              jpy_flp_price: item.jpy_price
+            }
             items.push(flp_obj)
           }
         }
 
-        // get user billing data as well as stripe token in an obj
+        // check if only flps or tracks were purchased, have to fill in default data
+
+
+        // get user billing data as well as stripe token and all
+        // cart items, both flps and tracks
         const data = {
           'name': this.name,
           'email': this.email,
@@ -413,9 +407,9 @@ export default {
           'stripe_token': token.id
         }
 
-        // post data to server
+        // post data to server; have to send token as well
         await axios
-        .post(process.env.VUE_APP_CHECKOUT_API_URL, data)
+        .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
         .then(response => {
           // if response was successful, clear the cart
           this.$store.commit('clearCart')
@@ -423,12 +417,37 @@ export default {
           this.$router.push('/thankyou')
         })
         .catch(error => {
-          console.log('django server error')
           console.log(error)
           this.errors.generalErrors.push('Something went wrong. Please try again later')
         })
 
         this.$store.commit('setIsLoading', false)
+      },
+
+
+
+      styleObject() {
+        return this.show === true ? {display: 'block'} : {display: 'none'}
+      },
+
+      clearFields() {
+        this.name = ''
+        this.email = ''
+        this.phone = ''
+        this.address1 = ''
+        this.address2 = ''
+        this.zipcode = ''
+        this.statePref = '',
+        this.country = '',
+        this.errors.generalErrors = []
+        this.errors.nameErrors = []
+        this.errors.emailErrors = []
+        this.errors.phoneErrors = []
+        this.errors.address1Errors = []
+        this.errors.address2Errors = []
+        this.errors.statePrefErrors = []
+        this.errors.countryErrors = []
+        this.errors.zipcodeErrors = []
       },
 
       removeFromCart(removeItemID) {

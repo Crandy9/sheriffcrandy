@@ -121,13 +121,13 @@ export default {
 
                         console.log(JSON.stringify(response))
                         // set auth token
-                        const token = response.data.auth_token
+                        const sf_auth_bearer = response.data.auth_token
                         // set token in store which sets is_authenticated var to true
-                        this.$store.commit('setToken', token)
+                        this.$store.commit('setToken', sf_auth_bearer)
                         // setting token in axios header
-                        axios.defaults.headers.common['Authorization'] = 'Token ' + token
+                        axios.defaults.headers.common['Authorization'] = 'Token ' + sf_auth_bearer
                         // set token in localstorage
-                        localStorage.setItem("sf_auth_bearer", token)
+                        localStorage.setItem("sf_auth_bearer", sf_auth_bearer)
 
                         // get user's username
                         // const currentUsername = response.data.username

@@ -226,9 +226,12 @@
     }
 }
 
+
 /* mobile */
 @media screen and (max-width: 1024px)    {
-
+    .my-checkout-button {
+        margin-bottom: 0rem;
+    }
     .cart-title {
         padding: 4rem;
     }

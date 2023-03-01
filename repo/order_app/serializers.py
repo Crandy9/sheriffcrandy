@@ -1,34 +1,41 @@
 # manually created serializers.py file created to turn DB data into JSON to be used by frontend
 from rest_framework import serializers
-from .models import Order, OrderItem
+from .models import Order, OrderFlpItem, OrderTrackItem
 
 # import serializers from flp and track apps
 from flps_app.serializers import FlpSerializer
 from tracks_app.serializers import TrackSerializer
 
-# OrderItem Serializer
-class OrderItemSerializer(serializers.ModelSerializer):
+# OrderItem Flp Serializer
+class OrderItemFlpSerializer(serializers.ModelSerializer):
+    print("WE'RE IN THE OrderItemFlpSerializer for axios post")
     class Meta:
-        model = OrderItem
+        model = OrderFlpItem
         fields = (
-            # price, flp, track, quantity
-            # flp items
             "flp",
-            "usd_flp_price",
-            "jpy_flp_price",
-            "flp_quantity",
-            # track items
-            "track",
-            "usd_track_price",
-            "jpy_track_price",
-            "track_quantity",
+            "usd_price",
+            "jpy_price",
+            "quantity",
         )
 
-# Order Serializer
-class OrderSerializer(serializers.ModelSerializer):
+# OrderItem Track Serializer
+class OrderItemTrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderTrackItem
+        fields = (
+            "track",
+            "usd_price",
+            "jpy_price",
+            "quantity",
+        )
 
-    # get related names from Order model
-    items = OrderItemSerializer(many=True)
+# Order Flp Serializer
+class OrderFlpSerializer(serializers.ModelSerializer):
+
+    print("WE'RE IN THE OrderFlpSerializer for axios post")
+
+    items = OrderItemFlpSerializer(many=True)
+
     class Meta:
         model = Order
         fields = (
@@ -41,16 +48,54 @@ class OrderSerializer(serializers.ModelSerializer):
             "statePref",
             "country",
             "zipcode",
-            "stripe_token",
             "items",
+            "stripe_token",
         )
 
     # override serializer create func
     def create(self, validated_data):
-        items_data = validated_data.pop('items')
-        order = Order.objects.create(**validated_data)
+        # flps
+        print('\nin create block\n')
+        # print('\n' + str(**validated_data) + '\n')
+        # print('\n' + str(validated_data) + '\n')
+        print('\npoppin items off of validated_data\n')
+        flp_items_data = validated_data.pop('flp_items')
+        print('\popped items off of validated_data\n')
+        flp_order = Order.objects.create(**validated_data)
 
-        for item_data in items_data:
-            OrderItem.objects.create(order=order, **item_data)
+        for item_data in flp_items_data:
+            OrderFlpItem.objects.create(order=flp_order, **item_data)
         
-        return order
+        return flp_order
+    
+# Order Flp Serializer
+class OrderTrackSerializer(serializers.ModelSerializer):
+
+    track_items = OrderItemTrackSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = (
+            "id",
+            "name",
+            "email",
+            "phone",
+            "address1",
+            "address2",
+            "statePref",
+            "country",
+            "zipcode",
+            "items",
+            "stripe_token",
+        )
+
+    # override serializer create func
+    def create(self, validated_data):
+        # remove track data
+        track_items_data = validated_data.pop('items')
+        track_order = Order.objects.create(**validated_data)
+
+        for item_data in track_items_data:
+            OrderTrackItem.objects.create(order=track_order, **item_data)
+        
+        return track_order

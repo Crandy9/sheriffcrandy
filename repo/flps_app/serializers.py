@@ -18,5 +18,5 @@ class FlpSerializer(serializers.ModelSerializer):
             "get_zips",
             "date_added",
             "flp_is_free",
-            "purchase_count"
+            # "purchase_count"
         )

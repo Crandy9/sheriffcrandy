@@ -26,24 +26,35 @@ class Order(models.Model):
     stripe_token = models.CharField(max_length=100)
 
     class Meta: 
+        # ordering 
         ordering = ['-order_created',]
 
     def __str__(self):
+        # string representation of object using name
         return self.name
     
-# Order Item, either flp or track
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+# Order Item for flp
+class OrderFlpItem(models.Model):
+    order = models.ForeignKey(Order, related_name='flp_items', on_delete=models.CASCADE)
     # flp items
-    flp = models.ForeignKey(Flp, related_name='items', on_delete=models.CASCADE)
-    usd_flp_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-    jpy_flp_price = models.IntegerField(default=0, null=True, blank=True)
-    flp_quantity = models.IntegerField(default = 0)
+    flp = models.ForeignKey(Flp, related_name='flp_items', on_delete=models.CASCADE)
+    usd_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    jpy_price = models.IntegerField(default=0, null=True, blank=True)
+    quantity = models.IntegerField(default = 0)
+
+    def __str__(self):
+        # string representation of the id
+        return '%s' % self.id
+    
+
+# Order Item for track
+class OrderTrackItem(models.Model):
+    order = models.ForeignKey(Order, related_name='track_items', on_delete=models.CASCADE)
     # track items
-    track = models.ForeignKey(Track, related_name='items', on_delete=models.CASCADE)
-    usd_track_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-    jpy_track_price = models.IntegerField(default=0, null=True, blank=True)
-    track_quantity = models.IntegerField(default = 0)
+    track = models.ForeignKey(Track, related_name='track_items', on_delete=models.CASCADE)
+    usd_price = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    jpy_price = models.IntegerField(default=0, null=True, blank=True)
+    quantity = models.IntegerField(default = 0)
 
     def __str__(self):
         # string representation of the id

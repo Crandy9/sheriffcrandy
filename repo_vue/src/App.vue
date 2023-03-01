@@ -65,8 +65,6 @@
               <!-- cart item count -->
               <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
           </a>
-          <a v-if="cartTotalLength >= 1" href="/checkout" class="navbar-item">Checkout</a>
-          <!-- <p>{{ this.cartCount }}</p> -->
         </div>
       </div>
     </nav>
@@ -329,6 +327,7 @@
   @import '../src/assets/styles/my-login.css';
   @import '../src/assets/styles/my-signup.css';
   @import '../src/assets/styles/my-checkout-modal.css';
+  @import '../src/assets/styles/my-checkout.css';
   @import '../src/assets/styles/my-thankyou.css';
 </style>
 
@@ -356,7 +355,7 @@ export default {
     this.$store.commit('initializeStore') 
 
     // get the web token from store
-    const token = this.$store.state.token
+    const token = this.$store.state.sf_auth_bearer
 
     if (token) {
       // set web token if it exists for api
