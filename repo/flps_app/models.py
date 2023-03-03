@@ -17,6 +17,7 @@ class Flp(models.Model):
     slug = models.SlugField()
     flp_zip = models.FileField(upload_to='flp_zips', blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
+    # calling it flp_is_free to distinguish from free tracks in frontend
     flp_is_free = models.BooleanField(default=False, blank=True, null=True)
     purchase_count = models.IntegerField(default=0, blank=True)
 
@@ -25,7 +26,7 @@ class Flp(models.Model):
         ordering = ('flp_name',)
 
     def __str__(self):
-        return self.flp_name
+        return self.flp_name + ' - Downloads: ' + str(self.purchase_count)
     
     def get_absolute_url(self):
         return f'/{self.slug}/'

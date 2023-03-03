@@ -355,42 +355,49 @@ export default {
       },
 
       async stripeTokenHandler(token) {
-        const items = []
-        var flp_quantity = 0
-        var track_quantity = 0
+        const flp_items = []
+        const track_items = []
 
 
         for (let i = 0; i < this.cart.itemsInCart.length; i++) {
           const item = this.cart.itemsInCart[i];
           // for tracks
           if ('title' in item) {
-            track_quantity++;
             const track_obj = {
               // track_id: item.id,
               track: item.id,
-              track_quantity: track_quantity++,
               usd_track_price: item.usd_price,
               jpy_track_price: item.jpy_price
             }
-            items.push(track_obj)
+            track_items.push(track_obj)
 
           }
           // for flps
           if ('flp_name' in item) {
-            flp_quantity++;
             const flp_obj = {
               // flp_id: item.id,
               flp: item.id,
-              flp_quantity: flp_quantity,
               usd_flp_price: item.usd_price,        
               jpy_flp_price: item.jpy_price
             }
-            items.push(flp_obj)
+            flp_items.push(flp_obj)
           }
         }
 
-        // check if only flps or tracks were purchased, have to fill in default data
-
+        // check if flp_items array or track_items arrays are empty
+        // send this in as a flag to backend
+        if (!Array.isArray(flp_items) || !flp_items.length) {
+            const flp_obj = {
+              no_flps: ''
+            }
+            flp_items.push(flp_obj)
+        }
+        if (!Array.isArray(track_items) || !track_items.length) {
+            const track_obj = {
+              no_tracks: ''
+            }
+            track_items.push(track_obj)
+        }
 
         // get user billing data as well as stripe token and all
         // cart items, both flps and tracks
@@ -403,7 +410,8 @@ export default {
           'statePref': this.statePref,
           'country': this.country,
           'zipcode': this.zipcode,
-          'items': items,
+          'flp_items': flp_items,
+          'track_items': track_items,
           'stripe_token': token.id
         }
 

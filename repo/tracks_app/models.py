@@ -47,7 +47,7 @@ class Track(models.Model):
 
     # string representation of object
     def __str__(self):
-        return self.title
+        return self.title + ' - Downloads: ' + str(self.purchase_count)
     
     # get url of track for frontend
     def get_absolute_url(self):

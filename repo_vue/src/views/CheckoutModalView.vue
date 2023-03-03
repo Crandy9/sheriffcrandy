@@ -298,8 +298,6 @@ export default {
       async stripeTokenHandler(token) {
 
         const items = []
-        var flp_quantity = 0
-        var track_quantity = 0
 
         for (let i = 0; i < this.cart.itemsInCart.length; i++) {
           const item = this.cart.itemsInCart[i];
@@ -307,8 +305,6 @@ export default {
           if ('title' in item) {
             const track_obj = {
               track: item.track.id,
-              track_quantity: track_quantity++,
-              flp_quantity: flp_quantity,
               price: (isUsd === true ? item.track.usd_price : item.track.jpy_price)
             }
             items.push(track_obj)
@@ -317,8 +313,6 @@ export default {
           if ('flp_name' in item) {
             const flp_obj = {
               flp: item.flp.id,
-              flp_quantity: flp_quantity++,
-              track_quantity: track_quantity,
               price: (isUsd === true ? item.flp.usd_price : item.flp.jpy_price)            
             }
             items.push(flp_obj)
