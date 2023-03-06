@@ -59,6 +59,9 @@
 export default {
     name: 'Home',
     data() {
+      return {
+        
+      }
     },
     mounted() {
       document.title = 'Home' 

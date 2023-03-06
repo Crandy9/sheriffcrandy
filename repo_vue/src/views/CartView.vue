@@ -31,10 +31,10 @@
               </div>
               <div class="my-cart-item-actions">
                 <!-- <div class="my-item-quantity">1</div> -->
-                <a @click="removeFromCart(item.id)" class="my-remove-button">remove<button class="delete"></button></a>
+                <a @click="removeFromCart(item.id);" class="my-remove-button">remove<button class="delete"></button></a>
                   <div class="my-cart-price" v-if="item.is_free == true || item.flp_is_free == true">FREE</div>
-                    <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false)">${{ item.usd_price }}</div>
-                    <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false)">¥{{ item.jpy_price }}</div>                
+                  <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false)">${{ item.usd_price }}</div>
+                  <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false)">¥{{ item.jpy_price }}</div>                
               </div>
             </td>
           </tr>
@@ -45,7 +45,7 @@
     <!-- end cart body -->
     <!-- cart footer -->
     <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
-      <a class="my-clear-cart-button" @click="clearCart()">Clear Cart</a>
+      <a class="my-clear-cart-button" @click="show = false; checkoutClicked = false; clearCart();">Clear Cart</a>
       <p class="my-subtotal">
         <span>Total:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
@@ -59,7 +59,10 @@
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
       </p>
       <div class="my-checkout-button-div">
-        <a v-if="cartTotalLength >= 1" @click="show = true; checkoutClicked = true;"  rel="noindex" class="my-checkout-button" >Checkout</a>
+        <!-- if the cart has only one free item -->
+        <a v-if="calculateUsdSubtotal === '0.00'" @click.prevent="show = false; checkoutClicked = false; freeDownloads();"  rel="noindex" class="my-checkout-button" >Download</a>
+        <!-- if the cart has at least one item which is not free -->
+        <a v-else="cartTotalLength >= 1 && calculateUsdSubtotal !== '0.00'" @click="show = true; checkoutClicked = true; scrollToBottom();"  rel="noindex" class="my-checkout-button" >Checkout</a>
       </div>
     </footer>
     <!-- end cart footer -->
@@ -68,7 +71,7 @@
     <!-- stripe payment form -->
     <transition>
       <div style="z-index: 9999;" class="my-checkout-div"
-        :style="styleObject()" v-bind:class="{'is-active': checkoutClicked}">
+        :style="styleObject()" v-bind:class="{'is-active': checkoutClicked}" ref="paymentFormTop">
           <!-- <div class="modal-background"></div> -->
             <div class="card">
               <header class="card-head">
@@ -203,6 +206,18 @@
                 </div>
               </section>
               <footer class="card-foot">
+                <p class="my-subtotal has-text-black">
+                  <span>Total:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
+                </p>
+                <p class="my-subtotal has-text-black">
+                  <span>Tax:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTaxes }}</span>
+                </p>
+                <p class="my-subtotal has-text-black">
+                  <span>Subtotal:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
+                </p>
                 <button @click="submitForm();" class="my-button-buy-now button">Pay ${{ totalUsdPrice }}</button>
                 <!-- if adding to cart, add the item to cart and close modal -->
                 <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">Cancel</button>
@@ -288,6 +303,20 @@ export default {
     },
 
     methods: {
+      // for one item in the cart that is free
+      freeDownloads() {
+        console.log('free downloads boy')
+        this.$store.commit('clearCart')
+        this.$router.push('/thankyou')
+      },
+      // for multiple items in cart that are free
+
+      // scroll to top of payment form
+      scrollToBottom() {
+        console.log('scroll to payment form')
+        // wait until modal closes, then scroll to payment form
+        this.$nextTick(() => this.$refs["paymentFormTop"].scrollIntoView({ behavior: "smooth" }))
+      },
       submitForm() {
         this.errors.generalErrors = []
         this.errors.nameErrors = []

@@ -79,16 +79,6 @@ const routes = [
       requiresAuthAccount: true
     }
   },
-  // may not be using this view
-  {
-    path: '/checkout',
-    name: 'Checkout',
-    component: () => import('../views/CheckoutModalView.vue'),
-    // prevent users from accessing the logout page if they are not logged in
-    meta: {
-      readyForCheckout: true
-    }
-  },
   {
     path: '/thankyou',
     name: 'ThankYou',

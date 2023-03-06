@@ -51,7 +51,10 @@ class OrderFlpItem(models.Model):
     def __str__(self):
         dtformat = self.date_order_created.strftime("%Y/%m/%d, %H:%M:%S")
         # admin page title display
-        return "Order ID: " + '%s' % self.order.id + ' Flp: ' + str(self.flp.flp_name) + '\nOrder Date: ' + str(dtformat)
+        if self.flp.flp_is_free is True:
+            return "Order ID: " + '%s' % self.order.id + ' Flp: ' + str(self.flp.flp_name) + '(free) Order Date: ' + str(dtformat)
+        else:
+             return "Order ID: " + '%s' % self.order.id + ' Flp: ' + str(self.flp.flp_name) + ' Order Date: ' + str(dtformat)
     
 # Same model for tracks
 class OrderTrackItem(models.Model):
@@ -65,4 +68,7 @@ class OrderTrackItem(models.Model):
 
     def __str__(self):
         dtformat = self.date_order_created.strftime("%Y/%m/%d, %H:%M:%S")
-        return "Order ID: " + '%s' % self.order.id + ' Track: ' + str(self.track.title) + '\nOrder Date: ' + str(dtformat)
+        if self.track.is_free is True:
+            return "Order ID: " + '%s' % self.order.id + ' Track: ' + str(self.track.title) + '(free) Order Date: ' + str(dtformat)
+        else:
+            return "Order ID: " + '%s' % self.order.id + ' Track: ' + str(self.track.title) + ' Order Date: ' + str(dtformat)

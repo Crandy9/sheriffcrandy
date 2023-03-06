@@ -16,6 +16,11 @@ export default createStore({
     // show loading bar for cart
     isLoading: false,
     username: '',
+    // free track/flp downloads
+    isSingleDownload: false,
+    freeDownload: '',
+    freeDownloadId: '',
+    downloadType: '',
   },
   getters: {
   },
