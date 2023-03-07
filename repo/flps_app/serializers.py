@@ -11,6 +11,7 @@ class FlpSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "flp_name",
+            "flp_zip",
             "get_absolute_url",
             "description",
             "usd_price",
@@ -18,5 +19,4 @@ class FlpSerializer(serializers.ModelSerializer):
             "get_zips",
             "date_added",
             "flp_is_free",
-            # "purchase_count"
         )

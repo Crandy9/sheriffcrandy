@@ -2,9 +2,6 @@
 import stripe
 from django.conf import settings
 # get custom users
-from django.contrib.auth import get_user_model
-from django.http import Http404
-from django.shortcuts import render
 
 # drf imports
 from rest_framework import status, authentication, permissions
@@ -12,22 +9,23 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-# import Order models
-from .models import Order, OrderFlpItem #, OrderTrackItem 
+# import Order serializers
 from .serializers import OrderFlpSerializer, OrderTrackSerializer
+# import flps+app and tracks_app serializers
+from flps_app.serializers import FlpSerializer
+from tracks_app.serializers import TrackSerializer
 
 # import track and flp models
 from flps_app.models import *
 from tracks_app.models import *
 
 
-def freeDownloads(request):
+# media path to return tracks/flps
+path = os.path.join(settings.MEDIA_ROOT, '')
+def downloads(request):
     pass
 
 
-
-def processRequest(request, items):
-    pass
 
     
 
@@ -108,14 +106,20 @@ def checkout(request):
                     )
                     # saving OrderFlpSerializer
                     track_dict_serializer.save(user=request.user, usd_paid_amount=track_usd_paid_amount, jpy_paid_amount=track_jpy_paid_amount)
-
+                    
+                    # create a list of tracks to return to frontend
+                    purchasedTracksList = []
+                    # increment the download count and create list of tracks to return
                     for item in track_dict_serializer.validated_data['track_items']:
                         my_track = Track.objects.get(title=item.get('track').title)
                         my_track.purchase_count += 1
+                        purchasedTracksList.append(my_track.pk)
                         my_track.save()
-                    print('\nTRACK DATA PROCESSED\n')
+                    # grab a list of all tracks and serialize them
+                    tracksForDownload = Track.objects.filter(pk__in=purchasedTracksList)
+                    trackDownloadSerializer = TrackSerializer(tracksForDownload, many=True)
                     # only return here if there are no flps to process
-                    return Response(status=status.HTTP_201_CREATED)
+                    return Response(trackDownloadSerializer.data, status=status.HTTP_201_CREATED)
 
             except Exception:
                 print('something went wrong with track serializer.save')
@@ -189,7 +193,7 @@ def checkout(request):
                         my_track.save()
                     # pass this to frontend if everything was ok
                     print('\nflp and track data processed together\n')
-                    return Response(status=status.HTTP_201_CREATED)
+                    return Response(track_dict_serializer.data, flp_dict_serializer.data, status=status.HTTP_201_CREATED)
                 else:
                     print('\n This charge contains flps only\n')
                     stripe.api_key = settings.STRIPE_SK
@@ -205,15 +209,22 @@ def checkout(request):
 
                     # saving OrderFlpSerializer create function
                     flp_dict_serializer.save(user=request.user, usd_paid_amount=usd_paid_amount, jpy_paid_amount=jpy_paid_amount)
-
+                    
+                    # create a list of tracks to return to frontend
+                    purchasedFlpsList = []
                     for item in flp_dict_serializer.validated_data['flp_items']:
                         my_flp = Flp.objects.get(flp_name=item.get('flp').flp_name)
                         my_flp.purchase_count += 1
+                        purchasedFlpsList.append(my_flp.pk)
                         my_flp.save()
+                    
+                    # grab a list of all flps and serialize them
+                    flpsForDownload = Flp.objects.filter(pk__in=purchasedFlpsList)
+                    flpDownloadSerializer = FlpSerializer(flpsForDownload, many=True)
 
                     # pass this to frontend if everything was ok
                     print('\nflp data processed\n')
-                    return Response(status=status.HTTP_201_CREATED)
+                    return Response(flpDownloadSerializer.data, status=status.HTTP_201_CREATED)
             except Exception:
                 print('something went wrong with flp_dict_serializer.save')
                 print('here are the track errors')

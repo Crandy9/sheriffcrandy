@@ -13,16 +13,16 @@ class TrackSerializer(serializers.ModelSerializer):
         # will be shown in API at DOMAIN/api/v1/latest-tracks/
         fields = (
             "id",
+            "track",
             "title",
             "get_absolute_url",
             "description",
             "usd_price",
             "jpy_price",         
-            # "get_track",
+            "get_track",
             "get_sample",
             "get_cover_art",
             "date_added",
             "is_free",
             "get_track_duration",
-            # "purchase_count"
         )

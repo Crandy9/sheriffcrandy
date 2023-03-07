@@ -305,7 +305,32 @@ export default {
     methods: {
       // for one item in the cart that is free
       freeDownloads() {
-        console.log('free downloads boy')
+        this.$store.state.downloadableItems = []
+        // loop through cart and get all free items
+        const flp_items = []
+        const track_items = []
+
+        for (let i = 0; i < this.cart.itemsInCart.length; i++) {
+          const item = this.cart.itemsInCart[i];
+          // for tracks
+          if ('title' in item) {
+            const track_obj = {
+              track: item.track,
+              title: item.title
+            }
+            this.$store.state.downloadableItems.push(track_obj)
+
+          }
+          // for flps
+          if ('flp_name' in item) {
+            const flp_obj = {
+              flp_zip: item.flp_zip,
+              flp_name: item.flp_name
+
+            }
+            this.$store.state.downloadableItems.push(flp_obj)
+          }
+        }
         this.$store.commit('clearCart')
         this.$router.push('/thankyou')
       },
@@ -313,7 +338,6 @@ export default {
 
       // scroll to top of payment form
       scrollToBottom() {
-        console.log('scroll to payment form')
         // wait until modal closes, then scroll to payment form
         this.$nextTick(() => this.$refs["paymentFormTop"].scrollIntoView({ behavior: "smooth" }))
       },
@@ -448,6 +472,9 @@ export default {
         await axios
         .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
         .then(response => {
+          // reset store
+          this.$store.state.downloadableItems = []
+          this.$store.state.downloadableItems = response.data
           // if response was successful, clear the cart
           this.$store.commit('clearCart')
           // naviaget to thank you page

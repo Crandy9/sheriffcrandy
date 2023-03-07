@@ -586,8 +586,11 @@ export default {
       await axios
       .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
       .then(response => {
-        // redirect to thank you page
-        this.$router.push('/thankyou')
+          // reset store
+          this.$store.state.downloadableItems = []
+          this.$store.state.downloadableItems = response.data        
+          // redirect to thank you page
+          this.$router.push('/thankyou')
       })
       .catch(error => {
         console.log(error)
@@ -625,13 +628,27 @@ export default {
       this.$store.state.freeDownload = track;
       this.$store.state.freeDownloadId = id;
       this.$store.state.isSingleDownload = true;
-      this.$store.state.downloadType = 'track';
+      this.$store.state.downloadType = 'track'; 
+
+
+      // get current object being downloaded
+      var index = this.tracks.findIndex(x => x.id === id);
+      const track_obj = {
+        track: this.tracks[index].track,
+        title: this.tracks[index].title
+      }
+      this.$store.state.downloadableItems = []
+      this.$store.state.downloadableItems.push(track_obj)
+
       this.$router.push('/thankyou')
     },
     // set flp name and id
     buyNow(track, id){
       this.buyNowItemName = track;
       this.buyNowItemId = id;
+      this.$store.state.isSingleDownload = true;
+      this.$store.state.downloadType = 'track'; 
+
       console.log('\nname: ' + track + '; flp id: '+ id)
     },
     setTrack(track) {

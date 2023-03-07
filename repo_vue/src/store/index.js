@@ -5,7 +5,7 @@ import { createStore } from 'vuex'
 export default createStore({
   // state are vars that persist
   state: {
-
+    downloadableItems: [],
     // web token used for authentication
     sf_auth_bearer: '',
     isAuthenticated: false,

@@ -491,6 +491,9 @@
         await axios
         .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
         .then(response => {
+          // reset store
+          this.$store.state.downloadableItems = []
+          this.$store.state.downloadableItems = response.data   
           // naviaget to thank you page
           this.$router.push('/thankyou')
         })
@@ -532,6 +535,17 @@
         this.$store.state.freeDownloadId = id;
         this.$store.state.isSingleDownload = true;
         this.$store.state.downloadType = 'flp';
+
+
+      // get current object being downloaded
+      var index = this.flps.findIndex(x => x.id === id);
+      const flp_obj = {
+        flp_zip: this.flps[index].flp_zip,
+        flp_name: this.flps[index].flp_name
+      }
+      this.$store.state.downloadableItems = []
+      this.$store.state.downloadableItems.push(flp_obj)
+
         this.$router.push('/thankyou')
       },
       // set flp name and id
