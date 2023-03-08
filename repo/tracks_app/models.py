@@ -37,7 +37,7 @@ class Track(models.Model):
     is_free = models.BooleanField(default=False, blank=True, null=True)
     # track length
     song_dur = models.CharField(default='',max_length=255, null=True, blank=True)
-    purchase_count = models.IntegerField(default=0, blank=True)
+    downloads = models.IntegerField(default=0, blank=True)
 
 
     # order Tracks by title in the backend
@@ -47,7 +47,10 @@ class Track(models.Model):
 
     # string representation of object
     def __str__(self):
-        return self.title + ' - Downloads: ' + str(self.purchase_count)
+        if self.is_free is True:
+            return '(free) ' + self.title + ' - Downloads: ' + str(self.downloads)
+        else:
+            return self.title + ' - Downloads: ' + str(self.downloads)
     
     # get url of track for frontend
     def get_absolute_url(self):

@@ -304,7 +304,7 @@ export default {
 
     methods: {
       // for one item in the cart that is free
-      freeDownloads() {
+      async freeDownloads() {
         this.$store.state.downloadableItems = []
         // loop through cart and get all free items
         const flp_items = []
@@ -313,15 +313,24 @@ export default {
         for (let i = 0; i < this.cart.itemsInCart.length; i++) {
           const item = this.cart.itemsInCart[i];
           // for tracks
+          // push to store for frontend. May not need this
           if ('title' in item) {
+            // for frontend
             const track_obj = {
               track: item.track,
               title: item.title
             }
             this.$store.state.downloadableItems.push(track_obj)
 
+            // for backend
+            const track_obj_for_backend = {
+              track: item.id
+            }
+            track_items.push(track_obj_for_backend)
+
           }
           // for flps
+          // push to store for frontend. May not need this
           if ('flp_name' in item) {
             const flp_obj = {
               flp_zip: item.flp_zip,
@@ -329,10 +338,57 @@ export default {
 
             }
             this.$store.state.downloadableItems.push(flp_obj)
+
+            // for backend
+            const flp_obj_for_backend = {
+              flp: item.id
+            }
+            flp_items.push(flp_obj_for_backend)
           }
         }
-        this.$store.commit('clearCart')
-        this.$router.push('/thankyou')
+
+        // check if flp_items array or track_items arrays are empty
+        // send this in as a flag to backend
+        if (!Array.isArray(flp_items) || !flp_items.length) {
+            const flp_obj = {
+              no_flps: ''
+            }
+            flp_items.push(flp_obj)
+        }
+        if (!Array.isArray(track_items) || !track_items.length) {
+            const track_obj = {
+              no_tracks: ''
+            }
+            track_items.push(track_obj)
+        }
+        // cart items, both flps and tracks
+        const data = {
+          'flp_items': flp_items,
+          'track_items': track_items,
+        }
+
+        // post data to server; have to send token as well
+        await axios
+        .post(process.env.VUE_APP_FREEDOWNLOAD_API_URL, 
+              data, 
+              {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}, responseType: 'arraybuffer'})
+        .then(response => {
+            console.log('it worked bic boiiii')
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+            const link = document.createElement('a')
+            link.href = url
+            // if it is a single wav file
+            link.setAttribute('download', 'SheriffCrandyDownloadables.zip')
+            document.body.appendChild(link)
+            link.click()
+            // redirect to thank you page
+            this.$router.push('/thankyou')
+        })
+        .catch(error => {
+          console.log(error)
+          this.errors.generalErrors.push('Something went wrong. Please try again later')
+        })
+        this.$store.commit('setIsLoading', false)
       },
       // for multiple items in cart that are free
 

@@ -67,7 +67,7 @@
                 <!-- pass in the flpname of the free flp to be downloaded -->
                 <button v-if="isFree" @click="modalOpened = false; show = false; buyNowClicked = false; downloadFreeNow(FlpName, FlpID);" class="my-modal-button-buy-now button">Download Now</button>
                 <!-- trigger stripe payment on this item only -->
-                <button v-else @click="modalOpened = false; show = true; buyNowClicked = true; buyNow(FlpName, FlpID); scrollToBottom();" class="my-modal-button-buy-now button">Buy Now</button>
+                <button v-else @click="modalOpened = false; show = true; buyNowClicked = true; buyNow(); scrollToBottom();" class="my-modal-button-buy-now button">Buy Now</button>
                 <!-- if adding to cart, add the item to cart and close modal -->
                 <button @click.stop="addFlpToCart(FlpID); modalOpened = false" class="my-modal-button-add-to-cart button">Add to Cart</button>
               </footer>
@@ -292,8 +292,6 @@
     data() {
       return {
         buyNowClicked: false,
-        buyNowItemName: '',
-        buyNowItemId: '',
         show: false,
         usdPrice: '',
         jpyPrice: '',
@@ -528,31 +526,61 @@
         this.errors.zipcodeErrors = []
       },
 
+      // set flp name and id
+      buyNow(){
+        this.$store.state.isSingleDownload = true;
+        this.$store.state.downloadType = 'flp';
+      },
 
       // download free flp now
-      downloadFreeNow(flp, id) {
+      async downloadFreeNow(flp, id) {
+        // FOR FRONTEND TO PREPARE FOR DOWNLOADS
         this.$store.state.freeDownload = flp;
         this.$store.state.freeDownloadId = id;
         this.$store.state.isSingleDownload = true;
         this.$store.state.downloadType = 'flp';
+        var index = this.flps.findIndex(x => x.id === id);
+        const flp_obj = {
+          flp_zip: this.flps[index].flp_zip,
+          flp_name: this.flps[index].flp_name
+        }
+        this.$store.state.downloadableItems = []
+        this.$store.state.downloadableItems.push(flp_obj)
+
+        // SEND DATA TO BACKEND
+        const track_items = []
+        const track_obj = {
+              no_tracks: ''
+            }
+        track_items.push(track_obj)
+
+        const flp_items = []
+          const flp_obj_for_backend = {
+            flp: this.FlpID,
+          }
+            flp_items.push(flp_obj_for_backend)
+
+        // get user billing data as well as stripe token and all
+        // cart items, both flps and tracks
+        const data = {
+          'flp_items': flp_items,
+          'track_items': track_items,
+        }
+
+        // post data to server; have to send token as well
+        await axios
+        .post(process.env.VUE_APP_FREEDOWNLOAD_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+        .then(response => {
+            // redirect to thank you page
+            this.$router.push('/thankyou')
+        })
+        .catch(error => {
+          console.log(error)
+          this.errors.generalErrors.push('Something went wrong. Please try again later')
+        })
+        this.$store.commit('setIsLoading', false)
 
 
-      // get current object being downloaded
-      var index = this.flps.findIndex(x => x.id === id);
-      const flp_obj = {
-        flp_zip: this.flps[index].flp_zip,
-        flp_name: this.flps[index].flp_name
-      }
-      this.$store.state.downloadableItems = []
-      this.$store.state.downloadableItems.push(flp_obj)
-
-        this.$router.push('/thankyou')
-      },
-      // set flp name and id
-      buyNow(flp, id){
-        this.buyNowItemName = flp;
-        this.buyNowItemId = id;
-        console.log('\nname: ' + flp + '; flp id: '+ id)
       },
       // called in modal popup on FREE or price button click
       setFlpId(flp) {

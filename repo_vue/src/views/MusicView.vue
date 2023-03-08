@@ -155,7 +155,7 @@
             <footer class="modal-card-foot">
               <button v-if="isFree" @click="modalOpened = false; show = false; buyNowClicked = false; downloadFreeNow(setTrackTitle, setTrackID);" class="my-modal-button-buy-now button">Download Now</button>
               <!-- trigger stripe payment on this item only -->
-              <button v-else @click="modalOpened = false; show = true; buyNowClicked = true; buyNow(setTrackTitle, setTrackID); scrollToBottom();" class="my-modal-button-buy-now button">Buy Now</button>
+              <button v-else @click="modalOpened = false; show = true; buyNowClicked = true; buyNow(); scrollToBottom();" class="my-modal-button-buy-now button">Buy Now</button>
               <!-- if adding to cart, add the item to cart and close modal -->
               <button @click.stop="addTrackToCart(setTrackID); modalOpened = false" class="my-modal-button-add-to-cart button">Add to Cart</button>
             </footer>
@@ -372,8 +372,6 @@ export default {
   data() {
     return {
       buyNowClicked: false,
-      buyNowItemName: '',
-      buyNowItemId: '',
       show: false,
       usdPrice: '',
       jpyPrice: '',
@@ -623,15 +621,19 @@ export default {
       this.errors.zipcodeErrors = []
     },
 
+    // set flp name and id
+    buyNow(){
+      this.$store.state.isSingleDownload = true;
+      this.$store.state.downloadType = 'track'; 
+    },
+
     // download one free track now
-    downloadFreeNow(track, id) {
+    async downloadFreeNow(track, id) {
+      // FOR FRONTEND TO PREPARE FOR DOWNLOADS
       this.$store.state.freeDownload = track;
       this.$store.state.freeDownloadId = id;
       this.$store.state.isSingleDownload = true;
       this.$store.state.downloadType = 'track'; 
-
-
-      // get current object being downloaded
       var index = this.tracks.findIndex(x => x.id === id);
       const track_obj = {
         track: this.tracks[index].track,
@@ -640,17 +642,41 @@ export default {
       this.$store.state.downloadableItems = []
       this.$store.state.downloadableItems.push(track_obj)
 
-      this.$router.push('/thankyou')
-    },
-    // set flp name and id
-    buyNow(track, id){
-      this.buyNowItemName = track;
-      this.buyNowItemId = id;
-      this.$store.state.isSingleDownload = true;
-      this.$store.state.downloadType = 'track'; 
+      // SEND DATA TO BACKEND
+      const flp_items = []
+      const flp_obj = {
+            no_flps: ''
+          }
+      flp_items.push(flp_obj)
 
-      console.log('\nname: ' + track + '; flp id: '+ id)
+      const track_items = []
+        const track_obj_for_backend = {
+          track: this.setTrackID,
+        }
+          track_items.push(track_obj_for_backend)
+
+      // get user billing data as well as stripe token and all
+      // cart items, both flps and tracks
+      const data = {
+        'flp_items': flp_items,
+        'track_items': track_items,
+      }
+
+      // post data to server; have to send token as well
+      await axios
+      .post(process.env.VUE_APP_FREEDOWNLOAD_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+      .then(response => {
+          // redirect to thank you page
+          this.$router.push('/thankyou')
+      })
+      .catch(error => {
+        console.log(error)
+        this.errors.generalErrors.push('Something went wrong. Please try again later')
+      })
+      this.$store.commit('setIsLoading', false)
+
     },
+
     setTrack(track) {
       // set track name as well to show in modal popup
       const item = this.tracks.find(item => item.id === track)

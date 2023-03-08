@@ -19,14 +19,17 @@ class Flp(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     # calling it flp_is_free to distinguish from free tracks in frontend
     flp_is_free = models.BooleanField(default=False, blank=True, null=True)
-    purchase_count = models.IntegerField(default=0, blank=True)
+    downloads = models.IntegerField(default=0, blank=True)
 
 
     class Meta:
         ordering = ('flp_name',)
 
     def __str__(self):
-        return self.flp_name + ' - Downloads: ' + str(self.purchase_count)
+        if self.flp_is_free is True:
+            return '(free) ' + self.flp_name + ' - Downloads: ' + str(self.downloads)
+        else:
+            return self.flp_name + ' - Downloads: ' + str(self.downloads)
     
     def get_absolute_url(self):
         return f'/{self.slug}/'

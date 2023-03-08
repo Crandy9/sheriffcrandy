@@ -3,4 +3,4 @@ from .models import *
 
 @admin.register(Flp)
 class AdminClassName(admin.ModelAdmin):
-    readonly_fields = ['pk', 'purchase_count', 'date_added']
+    readonly_fields = ['pk', 'downloads', 'date_added']

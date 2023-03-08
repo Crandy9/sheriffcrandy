@@ -13,17 +13,18 @@ User = get_user_model()
 # order model with customer's billing info
 class Order(models.Model):
     user = models.ForeignKey(User, related_name='orders', on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
-    phone = models.CharField(max_length=100)
-    address1 = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    email = models.CharField(max_length=100, null=True, blank=True)
+    phone = models.CharField(max_length=100, null=True, blank=True)
+    address1 = models.CharField(max_length=100, null=True, blank=True)
     address2 = models.CharField(max_length=100, null=True, blank=True)
-    statePref = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    zipcode = models.CharField(max_length=100)
+    statePref = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(max_length=100, null=True, blank=True)
+    zipcode = models.CharField(max_length=100, null=True, blank=True)
     date_order_created = models.DateTimeField(auto_now=True)
     usd_paid_amount= models.DecimalField(default=0, max_digits=8, decimal_places=2, blank=True, null=True)
     jpy_paid_amount = models.IntegerField(default=0, null=True, blank=True)
+    free_download = models.BooleanField(default=False, null= True, blank=True)
     stripe_token = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta: 
@@ -35,7 +36,11 @@ class Order(models.Model):
 
         dtformat = self.date_order_created.strftime("%Y/%m/%d, %H:%M:%S")
         # string representation of object using name
-        return "Order ID: " + '%s' % self.id + f'\nUser: {self.user.username}\nOrder Date: ' + str(dtformat)
+        if self.free_download is True:
+            return "(free) Order ID: " + '%s' % self.id + f' - User: {self.user.username} - Order Date: ' + str(dtformat)
+        else:
+            return "Order ID: " + '%s' % self.id + f' User: {self.user.username} Order Date: ' + str(dtformat) + ' - Subtotal: ' + str(self.usd_paid_amount)
+
     
 # Order Item for flp
 class OrderFlpItem(models.Model):
@@ -52,7 +57,7 @@ class OrderFlpItem(models.Model):
         dtformat = self.date_order_created.strftime("%Y/%m/%d, %H:%M:%S")
         # admin page title display
         if self.flp.flp_is_free is True:
-            return "Order ID: " + '%s' % self.order.id + ' Flp: ' + str(self.flp.flp_name) + '(free) Order Date: ' + str(dtformat)
+            return "(free) Order ID: " + '%s' % self.order.id + ' Flp: ' + str(self.flp.flp_name) + ' Order Date: ' + str(dtformat)
         else:
              return "Order ID: " + '%s' % self.order.id + ' Flp: ' + str(self.flp.flp_name) + ' Order Date: ' + str(dtformat)
     
@@ -69,6 +74,6 @@ class OrderTrackItem(models.Model):
     def __str__(self):
         dtformat = self.date_order_created.strftime("%Y/%m/%d, %H:%M:%S")
         if self.track.is_free is True:
-            return "Order ID: " + '%s' % self.order.id + ' Track: ' + str(self.track.title) + '(free) Order Date: ' + str(dtformat)
+            return "(free) Order ID: " + '%s' % self.order.id + ' Track: ' + str(self.track.title) + ' Order Date: ' + str(dtformat)
         else:
             return "Order ID: " + '%s' % self.order.id + ' Track: ' + str(self.track.title) + ' Order Date: ' + str(dtformat)

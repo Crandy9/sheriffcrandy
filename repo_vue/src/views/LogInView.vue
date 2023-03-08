@@ -35,7 +35,7 @@
                             </div>
                             <!-- password -->
                             <label for="">Password</label>
-                            <div class="field has-addons">
+                            <div class="field has-addons my-password-field">
                                 <div class="control is-expanded">
                                     <input v-if="showPassword" type="text" class="input" v-model="password" />
                                     <input v-else type="password" class="input" v-model="password">
@@ -47,15 +47,14 @@
                                     </button>
                                 </div>
                             </div>
-                            <!-- errors need to make them specific for each field-->
-                            <div class="notification is-danger" v-if="errors.length">
-                                <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
-                            </div>
                             <!-- submit form -->
                             <div class="field">
                                 <div class="control">
                                     <button class="button login-signup-button">Log in</button>
                                 </div>
+                                <p class="forgot-password-link">
+                                    <a style="color:aqua !important; text-decoration: underline;" href="">Forgot your password? </a>
+                                </p>  
                             </div>
                             <p class="signup-login-reroute">
                                 Don't have an account? <a style="color:aqua !important; text-decoration: underline;" href="/signup">Sign up!</a>
