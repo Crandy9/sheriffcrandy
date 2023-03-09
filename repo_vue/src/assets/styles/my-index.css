@@ -9,12 +9,6 @@
     display:inline-block !important;
 }
 
-.scripture-banner {
-    padding: 2rem;
-    /* margin-bottom: 2rem;
-    margin-left: 3rem; */
-}
-
 .title, .subtitle {
     color: rgb(255, 255, 255);
 }
@@ -33,6 +27,13 @@
         max-width: 600px; 
         max-height: 600px;
     }
+    .scripture-banner {
+        text-align: center;
+        padding-right: 20rem;
+        padding-left: 20rem;
+        padding-top: 3rem;
+        padding-bottom: 2rem;
+    }
 }
 
 /* sheriff crandy image mobile */
@@ -48,6 +49,13 @@
         height: 347px !important;
         margin:auto;
         display:block;
+    }
+    .scripture-banner {
+        padding: 2rem;
+    }
+    .my-scripture-sub {
+        padding-right: 5rem;
+        padding-left: 5rem;
     }
 }
 
@@ -65,6 +73,10 @@
         height: 247px !important;
         margin:auto;
         display:block;
+    }
+    .my-scripture-sub {
+        padding-right: 1rem;
+        padding-left: 1rem;
     }
 
 }

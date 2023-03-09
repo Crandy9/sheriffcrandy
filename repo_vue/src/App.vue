@@ -79,6 +79,28 @@
     <!-- main page content -->
     <section class="section">
       <router-view/>
+          <!-- CHANGE LANGUAGE MODAL POPUP -->
+    <Transition>
+      <div v-if="modalOpened" id="my-modal-id" class="modal my-lang-modal" v-bind:class="{'is-active':modalOpened}">
+        <div class="modal-background my-lang-modal-bg"></div>
+          <div class="modal-card my-lang-modal-card">
+            <header class="modal-card-head my-lang-modal-head">
+              <p class="modal-card-title my-lang-modal-card-title">Choose Language</p>
+              <button @click="modalOpened = false" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body my-lang-modal-card-body">
+              <ul class="my-lang-modal-list">
+                <li @click="chooseLanguage('en')" class="my-lang-modal-list-item">
+                  English
+                </li>
+                <li @click="chooseLanguage('jp')" class="my-lang-modal-list-item">
+                  Japanese (日本語)
+                </li>
+              </ul>
+            </section>
+          </div>
+      </div>
+    </Transition>
     </section>
   </div>
 		<!-- Footer only stays at the bottom in this file, not App.vue-->
@@ -258,7 +280,7 @@
         <!-- lctec brand-->
 				<div class="lctec-brand">
 					&copy;
-					2023 - Developed by
+					2023 - made by
 						<a class="company_link"
 								href="https://lctechnologies.azurewebsites.net/" target="_blank">
 							LC Technologies
@@ -267,6 +289,12 @@
 						- Jesus Christ is King
 				</div>
 			</div>
+      <div class="my-language-div">
+        
+        <button v-if="lang === 'jp'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-language-button">Japanese (日本語)</button>
+        <button v-else-if="lang === 'en'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-language-button">English</button>
+        <button v-else @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-language-button">English</button>
+      </div>
 		</footer>
 		<!-- end Footer -->
 </template>
@@ -329,6 +357,8 @@
   @import '../src/assets/styles/my-checkout-modal.css';
   @import '../src/assets/styles/my-checkout.css';
   @import '../src/assets/styles/my-thankyou.css';
+  @import '../src/assets/styles/my-lang-modal.css';
+
 </style>
 
 <!-- hamburger menu animation -->
@@ -340,7 +370,9 @@ import axios from 'axios'
 export default {
   data () {
     return {
+      lang: '',
       hamburgerClicked: false,
+      modalOpened: false,
       clientIp: '',
       geoData: '',
       cartCount: 0,
@@ -351,6 +383,8 @@ export default {
   },
   // initialize the store. First method that is called when app is loaded/page refreshed
   beforeCreate() {
+    // set default language
+
     // commit calls initializeStore function in mutations in store/index.js to setup cart/web token
     this.$store.commit('initializeStore') 
 
@@ -374,6 +408,8 @@ export default {
     this.getGeoData()
     // mount cart
     this.cart = this.$store.state.cart
+    document.addEventListener('click', this.closeModalOnWindowClick);
+
   },
   // whenever cart changes, cart count will automatically update
   computed: {
@@ -389,6 +425,23 @@ export default {
 
   // methods 
   methods: {
+
+    chooseLanguage(lang) {
+
+     this.$store.state.lang = lang
+     this.lang = lang
+     console.log('language changed to ' + this.$store.state.lang)
+    },
+
+    closeModalOnWindowClick() {
+      if (this.modalOpened === false) {
+
+      }
+      else if (this.modalOpened === true) {
+        this.modalOpened = false;
+
+      }
+    },
     // get user's IP address using https://www.ipify.org/ api
     getIP() {
       fetch('https://api.ipify.org?format=json')
@@ -406,6 +459,17 @@ export default {
       .then(response => response.json())
       .then(response => {
         this.geoData = response;
+        // set global langauge
+        if (response.country === 'Japan') {
+          this.$store.state.lang = 'jp'
+        }
+        else if (response.country === 'United States') {
+          this.$store.state.lang = 'en'
+        }
+        else {
+          this.$store.state.lang = 'en'
+        }
+        this.lang = this.$store.state.lang
       }).catch(error => console.log("GeoData API Error: " + error));
     },
     closeNav: function() {

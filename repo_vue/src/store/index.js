@@ -24,6 +24,7 @@ export default createStore({
     freeDownload: '',
     freeDownloadId: '',
     downloadType: '',
+    lang: 'en',
   },
   getters: {
   },

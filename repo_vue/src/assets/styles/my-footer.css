@@ -154,3 +154,7 @@ a.company_link {
 a.company_link:hover {
 	color:rgb(60, 200, 255);
 }
+
+.my-language-div {
+    padding: 2rem;
+}

@@ -25,7 +25,7 @@
                             <label for="">Username</label>
                             <div class="control">
                                 <!-- v-model connects the data var defined below -->
-                                <input type="text" name="username" class="input" v-model="username">
+                                <input type="text" name="username" class="input" placeholder="username" v-model="username">
                             </div>
                             <!-- email errors-->
                             <div v-if="errors.emailErrors.length">
@@ -36,23 +36,23 @@
                             <!-- email -->
                             <label for="">Email Address</label>
                             <div class="control">
-                                <input type="email" name="email" class="input" v-model="email">
+                                <input type="email" name="email" class="input" placeholder="email" v-model="email">
                             </div>
                             <!-- not required fields -->
                             <!-- first_name -->
                             <label for="">First Name (not required)</label>
                             <div class="control">
-                                <input type="text" class="input" v-model="first_name">
+                                <input type="text" class="input" placeholder="first name" v-model="first_name">
                             </div>
                             <!-- lastname -->
                             <label for="">Last Name (not required)</label>
                             <div class="control">
-                                <input type="text" class="input" v-model="last_name">
+                                <input type="text" class="input" placeholder="last name" v-model="last_name">
                             </div>
                             <!-- fav color -->
                             <label for="">Favorite Color (not required)</label>
                             <div class="control">
-                                <input type="text" class="input" v-model="favorite_color">
+                                <input type="text" class="input" placeholder="my favorite color is turquoise :)" v-model="favorite_color">
                             </div>
                             <!-- password errors-->
                             <div v-if="errors.passwordErrors.length">

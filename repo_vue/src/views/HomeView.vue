@@ -3,7 +3,7 @@
   <section class="banner-section">
     <div class="home">
       <div class="scripture-banner">
-        <h4 class="subtitle">
+        <h4 class="subtitle my-scripture-sub">
           "Make music to the Lord with the harp,
            with the harp and the sound of melody!
            With trumpets and the sound of the horn
