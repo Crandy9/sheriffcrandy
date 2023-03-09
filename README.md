@@ -113,6 +113,8 @@ npm i bulma-modal-fx
 npm install animate.css
 - install i18n for internationalization (translating website)
 npm install vue-i18n@next
+- install i18n for internationalization (if you have Vue Cli 3.x)
+vue add i18n
 
 
 
