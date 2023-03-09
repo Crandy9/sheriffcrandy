@@ -1,0 +1,71 @@
+{
+  "headerfooter": {
+      "head": {
+        "home": "Home",
+        "music": "Music",
+        "flps": "Flps",
+        "tools": "Tools I use",
+        "bio": "Bio",
+        "contact": "Contact",
+        "myaccount": "My Account",
+        "logout": "log Out",
+        "login": "Log In",
+        "signup": "Sign Up"
+      },
+      "foot": {
+        
+      }
+  },
+
+  "homeview": {
+    "body": {
+      "scripture": "Make music to the Lord with the harp, with the harp and the sound of melody! With trumpets and the sound of the horn make a joyful noise before the King, the Lord!",
+      "chaptverse": "-Psalms 98:5-6 (esv)",
+      "latestSongs": "Latest Songs/Covers",
+      "purchaseNowMusicLink": "Purchase/download my songs ",
+      "here": "here!"
+    }
+  },
+
+  "bioview": {
+      "biotitle": "Bio"
+  },
+
+  "cartview": {
+    "carttitle": "Your Cart",
+    "emptycart": "Your cart is empty",
+    "wavfile": ".wav audio file",
+    "zipfile": "FLP zip file",
+    "remove": "remove",
+    "clearcart": "clear cart",
+    "free": "FREE",
+    "total": "Total",
+    "tax":"Tax",
+    "subtotal":"Subtotal",
+    "download": "DOWNLOAD",
+    "checkout": "CHECKOUT"
+  },
+
+  "paymentmodal": {
+    "modaltitle": "Checkout",
+    "paymentdetails": "Payment Details",
+    "billingaddress": "Billing Address",
+    "name": "name",
+    "placeholdername": "ex) John Smith",
+    "email": "email",
+    "phone": "phone number",
+    "placeholderphone": "000-000-0000",
+    "street1": "street 1",
+    "street1placeholder": "123 my street",
+    "street2": "street 2",
+    "street2placeholder": "123 your street",
+    "pref": "prefecture",
+    "state": "state",
+    "stateprefplaceholder": "select from dropdown",
+    "country": "country",
+    "countryplaceholder": "select from dropdown",
+    "postcode": "postal code",
+    "postcodeplaceholder": "12345 or 12345-1234"
+  }
+
+}

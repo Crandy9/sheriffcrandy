@@ -6,7 +6,7 @@
       <!-- cart header -->
       <div class="my-cart-content">
         <h2 class="my-cart-title">
-          <span>Your Cart</span>
+          <span>{{$t('cartview.carttitle')}}</span>
         </h2>
       </div>
       <table class="my-cart-items-table" v-if="cartTotalLength">
@@ -20,8 +20,8 @@
             <td class="my-col-item-details" colspan="3">
               <div class="my-item-description">
                 <!-- track/flp title -->
-                <h2 class="my-item-name" v-if="item.title">{{ item.title }} (wav audio file)</h2>
-                <h2 class="my-item-name" v-else>{{ item.flp_name }} (FLP zip file)</h2>
+                <h2 class="my-item-name" v-if="item.title">{{ item.title }} ( {{$t('cartview.wavfile')}} )</h2>
+                <h2 class="my-item-name" v-else>{{ item.flp_name }} ( {{$t('cartview.zipfile')}} )</h2>
                 <div v-if="item.title" class="my-cart-item-desc">
                   Track download
                 </div>
@@ -31,8 +31,8 @@
               </div>
               <div class="my-cart-item-actions">
                 <!-- <div class="my-item-quantity">1</div> -->
-                <a @click="removeFromCart(item.id);" class="my-remove-button">remove<button class="delete"></button></a>
-                  <div class="my-cart-price" v-if="item.is_free == true || item.flp_is_free == true">FREE</div>
+                <a @click="removeFromCart(item.id);" class="my-remove-button">{{$t('cartview.remove')}}<button class="delete"></button></a>
+                  <div class="my-cart-price" v-if="item.is_free == true || item.flp_is_free == true">{{$t('cartview.free')}}</div>
                   <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false)">${{ item.usd_price }}</div>
                   <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false)">¥{{ item.jpy_price }}</div>                
               </div>
@@ -40,29 +40,29 @@
           </tr>
         </tbody>
       </table>
-      <p v-else style="color:white; padding: 2rem;" >Your cart is empty :(</p>
+      <p v-else style="color:white; padding: 2rem;" >{{$t('cartview.emptycart')}} :(</p>
     </div>
     <!-- end cart body -->
     <!-- cart footer -->
     <footer v-if="cart.itemsInCart.length" class="my-cart-footer">
-      <a class="my-clear-cart-button" @click="show = false; checkoutClicked = false; clearCart();">Clear Cart</a>
+      <a class="my-clear-cart-button" @click="show = false; checkoutClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
       <p class="my-subtotal">
-        <span>Total:</span>
+        <span>{{$t('cartview.total')}}:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
       </p>
       <p class="my-subtotal">
-        <span>Tax:</span>
+        <span>{{$t('cartview.tax')}}:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTaxes }}</span>
       </p>
       <p class="my-subtotal">
-        <span>Subtotal:</span>
+        <span>{{$t('cartview.subtotal')}}:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
       </p>
       <div class="my-checkout-button-div">
         <!-- if the cart has only one free item -->
-        <a v-if="calculateUsdSubtotal === '0.00'" @click.prevent="show = false; checkoutClicked = false; freeDownloads();"  rel="noindex" class="my-checkout-button" >Download</a>
+        <a v-if="calculateUsdSubtotal === '0.00'" @click.prevent="show = false; checkoutClicked = false; freeDownloads();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.download')}}</a>
         <!-- if the cart has at least one item which is not free -->
-        <a v-else="cartTotalLength >= 1 && calculateUsdSubtotal !== '0.00'" @click="show = true; checkoutClicked = true; scrollToBottom();"  rel="noindex" class="my-checkout-button" >Checkout</a>
+        <a v-else="cartTotalLength >= 1 && calculateUsdSubtotal !== '0.00'" @click="show = true; checkoutClicked = true; scrollToBottom();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.checkout')}}</a>
       </div>
     </footer>
     <!-- end cart footer -->
@@ -75,15 +75,15 @@
           <!-- <div class="modal-background"></div> -->
             <div class="card">
               <header class="card-head">
-                <p class="card-title">Checkout</p>
+                <p class="card-title">{{$t('paymentmodal.modaltitle')}}</p>
                 <button class="delete close-button" @click="show = false; clearFields(); checkoutClicked = false;" aria-label="close"></button>
               </header>
               <section class="card-body">
                 <div class="page-checkout">
                   <div class="columns is-multiline">
                       <div class="column is-12 box">
-                        <h2 style= "text-align: center;" class="subtitle has-text-black has-text-center is-underlined">Payment Details</h2>
-                        <h2 class="subtitle has-text-black">Billing Address</h2>
+                        <h2 style= "text-align: center;" class="subtitle has-text-black has-text-center is-underlined">{{$t('paymentmodal.paymentdetails')}}</h2>
+                        <h2 class="subtitle has-text-black">{{$t('paymentmodal.billingaddress')}}</h2>
                         <!-- <p class="has-text-danger mb-4">* All fields are required</p> -->
                         <div class="columns is-multiline">
                           <div class="column is-6">
@@ -94,9 +94,9 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Name</label>
+                              <label class="has-text-black">{{$t('paymentmodal.name')}}</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="ex) John Smith" v-model="name">
+                                  <input type="text" class="input" :placeholder="$t('paymentmodal.placeholdername')" v-model="name">
                               </div>
                             </div>
                             <!-- email errors-->
@@ -106,7 +106,7 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Email</label>
+                              <label class="has-text-black">{{$t('paymentmodal.email')}}</label>
                               <div class="control">
                                   <input type="email" class="input" placeholder="123@my-email.com" v-model="email">
                               </div>
@@ -118,9 +118,9 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Phone Number</label>
+                              <label class="has-text-black">{{$t('paymentmodal.phone')}}</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="ex) xxx-xxx-xxxx" v-model="phone">
+                                  <input type="text" class="input" :placeholder="$t('paymentmodal.placeholderphone')" v-model="phone">
                               </div>
                             </div>
                             <!-- address1 errors-->
@@ -130,9 +130,9 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Street 1</label>
+                              <label class="has-text-black">{{$t('paymentmodal.street1')}}</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="ex) 123 My Street" v-model="address1">
+                                  <input type="text" class="input" :placeholder="$t('paymentmodal.street1placeholder')" v-model="address1">
                               </div>
                             </div>
                               <!-- address2 errors-->
@@ -142,9 +142,9 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Street 2 (if applicable)</label>
+                              <label class="has-text-black">{{$t('paymentmodal.street2')}}</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="ex) apt. #101"  v-model="address2">
+                                  <input type="text" class="input" :placeholder="$t('paymentmodal.street2placeholder')"  v-model="address2">
                               </div>
                             </div>
                           </div>
@@ -155,10 +155,16 @@
                                 <span style="color:red !important">*</span> {{ error }}
                                 </p>                        
                               </div>
-                              <div class="field">
-                                <label class="has-text-black">State</label>
+                              <div v-if="this.country === '日本 (Japan)'" class="field">
+                                <label class="has-text-black">{{$t('paymentmodal.pref')}}</label>
                                 <div class="control">
-                                    <input type="text" class="input" placeholder="Chicago" v-model="statePref">
+                                    <input type="text" class="input" :placeholder="$t('paymentmodal.pref')" v-model="statePref">
+                                </div>
+                              </div>
+                              <div v-else-if="this.country === 'United States'" class="field">
+                                <label class="has-text-black">{{$t('paymentmodal.state')}}</label>
+                                <div class="control">
+                                    <input type="text" class="input" :placeholder="$t('paymentmodal.pref')" v-model="statePref">
                                 </div>
                               </div>
                               <!-- country errors-->
@@ -168,9 +174,13 @@
                                 </p>                        
                               </div>
                               <div class="field">
-                                <label class="has-text-black">Country</label>
+                                <label class="has-text-black">{{$t('paymentmodal.country')}}</label>
                                 <div class="control">
-                                    <input type="text" class="input" placeholder="ex) United States, Japan, etc."  v-model="country">
+                                    <select name="country" class="input" id="id_country" v-model="country">
+                                      <option value="" disabled selected hidden>{{$t('paymentmodal.countryplaceholder')}}</option>
+                                      <option @click="this.country === '日本 (Japan)'" value="JP">日本 (Japan)</option>
+                                      <option @click="this.country === 'United States'" value="US">United States</option>
+                                    </select>
                                 </div>
                               </div>
                               <!-- post code errors-->
@@ -180,9 +190,9 @@
                                 </p>                        
                               </div>
                               <div class="field">
-                                <label class="has-text-black">Postal Code</label>
+                                <label class="has-text-black">{{$t('paymentmodal.postcode')}}</label>
                                 <div class="control">
-                                    <input type="text" class="input" placeholder="ex) 12345 or 12312-1234" v-model="zipcode">
+                                    <input type="text" class="input" :placeholder="$t('paymentmodal.postcodeplaceholder')" v-model="zipcode">
                                 </div>
                               </div>
                           </div>

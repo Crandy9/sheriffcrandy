@@ -1,0 +1,71 @@
+{
+    "headerfooter": {
+        "head": {
+            "home": "ホーム",
+            "music": "曲",
+            "flps": "Flps",
+            "tools": "私が使っているツール",
+            "bio": "バイオ",
+            "contact": "連絡先",
+            "myaccount": "マイアカウント",
+            "logout": "ログアウト",
+            "login": "ログイン",
+            "signup": "サインアップ"
+        },
+        "foot": {
+
+        }
+    },
+
+    "homeview": {
+        "body": {
+            "scripture": "琴をもって主をほめうたえ。琴と歌の声をもってほめうたえ。ラッパと角笛の音をもって王なる主の前に喜ばしき声をあげよ。",
+            "chaptverse": "詩編 98:5-6",
+            "latestSongs": "最新の曲",
+            "purchaseNowMusicLink": " 私の曲をダウンロードしてください！",
+            "here": "ここで"
+        }
+    },
+
+    "bioview": {
+        "biotitle": "バイオ"
+    },
+
+    "cartview": {
+        "carttitle": "マイカート",
+        "emptycart": "カートは空です",
+        "wavfile": ".wav オーディオ ファイル",
+        "zipfile": "FLP zip ファイル",
+        "remove": "削除",
+        "clearcart": "カートからすべてのアイテムを削除する",
+        "free": "無料です",
+        "total": "合計",
+        "tax":"税",
+        "subtotal":"小計",
+        "download": "ダウンロード",
+        "checkout": "チェックアウト"
+    },
+
+    "paymentmodal": {
+        "modaltitle": "チェックアウト",
+        "paymentdetails": "支払詳細",
+        "billingaddress": "請求先住所",
+        "name": "名前",
+        "placeholdername": "ジョン・スミス",
+        "email": "メール",
+        "phone": "電話番号",
+        "placeholderphone": "000-0000-0000",
+        "street1": "住所 (丁目・番地・号)",
+        "street1placeholder": "住所",
+        "street2": "部屋番号（該当する場合)",
+        "street2placeholder": "部屋番号",
+        "pref": "都道府県",
+        "state": "州",
+        "stateprefplaceholder": "ドロップダウンから選択",
+        "country": "国/地域",
+        "countryplaceholder": "ドロップダウンから選択",
+        "postcode": "郵便番号",
+        "postcodeplaceholder": "000-0000"
+    }
+
+  }

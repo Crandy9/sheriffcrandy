@@ -48,18 +48,18 @@
           class="navbar-end" 
           v-bind:class="{'is-active':hamburgerClicked}">
           <!-- navbar items -->
-          <a href="/" class="navbar-item">Home</a>
-          <a href="/music" class="navbar-item">Music</a>
-          <a href="/flps" class="navbar-item">FLPs</a>
-          <a href="/tools" class="navbar-item">Tools I Use</a>
-          <a href="/bio" class="navbar-item">Bio</a>
-          <a href="/contact" class="navbar-item">Contact</a>
+          <a href="/" class="navbar-item">{{$t('headerfooter.head.home')}}</a>
+          <a href="/music" class="navbar-item">{{$t('headerfooter.head.music')}}</a>
+          <a href="/flps" class="navbar-item">{{$t('headerfooter.head.flps')}}</a>
+          <a href="/tools" class="navbar-item">{{$t('headerfooter.head.tools')}}</a>
+          <a href="/bio" class="navbar-item">{{$t('headerfooter.head.bio')}}</a>
+          <a href="/contact" class="navbar-item">{{$t('headerfooter.head.contact')}}</a>
           <!-- show my account link if user is authenticated -->
-          <a v-if="$store.state.isAuthenticated" href="/myaccount" class="navbar-item">My Account</a>
+          <a v-if="$store.state.isAuthenticated" href="/myaccount" class="navbar-item">{{$t('headerfooter.head.myaccount')}}</a>
           <!-- check if user is logged in or not -->
-          <a v-if="$store.state.isAuthenticated" href="/logout" class="navbar-item">Log Out</a>
-          <a v-if="!$store.state.isAuthenticated" href="/login" class="navbar-item">{{$t('logIn')}}</a>
-          <a v-if="!$store.state.isAuthenticated" href="/signup" class="navbar-item">Sign Up</a>
+          <a v-if="$store.state.isAuthenticated" href="/logout" class="navbar-item">{{$t('headerfooter.head.logout')}}</a>
+          <a v-if="!$store.state.isAuthenticated" href="/login" class="navbar-item">{{$t('headerfooter.head.login')}}</a>
+          <a v-if="!$store.state.isAuthenticated" href="/signup" class="navbar-item">{{$t('headerfooter.head.signup')}}</a>
           <a href="/cart" class="navbar-item">
               <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
               <!-- cart item count -->

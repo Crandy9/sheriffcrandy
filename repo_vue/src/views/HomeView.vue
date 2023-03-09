@@ -4,12 +4,11 @@
     <div class="home">
       <div class="scripture-banner">
         <h4 class="subtitle my-scripture-sub">
-          "Make music to the Lord with the harp,
-           with the harp and the sound of melody!
-           With trumpets and the sound of the horn
-           make a joyful noise before the King, the Lord!"
-          <p style="font-size:medium"><cite>-Psalm 89:5-6 (esv)</cite></p>
+          {{$t('homeview.body.scripture')}}
+          <p style="font-size:medium"><cite>{{$t('homeview.body.chaptverse')}}</cite></p>
         </h4>
+        <h3>
+        </h3>
       </div>
       <div class="has-text-centered">
         <figure>
@@ -23,7 +22,7 @@
   <!-- youtube video section -->
   <section class="latest-yt-songs-section">
       <h3 id="yt-section-title" class="is-size-3 has-text-centered has-text-white" >
-        <u>Latest Songs/Covers</u>
+        <u>{{$t('homeview.body.latestSongs')}}</u>
       </h3>
       <div class="yt-player">
         <h3 id="yt-section-title" class="is-size-4 has-text-centered has-text-white" >
@@ -47,8 +46,11 @@
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
         </iframe>
-        <h3 class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
-          Purchase/download my songs<a class="music-links" href="/music"> here</a>!
+        <h3 v-if="$store.state.lang === 'en'" class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
+          {{$t('homeview.body.purchaseNowMusicLink')}}<a class="music-links" href="/music"> {{$t('homeview.body.here')}}</a>
+        </h3>
+        <h3 v-else="$store.state.lang === 'ja'" class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
+          <a class="music-links" href="/music"> {{$t('homeview.body.here')}}</a>{{$t('homeview.body.purchaseNowMusicLink')}}
         </h3>
       </div>
   </section>

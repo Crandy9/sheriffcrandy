@@ -2,7 +2,7 @@
     <section class="bio-section">
         <div class="bio-title-div">
             <h3 class="bio-title has-text-white">
-                Bio
+                {{$t('bioview.biotitle')}}
             </h3>
         </div>
         <h4 class="is-size-3 has-text-centered">

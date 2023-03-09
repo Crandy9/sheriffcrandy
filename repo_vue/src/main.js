@@ -4,7 +4,8 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import 'animate.css'
-import { createI18n } from 'vue-i18n'
+// import { createI18n } from 'vue-i18n'
+import i18n from './i18n'
 
 
 // define backend API server path for axios
@@ -13,4 +14,4 @@ import { createI18n } from 'vue-i18n'
 //  to variable name
 axios.defaults.baseURL = (process.env.VUE_APP_BACKEND_URL)
 
-createApp(App).use(store).use(router, axios).use(i18n).mount('#app')
+createApp(App).use(i18n).use(store).use(router, axios).use(i18n).mount('#app')

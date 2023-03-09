@@ -113,10 +113,21 @@ npm i bulma-modal-fx
 npm install animate.css
 - install i18n for internationalization (translating website)
 npm install vue-i18n@next
-- install i18n for internationalization (if you have Vue Cli 3.x)
+- install vue-cli-plugin-i18n for internationalization (if you have Vue Cli 3.x) https://kazupon.github.io/vue-i18n
 vue add i18n
-
-
+- will install the following:
+- .env vars: 
+VUE_APP_I18N_LOCALE=en
+VUE_APP_I18N_FALLBACK_LOCALE=en
+- update dependcies in:
+repo_vue/package-lock.json
+repo_vue/package.json
+- create new files:
+repo_vue/vue.config.js
+repo_vue/src/i18n.js
+- import i18n in main.js
+- create repo_vue/src/components/HelloI18n.vue (may not need it)
+- create json files to hold translations repo_vue/src/locales/en.json
 
 - to run vue app on localhost:8080 
 npm run serve
