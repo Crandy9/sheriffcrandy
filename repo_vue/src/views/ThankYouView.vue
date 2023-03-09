@@ -38,33 +38,28 @@ export default {
             if (this.$store.state.downloadableItems.length === 0) {
                 console.log('no items to download')
             }
-            // check if this is a single buy now/purchase now not from cart view
-            else if (this.$store.state.isSingleDownload === true) {
-                console.log('this is a single download')
-                // check if it is a track or flp single download
-                if (this.$store.state.downloadType === 'flp') {
+            // single download from either the track view, cart view, or flp view
+            else if (this.$store.state.downloadableItems.length === 1) {
+                // single track download from track view
+                if (this.$store.state.isSingleTrackDownload === true && this.$store.state.downloadType === 'fromMusicView') {
+                    this.isSingleTrack = true;
+                    this.isSingleFlp = false;
+                    this.isMultFile = false;
+                    console.log('this is a single track download/purchase from the TRACK view')
+                    this.downloadWithAxios(this.$store.state.downloadableItems[0].track, this.$store.state.downloadableItems[0].title)
+                    this.$store.state.downloadableItems = []
+                }
+                // single flp download from flp view
+                else if (this.$store.state.isSingleFlpDownload === true && this.$store.state.downloadType === 'fromFlpView') {
                     this.isSingleTrack = false;
                     this.isSingleFlp = true;
                     this.isMultFile = false;
                     console.log('this is a single flp download/purchase from the FLP view')
-                    // automatically download on page render
                     this.downloadWithAxios(this.$store.state.downloadableItems[0].flp_zip, this.$store.state.downloadableItems[0].flp_name)
-                    // clear array
                     this.$store.state.downloadableItems = []
                 }
+                // else it is a single cart download item
                 else {
-                    console.log('this is a single track download/purchase from the TRACK view')
-                    this.isSingleTrack = true;
-                    this.isSingleFlp = false;
-                    this.isMultFile = false;
-                    // automatically download on page render
-                    this.downloadWithAxios(this.$store.state.downloadableItems[0].track, this.$store.state.downloadableItems[0].title)
-                    // clear array
-                    this.$store.state.downloadableItems = []
-                }
-            }
-            else {
-                if (this.$store.state.downloadableItems.length === 1) {
                     console.log('this is a single download/zip file download from the cart page')
                     // check if this is a single track item being bought from the cart
                     if (this.$store.state.downloadableItems.some(obj => obj.hasOwnProperty('track'))) {
@@ -90,36 +85,16 @@ export default {
                         this.$store.state.downloadableItems = []
                     }
                 }
-                // this is a multifile zip file download that should've been downloaded from cart view
-                else {
-                    // only thing to do is to empty the cart
-                    this.$store.commit('clearCart')
-                }
+            }
+            // else this is a multifile download consisting of free and paid tracks and flps from the cart
+            // zip file download is handled in the then block of CartView
+            else {
+                console.log('in thankyou view. This is a multifile download, clearing cart')
+                // only thing to do is to empty the cart
+                this.$store.commit('clearCart')
             }
         },
 
-        downloadMultiFilesWithAxios(url, title) {
-            axios({
-                method: 'get',
-                url,
-                responseType: 'arraybuffer',
-            }).then((response) =>{
-                console.log('i think it worked lol')
-                forceDownloadZipFile(response, title)
-
-            }).catch((error) =>  console.log(error))
-        },
-        forceDownloadZipFile(response, title) {
-            const url = window.URL.createObjectURL(new Blob([response.data]))
-            const link = document.createElement('a')
-            link.href = url
-            // if it is a single wav file
-            link.setAttribute('download', title)
-            // else for multiple wav files, or single flp or multiple flp files, or combinations of both
-            // it should be zipped
-            document.body.appendChild(link)
-            link.click()
-        },
         downloadWithAxios(url, title) {
             console.log(url)
             console.log(title)
@@ -131,7 +106,6 @@ export default {
 
                 // single track download/purchase
                 if (this.isSingleTrack === true) {
-                    console.log('In downloadWithAxios method. This is a single track. Going to forceDownloadSingleTrack method')
                     this.forceDownloadSingleTrack(response, title)
                 }
                 // single flp download/purchase
@@ -167,7 +141,6 @@ export default {
         },
 
     },
-    // get the flps/tracks/free flps/free tracks from backend
     created() {
     },
 
@@ -175,8 +148,6 @@ export default {
         document.title = "Thank you!";
         console.log('in the mounted block about to call this.getFiles()')
         this.getFiles()
-
     },
-
 }
 </script>

@@ -25,9 +25,7 @@ from tracks_app.models import *
 import copy
 
 # import modules to zip up multiple files
-from io import BytesIO, StringIO
 import zipfile
-import shutil
 
 
 
@@ -137,9 +135,8 @@ def freeDownload(request):
                             track_dict_serializer.save(user=request.user, free_download=True)
                             os.remove(zip)
                         except:
-                            print('\n\nFailed to open zip file as attachment response to axios frontend\n\n')
+                            print('\n\nIn freeDownload method, multiple free tracks only. Failed to open zip file as attachment response to axios frontend\n\n')
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
-                        print('\n\nreturning zip file as attachment response to axios frontend\n\n')
 
                         return response
 
@@ -210,15 +207,13 @@ def freeDownload(request):
                         track_dict_serializer.save(user=request.user, free_download=True)
                         os.remove(zip)
                     except:
-                        print('\n\nFailed to open zip file as attachment response to axios frontend\n\n')
+                        print('\n\nIn freeDownload method, multiple free tracks and free flps. Failed to open zip file as attachment response to axios frontend\n\n')
                         response = HttpResponseNotFound('<h1>File not exist</h1>')
                     print('\n\nreturning zip file as attachment response to axios frontend\n\n')
 
                     return response
                 else:
                     print('\nfree flps only\n')
-                    # saving OrderFlpSerializer create function
-                    flp_dict_serializer.save(user=request.user, free_download=True)
                     
                     # create a list of tracks to return to frontend
                     freeDownloadedFlpsList = []
@@ -236,7 +231,7 @@ def freeDownload(request):
                     if len(freeDownloadedFlpsList) > 1:
                         try:
                             freeFlpsForZip = []
-                            for item in freeDownloadedFlpsList:
+                            for item in flpsForDownload:
                                 # gets the absolute path
                                 freeFlpsForZip.append(item.flp_zip.path)
 
@@ -250,17 +245,17 @@ def freeDownload(request):
                             response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
                             print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                             # saving OrderFlpSerializer
-                            track_dict_serializer.save(user=request.user, free_download=True)
+                            flp_dict_serializer.save(user=request.user, free_download=True)
                             os.remove(zip)
                         except:
-                            print('\n\nFailed to open zip file as attachment response to axios frontend\n\n')
+                            print('\n\nIn freeDownload method, multiple free flps only. Failed to open zip file as attachment response to axios frontend\n\n')
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
                         print('\n\nreturning zip file as attachment response to axios frontend\n\n')
 
                         return response
                     else:
                         # pass this to frontend if everything was ok
-                        track_dict_serializer.save(user=request.user, free_download=True)
+                        flp_dict_serializer.save(user=request.user, free_download=True)
                         print('\rReturn a free single flp zip file\n')
                         return Response(flpDownloadSerializer.data, status=status.HTTP_201_CREATED)
             except Exception:
@@ -268,7 +263,7 @@ def freeDownload(request):
                 print('here are the track errors')
                 print(str(flp_dict_serializer.errors))
                 print(flp_dict_serializer.errors)
-                print('here is the track track_dict_serializer')
+                print('here is the track flp_dict_serializer')
                 print('\n' + str(flp_dict_serializer) + '\n')
                 return Response(status=status.HTTP_400_BAD_REQUEST)
     
@@ -343,7 +338,7 @@ def checkout(request):
                         amount = track_amountStripeWillCharge,
                         # usd or jpy
                         currency='USD' if isUsd is True else 'JPY',
-                        description='Sherrif Crandy digital audio track download charge',
+                        description='Sheriff Crandy digital audio track download charge',
                         # stripe token we get from frontend
                         source=track_dict_serializer.validated_data['stripe_token']
                     )
@@ -363,12 +358,17 @@ def checkout(request):
 
                     # check for multiple files
                     if len(purchasedTracksList) > 1:
+                        print('\nlen(purchasedTracksList) > 1 is true\n')
+                        print('\npurchasedTracksList:\n' + str(purchasedTracksList))
                         try:
+                            print('\nIn try block\n')
                             purchasedTracksForZip = []
-                            for item in purchasedTracksList:
+                            for item in tracksForDownload:
+                                print('\nIn for loop iterating over purchasedTracksList\n')
                                 # gets the absolute path
-                                purchasedTracksForZip.append(item.flp_zip.path)
-
+                                purchasedTracksForZip.append(item.track.path)
+                            print('\nout of for loop\n')
+                            print('\nattempting to zip files. Calling createZip method\n')
                             # returns the absolute path of the zipfile
                             zip = createZip(purchasedTracksForZip)
                             print('\nzip file path:\n' + str(zip) + '\n')
@@ -382,7 +382,7 @@ def checkout(request):
                             track_dict_serializer.save(user=request.user, usd_paid_amount=track_usd_paid_amount, jpy_paid_amount=track_jpy_paid_amount)                            
                             os.remove(zip)
                         except:
-                            print('\n\nFailed to open zip file as attachment response to axios frontend\n\n')
+                            print('\n\nIn checkout method, multiple tracks (paid only, or free and paid) only. Failed to open zip file as attachment response to axios frontend\n\n')
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
                         print('\n\nreturning zip file as attachment response to axios frontend\n\n')
 
@@ -446,35 +446,47 @@ def checkout(request):
                         amount = flp_amountStripeWillCharge + track_amountStripeWillCharge,
                         # usd or jpy
                         currency='USD' if isUsd is True else 'JPY',
-                        description='Sherrif Crandy flp/audio file digital download charge',
+                        description='Sheriff Crandy flp/audio file digital download charge',
                         # stripe token we get from frontend
                         source=flp_dict_serializer.validated_data['stripe_token']
                     )
 
-
+                    print('Stripe Charge completed')
                     purchasedTracksList = []
                     purchasedFlpList = []
                     # increment both model items
-                    for myflps in flp_dict_serializer.validated_data['flp_items']:
-                        my_flp = Flp.objects.get(flp_name=myflps.get('flp').flp_name)
+                    for item in flp_dict_serializer.validated_data['flp_items']:
+                        print('\nin flp for loop: ' + str(item) + '\n')
+                        my_flp = Flp.objects.get(flp_name=item.get('flp').flp_name)
                         my_flp.downloads += 1
-                        purchasedFlpList.append(myflps)
+                        purchasedFlpList.append(my_flp.pk)
                         my_flp.save()
-                    for mytracks in track_dict_serializer.validated_data['track_items']:
-                        my_track = Track.objects.get(title=mytracks.get('track').title)
+                    # grab a list of all flps and serialize them
+                    flpsForDownload = Flp.objects.filter(pk__in=purchasedFlpList)
+                    print('\nlist of flps to be zipped\n')
+                    print('\n' + str(flpsForDownload) + '\n')
+
+                    for item in track_dict_serializer.validated_data['track_items']:
+                        print('\nin track for loop: ' + str(item) + '\n')
+                        my_track = Track.objects.get(title=item.get('track').title)
                         my_track.downloads += 1
-                        purchasedTracksList.append(mytracks)
+                        purchasedTracksList.append(my_track.pk)
                         my_track.save()
+                    # grab a list of all flps and serialize them
+                    tracksForDownload = Track.objects.filter(pk__in=purchasedTracksList)
+                    print('\nlist of tracks to be zipped\n')
+                    print('\n' + str(tracksForDownload) + '\n')
+
                     # Return ZIP files of paid flp/track files
                     print('\nReturning zip file containing multple paid flp and track files\n')
                     try:
                         purchasedTracksAndFlpsForZip = []
-                        for mytracks in purchasedTracksList:
+                        for mytracks in tracksForDownload:
                             print('\nin tracks loop\n' + str(mytracks) + '\n')
                             # gets the absolute path
                             purchasedTracksAndFlpsForZip.append(mytracks.track.path)
-                        for myflps in purchasedFlpList:
-                            print('\nin flps loop\n' + str(mytracks) + '\n')
+                        for myflps in flpsForDownload:
+                            print('\nin flps loop\n' + str(myflps) + '\n')
                             # gets the absolute path
                             purchasedTracksAndFlpsForZip.append(myflps.flp_zip.path)
                         print('\n\nCompleted list of purchased flps and tracks' + str(purchasedTracksAndFlpsForZip) + '\n\n')
@@ -505,7 +517,7 @@ def checkout(request):
                         amount = flp_amountStripeWillCharge,
                         # usd or jpy
                         currency='USD' if isUsd is True else 'JPY',
-                        description='Sherrif Crandy flp project file download charge',
+                        description='Sheriff Crandy flp project file download charge',
                         # stripe token we get from frontend
                         source=flp_dict_serializer.validated_data['stripe_token']
                     )
@@ -527,7 +539,7 @@ def checkout(request):
                     if len(purchasedFlpsList) > 1:
                         try:
                             purchasedFlpsForZip = []
-                            for item in purchasedFlpsList:
+                            for item in flpsForDownload:
                                 # gets the absolute path
                                 purchasedFlpsForZip.append(item.flp_zip.path)
                             # returns the absolute path of the zipfile

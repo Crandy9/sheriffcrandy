@@ -623,8 +623,8 @@ export default {
 
     // set flp name and id
     buyNow(){
-      this.$store.state.isSingleDownload = true;
-      this.$store.state.downloadType = 'track'; 
+      this.$store.state.isSingleTrackDownload = true;
+      this.$store.state.downloadType = 'fromMusicView'; 
     },
 
     // download one free track now
@@ -632,8 +632,8 @@ export default {
       // FOR FRONTEND TO PREPARE FOR DOWNLOADS
       this.$store.state.freeDownload = track;
       this.$store.state.freeDownloadId = id;
-      this.$store.state.isSingleDownload = true;
-      this.$store.state.downloadType = 'track'; 
+      this.$store.state.isSingleTrackDownload = true;
+      this.$store.state.downloadType = 'fromMusicView'; 
       var index = this.tracks.findIndex(x => x.id === id);
       const track_obj = {
         track: this.tracks[index].track,

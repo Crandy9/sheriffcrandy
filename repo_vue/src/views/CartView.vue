@@ -367,28 +367,50 @@ export default {
           'track_items': track_items,
         }
 
-        // post data to server; have to send token as well
-        await axios
-        .post(process.env.VUE_APP_FREEDOWNLOAD_API_URL, 
-              data, 
-              {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}, responseType: 'arraybuffer'})
-        .then(response => {
-            console.log('it worked bic boiiii')
-            const url = window.URL.createObjectURL(new Blob([response.data]))
-            const link = document.createElement('a')
-            link.href = url
-            // if it is a single wav file
-            link.setAttribute('download', 'SheriffCrandyDownloadables.zip')
-            document.body.appendChild(link)
-            link.click()
-            // redirect to thank you page
+        if (this.$store.state.downloadableItems.length === 1) {
+          // buying one purchased item from cart
+          await axios
+          .post(process.env.VUE_APP_FREEDOWNLOAD_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+          .then(response => {
+            // reset store
+            this.$store.state.downloadableItems = []
+            this.$store.state.downloadableItems = response.data
+            // if response was successful, clear the cart
+            this.$store.commit('clearCart')
+            // naviaget to thank you page
             this.$router.push('/thankyou')
-        })
-        .catch(error => {
-          console.log(error)
-          this.errors.generalErrors.push('Something went wrong. Please try again later')
-        })
-        this.$store.commit('setIsLoading', false)
+          })
+          .catch(error => {
+            console.log(error)
+            this.errors.generalErrors.push('Something went wrong. Please try again later')
+          })
+
+          this.$store.commit('setIsLoading', false)
+        }
+        else {
+          // post data to server; have to send token as well
+          await axios
+          .post(process.env.VUE_APP_FREEDOWNLOAD_API_URL, 
+                data, 
+                {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}, responseType: 'arraybuffer'})
+          .then(response => {
+              console.log('it worked bic boiiii')
+              const url = window.URL.createObjectURL(new Blob([response.data]))
+              const link = document.createElement('a')
+              link.href = url
+              // if it is a single wav file
+              link.setAttribute('download', 'SheriffCrandyDownloadables.zip')
+              document.body.appendChild(link)
+              link.click()
+              // redirect to thank you page
+              this.$router.push('/thankyou')
+          })
+          .catch(error => {
+            console.log(error)
+            this.errors.generalErrors.push('Something went wrong. Please try again later')
+          })
+          this.$store.commit('setIsLoading', false)
+        }
       },
       // for multiple items in cart that are free
 
@@ -524,24 +546,55 @@ export default {
           'stripe_token': token.id
         }
 
-        // post data to server; have to send token as well
-        await axios
-        .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
-        .then(response => {
-          // reset store
-          this.$store.state.downloadableItems = []
-          this.$store.state.downloadableItems = response.data
-          // if response was successful, clear the cart
-          this.$store.commit('clearCart')
-          // naviaget to thank you page
-          this.$router.push('/thankyou')
-        })
-        .catch(error => {
-          console.log(error)
-          this.errors.generalErrors.push('Something went wrong. Please try again later')
-        })
+        if (this.cart.itemsInCart.length === 1) {
+          // buying one purchased item from cart
+          await axios
+          .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+          .then(response => {
+            // reset store
+            this.$store.state.downloadableItems = []
+            this.$store.state.downloadableItems = response.data
+            // if response was successful, clear the cart
+            this.$store.commit('clearCart')
+            // naviaget to thank you page
+            this.$router.push('/thankyou')
+          })
+          .catch(error => {
+            console.log(error)
+            this.errors.generalErrors.push('Something went wrong. Please try again later')
+          })
 
-        this.$store.commit('setIsLoading', false)
+          this.$store.commit('setIsLoading', false)
+        }
+        // buying multiple items
+        else {
+          // post data to server; have to send token as well
+          await axios
+          .post(process.env.VUE_APP_CHECKOUT_API_URL, 
+                data, 
+                {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}, responseType: 'arraybuffer'})
+          .then(response => {
+                        // reset store
+                        this.$store.state.downloadableItems = []
+            this.$store.state.downloadableItems = response.data
+              console.log('it worked bic boiiii')
+              const url = window.URL.createObjectURL(new Blob([response.data]))
+              const link = document.createElement('a')
+              link.href = url
+              // if it is a single wav file
+              link.setAttribute('download', 'SheriffCrandyDownloadables.zip')
+              document.body.appendChild(link)
+              link.click()
+              // redirect to thank you page
+              this.$router.push('/thankyou')
+          })
+          .catch(error => {
+            console.log(error)
+            this.errors.generalErrors.push('Something went wrong. Please try again later')
+          })
+          this.$store.commit('setIsLoading', false)
+        }
+
       },
 
 

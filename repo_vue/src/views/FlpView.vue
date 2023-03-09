@@ -528,8 +528,8 @@
 
       // set flp name and id
       buyNow(){
-        this.$store.state.isSingleDownload = true;
-        this.$store.state.downloadType = 'flp';
+        this.$store.state.isSingleFlpDownload = true;
+        this.$store.state.downloadType = 'fromFlpView';
       },
 
       // download free flp now
@@ -537,8 +537,8 @@
         // FOR FRONTEND TO PREPARE FOR DOWNLOADS
         this.$store.state.freeDownload = flp;
         this.$store.state.freeDownloadId = id;
-        this.$store.state.isSingleDownload = true;
-        this.$store.state.downloadType = 'flp';
+        this.$store.state.isSingleFlpDownload = true;
+        this.$store.state.downloadType = 'fromFlpView';
         var index = this.flps.findIndex(x => x.id === id);
         const flp_obj = {
           flp_zip: this.flps[index].flp_zip,

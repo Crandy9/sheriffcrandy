@@ -17,7 +17,10 @@ export default createStore({
     isLoading: false,
     username: '',
     // free track/flp downloads
-    isSingleDownload: false,
+    isSingleTrackDownload: false,
+    isSingleFlpDownload: false,
+    isSingleCartDownload: false,
+    isMultiFileDownload: false,
     freeDownload: '',
     freeDownloadId: '',
     downloadType: '',
