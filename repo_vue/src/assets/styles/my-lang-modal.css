@@ -4,7 +4,7 @@
 
 */
 
-.my-lang-modal-list-item {
+.my-region-modal-list-item {
     text-align: center;
     padding: 0.5rem;
     border-bottom: black;
@@ -14,17 +14,17 @@
     cursor: pointer;
 }
 
-.my-lang-modal-list-item:hover {
+.my-region-modal-list-item:hover {
     background-color: rgba(212, 211, 206, 0.3);
 }
 
 @media screen and (max-width: 1024px) {
-    .my-lang-modal-card-title {
+    .my-region-modal-card-title {
         font-size: large;
         text-align: center;
     }
 }
 
-.my-lang-modal-card-body {
+.my-region-modal-card-body {
     padding-bottom: 2.5rem;
 }

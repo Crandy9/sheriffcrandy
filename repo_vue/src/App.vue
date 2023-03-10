@@ -81,20 +81,20 @@
       <router-view/>
           <!-- CHANGE LANGUAGE MODAL POPUP -->
     <Transition>
-      <div v-if="modalOpened" id="my-modal-id" class="modal my-lang-modal" v-bind:class="{'is-active':modalOpened}">
-        <div class="modal-background my-lang-modal-bg"></div>
-          <div class="modal-card my-lang-modal-card">
-            <header class="modal-card-head my-lang-modal-head">
-              <p class="modal-card-title my-lang-modal-card-title">Choose Language</p>
+      <div v-if="modalOpened" id="my-modal-id" class="modal my-region-modal" v-bind:class="{'is-active':modalOpened}">
+        <div class="modal-background my-region-modal-bg"></div>
+          <div class="modal-card my-region-modal-card">
+            <header class="modal-card-head my-region-modal-head">
+              <p class="modal-card-title my-region-modal-card-title">{{$t('headerfooter.foot.chooseregionmodaltitle')}}</p>
               <button @click="modalOpened = false" class="delete" aria-label="close"></button>
             </header>
-            <section class="modal-card-body my-lang-modal-card-body">
-              <ul class="my-lang-modal-list">
-                <li @click="chooseLanguage('en')" class="my-lang-modal-list-item">
-                  English
+            <section class="modal-card-body my-region-modal-card-body">
+              <ul class="my-region-modal-list">
+                <li @click="setRegion('US')" class="my-region-modal-list-item">
+                  United States
                 </li>
-                <li @click="chooseLanguage('jp')" class="my-lang-modal-list-item">
-                  Japanese (日本語)
+                <li @click="setRegion('JA')" class="my-region-modal-list-item">
+                  Japan (日本)
                 </li>
               </ul>
             </section>
@@ -289,11 +289,10 @@
 						- Jesus Christ is King
 				</div>
 			</div>
-      <div class="my-language-div">
-        
-        <button v-if="lang === 'jp'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-language-button">Japanese (日本語)</button>
-        <button v-else-if="lang === 'en'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-language-button">English</button>
-        <button v-else @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-language-button">English</button>
+      <div class="my-region-div">
+        <!-- Japan and Japanese -->
+        <button v-if="$store.state.region === 'JA'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button">Japan (日本)</button>
+        <button v-else-if="$store.state.region === 'US'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button">United States</button>
       </div>
 		</footer>
 		<!-- end Footer -->
@@ -370,7 +369,6 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      lang: '',
       hamburgerClicked: false,
       modalOpened: false,
       clientIp: '',
@@ -426,11 +424,11 @@ export default {
   // methods 
   methods: {
 
-    chooseLanguage(lang) {
+    setRegion(region) {
+      this.$store.commit('setRegion',region)
+      localStorage.setItem("region", this.$store.state.region)
+      window.location.reload();
 
-     this.$store.state.lang = lang
-     this.lang = lang
-     console.log('language changed to ' + this.$store.state.lang)
     },
 
     closeModalOnWindowClick() {
@@ -459,17 +457,26 @@ export default {
       .then(response => response.json())
       .then(response => {
         this.geoData = response;
-        // set global langauge
-        if (response.country === 'Japan') {
-          this.$store.state.lang = 'jp'
+        // set region by IP address only if region hasn't been manually set
+        if (this.$store.state.region === '') {
+          if (response.country === 'Japan') {
+            this.$store.commit('setRegion','JA')
+            localStorage.setItem("region", this.$store.state.region)
+          }
+          else if (response.country === 'United States') {
+            this.$store.state.region = 'US'
+            this.$store.commit('setRegion','US')
+            localStorage.setItem("region", this.$store.state.region)
+
+          }
+          // default
+          else {
+            this.$store.commit('setRegion','US')
+            localStorage.setItem("region", this.$store.state.region)
+
+          }
         }
-        else if (response.country === 'United States') {
-          this.$store.state.lang = 'en'
-        }
-        else {
-          this.$store.state.lang = 'en'
-        }
-        this.lang = this.$store.state.lang
+
       }).catch(error => console.log("GeoData API Error: " + error));
     },
     closeNav: function() {

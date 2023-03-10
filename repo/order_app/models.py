@@ -38,8 +38,14 @@ class Order(models.Model):
         # string representation of object using name
         if self.free_download is True:
             return "(free) Order ID: " + '%s' % self.id + f' - User: {self.user.username} - Order Date: ' + str(dtformat)
+        elif self.usd_paid_amount > 0:
+            return "Order ID: " + '%s' % self.id + f' User: {self.user.username} Order Date: ' + str(dtformat) + ' - Subtotal: $' + str(self.usd_paid_amount)
+        elif self.jpy_paid_amount > 0:
+            return "Order ID: " + '%s' % self.id + f' User: {self.user.username} Order Date: ' + str(dtformat) + ' - Subtotal: ¥' + str(self.jpy_paid_amount)
         else:
-            return "Order ID: " + '%s' % self.id + f' User: {self.user.username} Order Date: ' + str(dtformat) + ' - Subtotal: ' + str(self.usd_paid_amount)
+            return "Order ID: " + '%s' % self.id + f' User: {self.user.username} Order Date: ' + str(dtformat) + ' - Subtotal: none'
+
+
 
     
 # Order Item for flp
@@ -60,7 +66,7 @@ class OrderFlpItem(models.Model):
             return "(free) Order ID: " + '%s' % self.order.id + ' Flp: ' + str(self.flp.flp_name) + ' Order Date: ' + str(dtformat)
         else:
              return "Order ID: " + '%s' % self.order.id + ' Flp: ' + str(self.flp.flp_name) + ' Order Date: ' + str(dtformat)
-    
+
 # Same model for tracks
 class OrderTrackItem(models.Model):
     order = models.ForeignKey(Order, related_name='track_items', on_delete=models.CASCADE)

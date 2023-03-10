@@ -13,7 +13,7 @@
             "signup": "サインアップ"
         },
         "foot": {
-
+            "chooseregionmodaltitle": "地域を選択"
         }
     },
 
@@ -32,6 +32,7 @@
     },
 
     "cartview": {
+        "addtocart": "カートに入れる",
         "carttitle": "マイカート",
         "emptycart": "カートは空です",
         "wavfile": ".wav オーディオ ファイル",
@@ -43,7 +44,42 @@
         "tax":"税",
         "subtotal":"小計",
         "download": "ダウンロード",
-        "checkout": "チェックアウト"
+        "checkout": "チェックアウト",
+        "addedtocart": "カートに追加されました!",
+        "downloadnow?": "ダウンロード中？",
+        "downloadnow": "ダウンロード中",
+        "doyouwannadownload?part1": "を今すぐダウンロードしますか、それともカートに追加してショッピングを続けますか?",
+        "doyouwannadownload?part2": "",
+        "buynow?": "今すぐ買う?",
+        "buynow": "今すぐ買う",
+        "doyouwannabuy?part1": "を今すぐ購入しますか、それともカートに追加してショッピングを続けますか?",
+        "doyouwannabuy?part2": ""
+    },
+
+    "toolsview": {
+        "toolsiuse": "使用するツール"
+    },
+
+    "contactview": {
+        "title": "ビジネスに関するお問い合わせまたはコラボレーションについて",
+        "email": "メールを送ってください"
+      },
+
+    "musicview": {
+        "clicktohearsample": "曲をクリックするとサンプルが聴けます！",
+        "about": " 購入/ダウンロードするには、右のリンクをクリックしてください必要な曲の .wav オーディオ ファイル。 曲を購入（または無料の場合はダウンロード）した後、ブラウザで .wav ファイルのダウンロードが開始されます。.wav ファイルをコンピューターに保存して、曲をお楽しみください。",
+        "cputoandroid": "- コンピューターから Android に wav ファイルを転送する",
+        "cputoiphone": "- パソコンからiPhoneにwavファイルを転送"
+    },
+  
+    "flpview": {
+        "whatsanflp": "FLPプロジェクトとは？",
+        "about": "右側のリンクをクリックして、FL Studio プロジェクトを含む .zip ファイル、必要なプラグインのリストを含むテキスト ファイル、および曲に使用されるオーディオ ファイルを購入/ダウンロードします。プロジェクトを購入 (または無料の場合はダウンロード) すると、ブラウザーで .zip ファイルのダウンロードが開始されます。 .zip ファイルをコンピュータに保存し、ファイルの内容を抽出/解凍するだけです。 .flp プロジェクトを FL Studio DAW で開いて実験を開始する準備ができました!楽しみ。",
+        "warning": "警告",
+        "flstudiowarningmsgp1": "これらの .flp プロジェクト ファイルを開いて使用するには、FL Studio Fruity Edition 以上のライセンスが必要です。 FL Studio の無料試用版では、これらの .flp ファイルを開いたり保存したりすることはできません。 FL Studio Edition ライセンスをまだお持ちでない場合は、",
+        "here": "こちら",
+        "flstudiowarningmsgp2": "から購入してください。",
+        "openingfllink": "FL Studio で FLP ファイルを開く"
     },
 
     "paymentmodal": {
@@ -60,12 +96,16 @@
         "street2": "部屋番号（該当する場合)",
         "street2placeholder": "部屋番号",
         "pref": "都道府県",
+        "prefplaceholder": "ドロップダウンから都道府県を選択",
         "state": "州",
-        "stateprefplaceholder": "ドロップダウンから選択",
+        "stateplaceholder": "ドロップダウンから米国の州を選択",
         "country": "国/地域",
-        "countryplaceholder": "ドロップダウンから選択",
+        "countryplaceholder": "ドロップダウンから国を選択",
         "postcode": "郵便番号",
-        "postcodeplaceholder": "000-0000"
+        "postcodeplaceholder": "000-0000",
+        "cardinfo": "クレジットカード情報",
+        "pay": "今すぐ買う",
+        "cancel": "キャンセル"
     }
 
   }

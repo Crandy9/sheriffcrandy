@@ -13,7 +13,7 @@
         "signup": "Sign Up"
       },
       "foot": {
-        
+        "chooseregionmodaltitle": "Choose Region"
       }
   },
 
@@ -32,6 +32,7 @@
   },
 
   "cartview": {
+    "addtocart": "Add to cart",
     "carttitle": "Your Cart",
     "emptycart": "Your cart is empty",
     "wavfile": ".wav audio file",
@@ -43,29 +44,71 @@
     "tax":"Tax",
     "subtotal":"Subtotal",
     "download": "DOWNLOAD",
-    "checkout": "CHECKOUT"
+    "checkout": "CHECKOUT",
+    "addedtocart": "Added to Cart!",
+    "downloadnow?": "Download now?",
+    "downloadnow": "Download now",
+    "doyouwannadownload?part1": "Do you want to download ",
+    "doyouwannadownload?part2": " now or add it to your cart and continue shopping?",
+    "buynow?": "Buy now?",
+    "buynow": "Buy now",
+    "doyouwannabuy?part1": "Do you want to purchase ",
+    "doyouwannabuy?part2": " now or add it to your cart and continue shopping?"
+  },
+
+
+  "toolsview": {
+    "toolsiuse": "Tools I use"
+  },
+
+  "contactview": {
+    "title": "For business inquiries/collaborations",
+    "email": "Email me"
+  },
+
+  "musicview": {
+    "clicktohearsample": "Click on a song to hear a sample!",
+    "about": "Click the links on the right to purchase/download the .wav audio file for the song you want.  After purchasing the song (or downloading if free), a download of the .wav file will begin in your browser. Save the .wav file to your computer and enjoy the tunes.",
+    "cputoandroid": "- Transfer wav files from computer to Android",
+    "cputoiphone": "- Transfer wav files from computer to iPhone"
+
+  },
+
+  "flpview": {
+    "whatsanflp": "What's an FLP?",
+    "about": "Click the links on the right to purchase/download the .zip file containing the FL Studio Project, a text file with a list of required plugins, and any audio files used for the song. After purchasing the project (or downloading if free), a download of the .zip file will begin in your browser. Save the .zip file to your computer, extract/unzip the file's contents and that's it! Your .flp project is ready to be opened up in your FL Studio DAW to start experimenting! Enjoy.",
+    "warning": "WARNING",
+    "flstudiowarningmsgp1": "An FL Studio Fruity Edition license or greater is required in order to open and us these .flp project files. The FL Studio free trial version will not allow you to open or save these .flp files. Purchase an FL Studio Edition license ",
+    "here": "here",
+    "flstudiowarningmsgp2": " if you do not already have one.",
+    "openingfllink": "Opening FLP files in FL Studio"
+
   },
 
   "paymentmodal": {
     "modaltitle": "Checkout",
     "paymentdetails": "Payment Details",
     "billingaddress": "Billing Address",
-    "name": "name",
+    "name": "Name",
     "placeholdername": "ex) John Smith",
-    "email": "email",
-    "phone": "phone number",
+    "email": "Email",
+    "phone": "Phone Number",
     "placeholderphone": "000-000-0000",
-    "street1": "street 1",
+    "street1": "Street 1",
     "street1placeholder": "123 my street",
-    "street2": "street 2",
+    "street2": "Street 2 (not required)",
     "street2placeholder": "123 your street",
-    "pref": "prefecture",
-    "state": "state",
-    "stateprefplaceholder": "select from dropdown",
-    "country": "country",
-    "countryplaceholder": "select from dropdown",
-    "postcode": "postal code",
-    "postcodeplaceholder": "12345 or 12345-1234"
+    "pref": "Prefecture",
+    "prefplaceholder": "select prefecture from dropdown",
+    "state": "State",
+    "stateplaceholder": "select state from dropdown",
+    "country": "Country",
+    "countryplaceholder": "select country from dropdown",
+    "postcode": "Postal Code",
+    "postcodeplaceholder": "12345 or 12345-1234",
+    "cardinfo": "Card Info",
+    "pay": "Buy Now",
+    "cancel": "Cancel"
   }
 
 }

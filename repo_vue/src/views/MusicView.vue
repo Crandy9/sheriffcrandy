@@ -22,7 +22,7 @@
       </div>
       <div>
         <h3 style="padding: 1rem;" v-if="currentTrackPlaying == 0" class="is-size-5 has-text-warning">
-          Click on a song to hear a sample!
+          {{$t('musicview.clicktohearsample')}}
         </h3>
       </div>
       <div class="skip-icons-wrapper">
@@ -109,7 +109,7 @@
                 <a class="music-in-cart-button button is-small price-button has-text-weight-medium" 
                   v-if="checkIfTrackIsInCart(track)" 
                   @click.stop="modalOpened = false; removeFromCart(track.id)" data-target="my-modal-id">
-                  Added to Cart!
+                  {{$t('cartview.addedtocart')}}
                 </a>
                 <!-- open modal. click.stop prevents the parent click even from firing
                   doesn't play/pause the song, adds this item to cart only
@@ -117,18 +117,19 @@
                 <a class="button is-small is-black price-button has-text-weight-medium" 
                   v-else-if="track.is_free" 
                   @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
-                  FREE
+                  {{$t('cartview.free')}}
+
                 </a>
                 <a class="button is-small is-black price-button has-text-weight-medium" 
-                  v-else-if="track.usd_price"
+                  v-else-if="track.usd_price && $store.state.region === 'US'"
                   @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
                   ${{ track.usd_price }}
                 </a>
-                <!-- <a class="button is-small is-black price-button has-text-weight-medium" 
-                  v-else-if="track.jpy_price"
+                <a class="button is-small is-black price-button has-text-weight-medium" 
+                  v-else-if="track.usd_price && $store.state.region === 'JA'"
                   @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
-                  ${{ track.jpy_price }}
-                </a> -->
+                  ¥{{ track.jpy_price }}
+                </a>
               </div>
             </div>
           </li>
@@ -139,206 +140,255 @@
     <Transition>
       <div v-if="modalOpened" id="my-modal-id" class="modal" v-bind:class="{'is-active':modalOpened}">
         <div class="modal-background"></div>
-
           <div class="modal-card">
             <header class="modal-card-head">
-              <p v-if="isFree" class="modal-card-title">Download now?</p>
-              <p v-else class="modal-card-title">Buy now?</p>
+              <p v-if="isFree" class="modal-card-title">{{$t('cartview.downloadnow?')}}</p>
+              <p v-else class="modal-card-title">{{$t('cartview.buynow?')}}</p>
               <button @click="modalOpened = false" class="delete" aria-label="close"></button>
             </header>
-            <section v-if="isFree" class="modal-card-body">
-              Do you want to download "{{ setTrackTitle }}" now or add it to your cart and continue shopping?
+            <!-- free US -->
+            <section v-if="isFree && $store.state.region === 'US'" class="modal-card-body">
+              {{$t('cartview.doyouwannadownload?part1')}}"{{ setTrackTitle }}" {{$t('cartview.doyouwannadownload?part2')}}
             </section>
-            <section v-else class="modal-card-body">
-              Do you want to purchase "{{ setTrackTitle }}" now or add it to your cart and continue shopping?
+            <!-- free JA -->
+            <section v-else-if="isFree && $store.state.region === 'JA'" class="modal-card-body">
+              "{{ setTrackTitle }}" {{$t('cartview.doyouwannadownload?part1')}}
+            </section>
+            <!-- purchase US -->
+            <section v-else-if="$store.state.region === 'US'" class="modal-card-body">
+              {{$t('cartview.doyouwannabuy?part1')}}"{{ setTrackTitle }}" {{$t('cartview.doyouwannabuy?part2')}}
+            </section>
+            <!-- purchase JA -->
+            <section v-else-if="$store.state.region === 'JA'" class="modal-card-body">
+              "{{ setTrackTitle }}"{{$t('cartview.doyouwannabuy?part1')}}
             </section>
             <footer class="modal-card-foot">
-              <button v-if="isFree" @click="modalOpened = false; show = false; buyNowClicked = false; downloadFreeNow(setTrackTitle, setTrackID);" class="my-modal-button-buy-now button">Download Now</button>
+              <button v-if="isFree" @click="modalOpened = false; show = false; buyNowClicked = false; downloadFreeNow(setTrackTitle, setTrackID);" class="my-modal-button-buy-now button">{{$t('cartview.downloadnow')}}</button>
               <!-- trigger stripe payment on this item only -->
-              <button v-else @click="modalOpened = false; show = true; buyNowClicked = true; buyNow(); scrollToBottom();" class="my-modal-button-buy-now button">Buy Now</button>
+              <button v-else @click="modalOpened = false; show = true; buyNowClicked = true; buyNow(); scrollToBottom();" class="my-modal-button-buy-now button">{{$t('cartview.buynow')}}</button>
               <!-- if adding to cart, add the item to cart and close modal -->
-              <button @click.stop="addTrackToCart(setTrackID); modalOpened = false" class="my-modal-button-add-to-cart button">Add to Cart</button>
+              <button @click.stop="addTrackToCart(setTrackID); modalOpened = false" class="my-modal-button-add-to-cart button">{{$t('cartview.addtocart')}}</button>
             </footer>
           </div>
       </div>
     </Transition>
     <h2 class="music-guide is-size-5 has-text-centered has-text-warning">
-      Click the links on the right to purchase/download 
-      the .wav audio file for the song you want. 
-      After purchasing the song (or downloading if free), 
-      a download of the .wav file will begin in your browser.
-      Save the .wav file to your computer and enjoy the tunes.
+      {{$t('musicview.about')}}
       <div class="is-size-6" style="padding: 1rem;">
         <p style="padding:1.2rem;">
           <a class="file-links" target="blank" href="https://www.wideanglesoftware.com/blog/how-to-transfer-music-from-computer-to-android.php#:~:text=on%20your%20Mac.-,Connect%20your%20Android%20to%20your%20Windows%20PC%20using%20a%20USB,device%20in%20Android%20File%20Transfer.">
-            - Transfer wav files from computer to Android
+            {{$t('musicview.cputoandroid')}}
           </a>
         </p>
         <p style="padding:1.2rem;">
           <a class="file-links" target="blank" href="https://support.apple.com/guide/itunes/transfer-files-itns32636/windows">
-            - Transfer wav files from computer to iPhone
+            {{$t('musicview.cputoiphone')}}
           </a>
         </p>
       </div>
     </h2>
   </section>
   <!-- FOR BUY NOW -->
-  <!-- stripe payment form -->
+  <!-- stripe payment form copied from cart view -->
+
   <transition>
-    <div style="z-index: 9999;" class="my-checkout-div"
-      :style="styleObject()" v-bind:class="{'is-active': buyNowClicked}" ref="paymentFormTop">
-        <!-- <div class="modal-background"></div> -->
-          <div class="card">
-            <header class="card-head">
-              <p class="card-title">Checkout</p>
-              <button class="delete close-button" @click="show = false; clearFields(); buyNowClicked = false;" aria-label="close"></button>
-            </header>
-            <section class="card-body">
-              <div class="page-checkout">
-                <div class="columns is-multiline">
-                    <div class="column is-12 box">
-                      <h2 style= "text-align: center;" class="subtitle has-text-black has-text-center is-underlined">Payment Details</h2>
-                      <h2 class="subtitle has-text-black">Billing Address</h2>
-                      <!-- <p class="has-text-danger mb-4">* All fields are required</p> -->
-                      <div class="columns is-multiline">
-                        <div class="column is-6">
-                          <!-- name errors-->
-                          <div v-if="errors.nameErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.nameErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Name</label>
-                            <div class="control">
-                                <input type="text" class="input" placeholder="ex) John Smith" v-model="name">
-                            </div>
-                          </div>
-                          <!-- email errors-->
-                          <div v-if="errors.emailErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.emailErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Email</label>
-                            <div class="control">
-                                <input type="email" class="input" placeholder="123@my-email.com" v-model="email">
-                            </div>
-                          </div>
-                          <!-- phone errors-->
-                          <div v-if="errors.phoneErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.phoneErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Phone Number</label>
-                            <div class="control">
-                                <input type="text" class="input" placeholder="ex) xxx-xxx-xxxx" v-model="phone">
-                            </div>
-                          </div>
-                          <!-- address1 errors-->
-                          <div v-if="errors.address1Errors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.address1Errors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Street 1</label>
-                            <div class="control">
-                                <input type="text" class="input" placeholder="ex) 123 My Street" v-model="address1">
-                            </div>
-                          </div>
-                            <!-- address2 errors-->
-                            <div v-if="errors.address2Errors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.address2Errors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
-                          </div>
-                          <div class="field">
-                            <label class="has-text-black">Street 2 (if applicable)</label>
-                            <div class="control">
-                                <input type="text" class="input" placeholder="ex) apt. #101"  v-model="address2">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="column is-6">
-                            <!-- statepref errors-->
-                            <div v-if="errors.statePrefErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.statePrefErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
+      <div style="z-index: 9999;" class="my-checkout-div"
+        :style="styleObject()" v-bind:class="{'is-active': buyNowClicked}" ref="paymentFormTop">
+          <!-- <div class="modal-background"></div> -->
+            <div class="card">
+              <header class="card-head">
+                <p class="card-title">{{$t('paymentmodal.modaltitle')}}</p>
+                <button class="delete close-button" @click="show = false; clearFields(); buyNowClicked = false;" aria-label="close"></button>
+              </header>
+              <section class="card-body">
+                <div class="page-checkout">
+                  <div class="columns is-multiline">
+                      <div class="column is-12 box">
+                        <h2 style= "text-align: center;" class="subtitle has-text-black has-text-center is-underlined">{{$t('paymentmodal.paymentdetails')}}</h2>
+                        <h2 class="subtitle has-text-black">{{$t('paymentmodal.billingaddress')}}</h2>
+                        <!-- <p class="has-text-danger mb-4">* All fields are required</p> -->
+                        <div class="columns is-multiline">
+                          <div class="column is-6">
+                            <!-- name errors-->
+                            <div v-if="errors.nameErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.nameErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">State</label>
+                              <label class="has-text-black">{{$t('paymentmodal.name')}}</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="Chicago" v-model="statePref">
+                                  <input type="text" class="input" :placeholder="$t('paymentmodal.placeholdername')" v-model="name">
                               </div>
                             </div>
-                            <!-- country errors-->
-                            <div v-if="errors.countryErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.countryErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
+                            <!-- email errors-->
+                            <div v-if="errors.emailErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.emailErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Country</label>
+                              <label class="has-text-black">{{$t('paymentmodal.email')}}</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="ex) United States, Japan, etc."  v-model="country">
+                                  <input type="email" class="input" placeholder="123@my-email.com" v-model="email">
                               </div>
                             </div>
-                            <!-- post code errors-->
-                            <div v-if="errors.zipcodeErrors.length">
-                              <p class="my-errors" style="color:red" v-for="error in errors.zipcodeErrors" v-bind:key="error">
-                              <span style="color:red !important">*</span> {{ error }}
-                              </p>                        
+                            <!-- phone errors-->
+                            <div v-if="errors.phoneErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.phoneErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">Postal Code</label>
+                              <label class="has-text-black">{{$t('paymentmodal.phone')}}</label>
                               <div class="control">
-                                  <input type="text" class="input" placeholder="ex) 12345 or 12312-1234" v-model="zipcode">
+                                  <input type="text" class="input" :placeholder="$t('paymentmodal.placeholderphone')" v-model="phone">
                               </div>
                             </div>
+                            <!-- address1 errors-->
+                            <div v-if="errors.address1Errors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.address1Errors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                            </div>
+                            <div class="field">
+                              <label class="has-text-black">{{$t('paymentmodal.street1')}}</label>
+                              <div class="control">
+                                  <input type="text" class="input" :placeholder="$t('paymentmodal.street1placeholder')" v-model="address1">
+                              </div>
+                            </div>
+                              <!-- address2 errors-->
+                              <div v-if="errors.address2Errors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.address2Errors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                            </div>
+                            <div class="field">
+                              <label class="has-text-black">{{$t('paymentmodal.street2')}}</label>
+                              <div class="control">
+                                  <input type="text" class="input" :placeholder="$t('paymentmodal.street2placeholder')"  v-model="address2">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="column is-6">
+                              <!-- country errors-->
+                              <div v-if="errors.countryErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.countryErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                              </div>
+                              <div class="field">
+                                <label class="has-text-black">{{$t('paymentmodal.country')}}</label>
+                                <div class="control">
+                                    <select class="input" v-model="country" name="country" id="id_country">
+                                      <option style="color:rgba(0,0,0,0.4) !important" value="" disabled selected hidden>
+                                          {{$t('paymentmodal.countryplaceholder')}}
+                                      </option>
+                                      <option v-for="cya in $store.state.countries" :value="cya.countryval" style="color: black !important;">{{cya.countryname}}</option>
+                                    </select>
+                                </div>
+                              </div>
+                              <!-- statepref errors-->
+                              <div v-if="errors.statePrefErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.statePrefErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                              </div>
+                              <!-- prefectures -->
+                              <div v-if="this.country === 'JP'" class="field">
+                                <label class="has-text-black">{{$t('paymentmodal.pref')}}</label>
+                                <div class="control">
+                                  <select v-model="statePref" name="statepref" class="input">
+                                    <option value="" disabled selected hidden>
+                                            {{$t('paymentmodal.prefplaceholder')}}
+                                    </option>
+                                    <option v-for="pref in $store.state.prefectures" :key="pref.prefval" :value="pref.prefval" style="color: black !important;">{{pref.prefval}}</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <!-- states -->
+                              <div v-if="this.country === 'US'" class="field">
+                                <label class="has-text-black">{{$t('paymentmodal.state')}}</label>
+                                <div class="control">
+                                  <select v-model="statePref" name="statepref" class="input">
+                                    <option value="" disabled selected hidden>
+                                            {{$t('paymentmodal.stateplaceholder')}}
+                                    </option>
+                                    <option v-for="state in $store.state.usstates" :key="state.stateval" :value="state.stateval" style="color: black !important;">{{state.statename}}</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <!-- post code errors-->
+                              <div v-if="errors.zipcodeErrors.length">
+                                <p class="my-errors" style="color:red" v-for="error in errors.zipcodeErrors" v-bind:key="error">
+                                <span style="color:red !important">*</span> {{ error }}
+                                </p>                        
+                              </div>
+                              <div class="field">
+                                <label class="has-text-black">{{$t('paymentmodal.postcode')}}</label>
+                                <div class="control">
+                                    <input type="text" class="input" :placeholder="$t('paymentmodal.postcodeplaceholder')" v-model="zipcode">
+                                </div>
+                              </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <hr>
-                    <!-- general errors -->
-                    <div v-if="errors.generalErrors.length">
-                        <p class="my-errors" style="text-align: center; color:red; padding-bottom: 1rem; padding-inline: 2.2rem;" v-for="error in errors.generalErrors" v-bind:key="error">
-                        <span style="color:red !important">*</span> {{ error }}
-                        </p>                        
-                    </div>
-                    <div class="mb-5 has-text-black">
-                      <h2 class="subtitle has-text-black">Card Information</h2>
-                    </div>
+                      <hr>
+                      <!-- general errors -->
+                      <div v-if="errors.generalErrors.length">
+                          <p class="my-errors" style="text-align: center; color:red; padding-bottom: 1rem; padding-inline: 2.2rem;" v-for="error in errors.generalErrors" v-bind:key="error">
+                          <span style="color:red !important">*</span> {{ error }}
+                          </p>                        
+                      </div>
+                      <div class="mb-5 has-text-black">
+                        <h2 class="subtitle has-text-black">Card Information</h2>
+                      </div>
+                  </div>
                 </div>
-              </div>
-              <div class="stripe-card-div">
-                <div id="card-element" class="mb-5 control"></div>
-              </div>
-            </section>
-            <footer class="card-foot">
-              <p class="my-subtotal has-text-black">
-                <span>Total:</span>
-                <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ usdPrice }}</span>
-              </p>
-              <p class="my-subtotal has-text-black">
-                <span>Tax:</span>
-                <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTaxes }}</span>
-              </p>
-              <p class="my-subtotal has-text-black">
-                <span>Subtotal:</span>
-                <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
-              </p>
-              <button @click="submitForm();" class="my-button-buy-now button">Pay ${{ usdPrice }}</button>
-              <!-- if adding to cart, add the item to cart and close modal -->
-              <button @click="show = false; clearFields(); buyNowClicked = false;" class="my-button-cancel button">Cancel</button>
-            </footer>
-          </div>
-    </div>
-  </transition>
+                <div class="stripe-card-div">
+                  <label for="has-text-black">Card</label>
+                  <div id="card-element" class="mb-5 control"></div>
+                </div>
+              </section>
+              <!-- for usd -->
+              <footer v-if="$store.state.region === 'US'" class="card-foot">
+                <p class="my-subtotal has-text-black">
+                  <span>{{$t('cartview.total')}}:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ usdPrice }}</span>
+                </p>
+                <p class="my-subtotal has-text-black">
+                  <span>{{$t('cartview.tax')}}:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTaxes }}</span>
+                </p>
+                <p class="my-subtotal has-text-black">
+                  <span>{{$t('cartview.subtotal')}}:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
+                </p>
+                <button @click="submitForm();" class="my-button-buy-now button">{{$t('paymentmodal.pay')}} ${{ calculateUsdSubtotal }}</button>
+                <!-- if adding to cart, add the item to cart and close modal -->
+                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
+              </footer>
+              <!-- for jpy -->
+              <footer v-else-if="$store.state.region === 'JA'" class="card-foot">
+                <p class="my-subtotal has-text-black">
+                  <span>{{$t('cartview.total')}}:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ jpyPrice }}</span>
+                </p>
+                <p class="my-subtotal has-text-black">
+                  <span>{{$t('cartview.subtotal')}}:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTaxes }}</span>
+                </p>
+                <p class="my-subtotal has-text-black">
+                  <span>{{$t('cartview.subtotal')}}:</span>
+                  <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpySubtotal }}</span>
+                </p>
+                <button @click="submitForm();" class="my-button-buy-now button">{{$t('paymentmodal.pay')}} ¥{{ calculateJpySubtotal }}</button>
+                <!-- if adding to cart, add the item to cart and close modal -->
+                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
+              </footer>
+            </div>
+      </div>
+    </transition>
 </template>
 
 
@@ -434,7 +484,7 @@ export default {
   mounted() {
     this.getTracks();
     document.addEventListener('click', this.closeModalOnWindowClick);
-    this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'})
+    this.$store.state.region === 'US' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
     const elements = this.stripe.elements();
     this.card = elements.create('card', { hidePostalCode: true })
     this.card.mount('#card-element')
@@ -454,20 +504,13 @@ export default {
         return this.usdSubTotal;
       },
 
-      // JPY TOTAL
-      calculateJpyTotal () {
-        let sum = 0;
-        this.totalJpyPrice = sum;
-
-        return this.totalJpyPrice;
-      },
       calculateJpyTaxes() {
-        var taxAmount = (parseFloat(this.jpyTaxRate * this.totalJpyPrice))
+        var taxAmount = (parseFloat(this.jpyTaxRate * this.jpyPrice))
         this.jpyTax = taxAmount;
         return this.jpyTax
       },
       calculateJpySubtotal() {
-        this.jpySubtotal = parseFloat((this.totalJpyPrice + this.jpyTax));
+        this.jpySubtotal = parseFloat((this.jpyPrice + this.jpyTax));
         return this.jpySubtotal
       },
 
@@ -566,36 +609,73 @@ export default {
 
       // get user billing data as well as stripe token and all
       // cart items, both flps and tracks
-      const data = {
-        'name': this.name,
-        'email': this.email,
-        'phone': this.phone,
-        'address1': this.address1,
-        'address2': this.address2,
-        'statePref': this.statePref,
-        'country': this.country,
-        'zipcode': this.zipcode,
-        'flp_items': flp_items,
-        'track_items': track_items,
-        'stripe_token': token.id
-      }
 
-      // post data to server; have to send token as well
-      await axios
-      .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
-      .then(response => {
+      if(this.$store.state.region === 'US') {
+        const data = {
+          'name': this.name,
+          'email': this.email,
+          'phone': this.phone,
+          'address1': this.address1,
+          'address2': this.address2,
+          'statePref': this.statePref,
+          'country': this.country,
+          'zipcode': this.zipcode,
+          'flp_items': flp_items,
+          'track_items': track_items,
+          'stripe_token': token.id,
+          'jpy_paid_amount': '0',
+          'usd_paid_amount': this.calculateUsdSubtotal,
+        }
+        // post data to server; have to send token as well
+        await axios
+        .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+        .then(response => {
           // reset store
           this.$store.state.downloadableItems = []
           this.$store.state.downloadableItems = response.data        
           // redirect to thank you page
           this.$router.push('/thankyou')
-      })
-      .catch(error => {
-        console.log(error)
-        this.errors.generalErrors.push('Something went wrong. Please try again later')
-      })
+        })
+        .catch(error => {
+          console.log(error)
+          this.errors.generalErrors.push('Something went wrong. Please try again later')
+        })
 
-      this.$store.commit('setIsLoading', false)
+        this.$store.commit('setIsLoading', false)
+      }
+      else {
+        const data = {
+          'name': this.name,
+          'email': this.email,
+          'phone': this.phone,
+          'address1': this.address1,
+          'address2': this.address2,
+          'statePref': this.statePref,
+          'country': this.country,
+          'zipcode': this.zipcode,
+          'flp_items': flp_items,
+          'track_items': track_items,
+          'stripe_token': token.id,
+          'jpy_paid_amount': this.calculateJpySubtotal,
+          'usd_paid_amount': '0',
+        }
+          // post data to server; have to send token as well
+          await axios
+          .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+          .then(response => {
+              // reset store
+              this.$store.state.downloadableItems = []
+              this.$store.state.downloadableItems = response.data        
+              // redirect to thank you page
+              this.$router.push('/thankyou')
+          })
+          .catch(error => {
+            console.log(error)
+            this.errors.generalErrors.push('Something went wrong. Please try again later')
+          })
+
+          this.$store.commit('setIsLoading', false)
+        }
     },
 
     styleObject() {

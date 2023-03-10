@@ -281,17 +281,32 @@ def freeDownload(request):
 def checkout(request):
 
     # bool to check if this is a US or Japan payment
-    isUsd = True
-    flp_amountStripeWillCharge = 0
-    track_amountStripeWillCharge = 0
+    isUsd = None
+    # flp_amountStripeWillCharge = 0
+    # track_amountStripeWillCharge = 0
+    TOTAL_USD_PAID = float(str(request.data.pop('usd_paid_amount')).strip(' "'))
+    TOTAL_JPY_PAID = int(str(request.data.pop('jpy_paid_amount')).strip(' "'))
+    print('TOTAL_USD_PAID: ' + str(TOTAL_USD_PAID) + ' ' + str(type(TOTAL_USD_PAID)))
+    print('TOTAL_JPY_PAID: ' + str(TOTAL_JPY_PAID) + ' ' + str(type(TOTAL_JPY_PAID)))
+
+    # check if this is a usd or jpy purchase
+    if TOTAL_JPY_PAID > 1:
+        isUsd = False
+        print('this is a jpy purchase')
+    else:
+        isUsd = True
+        print('this is a usd purchase')
 
     flp_dict = request.data
     track_dict = copy.deepcopy(flp_dict)
+
 
     # remove irrelevant data from both dicts
     flp_dict.pop('track_items') 
     track_dict.pop('flp_items') 
     
+    print(str(flp_dict))
+    print(str(track_dict))
     # don't attempt to create serializer for tracks if none exists
     if 'no_tracks' in str(track_dict):
         print('\n\nNo purchased tracks to process\n\n')
@@ -303,26 +318,22 @@ def checkout(request):
         
         if track_dict_serializer.is_valid():
 
-            track_usd_paid_amount = 0
-            track_jpy_paid_amount = 0
-            # check if this was jpy or usd purchase (usd is default)
-            if isUsd:
-                for item in track_dict_serializer.validated_data['track_items']:
-                    if item.get('track').is_free:
-                        print('\ntrack ' + str(item.get('track').title) + ' is a free track\n')
-                        pass
-                    else: 
-                        track_usd_paid_amount += item.get('track').usd_price
-            # for jpy
-            else:
-                for item in track_dict_serializer.validated_data['track_items']:
-                    if item.get('track').is_free:
-                        print('\ntrack ' + str(item.get('track').title) + ' is a free track\n')
-                        pass
-                    else: 
-                        track_jpy_paid_amount += item.get('track').jpy_price
+            # if isUsd:
+            #     for item in track_dict_serializer.validated_data['track_items']:
+            #         if item.get('track').is_free:
+            #             print('\ntrack ' + str(item.get('track').title) + ' is a free track\n')
+            #             pass
+            #         else: 
+            #             track_usd_paid_amount += item.get('track').usd_price
+            # else:
+            #     for item in track_dict_serializer.validated_data['track_items']:
+            #         if item.get('track').is_free:
+            #             print('\ntrack ' + str(item.get('track').title) + ' is a free track\n')
+            #             pass
+            #         else: 
+            #             track_jpy_paid_amount += item.get('track').jpy_price
         
-            track_amountStripeWillCharge = int(track_usd_paid_amount * 100) if isUsd is True else track_jpy_paid_amount
+            # track_amountStripeWillCharge = int(TOTAL_USD_PAID * 100) if isUsd is True else TOTAL_JPY_PAID
             
             # if there are flps to process, don't create stripe charge or return any data yet
             try:
@@ -335,7 +346,7 @@ def checkout(request):
                     stripe.api_key = settings.STRIPE_SK
                     charge = stripe.Charge.create(
                         # if it's usd, stripe takes amount in cents, otherwise leave it whole number for JPY
-                        amount = track_amountStripeWillCharge,
+                        amount = int(TOTAL_USD_PAID * 100) if isUsd is True else TOTAL_JPY_PAID,
                         # usd or jpy
                         currency='USD' if isUsd is True else 'JPY',
                         description='Sheriff Crandy digital audio track download charge',
@@ -379,7 +390,7 @@ def checkout(request):
                             response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
                             print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                             # saving track_dict_serializer
-                            track_dict_serializer.save(user=request.user, usd_paid_amount=track_usd_paid_amount, jpy_paid_amount=track_jpy_paid_amount)                            
+                            track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                            
                             os.remove(zip)
                         except:
                             print('\n\nIn checkout method, multiple tracks (paid only, or free and paid) only. Failed to open zip file as attachment response to axios frontend\n\n')
@@ -389,7 +400,7 @@ def checkout(request):
                         return response
                     else:
                         # saving track_dict_serializer
-                        track_dict_serializer.save(user=request.user, usd_paid_amount=track_usd_paid_amount, jpy_paid_amount=track_jpy_paid_amount)      
+                        track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)      
                         # only return here if there are no flps to process
                         print('\nReturning a single wav track file\n')
                         return Response(trackDownloadSerializer.data, status=status.HTTP_201_CREATED)
@@ -415,26 +426,26 @@ def checkout(request):
     
 
         if flp_dict_serializer.is_valid():
-            usd_paid_amount = 0
-            jpy_paid_amount = 0
+            # usd_paid_amount = 0
+            # jpy_paid_amount = 0
             # check if this was jpy or usd purchase (usd is default)
-            if isUsd:
-                for item in flp_dict_serializer.validated_data['flp_items']:
-                    if item.get('flp').flp_is_free:
-                        print('\nflp ' + str(item.get('flp').flp_name) + ' is a free flp\n')
-                        pass
-                    else: 
-                        usd_paid_amount += item.get('flp').usd_price
-            # for jpy
-            else:
-                for item in flp_dict_serializer.validated_data['flp_items']:
-                    if item.get('flp').flp_is_free:
-                        print('\flp ' + str(item.get('flp').flp_name) + ' is a free flp\n')
-                        pass
-                    else: 
-                        jpy_paid_amount += item.get('flp').jpy_price
+            # if isUsd:
+            #     for item in flp_dict_serializer.validated_data['flp_items']:
+            #         if item.get('flp').flp_is_free:
+            #             print('\nflp ' + str(item.get('flp').flp_name) + ' is a free flp\n')
+            #             pass
+            #         else: 
+            #             usd_paid_amount += item.get('flp').usd_price
+            # # for jpy
+            # else:
+            #     for item in flp_dict_serializer.validated_data['flp_items']:
+            #         if item.get('flp').flp_is_free:
+            #             print('\flp ' + str(item.get('flp').flp_name) + ' is a free flp\n')
+            #             pass
+            #         else: 
+            #             jpy_paid_amount += item.get('flp').jpy_price
         
-            flp_amountStripeWillCharge = int(usd_paid_amount * 100) if isUsd is True else jpy_paid_amount
+            # flp_amountStripeWillCharge = int(TOTAL_USD_PAID * 100) if isUsd is True else TOTAL_USD_PAID
             
             # if there are tracks and flps to process, process them
             try:
@@ -443,7 +454,7 @@ def checkout(request):
                     stripe.api_key = settings.STRIPE_SK
                     charge = stripe.Charge.create(
                         # if it's usd, stripe takes amount in cents, otherwise leave it whole number for JPY
-                        amount = flp_amountStripeWillCharge + track_amountStripeWillCharge,
+                        amount = int(TOTAL_USD_PAID * 100) if isUsd is True else TOTAL_JPY_PAID,
                         # usd or jpy
                         currency='USD' if isUsd is True else 'JPY',
                         description='Sheriff Crandy flp/audio file digital download charge',
@@ -499,9 +510,9 @@ def checkout(request):
                         response = HttpResponse(file_data, content_type='application/zip, application/octet-stream')
                         response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
                         print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
-                        # save both serializers
-                        flp_dict_serializer.save(user=request.user, usd_paid_amount=usd_paid_amount, jpy_paid_amount=jpy_paid_amount)
-                        track_dict_serializer.save(user=request.user, usd_paid_amount=track_usd_paid_amount, jpy_paid_amount=track_jpy_paid_amount)                         
+                        # save both serializers but only give one order the total
+                        flp_dict_serializer.save(user=request.user, usd_paid_amount=777, jpy_paid_amount=777)
+                        track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                         
                         os.remove(zip)
                     except:
                         print('\n\nFailed to open zip file as attachment response to axios frontend\n\n')
@@ -514,7 +525,7 @@ def checkout(request):
                     stripe.api_key = settings.STRIPE_SK
                     charge = stripe.Charge.create(
                         # if it's usd, stripe takes amount in cents, otherwise leave it whole number for JPY
-                        amount = flp_amountStripeWillCharge,
+                        amount = int(TOTAL_USD_PAID * 100) if isUsd is True else TOTAL_JPY_PAID,
                         # usd or jpy
                         currency='USD' if isUsd is True else 'JPY',
                         description='Sheriff Crandy flp project file download charge',
@@ -553,7 +564,7 @@ def checkout(request):
                             print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                             # save both serializers
                             # saving OrderFlpSerializer create function
-                            flp_dict_serializer.save(user=request.user, usd_paid_amount=usd_paid_amount, jpy_paid_amount=jpy_paid_amount)                      
+                            flp_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                      
                             os.remove(zip)
                         except:
                             print('\n\nFailed to open zip file as attachment response to axios frontend\n\n')
@@ -563,7 +574,7 @@ def checkout(request):
 
                     else:
                         print('\nReturning zip file containing a single paid flp file\n')
-                        flp_dict_serializer.save(user=request.user, usd_paid_amount=usd_paid_amount, jpy_paid_amount=jpy_paid_amount)                      
+                        flp_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                      
                         return Response(flpDownloadSerializer.data, status=status.HTTP_201_CREATED)
             except Exception:
                 print('something went wrong with flp_dict_serializer.save')
