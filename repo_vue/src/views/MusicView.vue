@@ -484,7 +484,7 @@ export default {
   mounted() {
     this.getTracks();
     document.addEventListener('click', this.closeModalOnWindowClick);
-    this.$store.state.region === 'US' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
+    this.$i18n.locale === 'en' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
     const elements = this.stripe.elements();
     this.card = elements.create('card', { hidePostalCode: true })
     this.card.mount('#card-element')

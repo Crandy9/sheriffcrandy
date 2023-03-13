@@ -6,6 +6,9 @@ import { toast } from 'bulma-toast'
 import HomeView from '../views/HomeView.vue'
 import FlpView from '../views/FlpView.vue'
 
+// import i18n
+import i18n from '@/i18n'
+
 
 // russian demo: https://www.youtube.com/watch?v=ZLCMv_rdlsY
 // indian demo: 
@@ -13,9 +16,16 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes: [
     {
-      path: "/:locale?",
+      path: '/',
+      redirect: `/${i18n.locale}`
+    },
+
+    {
+      // path: "/:locale?",
+      // path: '/:lang',
+      // component: RouterView,
+      path: '/:lang',
       component: RouterView,
-      // beforeEnter: Tr.routeMiddleware,
       children: [
         {
           path: '',

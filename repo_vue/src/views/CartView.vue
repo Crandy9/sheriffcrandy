@@ -364,7 +364,7 @@ export default {
       this.cart = this.$store.state.cart
       document.title = 'Cart' 
       if (this.cart.itemsInCart.length > 0) {
-          this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: this.$i18n.locale})
+        this.$i18n.locale === 'en' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
           const elements = this.stripe.elements();
           this.card = elements.create('card', { hidePostalCode: true })
           this.card.mount('#card-element')

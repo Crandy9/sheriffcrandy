@@ -46,11 +46,11 @@
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
         </iframe>
-        <h3 v-if="$store.state.region === 'US'" class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
-          {{$t('homeview.body.purchaseNowMusicLink')}}<a class="music-links" href="/music"> {{$t('homeview.body.here')}}</a>
+        <h3 v-if="$i18n.locale === 'en'" class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
+          {{$t('homeview.body.purchaseNowMusicLink')}}<a class="music-links" href="en/music"> {{$t('homeview.body.here')}}</a>
         </h3>
-        <h3 v-else="$store.state.region === 'JA'" class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
-          <a class="music-links" href="/music"> {{$t('homeview.body.here')}}</a>{{$t('homeview.body.purchaseNowMusicLink')}}
+        <h3 v-else-if="$i18n.locale === 'ja'" class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
+          <a class="music-links" href="ja/music"> {{$t('homeview.body.here')}}</a>{{$t('homeview.body.purchaseNowMusicLink')}}
         </h3>
       </div>
   </section>

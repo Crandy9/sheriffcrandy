@@ -198,6 +198,9 @@ export default createStore({
     // set region
     setRegion(state, region) {
       state.region = region
+      console.log('region changed')
+      console.log('new region:' + state.region)
+
     },
 
     // add items to cart
