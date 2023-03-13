@@ -19,7 +19,7 @@ export default {
         this.$store.commit('clearCart')
         // add toast message
         toast({
-            message: 'Successfully Logged out',
+            message: this.$t('modals.logout'),
             type: 'is-success',
             dismissible: true,
             pauseOnHover: true,

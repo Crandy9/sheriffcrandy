@@ -116,7 +116,7 @@ router.beforeEach((to,from,next) => {
   if (to.matched.some(record => record.meta.requiresAuthAccount) && !store.state.isAuthenticated){
 
     toast({
-      message: 'Please login',
+      message: this.$t('modals.pleaselogin'),
       type: 'is-danger',
       dismissible: true,
       pauseOnHover: true,

@@ -26,6 +26,29 @@
       "here": "here!"
     }
   },
+  "loginsignupview": {
+
+    "errors": {
+      "usernameemailerrors": "Please enter your username or email address to login.",
+      "passworderrors": "Please enter your password.",
+      "invalidusernamepassword": "username and/or password is invalid",
+      "generalerrors": "Oops! Something went wrong, please try again later."
+
+
+    },
+
+    "logintitle": "Login",
+    "signuptitle": "Sign up",
+    "username": "Username/Email Address",
+    "password": "Password",
+    "usernameonly": "Username",
+    "emailonly": "Email Address",
+    "forgotpassword": "forgot your password?",
+    "donthaveaccount": "Don't have an account?",
+    "signup1": "Don't have an account?",
+    "signup2": "Sign up!"
+
+  },
 
   "bioview": {
       "biotitle": "Bio"
@@ -109,6 +132,16 @@
     "cardinfo": "Card Info",
     "pay": "Buy Now",
     "cancel": "Cancel"
+  },
+  "modals": {
+    "accountcreated": "Account Created! Please log in.",
+    "logout": "Successfully Logged out",
+    "pleaselogin": "Please login",
+    "removedfromcart": "removed from cart",
+    "addedtocart": "added to cart",
+    "welcomeback": "Welcome back",
+    "welcomeback2": ""
+
   }
 
 }

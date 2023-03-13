@@ -64,6 +64,7 @@ pip install pillow (image processing)
 pip install pydub (audio file processing)
 pip install django-environ (for environment variables)
 pip install stripe (payment processor for handling secure payments)
+pip3 install --upgrade stripe (upgrade stripe)
 pip install psycopg2 (database adapter for PostgreSQL DB)
 install pgadmin4 desktop tool for DB management (https://www.pgadmin.org/download/)
 

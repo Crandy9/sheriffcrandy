@@ -4,7 +4,7 @@
             <div class="columns">
                 <div class="column is-6 is-offset-3">
                     <h1 class="title">
-                        Sign up
+                        {{$t('loginsignupview.signuptitle')}}
                     </h1>
                     <!-- sign up form prevent default action -->
                     <form @submit.prevent="submitForm">
@@ -208,7 +208,7 @@ export default {
 
                         // add toast message
                         toast({
-                            message: 'Account created. Please log in!',
+                            message: this.$t('modals.accountcreated'),
                             type: 'is-success',
                             dismissible: true,
                             pauseOnHover: true,

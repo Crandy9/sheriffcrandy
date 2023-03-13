@@ -991,7 +991,7 @@ export default {
       // show toast msg to user https://www.npmjs.com/package/bulma-toast
       // toast fadein/out animation requires animate.css. See README
       toast({
-        message: ' \"' + item.title + '\" added to cart!',
+        message: item.title + ' ' + this.$t('modals.addedtocart'),
         type: 'is-info',
         dismissible: true,
         pauseOnHover: true,
@@ -1007,7 +1007,7 @@ export default {
       // pass entire json track/flp obj to removeFromCart function
       this.$store.commit('removeFromCart', item)
       toast({
-        message: ' \"' + item.title + '\" removed from cart!',
+        message: item.title + ' ' + this.$t('modals.removedfromcart'),
         type: 'is-danger',
         dismissible: true,
         pauseOnHover: true,

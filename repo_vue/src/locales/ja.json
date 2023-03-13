@@ -22,9 +22,29 @@
             "scripture": "琴をもって主をほめうたえ。琴と歌の声をもってほめうたえ。ラッパと角笛の音をもって王なる主の前に喜ばしき声をあげよ。",
             "chaptverse": "詩編 98:5-6",
             "latestSongs": "最新の曲",
-            "purchaseNowMusicLink": " 私の曲をダウンロードしてください！",
+            "purchaseNowMusicLink": " 私の曲をダウンロード！",
             "here": "ここで"
         }
+    },
+    "loginsignupview": {
+
+        "errors": {
+            "usernameemailerrors": "ユーザー名またはメールアドレスを入力してログインしてください。",
+            "passworderrors": "パスワードを入力してください。",
+            "invalidusernamepassword": "ユーザー名またはパスワードが無効です。",
+            "generalerrors": "何かが間違っています。後でもう一度試してください。"
+        },
+
+        "logintitle": "ログイン",
+        "signuptitle": "会員登録",
+        "username": "ユーザー名またはメールアドレス",
+        "usernameonly": "ユーザー名",
+        "emailonly": "メールアドレス",
+        "password": "パスワード",
+        "forgotpassword": "パスワードをお忘れですか？",
+        "donthaveaccount": "",
+        "signup1": "",
+        "signup2": "アカウントをお持ちでない方"
     },
 
     "bioview": {
@@ -106,6 +126,16 @@
         "cardinfo": "クレジットカード情報",
         "pay": "今すぐ買う",
         "cancel": "キャンセル"
-    }
+    },
+      "modals": {
+            "accountcreated": "アカウントが作成されました！ログインしてください。",
+            "logout": "ログアウトしました",
+            "pleaselogin": "ログインしてください",
+            "removedfromcart": " がカートから削除されました。",
+            "addedtocart": "がカートに追加されました。",
+            "welcomeback": "ようこそ",
+            "welcomeback2": "さん"
+
+        }
 
   }

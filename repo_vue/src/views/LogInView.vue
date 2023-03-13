@@ -4,7 +4,7 @@
             <div class="columns">
                 <div class="column is-6 is-offset-3">
                     <h1 class="title">
-                        Login
+                        {{$t('loginsignupview.logintitle')}}
                     </h1>
                     <!-- sign up form prevent default action -->
                     <form @submit.prevent="submitForm">
@@ -22,7 +22,7 @@
                                 </p>                           
                             </div>
                             <!-- users can enter their email address or username to login -->
-                            <label for="">Username/Email Address</label>
+                            <label for="">{{$t('loginsignupview.username')}}</label>
                             <div class="control">
                                 <!-- v-model connects the data var defined below -->
                                 <input type="text" class="input" v-model="username_or_email">
@@ -34,7 +34,7 @@
                                 </p>                           
                             </div>
                             <!-- password -->
-                            <label for="">Password</label>
+                            <label for="">{{$t('loginsignupview.password')}}</label>
                             <div class="field has-addons my-password-field">
                                 <div class="control is-expanded">
                                     <input v-if="showPassword" type="text" class="input" v-model="password" />
@@ -50,14 +50,17 @@
                             <!-- submit form -->
                             <div class="field">
                                 <div class="control">
-                                    <button class="button login-signup-button">Log in</button>
+                                    <button class="button login-signup-button">{{$t('loginsignupview.logintitle')}}</button>
                                 </div>
                                 <p class="forgot-password-link">
-                                    <a style="color:aqua !important; text-decoration: underline;" href="">Forgot your password? </a>
+                                    <a style="color:aqua !important; text-decoration: underline;" href="">{{$t('loginsignupview.forgotpassword')}}</a>
                                 </p>  
                             </div>
-                            <p class="signup-login-reroute">
-                                Don't have an account? <a style="color:aqua !important; text-decoration: underline;" href="/signup">Sign up!</a>
+                            <p v-if="$store.state.region === 'US'" class="signup-login-reroute">
+                                {{$t('loginsignupview.signup1')}} <a style="color:aqua !important; text-decoration: underline;" href="/signup">{{$t('loginsignupview.signup2')}}</a>
+                            </p>
+                            <p v-else-if="$store.state.region === 'JA'" >
+                                <a class="signup-login-reroute" style="text-decoration: underline;" href="/signup">{{$t('loginsignupview.signup2')}}</a>
                             </p>
                         </div>
                     </form>
@@ -97,11 +100,11 @@ export default {
             // validate fields
             // USERNAME/EMAIL
             if (this.username_or_email === '') {
-                this.errors.usernameOrEmailErrors.push('Please enter your username or email address to login')
+                this.errors.usernameOrEmailErrors.push(this.$t('loginsignupview.errors.usernameemailerrors'))
             }
             // PASSWORD
             if (this.password === '') {
-                this.errors.passwordErrors.push('Please enter your password')
+                this.errors.passwordErrors.push(this.$t('loginsignupview.errors.passworderrors'))
             }
             // if no errors, submit the form and authenticate user
             if (!this.errors.usernameOrEmailErrors.length && !this.errors.passwordErrors.length ) {
@@ -133,7 +136,7 @@ export default {
 
                         // add toast message
                         toast({
-                            message: 'Welcome back ' + this.username_or_email + '!',
+                            message: this.$t('modals.welcomeback') + ' ' + this.username_or_email + this.$t('modals.welcomeback2') +'!',
                             type: 'is-success',
                             dismissible: true,
                             pauseOnHover: true,
@@ -149,11 +152,11 @@ export default {
                     })
                     .catch(error => {
                         if (error.response) {
-                            this.errors.generalErrors.push("username and/or password is invalid")
+                            this.errors.generalErrors.push(this.$t('loginsignupview.errors.invalidusernamepassword'))
                         } 
                         
                         else if (error.message) {
-                            this.errors.generalErrors.push('Oops! Something went wrong, please try again later.')
+                            this.errors.generalErrors.push(this.$t('loginsignupview.errors.generalerrors'))
                             console.log("Didn't work bic boii: " + JSON.stringify(error.response.data))
                         }
                     })
