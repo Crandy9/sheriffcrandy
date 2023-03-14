@@ -21,7 +21,7 @@
         </h3>
       </div>
       <div>
-        <h3 style="padding: 1rem;" v-if="currentTrackPlaying == 0" class="is-size-5 has-text-warning">
+        <h3 style="padding: 1rem; font-size: 16px !important;" v-if="currentTrackPlaying == 0" class="is-size-5 has-text-warning">
           {{$t('musicview.clicktohearsample')}}
         </h3>
       </div>
@@ -172,7 +172,7 @@
           </div>
       </div>
     </Transition>
-    <h2 class="music-guide is-size-5 has-text-centered has-text-warning">
+    <h2 class="music-guide has-text-centered has-text-warning">
       {{$t('musicview.about')}}
       <div class="is-size-6" style="padding: 1rem;">
         <p style="padding:1.2rem;">

@@ -32,12 +32,13 @@
 
 
 .my-region-modal-list-item {
+    color: white;
+    font-size: 16px !important;
     text-align: center;
     padding: 0.5rem;
-    border-bottom: black;
     border-bottom-style: solid;
     border-bottom-width: 1px;
-    border-color: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.9);
     cursor: pointer;
 }
 
@@ -45,15 +46,35 @@
     background-color: rgba(212, 211, 206, 0.3);
 }
 
+/* for region modal */
 @media screen and (max-width: 1024px) {
     .my-region-modal-card-title {
         font-size: large;
         text-align: center;
+        color: white;
     }
 }
 
 .my-region-modal-card-body {
     padding-bottom: 2.5rem;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius: 25px;
+    padding-top: 0;
+}
+
+.delete {
+    background-color: rgba(0, 0, 0, 0.6) !important
+}
+
+/* region modal bg color */
+.my-region-modal-head, .my-region-modal-card-body {
+    background-color: rgba(0, 89, 141, 0.7) !important;
+}
+
+.my-region-modal-head {
+    border: none;
+    border-top-right-radius: 25px;
+    border-top-left-radius: 25px;
 }
 
 
@@ -67,7 +88,7 @@ for mobile */
     }
     /* modal title */
     .modal-card-title {
-        font-size: 2rem;
+        font-size: 20px;
     }
     /* modal popup */
     .modal {

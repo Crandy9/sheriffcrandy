@@ -16,11 +16,12 @@
 
 .flp-main-title {
     border: 1px solid rgb(0, 199, 199);
-    padding: 1.2rem;
+    padding: 1rem;
 }
 
 .flp-guide {
     padding: 1.2rem;
+    font-size: 16px !important;
 }
 
 /* audio player section */
@@ -91,6 +92,7 @@
 .flp-file-links {
     color:chartreuse !important; 
     text-decoration: none;
+    font-size: 13px !important;
 }
 
 .flp-file-links:hover {

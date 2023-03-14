@@ -22,7 +22,7 @@
                                 </p>
                             </div>
                             <!-- username -->
-                            <label for="">{{ $t('loginsignupview.usernameonly') }}</label>
+                            <label class="my-label" for="">{{ $t('loginsignupview.usernameonly') }}</label>
                             <div class="control">
                                 <!-- v-model connects the data var defined below -->
                                 <input type="text" name="username" class="input" :placeholder="$t('loginsignupview.usernameonly')" v-model="username">
@@ -34,23 +34,23 @@
                                 </p>
                             </div>
                             <!-- email -->
-                            <label for="">{{ $t('loginsignupview.emailonly') }}</label>
+                            <label class="my-label" for="">{{ $t('loginsignupview.emailonly') }}</label>
                             <div class="control">
                                 <input type="text" name="email" class="input" :placeholder="$t('loginsignupview.emailonly')" v-model="email">
                             </div>
                             <!-- not required fields -->
                             <!-- first_name -->
-                            <label for="">{{ $t('loginsignupview.firstnamelabel') }}</label>
+                            <label class="my-label" for="">{{ $t('loginsignupview.firstnamelabel') }}</label>
                             <div class="control">
                                 <input type="text" class="input" :placeholder="$t('loginsignupview.firstnamelabel')" v-model="first_name">
                             </div>
                             <!-- lastname -->
-                            <label for="">{{ $t('loginsignupview.lastnamelabel') }}</label>
+                            <label class="my-label" for="">{{ $t('loginsignupview.lastnamelabel') }}</label>
                             <div class="control">
                                 <input type="text" class="input" :placeholder="$t('loginsignupview.lastnameplaceholder')" v-model="last_name">
                             </div>
                             <!-- fav color -->
-                            <label for="">{{ $t('loginsignupview.favoritecolor') }}</label>
+                            <label class="my-label" for="">{{ $t('loginsignupview.favoritecolor') }}</label>
                             <div class="control">
                                 <input type="text" class="input" :placeholder="$t('loginsignupview.favoritecolorplaceholder')" v-model="favorite_color">
                             </div>
@@ -61,7 +61,7 @@
                                 </p>                        
                             </div>
                             <!-- password use click.prevent to prevent form submission action -->
-                            <label for="">{{ $t('loginsignupview.password') }}</label>
+                            <label class="my-label" for="">{{ $t('loginsignupview.password') }}</label>
                             <div class="field has-addons">
                                 <div class="control is-expanded">
                                     <input v-if="showPassword" type="text" class="input" v-model="password" />
@@ -81,7 +81,7 @@
                                 </p>                           
                             </div>
                             <!--re-enter password use click.prevent to prevent form submission action -->
-                            <label for="">{{ $t('loginsignupview.reenterpassword') }}</label>
+                            <label class="my-label" for="">{{ $t('loginsignupview.reenterpassword') }}</label>
                             <div class="field has-addons">
                                 <div class="control is-expanded">
                                     <input v-if="showReEnterPassword" type="text" class="input" v-model="re_enter_password" />
@@ -100,15 +100,12 @@
                                     <button class="button login-signup-button">{{ $t('loginsignupview.createaccountbutton') }}</button>
                                 </div>
                             </div>
-                            <p v-if="$i18n.locale === 'en'" class="signup-login-reroute">
+                            <p v-if="$store.state.language === 'en'" class="signup-login-reroute">
                                 {{ $t('loginsignupview.login1') }} <a style="color:aqua !important; text-decoration:underline;" href="/login">{{ $t('loginsignupview.login2') }}</a>
                             </p>
-                            <p v-else-if="$i18n.locale === 'ja'" >
-                                <a class="signup-login-reroute" style=" text-decoration:underline;" href="/login">{{ $t('loginsignupview.login2') }}</a>
+                            <p v-else-if="$store.state.language === 'ja'" >
+                                <a class="signup-login-reroute" style="text-decoration:underline;" href="/login">{{ $t('loginsignupview.login1') }}</a>
                             </p>
-                            <h1>
-                                {{ $i18n.locale }}
-                            </h1>
                         </div>
                     </form>
                 </div>

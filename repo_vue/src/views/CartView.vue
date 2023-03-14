@@ -182,13 +182,16 @@
                               </div>
                               <div class="field">
                                 <label class="my-label has-text-black">{{$t('paymentmodal.country')}}</label>
-                                <div class="control">
+                                <div class="control has-icons-left">
                                     <select class="input" v-model="country" name="country" id="id_country">
                                       <option style="color:rgba(0,0,0,0.4) !important" value="" disabled selected hidden>
                                           {{$t('paymentmodal.countryplaceholder')}}
                                       </option>
                                       <option v-for="cya in $store.state.countries" :value="cya.countryval" style="color: black !important;">{{cya.countryname}}</option>
                                     </select>
+                                    <div class="icon is-small is-left">
+                                      <i class="fas fa-globe" style="color: rgb(55,195,255)"></i>
+                                    </div>
                                 </div>
                               </div>
                               <!-- statepref errors-->
@@ -244,7 +247,7 @@
                           </p>                        
                       </div>
                       <div class="mb-5 has-text-black">
-                        <h2 class="subtitle has-text-black">{{$t('paymentmodal.cardinfo')}}</h2>
+                        <h2 class="my-credit-card-subtitle has-text-black">{{$t('paymentmodal.cardinfo')}}</h2>
                       </div>
                   </div>
                 </div>

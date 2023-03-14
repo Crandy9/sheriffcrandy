@@ -3,7 +3,7 @@
         <div class="page-sign-up">
             <div class="columns">
                 <div class="column is-6 is-offset-3">
-                    <h1 class="title">
+                    <h1 class="title my-login-title">
                         {{$t('loginsignupview.logintitle')}}
                     </h1>
                     <!-- sign up form prevent default action -->
@@ -22,7 +22,7 @@
                                 </p>                           
                             </div>
                             <!-- users can enter their email address or username to login -->
-                            <label for="">{{$t('loginsignupview.username')}}</label>
+                            <label class="my-label" for="">{{$t('loginsignupview.username')}}</label>
                             <div class="control">
                                 <!-- v-model connects the data var defined below -->
                                 <input type="text" class="input" v-model="username_or_email">
@@ -34,7 +34,7 @@
                                 </p>                           
                             </div>
                             <!-- password -->
-                            <label for="">{{$t('loginsignupview.password')}}</label>
+                            <label class="my-label" for="">{{$t('loginsignupview.password')}}</label>
                             <div class="field has-addons my-password-field">
                                 <div class="control is-expanded">
                                     <input v-if="showPassword" type="text" class="input" v-model="password" />

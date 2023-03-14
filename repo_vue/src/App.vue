@@ -290,9 +290,15 @@
 				</div>
 			</div>
       <div class="my-region-div">
-        <!-- Language region modal popup -->
-        <button v-if="$store.state.language === 'ja'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button">地域と言語の変更</button>
-        <button v-else-if="$store.state.language === 'en'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button">Change Region and Language</button>
+        <button v-if="$store.state.language === 'ja'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button button">
+          <!-- Language region modal popup -->
+          <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
+          {{ $t('headerfooter.foot.chooseregionmodaltitle') }}
+        </button>
+        <button v-else-if="$store.state.language === 'en'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button button">
+            <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
+          {{ $t('headerfooter.foot.chooseregionmodaltitle') }}
+        </button>
       </div>
 		</footer>
 		<!-- end Footer -->

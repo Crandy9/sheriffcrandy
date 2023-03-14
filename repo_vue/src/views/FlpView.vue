@@ -7,7 +7,7 @@
           <h2 class="flp-main-title is-size-3 has-text-centered has-text-white">
             My FLPs
           </h2>
-          <p>
+          <p style="padding-top: 1rem;">
             <a style="color:chartreuse !important; text-decoration: none;" target="_blank" href="https://www.image-line.com/fl-studio-learning/fl-studio-online-manual/html/fformats_save_flp.htm">{{$t('flpview.whatsanflp')}}</a>
           </p>
         </div>
@@ -118,9 +118,9 @@
           </p>
         </div>
     </section>
+
     <!-- FOR BUY NOW -->
     <!-- stripe payment form copied from cart view -->
-
     <transition>
       <div style="z-index: 9999;" class="my-checkout-div"
         :style="showPaymentForm()" v-bind:class="{'is-active': purchaseButtonClicked}" ref="paymentFormTop">
