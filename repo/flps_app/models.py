@@ -12,8 +12,8 @@ class Flp(models.Model):
 
     flp_name = models.CharField(default='', max_length=255)
     description = models.CharField(default='', max_length=255, blank=True, null=True)
-    usd_price = models.DecimalField(default =0, max_digits=10, decimal_places=2, blank=True)
-    jpy_price = models.IntegerField(default =0, blank=True)
+    usd_price = models.DecimalField(default =0, max_digits=10, decimal_places=2, blank=True, null=True)
+    jpy_price = models.IntegerField(default =0, blank=True, null=True)
     slug = models.SlugField()
     flp_zip = models.FileField(upload_to='flp_zips', blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)

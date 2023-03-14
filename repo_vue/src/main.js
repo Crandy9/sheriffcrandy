@@ -4,9 +4,7 @@ import router from './router'
 import store from './store'
 import axios from 'axios'
 import 'animate.css'
-// import { createI18n } from 'vue-i18n'
 import i18n from './i18n'
-
 
 // define backend API server path for axios
 // process.env is already built in by VUE. Simply create and define .env file in root dir

@@ -15,101 +15,87 @@ import i18n from '@/i18n'
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes: [
-    {
-      path: '/',
-      redirect: `/${i18n.locale}`
-    },
-
-    {
-      // path: "/:locale?",
-      // path: '/:lang',
-      // component: RouterView,
-      path: '/:lang',
-      component: RouterView,
-      children: [
-        {
-          path: '',
-          name: 'Home',
-          component: HomeView
-        },
-        {
-          path: 'music',
-          name: 'Music',
-          // can also import components/views here using Arrow function expressions
-          component: () => import('../views/MusicView.vue')
-        },
-        {
-          path: 'flps',
-          name: 'Flps',
-          component: FlpView
-        },
-        {
-          path: 'contact',
-          name: 'Contact',
-          component: () => import('../views/ContactView.vue')
-        },
-        {
-          path: 'tools',
-          name: 'Tools',
-          component: () => import('../views/ToolsView.vue')
-        },
-        {
-          path: 'bio',
-          name: 'Bio',
-          component: () => import('../views/BioView.vue')
-        },
-        {
-          path: 'cart',
-          name: 'Cart',
-          component: () => import('../views/CartView.vue')
-        },
-        {
-          path: 'signup',
-          name: 'SignUp',
-          component: () => import('../views/SignUpView.vue'),
-          // prevent users from accessing the signup page if they are already logged in
-          meta: {
-            requireLogout: true
-          }
-        },
-        {
-          path: 'login',
-          name: 'LogIn',
-          component: () => import('../views/LogInView.vue'),
-          // prevent users from accessing the login page if they are already logged in
-          meta: {
-            requireLogout: true
-          }
-        },
-        {
-          path: 'logout',
-          name: 'LogOut',
-          component: () => import('../views/LogOutView.vue'),
-          // prevent users from accessing the logout page if they are not logged in
-          meta: {
-            requireLogin: true
-          }
-        },
-        {
-          path: 'myaccount',
-          name: 'MyAccount',
-          component: () => import('../views/MyAccountView.vue'),
-          // prevent users from accessing the logout page if they are not logged in
-          meta: {
-            requiresAuthAccount: true
-          }
-        },
-        {
-          path: 'thankyou',
-          name: 'ThankYou',
-          component: () => import('../views/ThankYouView.vue'),
-          // prevent users from accessing the logout page if they are not logged in
-          meta: {
-            readyForCheckout: true
-          }
-        },
-      ]
-    }
+      {
+        path: '/',
+        name: 'Home',
+        component: HomeView
+      },
+      {
+        path: '/music',
+        name: 'Music',
+        // can also import components/views here using Arrow function expressions
+        component: () => import('../views/MusicView.vue')
+      },
+      {
+        path: '/flps',
+        name: 'Flps',
+        component: FlpView
+      },
+      {
+        path: '/contact',
+        name: 'Contact',
+        component: () => import('../views/ContactView.vue')
+      },
+      {
+        path: '/tools',
+        name: 'Tools',
+        component: () => import('../views/ToolsView.vue')
+      },
+      {
+        path: '/bio',
+        name: 'Bio',
+        component: () => import('../views/BioView.vue')
+      },
+      {
+        path: '/cart',
+        name: 'Cart',
+        component: () => import('../views/CartView.vue')
+      },
+      {
+        path: '/signup',
+        name: 'SignUp',
+        component: () => import('../views/SignUpView.vue'),
+        // prevent users from accessing the signup page if they are already logged in
+        meta: {
+          requireLogout: true
+        }
+      },
+      {
+        path: '/login',
+        name: 'LogIn',
+        component: () => import('../views/LogInView.vue'),
+        // prevent users from accessing the login page if they are already logged in
+        meta: {
+          requireLogout: true
+        }
+      },
+      {
+        path: '/logout',
+        name: 'LogOut',
+        component: () => import('../views/LogOutView.vue'),
+        // prevent users from accessing the logout page if they are not logged in
+        meta: {
+          requireLogin: true
+        }
+      },
+      {
+        path: '/myaccount',
+        name: 'MyAccount',
+        component: () => import('../views/MyAccountView.vue'),
+        // prevent users from accessing the logout page if they are not logged in
+        meta: {
+          requiresAuthAccount: true
+        }
+      },
+      {
+        path: '/thankyou',
+        name: 'ThankYou',
+        component: () => import('../views/ThankYouView.vue'),
+        // prevent users from accessing the logout page if they are not logged in
+        meta: {
+          readyForCheckout: true
+        }
+      },
   ]
 })
 

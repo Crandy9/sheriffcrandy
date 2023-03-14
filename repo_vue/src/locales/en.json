@@ -17,6 +17,12 @@
       }
   },
 
+  "thankyouview": {
+    "title": "Thanks for your purchase/download!",
+    "waitmsg": "A download of your purchase(s) should begin in your browser soon!",
+    "aboutdownload": "If you purchased a single track, a .wav file will be available for download. If you purchased multiple tracks, flps, or a combination of both, a .zip file containing all files will be generated for download."
+  },
+
   "homeview": {
     "body": {
       "scripture": "Make music to the Lord with the harp, with the harp and the sound of melody! With trumpets and the sound of the horn make a joyful noise before the King, the Lord!",
@@ -40,14 +46,35 @@
     "logintitle": "Login",
     "signuptitle": "Sign up",
     "username": "Username/Email Address",
-    "password": "Password",
     "usernameonly": "Username",
     "emailonly": "Email Address",
+    "password": "Password",
+    "passwordpalceholder": "password",
+    "reenterpassword": "Re-enter Password",
+    "reenterpasswordpalceholder": "Re-enter Password",
     "forgotpassword": "forgot your password?",
-    "donthaveaccount": "Don't have an account?",
     "signup1": "Don't have an account?",
-    "signup2": "Sign up!"
-
+    "signup2": "Sign up!",
+    "firstnamelabel": "First name (not required)",
+    "firstnameplaceholder": "John (not required)",
+    "lastnamelabel": "Last Name (not required)",
+    "lastnameplaceholder": "Smith (not required)",
+    "favoritecolor": "favorite color :) (not required)",
+    "favoritecolorplaceholder": "turquoise (not required)",
+    "createaccountbutton": "Create Account",
+    "login1": "Already have an account?",
+    "login2": "Log in!",
+    "usernamereq": "Username is required",
+    "emailreq": "Email is required. Please enter a valid email address",
+    "noemptypass": "Password field cannot be empty. Please enter a strong password.",
+    "blankreenterpassword": "Please re-enter your password",
+    "passwordsdontmatch": "Passwords do not match",
+    "passwordtoosimilartousername": "Password is too similar to username",
+    "passwordtoosimilartoemail": "Password is too similar to email",
+    "emailexistserror": "This username already exists. Please choose a different username.",
+    "usernameexistserror": "This email address already exists. Please use a different email address.",
+    "generror": "Oops! Something went wrong on our end! We are working diligently to fix the error. Please try again later. I apologize for the inconvenience.",
+    "email@symbolerror": "Please enter a valid email address"
   },
 
   "bioview": {

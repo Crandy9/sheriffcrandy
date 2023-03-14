@@ -511,7 +511,7 @@ def checkout(request):
                         response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
                         print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                         # save both serializers but only give one order the total
-                        flp_dict_serializer.save(user=request.user, usd_paid_amount=777, jpy_paid_amount=777)
+                        flp_dict_serializer.save(user=request.user)
                         track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                         
                         os.remove(zip)
                     except:

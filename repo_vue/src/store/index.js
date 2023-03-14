@@ -124,8 +124,7 @@ export default createStore({
       {prefname: 'Kagoshima',prefval:'鹿児島県 Kagoshima'},
       {prefname: 'Okinawa',prefval: '沖縄県 Okinawa'}
     ],
-    region: '',
-    lang: '',
+    language: localStorage.getItem("language") || process.env.VUE_APP_I18N_LOCALE || 'en',
 
     downloadableItems: [],
     // web token used for authentication
@@ -148,6 +147,8 @@ export default createStore({
     downloadType: '',
   },
   getters: {
+    getLanguage: (state) => state.language
+
   },
   // synchronous functions; change states
   mutations: {
@@ -174,12 +175,12 @@ export default createStore({
       else {
           localStorage.setItem('cart', JSON.stringify(state.cart))
       }
-      // set region
-      if (localStorage.getItem('region')) {
-        state.region = localStorage.getItem('region')
+      // set language
+      if (localStorage.getItem('language')) {
+        state.language = localStorage.getItem('language')
       }
       else {
-        state.region = ''
+        state.language = ''
       }
     },
 
@@ -195,12 +196,12 @@ export default createStore({
       state.isAuthenticated = false
     },
 
-    // set region
-    setRegion(state, region) {
-      state.region = region
-      console.log('region changed')
-      console.log('new region:' + state.region)
-
+    // set language
+    changeLanguage(state, language) {
+      state.language = language;
+      console.log('language changed')
+      console.log('new language:' + state.language)
+      localStorage.setItem("language", language)
     },
 
     // add items to cart

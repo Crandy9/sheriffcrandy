@@ -90,11 +90,11 @@
             </header>
             <section class="modal-card-body my-region-modal-card-body">
               <ul class="my-region-modal-list">
-                <li @click="setRegion('US')" class="my-region-modal-list-item">
-                  United States
+                <li @click="changeLanguageButton('en')" class="my-region-modal-list-item">
+                  United States (English)
                 </li>
-                <li @click="setRegion('JA')" class="my-region-modal-list-item">
-                  Japan (日本)
+                <li @click="changeLanguageButton('ja')" class="my-region-modal-list-item">
+                  Japan (日本語)
                 </li>
               </ul>
             </section>
@@ -290,9 +290,9 @@
 				</div>
 			</div>
       <div class="my-region-div">
-        <!-- Japan and Japanese -->
-        <button v-if="$store.state.region === 'JA'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button">Japan (日本)</button>
-        <button v-else-if="$store.state.region === 'US'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button">United States</button>
+        <!-- Language region modal popup -->
+        <button v-if="$store.state.language === 'ja'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button">地域と言語の変更</button>
+        <button v-else-if="$store.state.language === 'en'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button">Change Region and Language</button>
       </div>
 		</footer>
 		<!-- end Footer -->
@@ -348,16 +348,13 @@
   @import '../src/assets/styles/my-flps.css';
   @import '../src/assets/styles/my-tools.css';
   @import '../src/assets/styles/my-bio.css';
-  @import '../src/assets/styles/my-modal.css';
   @import '../src/assets/styles/my-toast.css';
   @import '../src/assets/styles/my-cart.css';
   @import '../src/assets/styles/my-login.css';
   @import '../src/assets/styles/my-signup.css';
-  @import '../src/assets/styles/my-checkout-modal.css';
   @import '../src/assets/styles/my-checkout.css';
   @import '../src/assets/styles/my-thankyou.css';
-  @import '../src/assets/styles/my-lang-modal.css';
-
+  @import '../src/assets/styles/my-modal.css';
 </style>
 
 <!-- hamburger menu animation -->
@@ -365,8 +362,11 @@
 
 // import axios for retrieving web token from backend api
 import axios from 'axios'
+
+
 // change hamburger clicked boolean
 export default {
+
   data () {
     return {
       hamburgerClicked: false,
@@ -424,11 +424,10 @@ export default {
   // methods 
   methods: {
 
-    setRegion(region) {
-      this.$store.commit('setRegion',region)
-      localStorage.setItem("region", this.$store.state.region)
+    // change language button click
+    changeLanguageButton(language) {
+      this.$store.commit('changeLanguage',language)
       window.location.reload();
-
     },
 
     closeModalOnWindowClick() {
@@ -458,22 +457,17 @@ export default {
       .then(response => {
         this.geoData = response;
         // set region by IP address only if region hasn't been manually set
-        if (this.$store.state.region === '') {
+        if (this.$store.state.language === '') {
           if (response.country === 'Japan') {
-            this.$store.commit('setRegion','JA')
-            localStorage.setItem("region", this.$store.state.region)
+            this.$store.commit('changeLanguage','ja')
           }
           else if (response.country === 'United States') {
-            this.$store.state.region = 'US'
-            this.$store.commit('setRegion','US')
-            localStorage.setItem("region", this.$store.state.region)
+            this.$store.commit('changeLanguage','en')
 
           }
           // default
           else {
-            this.$store.commit('setRegion','US')
-            localStorage.setItem("region", this.$store.state.region)
-
+            this.$store.commit('changeLanguage','en')
           }
         }
 

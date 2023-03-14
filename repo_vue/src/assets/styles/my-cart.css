@@ -144,6 +144,7 @@
 }
 
 .my-clear-cart-button {
+    margin-bottom: 1rem;
     padding: 0.5rem;
     background-color: rgb(221, 0, 92);
     color: rgb(255, 255, 255);
@@ -152,6 +153,7 @@
     text-decoration: none;
     text-align: left;
     float: left;
+
 }
 
 .my-remove-button {
@@ -178,15 +180,6 @@
     text-align: center;
     display: block;
     padding: 2rem;
-}
-
-.my-subtotal {
-    text-align: right;
-    box-sizing: border-box;
-    color: white;
-    margin: 1em 0;
-    display: block;
-    /* padding-right: 1rem; */
 }
 
 .my-checkout-button {

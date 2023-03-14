@@ -56,10 +56,10 @@
                                     <a style="color:aqua !important; text-decoration: underline;" href="">{{$t('loginsignupview.forgotpassword')}}</a>
                                 </p>  
                             </div>
-                            <p v-if="$store.state.region === 'US'" class="signup-login-reroute">
+                            <p v-if="$i18n.locale === 'en'" class="signup-login-reroute">
                                 {{$t('loginsignupview.signup1')}} <a style="color:aqua !important; text-decoration: underline;" href="/signup">{{$t('loginsignupview.signup2')}}</a>
                             </p>
-                            <p v-else-if="$store.state.region === 'JA'" >
+                            <p v-else-if="$i18n.locale === 'ja'" >
                                 <a class="signup-login-reroute" style="text-decoration: underline;" href="/signup">{{$t('loginsignupview.signup2')}}</a>
                             </p>
                         </div>
@@ -121,7 +121,6 @@ export default {
                     .post(process.env.VUE_APP_AUTHENTICATE_USERS_API_URL, loginFormData)
                     .then(response => {
 
-                        console.log(JSON.stringify(response))
                         // set auth token
                         const sf_auth_bearer = response.data.auth_token
                         // set token in store which sets is_authenticated var to true

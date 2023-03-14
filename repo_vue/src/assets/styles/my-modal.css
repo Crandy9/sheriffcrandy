@@ -1,5 +1,6 @@
 /* 
-    MY MODAL
+    MY MODAL pop up styling used by 
+    App.vue, FlpView.vue, MusicView.vue
 */
 
 /* modal div */
@@ -17,13 +18,6 @@
     /* overflow: auto; */
 }
 
-.modal-card-foot {
-    /* flex-grow: 1;
-    flex-shrink: 1;
-    overflow: auto; */
-    /* padding: 2rem; */
-}
-
 .my-modal-button-buy-now {
     background-color: rgb(0, 77, 112) !important;
     color: white;
@@ -36,6 +30,52 @@
     /* border: none; */
 }
 
-.my-modal-button-add-to-cart {
+
+.my-region-modal-list-item {
+    text-align: center;
+    padding: 0.5rem;
+    border-bottom: black;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-color: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.my-region-modal-list-item:hover {
+    background-color: rgba(212, 211, 206, 0.3);
+}
+
+@media screen and (max-width: 1024px) {
+    .my-region-modal-card-title {
+        font-size: large;
+        text-align: center;
+    }
+}
+
+.my-region-modal-card-body {
+    padding-bottom: 2.5rem;
+}
+
+
+/* from 0px to 769px style the checkout modal form 
+for mobile */
+@media screen and (max-width: 769px) {
     
+    /* modal header */
+    .modal-card-head {
+        padding: 1.5rem;
+    }
+    /* modal title */
+    .modal-card-title {
+        font-size: 2rem;
+    }
+    /* modal popup */
+    .modal {
+        padding: 1.5rem;
+    }
+
+    /* pay cancel buttons */
+    .modal-card-foot {
+        justify-content: center;
+    }
 }

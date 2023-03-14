@@ -17,6 +17,12 @@
         }
     },
 
+    "thankyouview": {
+    "title": "ダウンロードしていただき、ありがとうございます！",
+    "waitmsg": "購入したコンテンツのダウンロードがブラウザでまもなく開始されます!",
+    "aboutdownload": "1曲だけ購入された場合は、.wavファイルがダウンロード可能です。複数のトラック、flps、またはその両方を組み合わせて購入した場合、すべてのファイルを含む.zipファイルがダウンロードできるように生成されます。"
+    },
+
     "homeview": {
         "body": {
             "scripture": "琴をもって主をほめうたえ。琴と歌の声をもってほめうたえ。ラッパと角笛の音をもって王なる主の前に喜ばしき声をあげよ。",
@@ -41,10 +47,32 @@
         "usernameonly": "ユーザー名",
         "emailonly": "メールアドレス",
         "password": "パスワード",
+        "passwordpalceholder": "パスワード",
+        "reenterpassword": "パスワード再入力",
+        "reenterpasswordpalceholder": "パスワード再入力",
         "forgotpassword": "パスワードをお忘れですか？",
-        "donthaveaccount": "",
         "signup1": "",
-        "signup2": "アカウントをお持ちでない方"
+        "signup2": "アカウントをお持ちでない方",
+        "firstnamelabel": "名前 (必須ではありません。)",
+        "firstnameplaceholder": "名前 (必須ではありません。)",
+        "lastnamelabel": "苗字 (必須ではありません。)",
+        "lastnameplaceholder": "苗字 (必須ではありません。)",
+        "favoritecolor": "好きな色 (必須ではありません。)",
+        "favoritecolorplaceholder": "好きな色 (必須ではありません。)",
+        "createaccountbutton": "アカウント作成",
+        "login1": "アカウントをお持ちの方",
+        "login2": "",
+        "usernamereq": "ユーザー名が必要です",
+        "emailreq": "Eメールが必須です",
+        "noemptypass": "パスワード欄を空にすることはできません。強力なパスワードを入力してください。",
+        "blankreenterpassword": "パスワードを再入力してください",
+        "passwordsdontmatch": "パスワードが一致しない",
+        "passwordtoosimilartousername": "パスワードがユーザー名と似すぎている",
+        "passwordtoosimilartoemail": "パスワードがメールと似すぎている",
+        "emailexistserror": "このユーザーネームはすでに存在します。別のユーザー名を選択してください。",
+        "usernameexistserror": "このメールアドレスはすでに存在しています。別のメールアドレスを使用してください。",
+        "generror": "おっと! 私たちの側で何かが間違っていた! 私たちはエラーを修正するために熱心に働いています。後ほど再度お試しください。ご迷惑をおかけして申し訳ありません。",
+        "email@symbolerror": "有効なEメールアドレスを入力してください"
     },
 
     "bioview": {

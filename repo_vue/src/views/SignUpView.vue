@@ -22,10 +22,10 @@
                                 </p>
                             </div>
                             <!-- username -->
-                            <label for="">Username</label>
+                            <label for="">{{ $t('loginsignupview.usernameonly') }}</label>
                             <div class="control">
                                 <!-- v-model connects the data var defined below -->
-                                <input type="text" name="username" class="input" placeholder="username" v-model="username">
+                                <input type="text" name="username" class="input" :placeholder="$t('loginsignupview.usernameonly')" v-model="username">
                             </div>
                             <!-- email errors-->
                             <div v-if="errors.emailErrors.length">
@@ -34,25 +34,25 @@
                                 </p>
                             </div>
                             <!-- email -->
-                            <label for="">Email Address</label>
+                            <label for="">{{ $t('loginsignupview.emailonly') }}</label>
                             <div class="control">
-                                <input type="email" name="email" class="input" placeholder="email" v-model="email">
+                                <input type="text" name="email" class="input" :placeholder="$t('loginsignupview.emailonly')" v-model="email">
                             </div>
                             <!-- not required fields -->
                             <!-- first_name -->
-                            <label for="">First Name (not required)</label>
+                            <label for="">{{ $t('loginsignupview.firstnamelabel') }}</label>
                             <div class="control">
-                                <input type="text" class="input" placeholder="first name" v-model="first_name">
+                                <input type="text" class="input" :placeholder="$t('loginsignupview.firstnamelabel')" v-model="first_name">
                             </div>
                             <!-- lastname -->
-                            <label for="">Last Name (not required)</label>
+                            <label for="">{{ $t('loginsignupview.lastnamelabel') }}</label>
                             <div class="control">
-                                <input type="text" class="input" placeholder="last name" v-model="last_name">
+                                <input type="text" class="input" :placeholder="$t('loginsignupview.lastnameplaceholder')" v-model="last_name">
                             </div>
                             <!-- fav color -->
-                            <label for="">Favorite Color (not required)</label>
+                            <label for="">{{ $t('loginsignupview.favoritecolor') }}</label>
                             <div class="control">
-                                <input type="text" class="input" placeholder="my favorite color is turquoise :)" v-model="favorite_color">
+                                <input type="text" class="input" :placeholder="$t('loginsignupview.favoritecolorplaceholder')" v-model="favorite_color">
                             </div>
                             <!-- password errors-->
                             <div v-if="errors.passwordErrors.length">
@@ -61,7 +61,7 @@
                                 </p>                        
                             </div>
                             <!-- password use click.prevent to prevent form submission action -->
-                            <label for="">Password</label>
+                            <label for="">{{ $t('loginsignupview.password') }}</label>
                             <div class="field has-addons">
                                 <div class="control is-expanded">
                                     <input v-if="showPassword" type="text" class="input" v-model="password" />
@@ -81,7 +81,7 @@
                                 </p>                           
                             </div>
                             <!--re-enter password use click.prevent to prevent form submission action -->
-                            <label for="">Re-enter Password</label>
+                            <label for="">{{ $t('loginsignupview.reenterpassword') }}</label>
                             <div class="field has-addons">
                                 <div class="control is-expanded">
                                     <input v-if="showReEnterPassword" type="text" class="input" v-model="re_enter_password" />
@@ -97,12 +97,18 @@
                             <!-- submit form -->
                             <div class="field">
                                 <div class="control">
-                                    <button class="button login-signup-button">Create Account</button>
+                                    <button class="button login-signup-button">{{ $t('loginsignupview.createaccountbutton') }}</button>
                                 </div>
                             </div>
-                            <p class="signup-login-reroute">
-                                Already have an account? <a style="color:aqua !important; text-decoration:underline;" href="/login">Log in!</a>
+                            <p v-if="$i18n.locale === 'en'" class="signup-login-reroute">
+                                {{ $t('loginsignupview.login1') }} <a style="color:aqua !important; text-decoration:underline;" href="/login">{{ $t('loginsignupview.login2') }}</a>
                             </p>
+                            <p v-else-if="$i18n.locale === 'ja'" >
+                                <a class="signup-login-reroute" style=" text-decoration:underline;" href="/login">{{ $t('loginsignupview.login2') }}</a>
+                            </p>
+                            <h1>
+                                {{ $i18n.locale }}
+                            </h1>
                         </div>
                     </form>
                 </div>
@@ -154,35 +160,40 @@ export default {
             // USERNAME
             // if username is empty
             if (this.username === '') {
-                this.errors.usernameErrors.push('Username is required')
+                this.errors.usernameErrors.push(this.$t('loginsignupview.usernamereq'))
             }
 
             // EMAIL
             if (this.email === '') {
-                this.errors.emailErrors.push('Email is required. Please enter a valid email address')
+                this.errors.emailErrors.push(this.$t('loginsignupview.emailreq'))
+            }
+            // check if email has @ symbol
+            if (!this.email.includes('@')) {
+                this.errors.emailErrors.push(this.$t('loginsignupview.email@symbolerror'))
+
             }
 
             // PASSWORD
             if (this.password === '') {
-                this.errors.passwordErrors.push('Password field cannot be empty. Please enter a strong password')
+                this.errors.passwordErrors.push(this.$t('loginsignupview.noemptypass'))
             }
 
             // RE-ENTER PASSWORD
             if (this.re_enter_password === '') {
-                this.errors.re_enter_passwordErrors.push('Please re-enter your password')
+                this.errors.re_enter_passwordErrors.push(this.$t('loginsignupview.blankreenterpassword'))
             }
 
             // if passwords don't match
             if (this.password !== this.re_enter_password) {
-                this.errors.passwordErrors.push('Passwords do not match')
+                this.errors.passwordErrors.push(this.$t('loginsignupview.passwordsdontmatch'))
             }
             // if password is similiar to username
             if (this.username.includes(this.password) && this.re_enter_password !== '') {
-                this.errors.passwordErrors.push('Password is too similar to username')
+                this.errors.passwordErrors.push(this.$t('loginsignupview.passwordtoosimilartousername'))
             }
             // if password is similiar to username
             if (this.email.includes(this.password) && this.re_enter_password !== '') {
-                this.errors.passwordErrors.push('Password is too similar to email')
+                this.errors.passwordErrors.push(this.$t('loginsignupview.passwordtoosimilartoemail'))
             }
 
 
@@ -234,18 +245,18 @@ export default {
                                 
                                 // check if username is already taken
                                 if (property === 'username') {
-                                    this.errors.usernameErrors.push('username already exists')
+                                    this.errors.usernameErrors.push(this.$t('loginsignupview.usernameexistserror'))
                                 }
                                 console.log(property)
                                 // check if username is already taken
                                 if (property === 'email') {
-                                    this.errors.emailErrors.push('email already exists')
+                                    this.errors.emailErrors.push(this.$t('loginsignupview.emailexistserror'))
                                 }
                                 console.log(property)
                             }
 
                         } else if (error.message) {
-                            this.errors.generalErrors.push('Oops! Something went wrong, please try again later.')
+                            this.errors.generalErrors.push(this.$t('loginsignupview.generror'))
                         }
                     })
             }

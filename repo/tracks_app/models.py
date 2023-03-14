@@ -15,9 +15,9 @@ class Track(models.Model):
     # description (not req'd)
     description = models.CharField(default='', max_length=255, blank=True, null=True)
     # price usd
-    usd_price = models.DecimalField(default =0, max_digits=10, decimal_places=2, blank=True)
+    usd_price = models.DecimalField(default =0, max_digits=10, decimal_places=2, blank=True, null=True)
     # price jpy
-    jpy_price = models.IntegerField()
+    jpy_price = models.IntegerField(default =0, blank=True, null=True)
     # aURL ddress of song title
     slug = models.SlugField()
     # song files

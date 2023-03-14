@@ -34,9 +34,9 @@
                 <a @click="removeFromCart(item.id);" class="my-remove-button">{{$t('cartview.remove')}}<button class="delete"></button></a>
                   <div class="my-cart-price" v-if="item.is_free == true || item.flp_is_free == true">{{$t('cartview.free')}}</div>
                   <!-- usd -->
-                  <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false) && $store.state.region === 'US'">${{ item.usd_price }}</div>
+                  <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false) && $store.state.language === 'en'">${{ item.usd_price }}</div>
                   <!-- jpy -->
-                  <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false) && $store.state.region === 'JA'">¥{{ item.jpy_price }}</div>                
+                  <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false) && $store.state.language === 'ja'">¥{{ item.jpy_price }}</div>                
               </div>
             </td>
           </tr>
@@ -46,8 +46,8 @@
     </div>
     <!-- end cart body -->
     <!-- cart footer USD -->
-    <footer v-if="cart.itemsInCart.length && $store.state.region === 'US'" class="my-cart-footer">
-      <a class="my-clear-cart-button" @click="show = false; checkoutClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
+    <footer v-if="cart.itemsInCart.length && $store.state.language === 'en'" class="my-cart-footer">
+      <a class="my-clear-cart-button" @click="show = false; purchaseButtonClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
       <p class="my-subtotal">
         <span>{{$t('cartview.total')}}:</span>
         <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
@@ -62,14 +62,14 @@
       </p>
       <div class="my-checkout-button-div">
         <!-- if the cart has only one free item -->
-        <a v-if="calculateUsdSubtotal === '0.00'" @click.prevent="show = false; checkoutClicked = false; freeDownloads();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.download')}}</a>
+        <a v-if="calculateUsdSubtotal === '0.00'" @click.prevent="show = false; purchaseButtonClicked = false; freeDownloads();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.download')}}</a>
         <!-- if the cart has at least one item which is not free -->
-        <a v-else="cartTotalLength >= 1 && calculateUsdSubtotal !== '0.00'" @click="show = true; checkoutClicked = true; scrollToBottom();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.checkout')}}</a>
+        <a v-else="cartTotalLength >= 1 && calculateUsdSubtotal !== '0.00'" @click="show = true; purchaseButtonClicked = true; scrollToBottom();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.checkout')}}</a>
       </div>
     </footer>
       <!-- cart footer USD -->
-      <footer v-if="cart.itemsInCart.length && $store.state.region === 'JA'" class="my-cart-footer">
-        <a class="my-clear-cart-button" @click="show = false; checkoutClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
+      <footer v-if="cart.itemsInCart.length && $store.state.language === 'ja'" class="my-cart-footer">
+        <a class="my-clear-cart-button" @click="show = false; purchaseButtonClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
         <p class="my-subtotal">
           <span>{{$t('cartview.total')}}:</span>
           <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTotal }}</span>
@@ -82,11 +82,12 @@
           <span>{{$t('cartview.subtotal')}}:</span>
           <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpySubtotal }}</span>
         </p>
+
         <div class="my-checkout-button-div">
           <!-- if the cart has only one free item -->
-          <a v-if="calculateUsdSubtotal === '0.00' && calculateJpySubtotal === ''" @click.prevent="show = false; checkoutClicked = false; freeDownloads();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.download')}}</a>
+          <a v-if="calculateUsdSubtotal == 0.00 && calculateJpySubtotal === 0" @click.prevent="show = false; purchaseButtonClicked = false; freeDownloads();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.download')}}</a>
           <!-- if the cart has at least one item which is not free -->
-          <a v-else="cartTotalLength >= 1 && calculateUsdSubtotal !== '0.00'" @click="show = true; checkoutClicked = true; scrollToBottom();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.checkout')}}</a>
+          <a v-else-if="cartTotalLength >= 1 && (calculateUsdSubtotal != 0.00 || calculateJpySubtotal !== 0)" @click="show = true; purchaseButtonClicked = true; scrollToBottom();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.checkout')}}</a>
         </div>
     </footer>
     <!-- end cart footer -->
@@ -95,12 +96,12 @@
     <!-- stripe payment form -->
     <transition>
       <div style="z-index: 9999;" class="my-checkout-div"
-        :style="styleObject()" v-bind:class="{'is-active': checkoutClicked}" ref="paymentFormTop">
+        :style="showPaymentForm()" v-bind:class="{'is-active': purchaseButtonClicked}" ref="paymentFormTop">
           <!-- <div class="modal-background"></div> -->
             <div class="card">
               <header class="card-head">
-                <p class="card-title">{{$t('paymentmodal.modaltitle')}}</p>
-                <button class="delete close-button" @click="show = false; clearFields(); checkoutClicked = false;" aria-label="close"></button>
+                <!-- <p class="card-title">{{$t('paymentmodal.modaltitle')}}</p> -->
+                <button class="delete close-button" @click="show = false; clearFields(); purchaseButtonClicked = false;" aria-label="close"></button>
               </header>
               <section class="card-body">
                 <div class="page-checkout">
@@ -118,7 +119,7 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">{{$t('paymentmodal.name')}}</label>
+                              <label class="my-label has-text-black">{{$t('paymentmodal.name')}}</label>
                               <div class="control">
                                   <input type="text" class="input" :placeholder="$t('paymentmodal.placeholdername')" v-model="name">
                               </div>
@@ -130,7 +131,7 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">{{$t('paymentmodal.email')}}</label>
+                              <label class="my-label has-text-black">{{$t('paymentmodal.email')}}</label>
                               <div class="control">
                                   <input type="email" class="input" placeholder="123@my-email.com" v-model="email">
                               </div>
@@ -142,7 +143,7 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">{{$t('paymentmodal.phone')}}</label>
+                              <label class="my-label has-text-black">{{$t('paymentmodal.phone')}}</label>
                               <div class="control">
                                   <input type="text" class="input" :placeholder="$t('paymentmodal.placeholderphone')" v-model="phone">
                               </div>
@@ -154,7 +155,7 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">{{$t('paymentmodal.street1')}}</label>
+                              <label class="my-label has-text-black">{{$t('paymentmodal.street1')}}</label>
                               <div class="control">
                                   <input type="text" class="input" :placeholder="$t('paymentmodal.street1placeholder')" v-model="address1">
                               </div>
@@ -166,7 +167,7 @@
                                 </p>                        
                             </div>
                             <div class="field">
-                              <label class="has-text-black">{{$t('paymentmodal.street2')}}</label>
+                              <label class="my-label has-text-black">{{$t('paymentmodal.street2')}}</label>
                               <div class="control">
                                   <input type="text" class="input" :placeholder="$t('paymentmodal.street2placeholder')"  v-model="address2">
                               </div>
@@ -180,7 +181,7 @@
                                 </p>                        
                               </div>
                               <div class="field">
-                                <label class="has-text-black">{{$t('paymentmodal.country')}}</label>
+                                <label class="my-label has-text-black">{{$t('paymentmodal.country')}}</label>
                                 <div class="control">
                                     <select class="input" v-model="country" name="country" id="id_country">
                                       <option style="color:rgba(0,0,0,0.4) !important" value="" disabled selected hidden>
@@ -198,7 +199,7 @@
                               </div>
                               <!-- prefectures -->
                               <div v-if="this.country === 'JP'" class="field">
-                                <label class="has-text-black">{{$t('paymentmodal.pref')}}</label>
+                                <label class="my-label has-text-black">{{$t('paymentmodal.pref')}}</label>
                                 <div class="control">
                                   <select v-model="statePref" name="statepref" class="input">
                                     <option value="" disabled selected hidden>
@@ -210,7 +211,7 @@
                               </div>
                               <!-- states -->
                               <div v-if="this.country === 'US'" class="field">
-                                <label class="has-text-black">{{$t('paymentmodal.state')}}</label>
+                                <label class="my-label has-text-black">{{$t('paymentmodal.state')}}</label>
                                 <div class="control">
                                   <select v-model="statePref" name="statepref" class="input">
                                     <option value="" disabled selected hidden>
@@ -227,7 +228,7 @@
                                 </p>                        
                               </div>
                               <div class="field">
-                                <label class="has-text-black">{{$t('paymentmodal.postcode')}}</label>
+                                <label class="my-label has-text-black">{{$t('paymentmodal.postcode')}}</label>
                                 <div class="control">
                                     <input type="text" class="input" :placeholder="$t('paymentmodal.postcodeplaceholder')" v-model="zipcode">
                                 </div>
@@ -252,7 +253,7 @@
                 </div>
               </section>
               <!-- for usd -->
-              <footer v-if="$store.state.region === 'US'" class="card-foot">
+              <footer v-if="$store.state.language === 'en'" class="card-foot">
                 <p class="my-subtotal has-text-black">
                   <span>{{$t('cartview.total')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
@@ -267,10 +268,10 @@
                 </p>
                 <button @click="submitForm();" class="my-button-buy-now button">{{$t('paymentmodal.pay')}} ${{ calculateUsdSubtotal }}</button>
                 <!-- if adding to cart, add the item to cart and close modal -->
-                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
+                <button @click="show = false; clearFields(); purchaseButtonClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
               </footer>
               <!-- for jpy -->
-              <footer v-else-if="$store.state.region === 'JA'" class="card-foot">
+              <footer v-else-if="$store.state.language === 'ja'" class="card-foot">
                 <p class="my-subtotal has-text-black">
                   <span>{{$t('cartview.total')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTotal }}</span>
@@ -285,7 +286,7 @@
                 </p>
                 <button @click="submitForm();" class="my-button-buy-now button">{{$t('paymentmodal.pay')}} ¥{{ calculateJpySubtotal }}</button>
                 <!-- if adding to cart, add the item to cart and close modal -->
-                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
+                <button @click="show = false; clearFields(); purchaseButtonClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
               </footer>
             </div>
       </div>
@@ -318,7 +319,7 @@ export default {
           {}
         ],
         prefDropdowns: [{}],
-        checkoutClicked: false,
+        purchaseButtonClicked: false,
         show: false,
         cart: {
           itemsInCart: [],
@@ -372,7 +373,8 @@ export default {
     },
 
     methods: {
-      // for one item in the cart that is free
+
+      // free downloads
       async freeDownloads() {
         this.$store.state.downloadableItems = []
         // loop through cart and get all free items
@@ -404,7 +406,6 @@ export default {
             const flp_obj = {
               flp_zip: item.flp_zip,
               flp_name: item.flp_name
-
             }
             this.$store.state.downloadableItems.push(flp_obj)
 
@@ -436,6 +437,7 @@ export default {
           'track_items': track_items,
         }
 
+        // if there was only one free track or one free flp 
         if (this.$store.state.downloadableItems.length === 1) {
           // buying one purchased item from cart
           await axios
@@ -456,8 +458,10 @@ export default {
 
           this.$store.commit('setIsLoading', false)
         }
+
+        // there were multiple free tracks and/or flp files
         else {
-          // post data to server; have to send token as well
+          // post data to server; have to set auth token as well as arraybuffer headers for zip file responses
           await axios
           .post(process.env.VUE_APP_FREEDOWNLOAD_API_URL, 
                 data, 
@@ -481,13 +485,14 @@ export default {
           this.$store.commit('setIsLoading', false)
         }
       },
-      // for multiple items in cart that are free
 
       // scroll to top of payment form
       scrollToBottom() {
         // wait until modal closes, then scroll to payment form
         this.$nextTick(() => this.$refs["paymentFormTop"].scrollIntoView({ behavior: "smooth" }))
       },
+
+      // for paid tracks/flps
       submitForm() {
         this.errors.generalErrors = []
         this.errors.nameErrors = []
@@ -511,9 +516,6 @@ export default {
         if (this.address1 === '') {
             this.errors.address1Errors.push('The address field is missing!')
         }
-        // if (this.address2 === '') {
-        //     this.errors.address2Errors.push('The address field is missing!')
-        // }
         if (this.statePref === '') {
             this.errors.statePrefErrors.push('The state field is missing!')
         }        
@@ -554,17 +556,17 @@ export default {
           }
       },
 
+      // for paid track/flp items
       async stripeTokenHandler(token) {
+        
         const flp_items = []
         const track_items = []
-
 
         for (let i = 0; i < this.cart.itemsInCart.length; i++) {
           const item = this.cart.itemsInCart[i];
           // for tracks
           if ('title' in item) {
             const track_obj = {
-              // track_id: item.id,
               track: item.id,
               usd_track_price: item.usd_price,
               jpy_track_price: item.jpy_price
@@ -599,171 +601,94 @@ export default {
             track_items.push(track_obj)
         }
 
-        // get user billing data as well as stripe token and all
-        // cart items, both flps and tracks
-
+        // for a single paid flp or track. 
         if (this.cart.itemsInCart.length === 1) {
+          var jpy_paid_amount = 0
+          var usd_paid_amount = 0
+          // set currency based on language which is being used to set the region as well
+          this.$store.state.language === 'en' ? (usd_paid_amount = this.calculateUsdSubtotal, jpy_paid_amount = 0) : (usd_paid_amount = 0, jpy_paid_amount = this.calculateJpySubtotal)
+
           // buying one purchased item from cart
-          if(this.$store.state.region === 'US') {
-            const data = {
-              'name': this.name,
-              'email': this.email,
-              'phone': this.phone,
-              'address1': this.address1,
-              'address2': this.address2,
-              'statePref': this.statePref,
-              'country': this.country,
-              'zipcode': this.zipcode,
-              'flp_items': flp_items,
-              'track_items': track_items,
-              'stripe_token': token.id,
-              'jpy_paid_amount': '0',
-              'usd_paid_amount': this.calculateUsdSubtotal,
-            }
-            // post data to server; have to send token as well
-            await axios
-            .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
-            .then(response => {
-              // reset store
-              this.$store.state.downloadableItems = []
-              this.$store.state.downloadableItems = response.data        
-              // redirect to thank you page
-              this.$router.push('/thankyou')
-            })
-            .catch(error => {
-              console.log(error)
-              this.errors.generalErrors.push('Something went wrong. Please try again later')
-            })
-
-            this.$store.commit('setIsLoading', false)
+          const data = {
+            'name': this.name,
+            'email': this.email,
+            'phone': this.phone,
+            'address1': this.address1,
+            'address2': this.address2,
+            'statePref': this.statePref,
+            'country': this.country,
+            'zipcode': this.zipcode,
+            'flp_items': flp_items,
+            'track_items': track_items,
+            'stripe_token': token.id,
+            'jpy_paid_amount': jpy_paid_amount,
+            'usd_paid_amount': usd_paid_amount,
           }
-          else {
-            const data = {
-              'name': this.name,
-              'email': this.email,
-              'phone': this.phone,
-              'address1': this.address1,
-              'address2': this.address2,
-              'statePref': this.statePref,
-              'country': this.country,
-              'zipcode': this.zipcode,
-              'flp_items': flp_items,
-              'track_items': track_items,
-              'stripe_token': token.id,
-              'jpy_paid_amount': this.calculateJpySubtotal,
-              'usd_paid_amount': '0',
-            }
-              // post data to server; have to send token as well
-              await axios
-              .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
-              .then(response => {
-                  // reset store
-                  this.$store.state.downloadableItems = []
-                  this.$store.state.downloadableItems = response.data        
-                  // redirect to thank you page
-                  this.$router.push('/thankyou')
-              })
-              .catch(error => {
-                console.log(error)
-                this.errors.generalErrors.push('Something went wrong. Please try again later')
-              })
 
-              this.$store.commit('setIsLoading', false)
-            }
+          await axios
+          .post(process.env.VUE_APP_CHECKOUT_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+          .then(response => {
+            // reset store
+            this.$store.state.downloadableItems = []
+            this.$store.state.downloadableItems = response.data        
+            // redirect to thank you page
+            this.$router.push('/thankyou')
+          })
+          .catch(error => {
+            console.log(error)
+            this.errors.generalErrors.push('Something went wrong. Please try again later')
+          })
+          this.$store.commit('setIsLoading', false)
         }
-        // buying multiple items
+        // for multiple items
         else {
-          if(this.$store.state.region === 'US') {
-            const data = {
-              'name': this.name,
-              'email': this.email,
-              'phone': this.phone,
-              'address1': this.address1,
-              'address2': this.address2,
-              'statePref': this.statePref,
-              'country': this.country,
-              'zipcode': this.zipcode,
-              'flp_items': flp_items,
-              'track_items': track_items,
-              'stripe_token': token.id,
-              'jpy_paid_amount': '0',
-              'usd_paid_amount': this.calculateUsdSubtotal,
-            }
-            // post data to server; have to send token as well
-            await axios
-            .post(process.env.VUE_APP_CHECKOUT_API_URL, 
-                  data, 
-                  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}, responseType: 'arraybuffer'})
-            .then(response => {
-                          // reset store
-                          this.$store.state.downloadableItems = []
-              this.$store.state.downloadableItems = response.data
-                console.log('it worked bic boiiii')
-                const url = window.URL.createObjectURL(new Blob([response.data]))
-                const link = document.createElement('a')
-                link.href = url
-                // if it is a single wav file
-                link.setAttribute('download', 'SheriffCrandyDownloadables.zip')
-                document.body.appendChild(link)
-                link.click()
-                // redirect to thank you page
-                this.$router.push('/thankyou')
-            })
-            .catch(error => {
-              console.log(error)
-              this.errors.generalErrors.push('Something went wrong. Please try again later')
-            })
-            this.$store.commit('setIsLoading', false)
+          var jpy_paid_amount = 0
+          var usd_paid_amount = 0
+          // set currency based on language which is being used to set the region as well
+          this.$store.state.language === 'en' ? (usd_paid_amount = this.calculateUsdSubtotal, jpy_paid_amount = 0) : (usd_paid_amount = 0, jpy_paid_amount = this.calculateJpySubtotal)
+          
+          const data = {
+            'name': this.name,
+            'email': this.email,
+            'phone': this.phone,
+            'address1': this.address1,
+            'address2': this.address2,
+            'statePref': this.statePref,
+            'country': this.country,
+            'zipcode': this.zipcode,
+            'flp_items': flp_items,
+            'track_items': track_items,
+            'stripe_token': token.id,
+            'jpy_paid_amount': jpy_paid_amount,
+            'usd_paid_amount': usd_paid_amount,
           }
-          else {
-            const data = {
-              'name': this.name,
-              'email': this.email,
-              'phone': this.phone,
-              'address1': this.address1,
-              'address2': this.address2,
-              'statePref': this.statePref,
-              'country': this.country,
-              'zipcode': this.zipcode,
-              'flp_items': flp_items,
-              'track_items': track_items,
-              'stripe_token': token.id,
-              'jpy_paid_amount': this.calculateJpySubtotal,
-              'usd_paid_amount': '0',
-            }
-            // post data to server; have to send token as well
-            await axios
-            .post(process.env.VUE_APP_CHECKOUT_API_URL, 
-                  data, 
-                  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}, responseType: 'arraybuffer'})
-            .then(response => {
-                          // reset store
-                          this.$store.state.downloadableItems = []
-              this.$store.state.downloadableItems = response.data
-                console.log('it worked bic boiiii')
-                const url = window.URL.createObjectURL(new Blob([response.data]))
-                const link = document.createElement('a')
-                link.href = url
-                // if it is a single wav file
-                link.setAttribute('download', 'SheriffCrandyDownloadables.zip')
-                document.body.appendChild(link)
-                link.click()
-                // redirect to thank you page
-                this.$router.push('/thankyou')
-              })
-              .catch(error => {
-                console.log(error)
-                this.errors.generalErrors.push('Something went wrong. Please try again later')
-              })
-            this.$store.commit('setIsLoading', false)
-          }
-        }
 
+          await axios
+          .post(process.env.VUE_APP_CHECKOUT_API_URL, 
+                data, 
+                {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}, responseType: 'arraybuffer'})
+          .then(response => {
+            // reset store
+            this.$store.state.downloadableItems = []
+            this.$store.state.downloadableItems = response.data
+            console.log('it worked bic boiiii')
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', 'SheriffCrandyDownloadables.zip')
+            document.body.appendChild(link)
+            link.click()
+            this.$router.push('/thankyou')
+          })
+          .catch(error => {
+            console.log(error)
+            this.errors.generalErrors.push('Something went wrong. Please try again later')
+          })
+          this.$store.commit('setIsLoading', false)
+        }
       },
 
-
-
-      styleObject() {
+      showPaymentForm() {
         return this.show === true ? {display: 'block'} : {display: 'none'}
       },
 
