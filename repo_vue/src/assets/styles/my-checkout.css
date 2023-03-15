@@ -57,6 +57,7 @@ for mobile */
         margin-right: 1rem;
         font-size: 13px;
         margin-top: 1rem;
+        padding-top: 0.5rem;
     }
     
     .my-button-buy-now:hover {
@@ -67,7 +68,10 @@ for mobile */
     .my-button-cancel {
         font-size: 13px;
         margin-top: 1rem;
-
+        color: black;
+        border-color: black;
+        background-color: rgb(247, 243, 243);
+        padding-top: 0.45rem;
     }
 
     .stripe-card-div {
@@ -83,6 +87,10 @@ for mobile */
         padding-right: 2rem;
         margin-top: 0.5rem !important;
         margin-bottom: 0.5rem !important;
+    }
+
+    .input {
+        border-color: rgb(32, 203, 255);
     }
 }
 

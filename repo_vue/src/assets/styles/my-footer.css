@@ -166,7 +166,7 @@ a.company_link:hover {
     font-size: 13px;
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.5);
-    padding: 0.5rem !important;
+    padding-top: 0.5rem !important;
     margin: 0.1rem !important;
     height: 2.5em; 
 }

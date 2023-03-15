@@ -124,8 +124,11 @@ export default createStore({
       {prefname: 'Kagoshima',prefval:'鹿児島県 Kagoshima'},
       {prefname: 'Okinawa',prefval: '沖縄県 Okinawa'}
     ],
-    language: localStorage.getItem("language") || process.env.VUE_APP_I18N_LOCALE || 'en',
+    language: localStorage.getItem("language") || langFromIpAPI || 'en',
 
+    clientIp: '',
+    langFromIpAPI: '',
+    countryLocation: '',
     downloadableItems: [],
     // web token used for authentication
     sf_auth_bearer: '',
@@ -155,6 +158,33 @@ export default createStore({
 
     // called on app load/page refresh in App.vue entry point
     initializeStore(state) {
+
+      fetch('https://api.ipify.org?format=json')
+      .then(response => response.json())
+      .then(response => {
+        state.clientIp = response.ip;
+      }).catch(error => console.log("GET IP API Error: " + error));
+      // get ip location
+      fetch('http://ip-api.com/json/' + state.clientIp + '?fields=status,message,country,countryCode')
+      .then(response => response.json())
+      .then(response => {
+        state.countryLocation = response
+        // set region by IP address only if region hasn't been manually set
+        if (state.langFromIpAPI === '') {
+          if (response.country === 'Japan') {
+            state.langFromIpAPI = 'ja'
+          }
+          else if (response.country === 'United States') {
+            state.langFromIpAPI = 'en'
+
+          }
+          // default
+          else {
+            state.langFromIpAPI = 'en'
+          }
+        }
+  
+      }).catch(error => console.log("GeoData API Error: " + error));
 
       // check if user has a web token (logged in)
       if (localStorage.getItem('sf_auth_bearer')) {

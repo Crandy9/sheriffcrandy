@@ -108,9 +108,9 @@
       <div class="location-beacon" style="padding: 1rem;">
         <div class="circle"></div>
         <p style="font-size: smaller; padding: 0.2rem; color: white; display:inline-block;">
-        Location: {{ geoData.country }}
+        Location: {{ $store.state.countryLocation.country }}
         <p>
-          IP: {{ clientIp }}
+          IP: {{ $store.state.clientIp }}
         </p>
       </p>
       </div>
@@ -377,8 +377,6 @@ export default {
     return {
       hamburgerClicked: false,
       modalOpened: false,
-      clientIp: '',
-      geoData: '',
       cartCount: 0,
       cart: {
         itemsInCart: []
@@ -406,10 +404,6 @@ export default {
   },
 
   mounted() {
-    // first get IP address
-    this.getIP(),
-    // then get geodata
-    this.getGeoData()
     // mount cart
     this.cart = this.$store.state.cart
     document.addEventListener('click', this.closeModalOnWindowClick);
@@ -444,40 +438,6 @@ export default {
         this.modalOpened = false;
 
       }
-    },
-    // get user's IP address using https://www.ipify.org/ api
-    getIP() {
-      fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(response => {
-        this.clientIp = response.ip;
-      }).catch(error => console.log("GET IP API Error: " + error));
-    },
-    // get user's geolocation using https://ip-api.com/docs/api:json api
-    getGeoData() {
-      // fetch requests data from a server and returns a Promise
-      fetch('http://ip-api.com/json/' + this.clientIp + '?fields=status,message,country,countryCode')
-      // when fetch request completes, the promise is returned 
-      // and resolved into a [object Response]] object which is an API wrapper
-      .then(response => response.json())
-      .then(response => {
-        this.geoData = response;
-        // set region by IP address only if region hasn't been manually set
-        if (this.$store.state.language === '') {
-          if (response.country === 'Japan') {
-            this.$store.commit('changeLanguage','ja')
-          }
-          else if (response.country === 'United States') {
-            this.$store.commit('changeLanguage','en')
-
-          }
-          // default
-          else {
-            this.$store.commit('changeLanguage','en')
-          }
-        }
-
-      }).catch(error => console.log("GeoData API Error: " + error));
     },
     closeNav: function() {
       current_width = window.innerWidth;
