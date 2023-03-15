@@ -12,4 +12,4 @@ import i18n from './i18n'
 //  to variable name
 axios.defaults.baseURL = (process.env.VUE_APP_BACKEND_URL)
 
-createApp(App).use(i18n).use(store).use(router, axios).use(i18n).mount('#app')
+createApp(App).use(store).use(router, axios).use(i18n).mount('#app')

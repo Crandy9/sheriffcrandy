@@ -13,7 +13,11 @@
         "signup": "Sign Up"
       },
       "foot": {
-        "chooseregionmodaltitle": "Choose Region"
+        "chooselang": "Choose Language",
+        "chooseregion": "Choose Region",
+        "regiontagjp": "Region:"
+
+
       }
   },
 

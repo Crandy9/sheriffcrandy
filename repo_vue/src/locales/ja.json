@@ -13,7 +13,9 @@
             "signup": "サインアップ"
         },
         "foot": {
-            "chooseregionmodaltitle": "地域を選択"
+            "chooselang": "言語を選択する",
+            "chooseregion": "地域を選択",
+            "regiontagjp": "地域:"
         }
     },
 

@@ -5,8 +5,7 @@ import { createStore } from 'vuex'
 export default createStore({
   // state are vars that persist
   state: {
-    usaChosen: false,
-    japanChosen: false,
+
     // country dropdowns
     countries: [
       {countryname: "日本 (Japan)", countryval: "JP"},
@@ -124,11 +123,15 @@ export default createStore({
       {prefname: 'Kagoshima',prefval:'鹿児島県 Kagoshima'},
       {prefname: 'Okinawa',prefval: '沖縄県 Okinawa'}
     ],
-    language: localStorage.getItem("language") || langFromIpAPI || 'en',
+
+    language: localStorage.getItem("language") || process.env.VUE_APP_I18N_LOCALE || 'en',
+    region:  localStorage.getItem("region") || 'US',
 
     clientIp: '',
     langFromIpAPI: '',
-    countryLocation: '',
+    countryFromIpAPI: '',
+    initialLocaleSet: false,
+
     downloadableItems: [],
     // web token used for authentication
     sf_auth_bearer: '',
@@ -151,7 +154,6 @@ export default createStore({
   },
   getters: {
     getLanguage: (state) => state.language
-
   },
   // synchronous functions; change states
   mutations: {
@@ -159,32 +161,49 @@ export default createStore({
     // called on app load/page refresh in App.vue entry point
     initializeStore(state) {
 
+      // set locale and region
+      // get the ip address
       fetch('https://api.ipify.org?format=json')
       .then(response => response.json())
       .then(response => {
         state.clientIp = response.ip;
+        console.log('IP Address: ' + state.clientIp)
       }).catch(error => console.log("GET IP API Error: " + error));
-      // get ip location
-      fetch('http://ip-api.com/json/' + state.clientIp + '?fields=status,message,country,countryCode')
+      
+      // get data
+     fetch('http://ip-api.com/json/' + state.clientIp + '?fields=status,message,country,countryCode')
       .then(response => response.json())
       .then(response => {
-        state.countryLocation = response
-        // set region by IP address only if region hasn't been manually set
-        if (state.langFromIpAPI === '') {
+        console.log('Response country: ' + response.country)
+        // set initial region/language values based on IP address location
+        if (state.initialLocaleSet == false) {
+          console.log('setting locale and region for first time')
           if (response.country === 'Japan') {
-            state.langFromIpAPI = 'ja'
+            // state.region = 'JP';
+            // state.language = 'ja';
+            console.log(state.language)
+            console.log(state.region)
           }
           else if (response.country === 'United States') {
-            state.langFromIpAPI = 'en'
-
+            // state.region = 'US';
+            // state.language = 'en';
+            console.log(state.language)
+            console.log(state.region)
           }
           // default
           else {
-            state.langFromIpAPI = 'en'
+            // state.region = 'US';
+            // state.language = 'en'
+            console.log(state.language)
+            console.log(state.region)
           }
+          state.initialLocaleSet = true
         }
-  
+        else {
+          console.log('Region manually set by user. Current location disregarded.')
+        }
       }).catch(error => console.log("GeoData API Error: " + error));
+
 
       // check if user has a web token (logged in)
       if (localStorage.getItem('sf_auth_bearer')) {
@@ -195,7 +214,6 @@ export default createStore({
         state.sf_auth_bearer = ''
         state.isAuthenticated = false
       }
-
       // check if cart exists in local browser storage
       if (localStorage.getItem('cart')) {
           // get obj from storage if it exists
@@ -204,13 +222,6 @@ export default createStore({
       // create empty cart in local browser storage
       else {
           localStorage.setItem('cart', JSON.stringify(state.cart))
-      }
-      // set language
-      if (localStorage.getItem('language')) {
-        state.language = localStorage.getItem('language')
-      }
-      else {
-        state.language = ''
       }
     },
 
@@ -227,11 +238,18 @@ export default createStore({
     },
 
     // set language
-    changeLanguage(state, language) {
+    setLanguage(state, language) {
       state.language = language;
       console.log('language changed')
       console.log('new language:' + state.language)
       localStorage.setItem("language", language)
+    },
+    // set region
+    setRegion(state, region) {
+      state.region = region;
+      console.log('region changed')
+      console.log('new region:' + state.region)
+      localStorage.setItem("region", region)
     },
 
     // add items to cart

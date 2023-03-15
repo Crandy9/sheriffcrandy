@@ -155,12 +155,14 @@ a.company_link:hover {
 	color:rgb(60, 200, 255);
 }
 
-.my-region-div {
-    padding: 2rem;
+.my-region-language-div {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    padding-left: 0.5rem;
+    display: inline-block !important;
 }
 
 .my-region-button {
-    z-index: 9999;
     background-color: rgba(0, 0, 0, 0.7);
     color: #ffffff;
     font-size: 13px;
@@ -169,4 +171,25 @@ a.company_link:hover {
     padding-top: 0.5rem !important;
     margin: 0.1rem !important;
     height: 2.5em; 
+}
+
+.my-lang-button {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    font-size: 13px;
+    border-width: 1px;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;   
+    outline-style: none !important; 
+    padding-top: 0.5rem !important;
+    margin: 0.1rem !important;
+    height: 2.5em; 
+}
+
+.my-lang-button:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    outline-style: none !important; 
 }

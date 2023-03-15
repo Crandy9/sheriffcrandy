@@ -1,6 +1,6 @@
 <!-- navbar/footer template -->
 <template>
-  <div id="wrapper">
+  <div id="wrapper" v-if="$store.state.region !== null">
     <!-- bulma navbar -->
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <!-- logo on navbar-->
@@ -79,22 +79,44 @@
     <!-- main page content -->
     <section class="section">
       <router-view/>
-          <!-- CHANGE LANGUAGE MODAL POPUP -->
+    <!-- CHANGE LANGUAGE MODAL POPUP -->
     <Transition>
-      <div v-if="modalOpened" id="my-modal-id" class="modal my-region-modal" v-bind:class="{'is-active':modalOpened}">
+      <div v-if="langModalOpened" id="my-modal-id" class="modal my-region-modal" v-bind:class="{'is-active':langModalOpened}">
         <div class="modal-background my-region-modal-bg"></div>
           <div class="modal-card my-region-modal-card">
             <header class="modal-card-head my-region-modal-head">
-              <p class="modal-card-title my-region-modal-card-title">{{$t('headerfooter.foot.chooseregionmodaltitle')}}</p>
-              <button @click="modalOpened = false" class="delete" aria-label="close"></button>
+              <p class="modal-card-title my-region-modal-card-title">{{$t('headerfooter.foot.chooselang')}}</p>
+              <button @click="langModalOpened = false" class="delete" aria-label="close"></button>
             </header>
             <section class="modal-card-body my-region-modal-card-body">
               <ul class="my-region-modal-list">
                 <li @click="changeLanguageButton('en')" class="my-region-modal-list-item">
-                  United States (English)
+                  English
                 </li>
                 <li @click="changeLanguageButton('ja')" class="my-region-modal-list-item">
-                  Japan (日本語)
+                  日本語 (Japanese)
+                </li>
+              </ul>
+            </section>
+          </div>
+      </div>
+    </Transition>
+    <!-- CHANGE REGION MODAL POPUP -->
+    <Transition>
+      <div v-if="regionModalOpened" id="my-modal-id" class="modal my-region-modal" v-bind:class="{'is-active':regionModalOpened}">
+        <div class="modal-background my-region-modal-bg"></div>
+          <div class="modal-card my-region-modal-card">
+            <header class="modal-card-head my-region-modal-head">
+              <p class="modal-card-title my-region-modal-card-title">{{$t('headerfooter.foot.chooseregion')}}</p>
+              <button @click="regionModalOpened = false" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body my-region-modal-card-body">
+              <ul class="my-region-modal-list">
+                <li @click="changeRegionButton('US')" class="my-region-modal-list-item">
+                  United States
+                </li>
+                <li @click="changeRegionButton('JP')" class="my-region-modal-list-item">
+                  日本 (Japan)
                 </li>
               </ul>
             </section>
@@ -105,12 +127,13 @@
   </div>
 		<!-- Footer only stays at the bottom in this file, not App.vue-->
 		<footer class="my-footer">
+      <!-- cool little api ip/region integration but not really needed. Keeping code for -->
       <div class="location-beacon" style="padding: 1rem;">
-        <div class="circle"></div>
+        <!-- <div class="circle"></div> -->
         <p style="font-size: smaller; padding: 0.2rem; color: white; display:inline-block;">
-        Location: {{ $store.state.countryLocation.country }}
+        <!-- Location: {{ $store.state.regionFromIpAPI }} -->
         <p>
-          IP: {{ $store.state.clientIp }}
+          <!-- IP: {{ $store.state.clientIp }} -->
         </p>
       </p>
       </div>
@@ -289,16 +312,28 @@
 						- Jesus Christ is King
 				</div>
 			</div>
-      <div class="my-region-div">
-        <button v-if="$store.state.language === 'ja'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button button">
-          <!-- Language region modal popup -->
-          <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
-          {{ $t('headerfooter.foot.chooseregionmodaltitle') }}
-        </button>
-        <button v-else-if="$store.state.language === 'en'" @click.stop="modalOpened = true;" data-target="my-modal-id" class="my-region-button button">
+      <!-- region language -->
+      <div class="my-region-language-div">
+        <!-- region button -->
+        <div class="my-region">
+          <button v-if="$store.state.region === 'JP'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
             <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
-          {{ $t('headerfooter.foot.chooseregionmodaltitle') }}
-        </button>
+            日本 (Japan)
+          </button>
+          <button v-else-if="$store.state.region === 'US'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
+              <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
+            United States
+            </button>
+        </div>
+        <!-- Language button -->
+        <div class="my-language">
+          <button v-if="$store.state.language === 'ja'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
+            日本語
+          </button>
+          <button v-else-if="$store.state.language === 'en'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
+            English
+          </button>
+        </div>
       </div>
 		</footer>
 		<!-- end Footer -->
@@ -376,7 +411,8 @@ export default {
   data () {
     return {
       hamburgerClicked: false,
-      modalOpened: false,
+      regionModalOpened: false,
+      langModalOpened: false,
       cartCount: 0,
       cart: {
         itemsInCart: []
@@ -385,7 +421,6 @@ export default {
   },
   // initialize the store. First method that is called when app is loaded/page refreshed
   beforeCreate() {
-    // set default language
 
     // commit calls initializeStore function in mutations in store/index.js to setup cart/web token
     this.$store.commit('initializeStore') 
@@ -426,18 +461,36 @@ export default {
 
     // change language button click
     changeLanguageButton(language) {
-      this.$store.commit('changeLanguage',language)
+      this.$store.commit('setLanguage',language)
+      window.location.reload();
+    },
+
+    // change region button click
+    changeRegionButton(region) {
+      this.$store.commit('setRegion',region)
       window.location.reload();
     },
 
     closeModalOnWindowClick() {
-      if (this.modalOpened === false) {
 
-      }
-      else if (this.modalOpened === true) {
-        this.modalOpened = false;
+      // region modal
+      this.regionModalOpened === true ? this.regionModalOpened = false : null;
+      // lanugae modal
+      this.langModalOpened === true ? this.langModalOpened === false : null;
 
-      }
+      // if (this.regionModalOpened === false) {
+
+      // }
+      // else if (this.regionModalOpened === true) {
+      //   this.regionModalOpened = false;
+
+      // }
+      // if (this.langModalOpened === false) {
+
+      // }
+      // else if (this.langModalOpened === true) {
+      //   this.langModalOpened = false;
+      // }
     },
     closeNav: function() {
       current_width = window.innerWidth;

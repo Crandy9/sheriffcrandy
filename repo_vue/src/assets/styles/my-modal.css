@@ -55,6 +55,12 @@
     }
 }
 
+.my-region-modal-card-title {
+    font-size: large;
+    text-align: center;
+    color: white;
+}
+
 .my-region-modal-card-body {
     padding-bottom: 2.5rem;
     border-bottom-right-radius: 25px;
