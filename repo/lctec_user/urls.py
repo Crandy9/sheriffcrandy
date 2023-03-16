@@ -1,6 +1,3 @@
-'''
-DON'T THINK I EVEN NEED TO REGISTER THIS USERS URLS
-
 # manually created urls.py file
 
 from django.contrib import admin
@@ -10,8 +7,8 @@ from django.conf.urls.static import static
 from lctec_user import views
 
 urlpatterns = [
-    # serialized track data accessible from api at DOMAIN/api/v1/latest-tracks/
-    # path('lol/', views.ScUsers.as_view()),
+    # for username validation, allow a string to be input as a param
+    path('check-username/<str:username>/', views.check_username),
+    path('check-email/<str:email>/', views.check_email),
 ] 
 
-'''

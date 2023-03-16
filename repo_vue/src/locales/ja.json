@@ -72,7 +72,11 @@
         "passwordtoosimilartousername": "パスワードがユーザー名と似すぎている",
         "passwordtoosimilartoemail": "パスワードがメールと似すぎている",
         "emailexistserror": "このユーザーネームはすでに存在します。別のユーザー名を選択してください。",
+        "emailnotavail": "Eメールが利用できません",
+        "emailavail": "Eメールが利用できます！",
         "usernameexistserror": "このメールアドレスはすでに存在しています。別のメールアドレスを使用してください。",
+        "usernamenotavail": "ユーザー名が利用できません",
+        "usernameavail": "ユーザー名が利用できます！",
         "generror": "おっと! 私たちの側で何かが間違っていた! 私たちはエラーを修正するために熱心に働いています。後ほど再度お試しください。ご迷惑をおかけして申し訳ありません。",
         "email@symbolerror": "有効なEメールアドレスを入力してください"
     },

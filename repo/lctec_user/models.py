@@ -7,7 +7,7 @@ class Lctec_CustomUserManager(BaseUserManager):
 
 
 
-    # called when creating user through terminal and presumably drf
+    # called when creating user through drf terminal and frontend
     # only pass in req params, all other unrequired params like
     # first/lastname, favorite color, etc. will be held in **extra_fields param
     def create_user(self, email, username, password, **extra_fields):

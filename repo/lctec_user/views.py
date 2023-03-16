@@ -1,30 +1,19 @@
-'''
-
-
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import authentication, permissions
 from django.contrib.auth import get_user_model
 
-DON'T THINK I EVEN NEED TO REGISTER THIS USERS VIEW
-User = get_user_model()
+user = get_user_model()
 
-class ScUsers(APIView):
-    print("\n\n ScUsers view getting hit\n\n")
-    """
-    View to list all users in the system.
+# checking username in form validation
+@api_view(['GET'])
+def check_username(request, username):
+    username_available = not user.objects.filter(username=username).exists()
+    return Response({'available': username_available})
 
-    * Requires token authentication.
-    * Only admin users are able to access this view.
-    """
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAdminUser]
-
-    def get(self, request, format=None):
-        """
-        Return a list of all users.
-        """
-        usernames = [user.username for user in User.objects.all()]
-        return Response(usernames)
-
-        '''
+# checking username in form validation
+@api_view(['GET'])
+def check_email(request, email):
+    email_available = not user.objects.filter(email=email).exists()
+    return Response({'available': email_available})

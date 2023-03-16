@@ -76,7 +76,11 @@
     "passwordtoosimilartousername": "Password is too similar to username",
     "passwordtoosimilartoemail": "Password is too similar to email",
     "emailexistserror": "This username already exists. Please choose a different username.",
+    "emailnotavail": "email not available",
+    "emailavail": "email available!",
     "usernameexistserror": "This email address already exists. Please use a different email address.",
+    "usernamenotavail": "username not available",
+    "usernameavail": "username available!",
     "generror": "Oops! Something went wrong on our end! We are working diligently to fix the error. Please try again later. I apologize for the inconvenience.",
     "email@symbolerror": "Please enter a valid email address"
   },

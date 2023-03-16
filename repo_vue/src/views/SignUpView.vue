@@ -21,11 +21,14 @@
                                 <span style="color:red !important">*</span> {{ error }}
                                 </p>
                             </div>
+                            <!-- real-time username validation -->
+                            <p class="my-errors" style="color:red" v-if="!usernameAvailable && !isUsernameEmpty ">{{ $t('loginsignupview.usernamenotavail') }}</p>
+                            <p class="my-errors" style="color:green" v-else-if="usernameAvailable && !isUsernameEmpty ">{{ $t('loginsignupview.usernameavail') }}</p>
                             <!-- username -->
                             <label class="my-label" for="">{{ $t('loginsignupview.usernameonly') }}</label>
                             <div class="control">
                                 <!-- v-model connects the data var defined below -->
-                                <input type="text" name="username" class="input" :placeholder="$t('loginsignupview.usernameonly')" v-model="username">
+                                <input type="text" v-model="username" name="username" @input="checkUsername" class="input" :placeholder="$t('loginsignupview.usernameonly')">
                             </div>
                             <!-- email errors-->
                             <div v-if="errors.emailErrors.length">
@@ -33,10 +36,13 @@
                                 <span style="color:red !important">*</span> {{ error }}
                                 </p>
                             </div>
+                            <!-- real-time email validation -->
+                            <p class="my-errors" style="color:red" v-if="!emailAvailable && !isEmailEmpty">{{ $t('loginsignupview.emailnotavail') }}</p>
+                            <p class="my-errors" style="color:green" v-else-if="emailAvailable && !isEmailEmpty">{{ $t('loginsignupview.emailavail') }}</p>
                             <!-- email -->
                             <label class="my-label" for="">{{ $t('loginsignupview.emailonly') }}</label>
                             <div class="control">
-                                <input type="text" name="email" class="input" :placeholder="$t('loginsignupview.emailonly')" v-model="email">
+                                <input type="text" v-model="email" name="email" @input="checkEmail" class="input" :placeholder="$t('loginsignupview.emailonly')">
                             </div>
                             <!-- not required fields -->
                             <!-- first_name -->
@@ -124,7 +130,9 @@ export default {
     data() {
         return {
             username: '',
+            usernameAvailable: true,
             email: '',
+            emailAvailable: true,
             first_name: '',
             last_name: '',
             password: '',
@@ -141,9 +149,47 @@ export default {
             showReEnterPassword: false,
         };
     },
+
+
     computed: {
+        isUsernameEmpty() {
+            return this.username.trim().length === 0;
+        },
+
+        isEmailEmpty() {
+            return this.email.trim().length === 0;
+        },
     },
     methods: {
+
+        // dynamically check username validity
+        async checkUsername() {
+
+                try {
+                if (this.username.trim().length > 0) {
+                    const response = await axios.get(process.env.VUE_APP_CHECK_USERNAME_API_URL + `${this.username}`)
+                    this.usernameAvailable = response.data.available;
+                    this.usernameAvailable === true ? console.log('username is available') : console.log('username is not available')
+                }
+
+            }
+            catch (error) {
+                console.log(error)
+            }
+        } ,
+
+        async checkEmail() {
+            try {
+                if (this.email.trim().length > 0) {
+                    const response = await axios.get(process.env.VUE_APP_CHECK_EMAIL_API_URL + `${this.email}`)
+                    this.emailAvailable = response.data.available;
+                    this.emailAvailable === true ? console.log('email is available') : console.log('email is not available')
+                }
+            }
+            catch (error) {
+                console.log(error)
+            }
+        },
         submitForm() {
             // reset errors
             this.errors.generalErrors = []
