@@ -90,11 +90,11 @@
                             <div class="field has-addons my-password-field">
                                 <div class="control is-expanded input-container">
                                     <!-- show password, type has to be text -->
-                                    <input v-if="showPassword" type="text" class="input" v-model="password" />
+                                    <input v-if="showReEnterPassword" type="text" class="input" v-model="re_enter_password" />
                                     <!-- hide password, type is password -->
-                                    <input v-else type="password" class="input" v-model="password">
-                                    <span @click.prevent="toggleShowPassword" class="icon is-small is-right my-eye-icon">
-                                        <i class="fas" :class="{ 'fa-eye-slash': showPassword, 'fa-eye': !showPassword }"></i>
+                                    <input v-else type="password" class="input" v-model="re_enter_password">
+                                    <span @click.prevent="toggleShowReEnterPassword" class="icon is-small is-right my-eye-icon">
+                                        <i class="fas" :class="{ 'fa-eye-slash': showReEnterPassword, 'fa-eye': !showReEnterPassword }"></i>
                                     </span>
                                 </div>
                             </div> 
@@ -127,6 +127,10 @@ export default {
 
     data() {
         return {
+            timer: '',
+            timerRunning: '',
+            // 1 second
+            duration: 400,
             username: '',
             usernameAvailable: true,
             email: '',
@@ -159,35 +163,58 @@ export default {
         },
     },
     methods: {
-
         // dynamically check username validity
-        async checkUsername() {
-
-                try {
-                if (this.username.trim().length > 0) {
-                    const response = await axios.get(process.env.VUE_APP_CHECK_USERNAME_API_URL + `${this.username}`)
-                    this.usernameAvailable = response.data.available;
-                    this.usernameAvailable === true ? console.log('username is available') : console.log('username is not available')
-                }
-
+        checkUsername() {
+            // clear the timeout if it is still running
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timerRunning = false;
             }
-            catch (error) {
-                console.log(error)
+            if (this.username.trim().length > 0) {
+                this.timer = setTimeout(() => {
+                    this.timerRunning = true;
+                    try {
+                        axios.get(process.env.VUE_APP_CHECK_USERNAME_API_URL + `${this.username}`)
+                        .then(response => {
+                            const data = response.data;
+                            this.usernameAvailable = data.available;
+                            this.timerRunning = false;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        })
+                    }
+                    catch(error) {
+                        console.log(error)
+                        }   
+                }, this.duration)
             }
         } ,
 
-        async checkEmail() {
-            try {
-                if (this.email.trim().length > 0) {
-                    const response = await axios.get(process.env.VUE_APP_CHECK_EMAIL_API_URL + `${this.email}`)
-                    this.emailAvailable = response.data.available;
-                    this.emailAvailable === true ? console.log('email is available') : console.log('email is not available')
-                }
+        checkEmail() {
+            // clear the timeout if it is still running
+            if (this.timer) {
+                clearTimeout(this.timer);
             }
-            catch (error) {
-                console.log(error)
+            if (this.email.trim().length > 0) {
+                this.timer = setTimeout(() => {
+                    try {
+                        axios.get(process.env.VUE_APP_CHECK_EMAIL_API_URL + `${this.email}`)
+                        .then(response => {
+                            const data = response.data;
+                            this.emailAvailable = data.available;
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        })
+                    }
+                    catch(error) {
+                        console.log(error)
+                        }   
+                }, this.duration)
             }
         },
+
         submitForm() {
             // reset errors
             this.errors.generalErrors = []
@@ -302,7 +329,6 @@ export default {
                     })
             }
             else {
-                console.log('form is invalid, errors')
             }
 
         },
