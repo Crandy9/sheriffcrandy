@@ -11,12 +11,16 @@ export default {
     name: 'LogOut',
 
     beforeCreate() {
-        // log user out
-        axios.post(process.env.VUE_APP_LOGOUT_USER_API_URL, null, {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+        const cartData = {
+            cart: this.$store.state.cart.itemsInCart
+        }
+
+        console.log(JSON.stringify(cartData))
+
+        // log user out, pass in the cart to save it to user
+        axios.post(process.env.VUE_APP_LOGOUT_USER_API_URL, cartData , {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
         .then(response => {
           // handle success
-          console.log(response.data.success);
-          console.log("successfully logged user out and deleted user's auth token")
           // remove token
           axios.defaults.headers.common["Authorization"] = ""
           localStorage.removeItem('sf_auth_bearer')

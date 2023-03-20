@@ -7,6 +7,7 @@ MyUser = get_user_model()
 
 # called when making api attempts to authenticate users and create auth tokens
 class Lctec_Backend(object):
+    
     def authenticate(self, request, username=None, password=None, **kwargs):
         print("\n\nbackend accessed for login\n\n")
         try:

@@ -1,6 +1,9 @@
 from django.db import models
 # import classes needed for custom user model
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+# import tracks and flp models for cart model
+from flps_app.models import Flp
+from tracks_app.models import Track
 
 # custom user manager
 class Lctec_CustomUserManager(BaseUserManager):
@@ -81,3 +84,16 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
     @staticmethod
     def has_module_perms(app_label, **kwargs):
         return True
+
+
+# set custom user model
+from django.contrib.auth import get_user_model
+User = get_user_model()
+# user's cart
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    flps_in_cart = models.ManyToManyField(Flp, blank=True)
+    tracks_in_cart = models.ManyToManyField(Track, blank=True)
+    flp_cart_quantity = models.IntegerField(default = 0, null=True, blank=True)
+    track_cart_quantity = models.IntegerField(default = 0, null=True, blank=True)
+    total_cart_quantity = models.IntegerField(default = 0, null=True, blank=True)

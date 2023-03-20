@@ -680,7 +680,7 @@
         // stop loading bar after api data is fetched
         this.$store.commit('setIsLoading', false);
       },
-          // add to cart
+    // add to cart
     addFlpToCart(flp) {
       // get specific flp added to cart
       const item = this.flps.find(item => item.id === flp)

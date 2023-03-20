@@ -1,6 +1,3 @@
-'''
-DON'T THINK I EVEN NEED TO REGISTER THIS USERS SERIALIZERS
-
 # manually created serializers.py file created to turn DB data into JSON to be used by frontend
 from rest_framework import serializers
 from .models import *
@@ -8,14 +5,11 @@ from .models import *
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
+# return authenticated user as well as user's cart data
 User = get_user_model()
-class LcTecSerializer(serializers.ModelSerializer):
+class LctecSerializer(serializers.ModelSerializer):
+    cart_data = serializers.JSONField()
 
     class Meta(object):
         model = User
-        fields = (
-            'username, password'
-        )
-        extra_kwargs = {'password': {'write_only': True, 'required': False}}
-
-'''
+        fields = ('id', 'username', 'email', 'cart_data')
