@@ -1,9 +1,17 @@
 # sheriffcrandy
-Web app for independent music artist Sheriff Crandy. This is a full stack web app using Django web framework, Django rest framework, and PostgreSQL database for backend and VUE.js for frontend.
+Web app for independent music artist Sheriff Crandy. This is a full stack web app which uses Django, Django rest framework, token authentication, PostgreSQL and VUE.js for frontend.
 
-(follwed this Django/Django Rest Framework/Vue.js tutorial as starting point here: https://www.youtube.com/watch?v=Yg5zkd9nm6w)
+(loosely followed this Django/Django Rest Framework/Vue.js tutorial as starting point: https://www.youtube.com/watch?v=Yg5zkd9nm6w)
 
-The site's capabilities will include music streaming, with the option of purchasing and downloading song files. Payment processing will be handled by Stripe.
+The site's capabilities will include:
+1.) music streaming, with the option of purchasing and downloading music files/fl studio .flp project files. 
+2.) Payment processing handled by Stripe API payment gateway.
+3.) user authentication/authorization handled by custom backend, custom user model, and Django rest framework via token authentication
+4.) user cart implementaiton for purchasing multiple music files/.flp project files.
+
+Future implementations can accomodate:
+- mobile (android/iOS) development 
+- Desktop app development
 
 Basic File Structure:
 ```
