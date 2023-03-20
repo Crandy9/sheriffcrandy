@@ -38,12 +38,12 @@
                     {{$t('cartview.free')}}
                   </a>
                   <a class="button is-small is-black price-button has-text-weight-medium" 
-                    v-else-if="$store.state.language === 'en'" 
+                    v-else-if="$store.state.region === 'US'" 
                     @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
                     ${{ flp.usd_price }}
                   </a>
                   <a class="button is-small is-black price-button has-text-weight-medium" 
-                    v-else-if="$store.state.language === 'ja'" 
+                    v-else-if="$store.state.region === 'JP'" 
                     @click.stop="modalOpened = true; setFlpId(flp.id);" data-target="my-modal-id">
                     ¥{{ flp.jpy_price }}
                   </a>
@@ -283,7 +283,7 @@
                 </div>
               </section>
               <!-- for usd -->
-              <footer v-if="$store.state.language === 'en'" class="card-foot">
+              <footer v-if="$store.state.region === 'US'" class="card-foot">
                 <p class="my-subtotal has-text-black">
                   <span>{{$t('cartview.total')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ usdPrice }}</span>
@@ -301,7 +301,7 @@
                 <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
               </footer>
               <!-- for jpy -->
-              <footer v-else-if="$store.state.language === 'ja'" class="card-foot">
+              <footer v-else-if="$store.state.region === 'JP'" class="card-foot">
                 <p class="my-subtotal has-text-black">
                   <span>{{$t('cartview.total')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ jpyPrice }}</span>
@@ -399,7 +399,7 @@
     mounted() {
       this.getFlps();
       document.addEventListener('click', this.closeModalOnWindowClick);
-      this.$i18n.locale === 'en' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
+      this.$store.state.region === 'US' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
       const elements = this.stripe.elements();
       this.card = elements.create('card', { hidePostalCode: true })
       this.card.mount('#card-element')
@@ -521,7 +521,7 @@
       var jpy_paid_amount = 0
       var usd_paid_amount = 0
       // set currency based on language which is being used to set the region as well
-      this.$store.state.language === 'en' ? (usd_paid_amount = this.calculateUsdSubtotal, jpy_paid_amount = 0) : (usd_paid_amount = 0, jpy_paid_amount = this.calculateJpySubtotal)
+      this.$store.state.region === 'US' ? (usd_paid_amount = this.calculateUsdSubtotal, jpy_paid_amount = 0) : (usd_paid_amount = 0, jpy_paid_amount = this.calculateJpySubtotal)
       
       // get user billing data as well as stripe token and all
       // cart items, both flps and tracks

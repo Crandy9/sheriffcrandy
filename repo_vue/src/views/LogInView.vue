@@ -36,15 +36,14 @@
                             <!-- password -->
                             <label class="my-label" for="">{{$t('loginsignupview.password')}}</label>
                             <div class="field has-addons my-password-field">
-                                <div class="control is-expanded">
+                                <div class="control is-expanded input-container">
+                                    <!-- show password, type has to be text -->
                                     <input v-if="showPassword" type="text" class="input" v-model="password" />
+                                    <!-- hide password, type is password -->
                                     <input v-else type="password" class="input" v-model="password">
-                                </div>
-                                <div class="control">
-                                    <button class="button" @click.prevent="toggleShowPassword"><span class="icon is-small is-right">
+                                    <span @click.prevent="toggleShowPassword" class="icon is-small is-right my-eye-icon">
                                         <i class="fas" :class="{ 'fa-eye-slash': showPassword, 'fa-eye': !showPassword }"></i>
-                                        </span>
-                                    </button>
+                                    </span>
                                 </div>
                             </div>
                             <!-- submit form -->

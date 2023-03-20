@@ -11,6 +11,13 @@ export default {
     name: 'LogOut',
 
     mounted() {
+
+        // log user out
+        axios.post(process.env.VUE_APP_LOGOUT_USER_API_URL, null, {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+        .then(response => {
+        // handle success
+        console.log(response.data.success);
+        console.log("successfully logged user out and deleted user's auth token")
         // remove token
         axios.defaults.headers.common["Authorization"] = ""
         localStorage.removeItem('sf_auth_bearer')
@@ -29,6 +36,16 @@ export default {
         })
         // redirect to homepage
         this.$router.push('/')
+        })
+        .catch(error => {
+        // handle error
+        console.log(error);
+        console.log("log out didn't work")
+        console.log('axios post logout url')
+        console.log(process.env.VUE_APP_LOGOUT_USER_API_URL)
+        console.log(process.env.VUE_APP_I18N_FALLBACK_LOCALE)
+
+        });
     }
 }
 </script>

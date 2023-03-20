@@ -34,9 +34,9 @@
                 <a @click="removeFromCart(item.id);" class="my-remove-button">{{$t('cartview.remove')}}<button class="delete"></button></a>
                   <div class="my-cart-price" v-if="item.is_free == true || item.flp_is_free == true">{{$t('cartview.free')}}</div>
                   <!-- usd -->
-                  <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false) && $store.state.language === 'en'">${{ item.usd_price }}</div>
+                  <div class="my-cart-price" v-else-if="item.usd_price && (item.is_free == false || item.flp_is_free == false) && $store.state.region === 'US'">${{ item.usd_price }}</div>
                   <!-- jpy -->
-                  <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false) && $store.state.language === 'ja'">¥{{ item.jpy_price }}</div>                
+                  <div class="my-cart-price" v-else-if="item.jpy_price && (item.is_free == false || item.flp_is_free == false) && $store.state.region === 'JP'">¥{{ item.jpy_price }}</div>                
               </div>
             </td>
           </tr>
@@ -46,7 +46,7 @@
     </div>
     <!-- end cart body -->
     <!-- cart footer USD -->
-    <footer v-if="cart.itemsInCart.length && $store.state.language === 'en'" class="my-cart-footer">
+    <footer v-if="cart.itemsInCart.length && $store.state.region === 'US'" class="my-cart-footer">
       <a class="my-clear-cart-button" @click="show = false; purchaseButtonClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
       <p class="my-subtotal">
         <span>{{$t('cartview.total')}}:</span>
@@ -68,7 +68,7 @@
       </div>
     </footer>
       <!-- cart footer USD -->
-      <footer v-if="cart.itemsInCart.length && $store.state.language === 'ja'" class="my-cart-footer">
+      <footer v-if="cart.itemsInCart.length && $store.state.region === 'JP'" class="my-cart-footer">
         <a class="my-clear-cart-button" @click="show = false; purchaseButtonClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
         <p class="my-subtotal">
           <span>{{$t('cartview.total')}}:</span>
@@ -256,7 +256,7 @@
                 </div>
               </section>
               <!-- for usd -->
-              <footer v-if="$store.state.language === 'en'" class="card-foot">
+              <footer v-if="$store.state.region === 'US'" class="card-foot">
                 <p class="my-subtotal has-text-black">
                   <span>{{$t('cartview.total')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdTotal }}</span>
@@ -274,7 +274,7 @@
                 <button @click="show = false; clearFields(); purchaseButtonClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
               </footer>
               <!-- for jpy -->
-              <footer v-else-if="$store.state.language === 'ja'" class="card-foot">
+              <footer v-else-if="$store.state.region === 'JP'" class="card-foot">
                 <p class="my-subtotal has-text-black">
                   <span>{{$t('cartview.total')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpyTotal }}</span>
@@ -368,7 +368,7 @@ export default {
       this.cart = this.$store.state.cart
       document.title = 'Cart' 
       if (this.cart.itemsInCart.length > 0) {
-        this.$i18n.locale === 'en' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
+        this.$store.state.region === 'US' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
           const elements = this.stripe.elements();
           this.card = elements.create('card', { hidePostalCode: true })
           this.card.mount('#card-element')
@@ -609,7 +609,7 @@ export default {
           var jpy_paid_amount = 0
           var usd_paid_amount = 0
           // set currency based on language which is being used to set the region as well
-          this.$store.state.language === 'en' ? (usd_paid_amount = this.calculateUsdSubtotal, jpy_paid_amount = 0) : (usd_paid_amount = 0, jpy_paid_amount = this.calculateJpySubtotal)
+          this.$store.state.region === 'US' ? (usd_paid_amount = this.calculateUsdSubtotal, jpy_paid_amount = 0) : (usd_paid_amount = 0, jpy_paid_amount = this.calculateJpySubtotal)
 
           // buying one purchased item from cart
           const data = {
@@ -648,7 +648,7 @@ export default {
           var jpy_paid_amount = 0
           var usd_paid_amount = 0
           // set currency based on language which is being used to set the region as well
-          this.$store.state.language === 'en' ? (usd_paid_amount = this.calculateUsdSubtotal, jpy_paid_amount = 0) : (usd_paid_amount = 0, jpy_paid_amount = this.calculateJpySubtotal)
+          this.$store.state.region === 'US' ? (usd_paid_amount = this.calculateUsdSubtotal, jpy_paid_amount = 0) : (usd_paid_amount = 0, jpy_paid_amount = this.calculateJpySubtotal)
           
           const data = {
             'name': this.name,

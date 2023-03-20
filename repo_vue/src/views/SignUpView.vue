@@ -68,18 +68,17 @@
                             </div>
                             <!-- password use click.prevent to prevent form submission action -->
                             <label class="my-label" for="">{{ $t('loginsignupview.password') }}</label>
-                            <div class="field has-addons">
-                                <div class="control is-expanded">
+                            <div class="field has-addons my-password-field">
+                                <div class="control is-expanded input-container">
+                                    <!-- show password, type has to be text -->
                                     <input v-if="showPassword" type="text" class="input" v-model="password" />
-                                    <input v-else type="password" name="password" class="input" v-model="password">
-                                </div>
-                                <div class="control">
-                                    <button class="button" @click.prevent="toggleShowPassword"><span class="icon is-small is-right">
+                                    <!-- hide password, type is password -->
+                                    <input v-else type="password" class="input" v-model="password">
+                                    <span @click.prevent="toggleShowPassword" class="icon is-small is-right my-eye-icon">
                                         <i class="fas" :class="{ 'fa-eye-slash': showPassword, 'fa-eye': !showPassword }"></i>
-                                        </span>
-                                    </button>
+                                    </span>
                                 </div>
-                            </div>  
+                            </div>
                             <!-- re-enter password errors-->
                             <div class="my-errors" v-if="errors.re_enter_passwordErrors.length">
                                 <p style="color:red" v-for="error in errors.re_enter_passwordErrors" v-bind:key="error">
@@ -88,18 +87,17 @@
                             </div>
                             <!--re-enter password use click.prevent to prevent form submission action -->
                             <label class="my-label" for="">{{ $t('loginsignupview.reenterpassword') }}</label>
-                            <div class="field has-addons">
-                                <div class="control is-expanded">
-                                    <input v-if="showReEnterPassword" type="text" class="input" v-model="re_enter_password" />
-                                    <input v-else type="password" class="input" v-model="re_enter_password">
+                            <div class="field has-addons my-password-field">
+                                <div class="control is-expanded input-container">
+                                    <!-- show password, type has to be text -->
+                                    <input v-if="showPassword" type="text" class="input" v-model="password" />
+                                    <!-- hide password, type is password -->
+                                    <input v-else type="password" class="input" v-model="password">
+                                    <span @click.prevent="toggleShowPassword" class="icon is-small is-right my-eye-icon">
+                                        <i class="fas" :class="{ 'fa-eye-slash': showPassword, 'fa-eye': !showPassword }"></i>
+                                    </span>
                                 </div>
-                                <div class="control">
-                                    <button class="button" @click.prevent="toggleShowReEnterPassword"><span class="icon is-small is-right">
-                                        <i class="fas" :class="{ 'fa-eye-slash': showReEnterPassword, 'fa-eye': !showReEnterPassword }"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>  
+                            </div> 
                             <!-- submit form -->
                             <div class="field">
                                 <div class="control">

@@ -71,7 +71,8 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email', 'favorite_color']
 
     def __str__(self):
-        return self.email
+        # return self.email
+        return self.username
 
     @staticmethod
     def has_perm(perm, obj=None, **kwargs):

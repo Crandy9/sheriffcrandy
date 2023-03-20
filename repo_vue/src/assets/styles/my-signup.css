@@ -61,3 +61,22 @@ label {
     color: rgb(255, 230, 0);
     padding-bottom: 15rem;
 }
+
+/* align eye icon to the right for both login and signup*/
+.input-container {
+    display: flex;
+    align-items: center; /* Align items vertically center */
+    justify-content: space-between; /* Distribute items evenly */
+    position: relative; /* Set the container to a relative position */
+}
+
+.input-container .my-eye-icon {
+    position: absolute; /* Set the icon to absolute position */
+    right: 10px; /* Position the icon to the right */
+    cursor: pointer;
+    z-index: 999; /* preven eye icon from disappearing */
+}
+
+.input-container input[type="password"] {
+    padding-right: 40px; /* Add padding to the right to make room for the icon */
+}

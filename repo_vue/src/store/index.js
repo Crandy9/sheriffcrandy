@@ -174,33 +174,21 @@ export default createStore({
      fetch('http://ip-api.com/json/' + state.clientIp + '?fields=status,message,country,countryCode')
       .then(response => response.json())
       .then(response => {
-        console.log('Response country: ' + response.country)
         // set initial region/language values based on IP address location
         if (state.initialLocaleSet == false) {
-          console.log('setting locale and region for first time')
           if (response.country === 'Japan') {
-            // state.region = 'JP';
-            // state.language = 'ja';
-            console.log(state.language)
-            console.log(state.region)
+
           }
           else if (response.country === 'United States') {
-            // state.region = 'US';
-            // state.language = 'en';
-            console.log(state.language)
-            console.log(state.region)
+
           }
           // default
           else {
-            // state.region = 'US';
-            // state.language = 'en'
-            console.log(state.language)
-            console.log(state.region)
+
           }
           state.initialLocaleSet = true
         }
         else {
-          console.log('Region manually set by user. Current location disregarded.')
         }
       }).catch(error => console.log("GeoData API Error: " + error));
 
