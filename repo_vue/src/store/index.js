@@ -243,6 +243,8 @@ export default createStore({
     // add items to cart
     addToCart(state, item) {
 
+      console.log(item)
+
       // check if this is an flp or track being added to cart
       var isTrack = false
       var is_flp = false
