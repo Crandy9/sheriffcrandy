@@ -475,22 +475,9 @@ export default {
 
       // region modal
       this.regionModalOpened === true ? this.regionModalOpened = false : null;
-      // lanugae modal
+      // language modal
       this.langModalOpened === true ? this.langModalOpened === false : null;
 
-      // if (this.regionModalOpened === false) {
-
-      // }
-      // else if (this.regionModalOpened === true) {
-      //   this.regionModalOpened = false;
-
-      // }
-      // if (this.langModalOpened === false) {
-
-      // }
-      // else if (this.langModalOpened === true) {
-      //   this.langModalOpened = false;
-      // }
     },
     closeNav: function() {
       current_width = window.innerWidth;
