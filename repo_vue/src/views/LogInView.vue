@@ -2,7 +2,7 @@
     <section class="my-login-signup-section">
         <div class="page-sign-up">
             <div class="columns">
-                <div class="column is-6 is-offset-3">
+                <div class="column is-5 is-offset-3">
                     <h1 class="title my-login-title">
                         {{$t('loginsignupview.logintitle')}}
                     </h1>
@@ -129,8 +129,32 @@ export default {
                         // set token in localstorage
                         localStorage.setItem("sf_auth_bearer", sf_auth_bearer)
 
-                        // get user's username
-                        // const currentUsername = response.data.username
+                        // get user's cart data
+                        axios
+                            // .get(process.env.VUE_APP_GET_CART, {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+                            .get(process.env.VUE_APP_GET_CART, {headers: { 'Authorization': `Token ${sf_auth_bearer}`}})
+                            .then(response => {
+
+                                const cart_data = response.data.cart;
+                                console.log(cart_data.length)
+                                if (cart_data.length === 0) {
+                                }
+                                else {
+                                    // there are cart items, clear the cart if the user added items to cart anonymously
+                                    this.$store.commit('clearCart')
+
+                                    for (let i = 0; i < cart_data.length; i++) {
+                                        const item = cart_data[i];
+                                        // add item to cart in store
+                                        this.$store.commit('addToCart', item)
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                console.log('user cart data get request failed. Printing error')
+                                console.log(error)
+
+                            })
 
                         // add toast message
                         toast({
@@ -138,8 +162,8 @@ export default {
                             type: 'is-success',
                             dismissible: true,
                             pauseOnHover: true,
-                            duration: 3000,
-                            position: 'top-center',
+                            duration: 2000,
+                            position: 'center',
                             animate: { in: 'fadeIn', out: 'fadeOut' },
                         })
                         // check if there is a pending route to be redirected to
