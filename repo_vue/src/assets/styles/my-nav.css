@@ -219,8 +219,13 @@
         100% { opacity: 1; }
     }
 
+    /**
     .navbar-sns-icons.is-active, path {
-        fill: rgba(89, 255, 255, 0.6) !important;
+        fill: rgba(89, 255, 255, 0.6);
+    }
+    **/
+    #apple, #spot, #ama, #in, #yt, #tw, #g, #a, #b {
+        fill: rgba(255, 119, 119, 0.9);
     }
 
     /* navbar when hamburger button is not clicked */
