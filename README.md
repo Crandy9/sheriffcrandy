@@ -8,39 +8,45 @@ The site's capabilities will include:
 2.) Payment processing handled by Stripe API payment gateway.
 3.) user authentication/authorization handled by custom backend, custom user model, and Django rest framework via token authentication
 4.) user cart implementaiton for purchasing multiple music files/.flp project files.
+5.) i18n (internationalization) for Japan/United states locales
+6.) Music Artist's portal to upload music and get paid
 
 Future implementations can accomodate:
 - mobile (android/iOS) development 
 - Desktop app development
+- additional region/locale support
 
 Basic File Structure:
 ```
 SHERIFFCRANDY-
             |
-            repo-
+            repo (Django)-
                 |
                 main_project-
                             |
-                            __init__.py
-                            .env
-                            asgi.py
-                            settings.py
-                            urls.py
-                            wsqi.py
-                products-
-                        |
-                        __init__.py
-                        admin.py
-                        apps.py
-                        models.py
-                        tests.py
-                        views.py
+                            files....
+
+                |
+                flps -
+                     |
+                     files....
+                |
+                tracks -
+                     |
+                     files....
+                |
+                users -
+                     |
+                     files....
+                |
+                orders -
+                       |
+                       files...
                 manage.py
-            repo_vue-
+
+            repo_vue (VueJS)-
                     |
-                    .gitignore
-                    LICENSE
-                    README.md
+                    basic VueJS directory
 
 ```
 
