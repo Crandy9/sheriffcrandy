@@ -14,9 +14,7 @@ export default {
         const cartData = {
             cart: this.$store.state.cart.itemsInCart
         }
-
-        console.log(JSON.stringify(cartData))
-
+        
         // log user out, pass in the cart to save it to user
         axios.post(process.env.VUE_APP_LOGOUT_USER_API_URL, cartData , {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
         .then(response => {
@@ -33,8 +31,8 @@ export default {
               type: 'is-success',
               dismissible: true,
               pauseOnHover: true,
-              duration: 3000,
-              position: 'top-center',
+              duration: 2000,
+              position: 'center',
               animate: { in: 'fadeIn', out: 'fadeOut' },
           })
           this.$router.push('/')
@@ -44,8 +42,6 @@ export default {
         console.log(error);
         console.log("log out didn't work")
         console.log('axios post logout url')
-        console.log(process.env.VUE_APP_LOGOUT_USER_API_URL)
-        console.log(process.env.VUE_APP_I18N_FALLBACK_LOCALE)
 
         });
     }
