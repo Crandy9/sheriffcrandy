@@ -151,9 +151,16 @@
 
 
 @media screen and (min-width: 1024px) {
+    /* for nav items */
     .navbar-end {
         display: flex !important;
     }
+
+    /* for sns icons in hamburger menu */
+    .navbar-sns-icons {
+        display: none !important;
+    }
+
     .my-burger {
         display: none !important;
     }
@@ -176,25 +183,45 @@
     .navbar-end {
         display: none;
     }
+    .navbar-sns-icons {
+        display: none;
+    }
 
     .navbar-end.is-active {
         display: block;
         /* position nav items when hamburger opens */
         padding-left: 6rem;
-        padding-top: 3rem;
+        padding-top: 2rem;
         /* during nav menu transition, the nav items 'jump' into position
             which makes it look ugly. To remedy that, fade the nav items in
             after the nav menu has fully transitioned
         */
-        animation: fadeIn 1.2s ease-in-out;
+        opacity: 0; /* set the initial opacity to 0 */
+        animation: fadeIn 0.3s ease-in-out 0.6s forwards;
     }
     
     @keyframes fadeIn {
         0% { opacity: 0; }
         50% { opacity: 0; }
         100% { opacity: 1; }
-      }
+    }
 
+    .navbar-sns-icons.is-active {
+        display: block;
+        padding-top: 2rem;
+        opacity: 0; /* set the initial opacity to 0 */
+        animation: fadeIn 0.3s ease-in-out 0.6s forwards;
+    }
+    
+    @keyframes fadeIn {
+        0% { opacity: 0; }
+        50% { opacity: 0; }
+        100% { opacity: 1; }
+    }
+
+    .navbar-sns-icons.is-active, path {
+        fill: rgba(89, 255, 255, 0.6) !important;
+    }
 
     /* navbar when hamburger button is not clicked */
     .my-navbar-menu {
@@ -230,8 +257,7 @@
         text-decoration: none;
         color: rgb(255, 255, 255) !important;
         font-weight: 700;
-        font-size: 4vmin;
-
+        font-size: 2rem;
     }
 
     /* place cart outside the hamburger menu */
