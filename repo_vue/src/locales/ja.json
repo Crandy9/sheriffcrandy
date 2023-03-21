@@ -159,7 +159,8 @@
         "postcodeplaceholder": "000-0000",
         "cardinfo": "クレジットカード情報",
         "pay": "今すぐ買う",
-        "cancel": "キャンセル"
+        "cancel": "キャンセル",
+        "paymentprocessing": "支払処理..."
     },
       "modals": {
             "accountcreated": "アカウントが作成されました！ログインしてください。",

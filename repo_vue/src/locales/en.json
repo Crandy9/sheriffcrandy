@@ -166,7 +166,8 @@
     "postcodeplaceholder": "12345 or 12345-1234",
     "cardinfo": "Card Info",
     "pay": "Buy Now",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "paymentprocessing": "processing..."
   },
   "modals": {
     "accountcreated": "Account Created! Please log in.",
