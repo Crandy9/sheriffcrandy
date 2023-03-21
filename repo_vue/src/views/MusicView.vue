@@ -522,7 +522,6 @@ export default {
   methods: {
     // scroll to top of payment form
     scrollToBottom() {
-      console.log('scroll to payment form')
       // wait until modal closes, then scroll to payment form
       this.$nextTick(() => this.$refs["paymentFormTop"].scrollIntoView({ behavior: "smooth" }))
     },
@@ -941,7 +940,6 @@ export default {
         })
         .catch(error => {
           console.log("ERROR BOYY: " + error)
-          console.log(process.env.VUE_APP_TRACKS_API_URL)
         })
 
       // stop loading bar after api data is fetched

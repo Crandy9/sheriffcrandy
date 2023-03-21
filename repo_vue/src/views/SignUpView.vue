@@ -291,8 +291,8 @@ export default {
                             type: 'is-success',
                             dismissible: true,
                             pauseOnHover: true,
-                            duration: 3000,
-                            position: 'top-center',
+                            duration: 2000,
+                            position: 'center',
                             animate: { in: 'fadeIn', out: 'fadeOut' },
                         })
 
