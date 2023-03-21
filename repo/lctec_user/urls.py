@@ -5,7 +5,6 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from lctec_user import views
-from lctec_user.views import CustomObtainAuthToken
 
 
 urlpatterns = [
@@ -14,6 +13,6 @@ urlpatterns = [
     path('check-email/<str:email>/', views.check_email),
     # path('lctec-logout/', views.lctec_logout),
     path('lctec-logout', views.LogoutView.as_view()),
-    path('lctec-api-token-auth/', CustomObtainAuthToken.as_view()),
+    path('get-cart/', views.get_user_cart),
 ] 
 
