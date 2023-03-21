@@ -94,7 +94,6 @@
 
     <!-- checkout form initially hidden -->
     <!-- stripe payment form -->
-    <transition>
       <div style="z-index: 9999;" class="my-checkout-div"
         :style="showPaymentForm()" v-bind:class="{'is-active': purchaseButtonClicked}" ref="paymentFormTop">
           <!-- <div class="modal-background"></div> -->
@@ -269,9 +268,18 @@
                   <span>{{$t('cartview.subtotal')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
                 </p>
-                <button @click="submitForm();" class="my-button-buy-now button">{{$t('paymentmodal.pay')}} ${{ calculateUsdSubtotal }}</button>
+                <button @click.stop="submitForm();" :disabled="paymentProcessing" class="my-button-buy-now button">
+                  <span v-if="paymentProcessing">
+                    {{$t('paymentmodal.paymentprocessing')}}
+                  </span>
+                  <span v-else>
+                    {{$t('paymentmodal.pay')}} ${{ calculateUsdSubtotal }}
+                  </span>
+                </button>                
                 <!-- if adding to cart, add the item to cart and close modal -->
-                <button @click="show = false; clearFields(); purchaseButtonClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
+                <button @click="show = false; clearFields(); purchaseButtonClicked = false;" class="my-button-cancel button">
+                  {{$t('paymentmodal.cancel')}}
+                </button>
               </footer>
               <!-- for jpy -->
               <footer v-else-if="$store.state.region === 'JP'" class="card-foot">
@@ -287,27 +295,23 @@
                   <span>{{$t('cartview.subtotal')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpySubtotal }}</span>
                 </p>
-                <button @click="submitForm();" class="my-button-buy-now button">{{$t('paymentmodal.pay')}} ¥{{ calculateJpySubtotal }}</button>
+                <button @click.stop="submitForm();" :disabled="paymentProcessing" class="my-button-buy-now button">
+                  <span v-if="paymentProcessing">
+                    {{$t('paymentmodal.paymentprocessing')}}
+                  </span>
+                  <span v-else>
+                    {{$t('paymentmodal.pay')}} ¥{{ calculateJpySubtotal }}
+                  </span>
+                </button>                
                 <!-- if adding to cart, add the item to cart and close modal -->
-                <button @click="show = false; clearFields(); purchaseButtonClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
+                <button @click="show = false; clearFields(); purchaseButtonClicked = false;" class="my-button-cancel button">
+                  {{$t('paymentmodal.cancel')}}
+                </button>
               </footer>
             </div>
       </div>
-    </transition>
   </section>
 </template>
-
-<style>
-  .v-enter-active,
-  .v-leave-active {
-    transition: opacity 0.3s ease;
-  }
-
-  .v-enter-from,
-  .v-leave-to {
-    opacity: 0;
-  }
-</style>
 
 <script>
 import axios from 'axios'
@@ -317,6 +321,7 @@ export default {
     name: 'Cart',
     data() {
       return {
+        paymentProcessing: false,
         // country dropdowns
         stateDropdowns: [
           {}
@@ -456,6 +461,7 @@ export default {
           })
           .catch(error => {
             console.log(error)
+            this.paymentProcessing = false;
             this.errors.generalErrors.push('Something went wrong. Please try again later')
           })
 
@@ -483,6 +489,7 @@ export default {
           })
           .catch(error => {
             console.log(error)
+            this.paymentProcessing = false;
             this.errors.generalErrors.push('Something went wrong. Please try again later')
           })
           this.$store.commit('setIsLoading', false)
@@ -497,6 +504,7 @@ export default {
 
       // for paid tracks/flps
       submitForm() {
+        this.paymentProcessing = true;
         this.errors.generalErrors = []
         this.errors.nameErrors = []
         this.errors.emailErrors = []
@@ -508,24 +516,31 @@ export default {
         this.errors.zipcodeErrors = []
 
         if (this.name === '') {
+            this.paymentProcessing = false;
             this.errors.nameErrors.push('The name field is missing!')
         }
         if (this.email === '') {
+            this.paymentProcessing = false;
             this.errors.emailErrors.push('The email field is missing!')
         }
         if (this.phone === '') {
+            this.paymentProcessing = false;
             this.errors.phoneErrors.push('The phone field is missing!')
         }
         if (this.address1 === '') {
+            this.paymentProcessing = false;
             this.errors.address1Errors.push('The address field is missing!')
         }
         if (this.statePref === '') {
+            this.paymentProcessing = false;
             this.errors.statePrefErrors.push('The state field is missing!')
         }        
         if (this.country === '') {
+            this.paymentProcessing = false;
             this.errors.countryErrors.push('The country field is missing!')
         }
         if (this.zipcode === '') {
+            this.paymentProcessing = false;
             this.errors.zipcodeErrors.push('The zip code field is missing!')
         }
 
@@ -548,6 +563,7 @@ export default {
             this.stripe.createToken(this.card).then(result => {                    
                 if (result.error) {
                     this.$store.commit('setIsLoading', false)
+                    this.paymentProcessing = false;
                     this.errors.generalErrors.push('Something went wrong with Stripe. Please try again')
                     console.log(result.error.message)
                 } 
@@ -635,10 +651,12 @@ export default {
             this.$store.state.downloadableItems = []
             this.$store.state.downloadableItems = response.data        
             // redirect to thank you page
+            this.paymentProcessing = false;
             this.$router.push('/thankyou')
           })
           .catch(error => {
             console.log(error)
+            this.paymentProcessing = false;
             this.errors.generalErrors.push('Something went wrong. Please try again later')
           })
           this.$store.commit('setIsLoading', false)
@@ -681,10 +699,12 @@ export default {
             link.setAttribute('download', 'SheriffCrandyDownloadables.zip')
             document.body.appendChild(link)
             link.click()
+            this.paymentProcessing = false;
             this.$router.push('/thankyou')
           })
           .catch(error => {
             console.log(error)
+            this.paymentProcessing = false;
             this.errors.generalErrors.push('Something went wrong. Please try again later')
           })
           this.$store.commit('setIsLoading', false)
