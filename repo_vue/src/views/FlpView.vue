@@ -79,12 +79,23 @@
                 "{{ FlpName }}"{{$t('cartview.doyouwannabuy?part1')}}
               </section>
               <footer class="modal-card-foot">
-                <!-- pass in the flpname of the free flp to be downloaded -->
-                <button v-if="isFree" @click="modalOpened = false; show = false; purchaseButtonClicked = false; downloadFreeNow(FlpName, FlpID);" class="my-modal-button-buy-now button">{{$t('cartview.downloadnow')}}</button>
-                <!-- trigger stripe payment on this item only -->
-                <button v-else @click="modalOpened = false; show = true; purchaseButtonClicked = true; buyNow(); scrollToBottom();" class="my-modal-button-buy-now button">{{$t('cartview.buynow')}}</button>
-                <!-- if adding to cart, add the item to cart and close modal -->
-                <button @click.stop="addFlpToCart(FlpID); modalOpened = false" class="my-modal-button-add-to-cart button">{{$t('cartview.addtocart')}}</button>
+                <div v-if="$store.state.isAuthenticated">
+                  <!-- pass in the flpname of the free flp to be downloaded -->
+                  <button v-if="isFree" @click="modalOpened = false; show = false; purchaseButtonClicked = false; downloadFreeNow(FlpName, FlpID);" class="my-modal-button-buy-now button">{{$t('cartview.downloadnow')}}</button>
+                  <!-- trigger stripe payment on this item only -->
+                  <button v-else @click="modalOpened = false; show = true; purchaseButtonClicked = true; buyNow(); scrollToBottom();" class="my-modal-button-buy-now button">{{$t('cartview.buynow')}}</button>
+                  <!-- if adding to cart, add the item to cart and close modal -->
+                  <button @click.stop="addFlpToCart(FlpID); modalOpened = false" class="my-modal-button-add-to-cart button">{{$t('cartview.addtocart')}}</button>
+                </div>
+                <!-- if user is not logged in, redirect to login screen -->
+                <div v-else>
+                  <!-- pass in the flpname of the free flp to be downloaded -->
+                  <a v-if="isFree" role="button" @click='redirectToLogin()' class="my-modal-button-buy-now button">{{$t('cartview.downloadnow')}}</a>
+                  <!-- trigger stripe payment on this item only -->
+                  <a v-else role="button" @click='redirectToLogin()' class="my-modal-button-buy-now button">{{$t('cartview.buynow')}}</a>
+                  <!-- if adding to cart, add the item to cart and close modal -->
+                  <a role="button" @click='redirectToLogin()' class="my-modal-button-add-to-cart button">{{$t('cartview.addtocart')}}</a>
+                </div>
               </footer>
             </div>
         </div>
@@ -121,7 +132,6 @@
 
     <!-- FOR BUY NOW -->
     <!-- stripe payment form copied from cart view -->
-    <transition>
       <div style="z-index: 9999;" class="my-checkout-div"
         :style="showPaymentForm()" v-bind:class="{'is-active': purchaseButtonClicked}" ref="paymentFormTop">
           <!-- <div class="modal-background"></div> -->
@@ -296,9 +306,17 @@
                   <span>{{$t('cartview.subtotal')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">${{ calculateUsdSubtotal }}</span>
                 </p>
-                <button @click="submitForm();" class="my-button-buy-now button">{{$t('paymentmodal.pay')}} ${{ calculateUsdSubtotal }}</button>
+                <button @click.stop="submitForm();" :disabled="paymentProcessing" class="my-button-buy-now button">
+                  <span v-if="paymentProcessing">
+                    {{$t('paymentmodal.paymentprocessing')}}
+                  </span>
+                  <span v-else>
+                    {{$t('paymentmodal.pay')}} ${{ calculateUsdSubtotal }}
+                  </span>                </button>
                 <!-- if adding to cart, add the item to cart and close modal -->
-                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
+                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">
+                  {{$t('paymentmodal.cancel')}}
+                </button>
               </footer>
               <!-- for jpy -->
               <footer v-else-if="$store.state.region === 'JP'" class="card-foot">
@@ -314,13 +332,21 @@
                   <span>{{$t('cartview.subtotal')}}:</span>
                   <span style="padding-left: 0.5rem;" data-cart--cart-target="total">¥{{ calculateJpySubtotal }}</span>
                 </p>
-                <button @click="submitForm();" class="my-button-buy-now button">{{$t('paymentmodal.pay')}} ¥{{ calculateJpySubtotal }}</button>
+                <button @click.stop="submitForm();" :disabled="paymentProcessing" class="my-button-buy-now button">
+                  <span v-if="paymentProcessing">
+                    {{$t('paymentmodal.paymentprocessing')}}
+                  </span>
+                  <span v-else>
+                    {{$t('paymentmodal.pay')}} ¥{{ calculateJpySubtotal }}
+                  </span>                
+                </button>
                 <!-- if adding to cart, add the item to cart and close modal -->
-                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">{{$t('paymentmodal.cancel')}}</button>
+                <button @click="show = false; clearFields(); checkoutClicked = false;" class="my-button-cancel button">
+                  {{$t('paymentmodal.cancel')}}
+                </button>
               </footer>
             </div>
       </div>
-    </transition>
   </template>
 
 <!-- modal animation fade-in/out -->
@@ -350,6 +376,7 @@
     name: 'Flps',
     data() {
       return {
+        paymentProcessing: false,
         purchaseButtonClicked: false,
         show: false,
         usdPrice: '',
@@ -432,6 +459,22 @@
     },
     // functions defined here
     methods: {
+
+      // redirect to login screen
+      redirectToLogin() {
+        toast({
+        // message: this.$t('modals.redirectoToLogin'),
+          message: 'please login to continue',
+
+          type: 'is-warning',
+          dismissible: true,
+          pauseOnHover: true,
+          duration: 3000,
+          position: 'center',
+          animate: { in: 'fadeIn', out: 'fadeOut' },
+        })
+        this.$router.push('/login')
+      },
       // scroll to top of payment form
       scrollToBottom() {
         // wait until modal closes, then scroll to payment form
@@ -439,6 +482,7 @@
       },
       // BUY NOW METHODS
       submitForm() {
+        this.paymentProcessing = true;
         this.errors.generalErrors = []
         this.errors.nameErrors = []
         this.errors.emailErrors = []
@@ -450,24 +494,31 @@
         this.errors.zipcodeErrors = []
 
         if (this.name === '') {
+            this.paymentProcessing = false;
             this.errors.nameErrors.push('The name field is missing!')
         }
         if (this.email === '') {
+            this.paymentProcessing = false;
             this.errors.emailErrors.push('The email field is missing!')
         }
         if (this.phone === '') {
+            this.paymentProcessing = false;
             this.errors.phoneErrors.push('The phone field is missing!')
         }
         if (this.address1 === '') {
+            this.paymentProcessing = false;
             this.errors.address1Errors.push('The address field is missing!')
         }
         if (this.statePref === '') {
+            this.paymentProcessing = false;
             this.errors.statePrefErrors.push('The state field is missing!')
         }        
         if (this.country === '') {
+            this.paymentProcessing = false;
             this.errors.countryErrors.push('The country field is missing!')
         }
         if (this.zipcode === '') {
+            this.paymentProcessing = false;
             this.errors.zipcodeErrors.push('The zip code field is missing!')
         }
 
@@ -490,6 +541,7 @@
             this.stripe.createToken(this.card).then(result => {                    
                 if (result.error) {
                     this.$store.commit('setIsLoading', false)
+                    this.paymentProcessing = false;
                     this.errors.generalErrors.push('Something went wrong with Stripe. Please try again')
                     console.log(result.error.message)
                 } 
@@ -548,10 +600,12 @@
         this.$store.state.downloadableItems = []
         this.$store.state.downloadableItems = response.data        
         // redirect to thank you page
+        this.paymentProcessing = false;
         this.$router.push('/thankyou')
       })
       .catch(error => {
         console.log(error)
+        this.paymentProcessing = false;
         this.errors.generalErrors.push('Something went wrong. Please try again later')
       })
       this.$store.commit('setIsLoading', false)
@@ -626,10 +680,12 @@
         .post(process.env.VUE_APP_FREEDOWNLOAD_API_URL, data,  {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
         .then(response => {
             // redirect to thank you page
+            this.paymentProcessing = false;
             this.$router.push('/thankyou')
         })
         .catch(error => {
           console.log(error)
+          this.paymentProcessing = false;
           this.errors.generalErrors.push('Something went wrong. Please try again later')
         })
         this.$store.commit('setIsLoading', false)
