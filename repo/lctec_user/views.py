@@ -110,6 +110,3 @@ class LogoutView(APIView):
             user = request.user
             Token.objects.filter(user=user).delete()
             return Response({'success': 'Logged out successfully.'})
-
-        
-    
