@@ -42,23 +42,15 @@
 .my-burger {
     z-index: 9999;
     position: absolute !important;
-    top: 1rem !important;
-    right: 2rem !important;
+    top: 1.2rem !important;
+    right: 3.3rem !important;
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
     cursor: pointer;
-    display: block;
     height: 3.25rem;
     width: 3.25rem;
-    margin-left: auto;
-    -moz-appearance: none;
-    -webkit-appearance: none;
     border: none;
-    font-family: inherit;
-    font-size: 1em;
-    margin: 0;
-    padding: 0;
 }
 
 /* remove hamburger button background */
@@ -74,16 +66,16 @@
 /* overwriting bulma hamburger stroke animation */
 /* stroke length and height*/
 .my-burger span {
-    display: block;
-    height: 1px;
     left: calc(50% - 12px);
     position: absolute;
     transform-origin: center;
     transition-duration: 86ms;
     transition-property: background-color, opacity, transform;
     transition-timing-function: ease-out;
-    width: 25px;
-    height: 2.5px;
+    /* length of span lines */
+    width: 30px;
+    /* thickness of the span lines */
+    height: 3px;
 }
 
 /* remove hamburger button background */
@@ -225,8 +217,9 @@
     }
     **/
     #apple, #spot, #ama, #in, #yt, #tw, #g, #a, #b {
-        fill: rgba(255, 119, 119, 0.9);
+        fill: rgba(180, 255, 119, 0.9);
     }
+
 
     /* navbar when hamburger button is not clicked */
     .my-navbar-menu {

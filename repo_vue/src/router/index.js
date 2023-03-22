@@ -116,7 +116,7 @@ router.beforeEach((to,from,next) => {
       type: 'is-danger',
       dismissible: true,
       pauseOnHover: true,
-      duration: 3000,
+      duration: 2000,
       position: 'top-center',
       animate: { in: 'fadeIn', out: 'fadeOut' },
     })

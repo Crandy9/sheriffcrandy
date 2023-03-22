@@ -1,6 +1,11 @@
 <template>
     <section class="my-login-signup-section">
         <div class="page-sign-up">
+            <!-- toast messages will be here -->
+            <!-- The toast container div -->
+            <div class="toast-container" ref="toastContainer">
+            <!-- The Bulma toast will be rendered here -->
+            </div>
             <div class="columns">
                 <div class="column is-5 is-offset-3">
                     <h1 class="title my-login-title">
@@ -88,6 +93,22 @@ export default {
             showPassword: false,
         }
     },
+
+    // show toast if it exists
+    mounted () {
+        if (this.$route.query.loginwarning) {
+            toast({
+                message: this.$t('modals.redirectoToLogin'),
+                type: 'is-warning',
+                dismissible: true,
+                pauseOnHover: true,
+                duration: 2000,
+                position: 'top-center',
+                animate: { in: 'fadeIn', out: 'fadeOut' },
+            })
+        }
+    },
+
     methods: {
         submitForm() {
             // reset errors
@@ -163,7 +184,7 @@ export default {
                             dismissible: true,
                             pauseOnHover: true,
                             duration: 2000,
-                            position: 'center',
+                            position: 'top-center',
                             animate: { in: 'fadeIn', out: 'fadeOut' },
                         })
                         // check if there is a pending route to be redirected to

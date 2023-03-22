@@ -130,7 +130,7 @@ export default {
             timer: '',
             timerRunning: '',
             // 1 second
-            duration: 400,
+            api_post_wait_duration: 400,
             username: '',
             usernameAvailable: true,
             email: '',
@@ -187,7 +187,7 @@ export default {
                     catch(error) {
                         console.log(error)
                         }   
-                }, this.duration)
+                }, this.api_post_wait_duration)
             }
         } ,
 
@@ -211,7 +211,7 @@ export default {
                     catch(error) {
                         console.log(error)
                         }   
-                }, this.duration)
+                }, this.api_post_wait_duration)
             }
         },
 

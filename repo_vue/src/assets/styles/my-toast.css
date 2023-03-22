@@ -13,3 +13,11 @@
         padding-right: 3rem !important;
     }
 }
+
+/* warning toast message for login redirect */
+.toast-container {
+    position: absolute;
+    padding: 4rem;
+    top: 50px;
+    right: 50px;
+}

@@ -462,18 +462,8 @@
 
       // redirect to login screen
       redirectToLogin() {
-        toast({
-        // message: this.$t('modals.redirectoToLogin'),
-          message: 'please login to continue',
-
-          type: 'is-warning',
-          dismissible: true,
-          pauseOnHover: true,
-          duration: 3000,
-          position: 'center',
-          animate: { in: 'fadeIn', out: 'fadeOut' },
-        })
-        this.$router.push('/login')
+        // redirect and show toast
+        this.$router.push({ path: '/login', query: { loginwarning: true }})
       },
       // scroll to top of payment form
       scrollToBottom() {
@@ -750,7 +740,7 @@
         type: 'is-info',
         dismissible: true,
         pauseOnHover: true,
-        duration: 3000,
+        duration: 2000,
         position: 'bottom-right',
         animate: { in: 'fadeIn', out: 'fadeOut' },
       })
@@ -766,7 +756,7 @@
         type: 'is-danger',
         dismissible: true,
         pauseOnHover: true,
-        duration: 3000,
+        duration: 2000,
         position: 'bottom-right',
         animate: { in: 'fadeIn', out: 'fadeOut' },
       })

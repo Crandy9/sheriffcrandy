@@ -32,7 +32,7 @@ export default {
               dismissible: true,
               pauseOnHover: true,
               duration: 2000,
-              position: 'center',
+              position: 'top-center',
               animate: { in: 'fadeIn', out: 'fadeOut' },
           })
           this.$router.push('/')

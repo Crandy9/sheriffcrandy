@@ -169,8 +169,8 @@
             "removedfromcart": " がカートから削除されました。",
             "addedtocart": "がカートに追加されました。",
             "welcomeback": "ようこそ",
-            "welcomeback2": "さん"
-
+            "welcomeback2": "さん",
+            "redirectoToLogin": "アクセスするには、ログインが必要です。"
         }
 
   }

@@ -176,7 +176,8 @@
     "removedfromcart": "removed from cart",
     "addedtocart": "added to cart",
     "welcomeback": "Welcome back",
-    "welcomeback2": ""
+    "welcomeback2": "",
+    "redirectoToLogin": "Please login"
 
   }
 
