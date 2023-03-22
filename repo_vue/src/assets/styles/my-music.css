@@ -39,7 +39,6 @@
 
 /* audio player section */
 .music-player-section {
-    background-color: rgb(255, 255, 255);
     box-shadow: 0 30px 40px rgba(0,0,0,.1);
 }
 
@@ -48,30 +47,21 @@
     transition: width 2s, height 2s, transform 2s;
 } */
 
-/* track title below image */
-.track-title-img {
-    display: block;
-    margin-left: 2.2rem;
-    padding-top: 1rem;
-    color: rgb(255, 255, 255);
-    font-size: small;
-}
 
+/* cover art positioning */
 .track-img {
     padding-top: 1.5rem;
+    display: flex; /* Set the container to use flexbox layout */
+    justify-content: center; /* Center the items horizontally */
+    align-items: center; /* Center the items vertically */
 }
 
 /* track cover art */
 img.cover-art {
-    width: 10rem;
-    /* keep track art img height the same to prevent music player
-    from "jumping" up and down the div. Looks bad
-     */
-    min-height: 7rem !important;
-    max-height: 7rem !important;
+    min-height: 11rem !important;
+    max-height: 11rem !important;
+    width: 15rem !important;
     display: block;
-    margin-left: 2rem;
-    margin-right: auto;
     -moz-transition: all .15s ease-in;
     -o-transition: all .15s ease-in;
     -webkit-transition: all .15s ease-in;
@@ -89,55 +79,105 @@ img.cover-art {
     -o-animation: fadeIn ease 1s;
     -ms-animation: fadeIn ease 1s;
   }
-  @keyframes fadeIn {
+@keyframes fadeIn {
     0% {opacity:0;}
     100% {opacity:1;}
-  }
-  
-  @-moz-keyframes fadeIn {
+}
+
+@-moz-keyframes fadeIn {
     0% {opacity:0;}
     100% {opacity:1;}
-  }
-  
-  @-webkit-keyframes fadeIn {
+}
+
+@-webkit-keyframes fadeIn {
     0% {opacity:0;}
     100% {opacity:1;}
-  }
-  
-  @-o-keyframes fadeIn {
+}
+
+@-o-keyframes fadeIn {
     0% {opacity:0;}
     100% {opacity:1;}
-  }
-  
-  @-ms-keyframes fadeIn {
+}
+
+@-ms-keyframes fadeIn {
     0% {opacity:0;}
     100% {opacity:1;}
-  }
+}
+
+/* track title below image */
+.track-title-img {
+    display: block;
+    display: flex; /* Set the container to use flexbox layout */
+    justify-content: center; /* Center the items horizontally */
+    align-items: center; /* Center the items vertically */ 
+    padding-top: 2rem;
+    color: rgb(255, 255, 255);
+    font-size: small;
+}
 
 
 /* fwrapper to position div to right-most top of player*/
-.skip-icons-wrapper {
+.music-player-controls-wrapper {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 /* space between icons */
-.skip-icons {
+.music-player-controls {
     display: flex;
     justify-content: space-between;
     padding: 1rem;
-    width: 5rem;
+    align-items: center;
+    gap: 3rem;
+}
+
+.music-player-controls .skip-back-controller {
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+
+.music-player-controls .pause-controller, .play-controller   {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.music-player-controls .skip-forward-controller {
+    flex-grow: 1;
+    flex-shrink: 0;
 }
 
 /* fa fa-fast-backward */
 .fa-fast-backward {
     color: rgb(255, 255, 255);
     cursor: pointer;
+    font-size: 24px;
+    margin-right: auto; /* push to leftmost position */
+}
+
+/* draw a circle around the play/pause control buttons */
+.play-controller, .pause-controller {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  transform: rotate(45deg);
+  cursor: pointer;
+}
+
+.fa-play, .fa-pause {
+    transform: rotate(-45deg);
+    font-size: 24px;
+    color: white;
 }
 
 /* fa fa-fast-forward */
 .fa-fast-forward {
     color: rgb(255, 255, 255);
     cursor: pointer;
+    font-size: 24px;
+    margin-left: auto; /* push to rightmost position */
+
 }
 
 /* change color on hover */
@@ -156,6 +196,10 @@ img.cover-art {
 /* html audio player always hidden (play pause functionality handled by vue) */
 .hidden-player {
     display: none;
+}
+
+.audio-player-ul {
+    background-color: white;
 }
 
 /* for each track list item */

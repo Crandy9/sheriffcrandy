@@ -10,46 +10,56 @@
           Sheriff Crandy Music
         </h2>
       </div>
-      <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-        <!-- show img thumbnail for current track -->
-        <!-- or leave title up after song stops playing -->
-        <figure v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)" class="track-img">
-          <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
-        </figure> 
-        <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
-          Sheriff Crandy - {{ trackDisplay.title }}
-        </h3>
-      </div>
       <div>
-        <h3 style="padding: 1rem; font-size: 16px !important;" v-if="currentTrackPlaying == 0" class="is-size-5 has-text-warning">
+        <!-- show this if no songs have been playing -->
+        <h3 v-if="currentTrackPlaying == 0" style="padding: 1rem; font-size: 16px !important;" class="is-size-5 has-text-warning">
           {{$t('musicview.clicktohearsample')}}
         </h3>
       </div>
-      <div class="skip-icons-wrapper">
-        <div class="skip-icons">
-          <span @click="prevTrack()">
+    </section>
+    <section class="music-player-section">
+      <!-- show img thumbnail for current track -->
+      <!-- or leave title up after song stops playing -->
+      <!-- v-bind:key is used to optimize rendering -->
+      <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
+        <div v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
+          <figure  class="track-img">
+            <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
+          </figure> 
+          <h3 class="track-title-img">
+            Sheriff Crandy - {{ trackDisplay.title }}
+          </h3>
+        </div>
+      </div>
+      <!-- skip play/pause controllers -->
+      <div class="music-player-controls-wrapper">
+        <div class="music-player-controls">
+          <!-- skip previous -->
+          <span class="skip-back-controller" @click="prevTrack()">
             <i class="fa fa-fast-backward"></i>
           </span>
-          <span @click="nextTrack()">
+          <!-- play -->
+          <span class="play-controller" v-show="!currentAudioElementPlaying" @click="playFirstTrack()">
+            <i class="fas fa-play"></i>          
+          </span>
+          <!-- pause -->
+          <span class="pause-controller" v-show="currentAudioElementPlaying" @click="playFirstTrack()">
+            <i class="fas fa-pause"></i>          
+          </span>
+          <!-- skip forward -->
+          <span class="skip-forward-controller" @click="nextTrack()">
             <i class="fa fa-fast-forward"></i>  
           </span>
         </div>
       </div>
-    </section>
-    <section class="music-player-section">
       <!-- currently playing song -->
       <!-- unordered list of track -->
       <ul class="audio-player-ul">
         <!-- Vue for loop -->
         <div v-for="track, index in tracks" v-bind:key="track.id" class="media-player">
-          <!-- play audio if play is true -->
-          <audio class="hidden-player" controls autoplay v-if="play == true && pause == false && currentTrackPlaying == track.id">
-            <source :src="track.get_sample" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-          <div>
-          </div>
-          <li @click="setPlayOrPause(track.id)" class="track-list-item" v-bind:id="track.id">
+          <!-- html audio player for each track in the playlist-->
+          <audio class="hidden-player" :id="'audio-' + track.id" :src="track.get_sample" ref="audioPlayer" type="audio/mpeg"></audio>
+          <li @click="setPlayOrPause('audio-' + track.id, track.id)" class="track-list-item" v-bind:id="track.id">
             <!-- show play button on all tracks on hover -->
             <a class="play-button" href="#" v-if="currentTrackPlaying != track.id"> 
               <span class="play-icon-span">
@@ -449,6 +459,11 @@ export default {
   // data() is a new obj returning tracks list used in for loop above
   data() {
     return {
+
+      // new media player implementation
+      currentAudioElement: null,
+      currentAudioElementPlaying: false,
+
       paymentProcessing: false,
       purchaseButtonClicked: false,
       show: false,
@@ -791,38 +806,31 @@ export default {
       }
     },
 
-    // skip track forward
+    // next track
     nextTrack() {
       var last_track = this.tracks[this.tracks.length - 1].id
-      // if no songs have been played, skip to second track in playlist 
-      if (this.currentTrackPlaying == 0) {
+      // if no songs have been played, play first track
+      if (!this.currentAudioElement) {
         this.currentTrackPlaying = this.tracks[0].id
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
+        const newAudioElement = document.getElementById('audio-' + this.currentTrackPlaying);
+        this.currentAudioElement = newAudioElement
+        newAudioElement.play();
+        this.currentAudioElement = newAudioElement;
+        this.currentAudioElementPlaying = true;
+
       }
       // else if this is the last track in the playlist, play the first track
       else if (this.currentTrackPlaying == last_track) {
         this.currentTrackPlaying = this.tracks[0].id
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
+        this.currentAudioElement.currentTime = 0;
+        this.currentAudioElement.pause();        
+        this.currentAudioElementPlaying = false;
+
+        const newAudioElement = document.getElementById('audio-' + this.currentTrackPlaying);
+        this.currentAudioElement = newAudioElement
+        this.currentAudioElement.play();        
+        this.currentAudioElementPlaying = true;
+
       }
       else {
         // local var containing the current track id needed for function below 
@@ -833,141 +841,207 @@ export default {
         });
         // get the id of the next track in the playlist
         this.currentTrackPlaying = this.tracks[index + 1].id
-
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
+        this.currentAudioElement.currentTime = 0;
+        this.currentAudioElement.pause();        
+        this.currentAudioElementPlaying = false;
+        const newAudioElement = document.getElementById('audio-' + this.currentTrackPlaying);
+        this.currentAudioElement = newAudioElement
+        this.currentAudioElement.play();        
+        this.currentAudioElementPlaying = true;
       }
     },
+    
+    // previous track
     prevTrack() {
       var first_track = this.tracks[0].id
       var last_track = this.tracks[this.tracks.length - 1].id
 
-      // if no songs have been played or if current track is the first_track, play the last track in the playlist
-      if (this.currentTrackPlaying == 0 || this.currentTrackPlaying == first_track) {
+      // if no songs have been played play the last track in the playlist
+      if (!this.currentAudioElement) {
+        const newAudioElement = document.getElementById('audio-' + last_track);
+        this.currentAudioElement = newAudioElement
+        newAudioElement.play();
+        this.currentAudioElement = newAudioElement;
+        this.currentAudioElementPlaying = true;
         this.currentTrackPlaying = last_track
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
       }
       // skip back to the previous track
       else {
-        // same setup for nextTrack only reversed
-        var val = this.currentTrackPlaying
-        var index = this.tracks.findIndex(function(item){
-          return item.id === val;
-        });
-        // get the id of the prev track in the playlist
-        this.currentTrackPlaying = this.tracks[index - 1].id
+        // if current track is the first_track, play the last track
+        if (this.currentTrackPlaying == first_track) {
+          this.currentAudioElement.currentTime = 0;
+          this.currentAudioElement.pause();        
+          this.currentAudioElementPlaying = false;
+          const newAudioElement = document.getElementById('audio-' + last_track);
+          this.currentAudioElement = newAudioElement
+          this.currentAudioElement.play();        
+          this.currentAudioElementPlaying = true;
+          this.currentTrackPlaying = last_track
 
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
+        }
+        else {
+          this.currentAudioElement.currentTime = 0;
+          this.currentAudioElement.pause();        
+          this.currentAudioElementPlaying = false;
+          var val = this.currentTrackPlaying
+          var index = this.tracks.findIndex(function(item){
+            return item.id === val;
+          });
+          this.currentTrackPlaying = this.tracks[index - 1].id
+          const newAudioElement = document.getElementById('audio-' + this.currentTrackPlaying);
+          newAudioElement.play();
+          this.currentAudioElement = newAudioElement;
+          this.currentAudioElementPlaying = true;
+        }
+      }
+    },
+
+    setPlayOrPause(audioTrack, trackId) {
+      // set the currenttrack
+      this.currentTrackPlaying = trackId
+      // get the current tracks html id
+      const newAudioElement = document.getElementById(audioTrack);
+
+      // if currentAudioElement is not null and is different from the incoming audio element
+      if (this.currentAudioElement && this.currentAudioElement !== newAudioElement) {
+        this.currentAudioElement.pause();
+        this.currentAudioElementPlaying = false;
       }
 
+      if (newAudioElement.paused) {
+        newAudioElement.play();
+        this.currentAudioElementPlaying = true;
+      } 
+      else {
+        newAudioElement.pause();
+        this.currentAudioElementPlaying = false;
+      }
+
+      this.currentAudioElement = newAudioElement;
     },
+
+    // NEW MUSIC PLAYER IMPLEMENTATION
+    // FOR MAIN PLAY/PAUSE BUTTON
+    playFirstTrack() {
+
+      // If audio is currently playing, pause it and show the play icon
+      if (this.currentAudioElementPlaying) {
+        this.currentAudioElement.pause();
+        this.currentAudioElementPlaying = false;
+      }
+      else {
+        // if this is null, play the first song in the playlist
+        if (!this.currentAudioElement) {
+          // find the first track's index and play it
+          const audioElement = document.getElementById('audio-' + this.tracks[0].id);
+          audioElement.play();
+          this.currentAudioElement = audioElement;
+          this.currentTrackPlaying = this.tracks[0].id
+
+        }
+        // else play/resume current song
+        else {
+          this.currentAudioElement.play();
+        }
+        this.currentAudioElementPlaying = true;
+      }
+    },
+
     // number the tracks for UI/UX media player
     increment() {
       this.trackNumber++;
     },
-    // for playing/pausing track
-    setPlayOrPause(track) {
+    // setPlayOrPause(track) {
 
-      // if currentTrackPlaying is 0, it means no song has been played
-       if (this.currentTrackPlaying == 0 && this.play == false && this.pause == false && this.stop == true) {
-        // set the current track to the track selected by user
-        this.currentTrackPlaying = track
-        this.play = true;
-        this.stop = false;
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);        
-      }
-      // either pausing, resuming, or playing current track again
-      else if (this.currentTrackPlaying == track) {
-        // if the song is currently playing, pause it
-        if (this.play == true && this.pause == false && this.stop == false) {
-          this.pause = true;
-          this.play = false;
-          // get how many more seconds the song has to play
-        }
-        // if song is currently paused, resume it
-        else if (this.play == false && this.pause == true && this.stop == false){
-          this.pause = false;
-          this.play = true;
-          // 
-          clearTimeout(this.currentTimer)
-          // resume timeout
-          // start new timer and set stop = true if full song plays
-          this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration); 
-        }
-        //  else if the song played all the way through and the user clicks it again, play it again
-        else {
-          this.pause = false;
-          this.play = true;
-          this.stop = false;
-          clearTimeout(this.currentTimer)
-          // resume timeout
-          // start new timer and set stop = true if full song plays
-          this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration); 
-        }
-      }
-      // stop current track and play new track
-      else {
-        // clear the timer that was playing
-        clearTimeout(this.currentTimer)
-        // set the new track
-        this.currentTrackPlaying = track;
-        this.play = true
-        this.stop = false;
-        this.pause = false;
-        // start new timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true;
-            this.lastPlayedTrack = this.currentTrackPlaying; 
-            this.play = false;
-            this.pause = false;
-          }, this.duration);         
-      }
-    },
+    //   // when pressing the play controller for the first time, play the first track in the list
+    //   // currentTrackPlaying == track.id
+    //   if (track === 0 && this.currentTrackPlaying === 0) {
+    //     console.log('what the heeee')
+    //     this.currentTrackPlaying = this.tracks[0].id
+    //     console.log(JSON.stringify(this.currentTrackPlaying))
+    //     this.play = true;
+    //     this.stop = false;
+    //     this.pause = false;
+    //     clearTimeout(this.currentTimer)
+    //     // start timer
+    //     this.currentTimer = setTimeout(() => {
+    //         this.stop = true; 
+    //         this.lastPlayedTrack = this.currentTrackPlaying;
+    //         this.play = false;
+    //         this.pause = false;
+    //       }, this.duration);
+    //   }
+    //   // if currentTrackPlaying is 0, it means no song has been played
+    //    if (this.currentTrackPlaying == 0 && this.play == false && this.pause == false && this.stop == true) {
+    //     // set the current track to the track selected by user
+    //     this.currentTrackPlaying = track
+    //     this.play = true;
+    //     this.stop = false;
+    //     // start timer
+    //     this.currentTimer = setTimeout(() => {
+    //         this.stop = true; 
+    //         this.lastPlayedTrack = this.currentTrackPlaying;
+    //         this.play = false;
+    //         this.pause = false;
+    //       }, this.duration);        
+    //   }
+    //   // either pausing, resuming, or playing current track again
+    //   else if (this.currentTrackPlaying == track && track !== 0) {
+    //     // if the song is currently playing, pause it
+    //     if (this.play == true && this.pause == false && this.stop == false) {
+    //       this.pause = true;
+    //       this.play = false;
+    //       // get how many more seconds the song has to play
+    //     }
+    //     // if song is currently paused, resume it
+    //     else if (this.play == false && this.pause == true && this.stop == false){
+    //       this.pause = false;
+    //       this.play = true;
+    //       // 
+    //       clearTimeout(this.currentTimer)
+    //       // resume timeout
+    //       // start new timer and set stop = true if full song plays
+    //       this.currentTimer = setTimeout(() => {
+    //         this.stop = true; 
+    //         this.lastPlayedTrack = this.currentTrackPlaying;
+    //         this.play = false;
+    //         this.pause = false;
+    //       }, this.duration); 
+    //     }
+    //     //  else if the song played all the way through and the user clicks it again, play it again
+    //     else {
+    //       this.pause = false;
+    //       this.play = true;
+    //       this.stop = false;
+    //       clearTimeout(this.currentTimer)
+    //       // resume timeout
+    //       // start new timer and set stop = true if full song plays
+    //       this.currentTimer = setTimeout(() => {
+    //         this.stop = true; 
+    //         this.lastPlayedTrack = this.currentTrackPlaying;
+    //         this.play = false;
+    //         this.pause = false;
+    //       }, this.duration); 
+    //     }
+    //   }
+    //   // stop current track and play new track
+    //   else {
+    //     // clear the timer that was playing
+    //     clearTimeout(this.currentTimer)
+    //     // set the new track
+    //     this.currentTrackPlaying = track;
+    //     this.play = true
+    //     this.stop = false;
+    //     this.pause = false;
+    //     // start new timer
+    //     this.currentTimer = setTimeout(() => {
+    //         this.stop = true;
+    //         this.lastPlayedTrack = this.currentTrackPlaying; 
+    //         this.play = false;
+    //         this.pause = false;
+    //       }, this.duration);         
+    //   }
+    // },
 
     // make this method async and axios.get to await to make sure setIsLoading isn't set to false
     // until axios finished fetching api data
