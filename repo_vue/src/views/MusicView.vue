@@ -22,7 +22,7 @@
       <!-- or leave title up after song stops playing -->
       <!-- v-bind:key is used to optimize rendering -->
       <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-        <div v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
+        <div v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && currentAudioElementPlaying == false)">
           <figure  class="track-img">
             <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
           </figure> 
@@ -35,22 +35,26 @@
       <div class="music-player-controls-wrapper">
         <div class="music-player-controls">
           <!-- skip previous -->
-          <span class="skip-back-controller" @click="prevTrack()">
+          <span class="skip-back-controller" @click="skipPrev()">
             <i class="fa fa-fast-backward"></i>
           </span>
-          <!-- play -->
+          <!-- play controller showing when paused -->
           <span class="play-controller" v-show="!currentAudioElementPlaying" @click="playFirstTrack()">
             <i class="fas fa-play"></i>          
           </span>
-          <!-- pause -->
+          <!-- pause controller shown when playing -->
           <span class="pause-controller" v-show="currentAudioElementPlaying" @click="playFirstTrack()">
             <i class="fas fa-pause"></i>          
           </span>
           <!-- skip forward -->
-          <span class="skip-forward-controller" @click="nextTrack()">
+          <span class="skip-forward-controller" @click="skipNext()">
             <i class="fa fa-fast-forward"></i>  
           </span>
         </div>
+      </div>
+      <!-- slide bar -->
+      <div class="slide-bar" ref="slideBar" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag">
+        <div class="slider" ref="slider" :style="{ left: progress + '%' }"></div>
       </div>
       <!-- currently playing song -->
       <!-- unordered list of track -->
@@ -58,7 +62,7 @@
         <!-- Vue for loop -->
         <div v-for="track, index in tracks" v-bind:key="track.id" class="media-player">
           <!-- html audio player for each track in the playlist-->
-          <audio class="hidden-player" :id="'audio-' + track.id" :src="track.get_sample" ref="audioPlayer" type="audio/mpeg"></audio>
+          <audio class="hidden-player" :id="'audio-' + track.id" :src="track.get_sample" preload="auto" @timeupdate="updateProgress" @ended="songEnded" ref="audioPlayer" type="audio/mpeg"></audio>
           <li @click="setPlayOrPause('audio-' + track.id, track.id)" class="track-list-item" v-bind:id="track.id">
             <!-- show play button on all tracks on hover -->
             <a class="play-button" href="#" v-if="currentTrackPlaying != track.id"> 
@@ -74,7 +78,7 @@
             </a>
             <!-- show play button on paused track -->
             <a class="play-button-on-pause" href="#"
-              v-if="(currentTrackPlaying == track.id && play == false && pause == true) || (lastPlayedTrack == track.id && play == false && pause == false && stop == true)">
+              v-if="currentTrackPlaying == track.id && currentAudioElementPlaying == false">
               <span class="play-icon-span">
                 <svg 
                   class="play-icon-svg" 
@@ -86,7 +90,7 @@
               </span>
             </a>
             <!-- show pause button while playing -->
-            <a class="pause-button" href="#" v-if="currentTrackPlaying == track.id && play == true && pause == false">
+            <a class="pause-button" href="#" v-if="currentTrackPlaying == track.id && currentAudioElementPlaying == true">
               <!-- show pause button only on track that is currently playing -->
               <span class="pause-icon-span" style="display: block !important">
                 <svg 
@@ -121,8 +125,8 @@
                   @click.stop="modalOpened = false; removeFromCart(track.id)" data-target="my-modal-id">
                   {{$t('cartview.addedtocart')}}
                 </a>
-                <!-- open modal. click.stop prevents the parent click even from firing
-                  doesn't play/pause the song, adds this item to cart only
+                <!-- open modal. click.stop prevents the parent click even from firing.
+                  Doesn't play/pause the song, adds this item to cart only
                 -->
                 <a class="button is-small is-black price-button has-text-weight-medium" 
                   v-else-if="track.is_free" 
@@ -460,9 +464,13 @@ export default {
   data() {
     return {
 
-      // new media player implementation
+      // the current track's html audio element playing
       currentAudioElement: null,
+      // id of the current track playing
       currentAudioElementPlaying: false,
+      // percentage used to move the slider along the slide bar
+      progress: 0,
+      isDragging: false,
 
       paymentProcessing: false,
       purchaseButtonClicked: false,
@@ -806,8 +814,9 @@ export default {
       }
     },
 
-    // next track
-    nextTrack() {
+    // NEW MUSIC PLAYER IMPLEMENTATION
+    // SKIP TO NEXT TRACK
+    skipNext() {
       var last_track = this.tracks[this.tracks.length - 1].id
       // if no songs have been played, play first track
       if (!this.currentAudioElement) {
@@ -850,9 +859,8 @@ export default {
         this.currentAudioElementPlaying = true;
       }
     },
-    
-    // previous track
-    prevTrack() {
+    // SKIP TO PREVIOUS TRACK
+    skipPrev() {
       var first_track = this.tracks[0].id
       var last_track = this.tracks[this.tracks.length - 1].id
 
@@ -896,6 +904,7 @@ export default {
       }
     },
 
+    // PLAY/RESUME TRACK
     setPlayOrPause(audioTrack, trackId) {
       // set the currenttrack
       this.currentTrackPlaying = trackId
@@ -920,7 +929,6 @@ export default {
       this.currentAudioElement = newAudioElement;
     },
 
-    // NEW MUSIC PLAYER IMPLEMENTATION
     // FOR MAIN PLAY/PAUSE BUTTON
     playFirstTrack() {
 
@@ -947,101 +955,69 @@ export default {
       }
     },
 
+    // FOR UI/UX WHEN TRACK ENDS
+    songEnded() {
+      // get the slider
+      const slider = this.$refs.slider
+      this.progress = 0
+      slider.style.left = 0
+      this.currentAudioElementPlaying = false;
+    },
+
+    // SLIDE BAR called by the audio tag
+    updateProgress() {
+      // while the song is playing, increment slider smoothly
+      if (!this.currentAudioElement.paused && !this.currentAudioElement.ended) {
+        // get the current playback time in seconds
+        const currentTime = this.currentAudioElement.currentTime
+        // get the song's duration
+        const duration = this.currentAudioElement.duration
+
+        // get the current progress percentage
+        this.progress = (currentTime / duration) * 100;
+        
+        // give the slider a smoother transition
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            this.updateProgress();
+          });
+        }, 100);
+      }
+    },
+
+    beforeDestroy() {
+      // stop the recursion when the component is destroyed
+      cancelAnimationFrame(this.updateProgress);
+    },
+
+    // called by the slidebar div
+    startDrag(event) {
+      this.isDragging = true
+      this.drag(event)
+    },
+
+    // set the new slider position as the user is sliding it left or right
+    drag(event) {
+      if (this.isDragging) {
+        const slideBar = event.currentTarget
+        const slideBarRect = slideBar.getBoundingClientRect()
+        const x = event.clientX - slideBarRect.left
+        const width = slideBarRect.width
+        const progress = (x / width) * 100
+        this.progress = progress
+      }
+    },
+    // when the user let's go of the slider, start playing from that position
+    endDrag() {
+      this.isDragging = false
+      const duration = this.currentAudioElement.duration
+      this.currentAudioElement.currentTime = (this.progress / 100) * duration
+    },
+
     // number the tracks for UI/UX media player
     increment() {
       this.trackNumber++;
     },
-    // setPlayOrPause(track) {
-
-    //   // when pressing the play controller for the first time, play the first track in the list
-    //   // currentTrackPlaying == track.id
-    //   if (track === 0 && this.currentTrackPlaying === 0) {
-    //     console.log('what the heeee')
-    //     this.currentTrackPlaying = this.tracks[0].id
-    //     console.log(JSON.stringify(this.currentTrackPlaying))
-    //     this.play = true;
-    //     this.stop = false;
-    //     this.pause = false;
-    //     clearTimeout(this.currentTimer)
-    //     // start timer
-    //     this.currentTimer = setTimeout(() => {
-    //         this.stop = true; 
-    //         this.lastPlayedTrack = this.currentTrackPlaying;
-    //         this.play = false;
-    //         this.pause = false;
-    //       }, this.duration);
-    //   }
-    //   // if currentTrackPlaying is 0, it means no song has been played
-    //    if (this.currentTrackPlaying == 0 && this.play == false && this.pause == false && this.stop == true) {
-    //     // set the current track to the track selected by user
-    //     this.currentTrackPlaying = track
-    //     this.play = true;
-    //     this.stop = false;
-    //     // start timer
-    //     this.currentTimer = setTimeout(() => {
-    //         this.stop = true; 
-    //         this.lastPlayedTrack = this.currentTrackPlaying;
-    //         this.play = false;
-    //         this.pause = false;
-    //       }, this.duration);        
-    //   }
-    //   // either pausing, resuming, or playing current track again
-    //   else if (this.currentTrackPlaying == track && track !== 0) {
-    //     // if the song is currently playing, pause it
-    //     if (this.play == true && this.pause == false && this.stop == false) {
-    //       this.pause = true;
-    //       this.play = false;
-    //       // get how many more seconds the song has to play
-    //     }
-    //     // if song is currently paused, resume it
-    //     else if (this.play == false && this.pause == true && this.stop == false){
-    //       this.pause = false;
-    //       this.play = true;
-    //       // 
-    //       clearTimeout(this.currentTimer)
-    //       // resume timeout
-    //       // start new timer and set stop = true if full song plays
-    //       this.currentTimer = setTimeout(() => {
-    //         this.stop = true; 
-    //         this.lastPlayedTrack = this.currentTrackPlaying;
-    //         this.play = false;
-    //         this.pause = false;
-    //       }, this.duration); 
-    //     }
-    //     //  else if the song played all the way through and the user clicks it again, play it again
-    //     else {
-    //       this.pause = false;
-    //       this.play = true;
-    //       this.stop = false;
-    //       clearTimeout(this.currentTimer)
-    //       // resume timeout
-    //       // start new timer and set stop = true if full song plays
-    //       this.currentTimer = setTimeout(() => {
-    //         this.stop = true; 
-    //         this.lastPlayedTrack = this.currentTrackPlaying;
-    //         this.play = false;
-    //         this.pause = false;
-    //       }, this.duration); 
-    //     }
-    //   }
-    //   // stop current track and play new track
-    //   else {
-    //     // clear the timer that was playing
-    //     clearTimeout(this.currentTimer)
-    //     // set the new track
-    //     this.currentTrackPlaying = track;
-    //     this.play = true
-    //     this.stop = false;
-    //     this.pause = false;
-    //     // start new timer
-    //     this.currentTimer = setTimeout(() => {
-    //         this.stop = true;
-    //         this.lastPlayedTrack = this.currentTrackPlaying; 
-    //         this.play = false;
-    //         this.pause = false;
-    //       }, this.duration);         
-    //   }
-    // },
 
     // make this method async and axios.get to await to make sure setIsLoading isn't set to false
     // until axios finished fetching api data

@@ -126,6 +126,8 @@ npm install bulma-toast
 npm i bulma-modal-fx
 - install animate.css
 npm install animate.css
+- install Howler js for audio library
+npm install howler
 - install i18n for internationalization (translating website)
 npm install vue-i18n@next
 - install vue-cli-plugin-i18n for internationalization (if you have Vue Cli 3.x) https://kazupon.github.io/vue-i18n

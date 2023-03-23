@@ -58,9 +58,9 @@
 
 /* track cover art */
 img.cover-art {
-    min-height: 11rem !important;
-    max-height: 11rem !important;
-    width: 15rem !important;
+    min-height: 18rem !important;
+    max-height: 18rem !important;
+    width: 30rem !important;
     display: block;
     -moz-transition: all .15s ease-in;
     -o-transition: all .15s ease-in;
@@ -127,22 +127,7 @@ img.cover-art {
     justify-content: space-between;
     padding: 1rem;
     align-items: center;
-    gap: 3rem;
-}
-
-.music-player-controls .skip-back-controller {
-    flex-grow: 1;
-    flex-shrink: 0;
-}
-
-.music-player-controls .pause-controller, .play-controller   {
-    flex-grow: 0;
-    flex-shrink: 0;
-}
-
-.music-player-controls .skip-forward-controller {
-    flex-grow: 1;
-    flex-shrink: 0;
+    gap: 8rem;
 }
 
 /* fa fa-fast-backward */
@@ -158,15 +143,10 @@ img.cover-art {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 50px;
-  height: 50px;
-  border: 1px solid black;
-  transform: rotate(45deg);
   cursor: pointer;
 }
 
 .fa-play, .fa-pause {
-    transform: rotate(-45deg);
     font-size: 24px;
     color: white;
 }
@@ -178,6 +158,32 @@ img.cover-art {
     font-size: 24px;
     margin-left: auto; /* push to rightmost position */
 
+}
+
+/* SLIDE BAR AND SLIDER */
+.slide-bar {
+    position: relative;
+    height: 4px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    cursor: pointer;
+    margin-bottom: 2rem;
+}
+
+.slider {
+    /* needs to be absolute to move along the slide bar */
+    position: absolute;
+    top: -0.3rem;
+    /* left: 0; */
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: rgba(0, 238, 255, 0.9);
+    cursor: pointer;
+    box-shadow: 0 0 10px #333;
+    /* transform: translateX(-50%); */
+    transform: translateX(0);
+    transition: transform 0.3s linear; 
 }
 
 /* change color on hover */
