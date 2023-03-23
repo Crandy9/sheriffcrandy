@@ -159,15 +159,39 @@ img.cover-art {
     margin-left: auto; /* push to rightmost position */
 
 }
-
+.slider-container {
+    position: relative;
+    /* display: flex; */
+    /* align-items: center; */
+  }
+  
+  .start-time, .end-time {
+    padding-bottom: 2rem !important;
+  }
+  
+  .start-time {
+    position: absolute;
+    left: 0;
+    top: 0;  
+}
+  
+.end-time {
+    position: absolute;
+    right: 0;
+    top: 0;  
+}
+  
 /* SLIDE BAR AND SLIDER */
 .slide-bar {
     position: relative;
+    display: flex;
     height: 4px;
     border-radius: 4px;
     background-color: #ffffff;
     cursor: pointer;
     margin-bottom: 2rem;
+    margin-left: 5rem !important;
+    margin-right: 5rem !important;
 }
 
 .slider {

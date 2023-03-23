@@ -52,9 +52,24 @@
           </span>
         </div>
       </div>
-      <!-- slide bar -->
-      <div class="slide-bar" ref="slideBar" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag">
-        <div class="slider" ref="slider" :style="{ left: progress + '%' }"></div>
+      <div class="slider-container">
+        <span class="start-time">
+          {{ progress }}
+        </span>
+        <!-- slide bar -->
+        <div class="slide-bar" ref="slideBar" 
+          @click="jumpSlider" 
+          @mousedown="startDrag" 
+          @mousemove="drag" 
+          @mouseup="endDrag"
+          @touchstart="startDrag" 
+          @touchmove="drag" 
+          @touchend="endDrag">
+          <div class="slider" ref="slider" :style="{ left: progress - 1.3 + '%' }"></div>
+        </div>
+        <span v-show="songLength" class="end-time">
+          {{ new Date({ songLength } * 1000).toISOString().substr(14, 5) }}
+        </span>
       </div>
       <!-- currently playing song -->
       <!-- unordered list of track -->
@@ -62,8 +77,10 @@
         <!-- Vue for loop -->
         <div v-for="track, index in tracks" v-bind:key="track.id" class="media-player">
           <!-- html audio player for each track in the playlist-->
-          <audio class="hidden-player" :id="'audio-' + track.id" :src="track.get_sample" preload="auto" @timeupdate="updateProgress" @ended="songEnded" ref="audioPlayer" type="audio/mpeg"></audio>
-          <li @click="setPlayOrPause('audio-' + track.id, track.id)" class="track-list-item" v-bind:id="track.id">
+          <div class="hidden-player" :id="'audio-' + track.id">
+          </div>
+          <!-- <li @click="setPlayOrPause('audio-' + track.id, track.id)" class="track-list-item" v-bind:id="track.id"> -->
+          <li @click="setPlayOrPause(track.id)" class="track-list-item" v-bind:id="track.id">
             <!-- show play button on all tracks on hover -->
             <a class="play-button" href="#" v-if="currentTrackPlaying != track.id"> 
               <span class="play-icon-span">
@@ -457,6 +474,8 @@
 import axios from 'axios'
 // for pop up notifying user about added item to cart
 import { toast } from 'bulma-toast'
+// import howler
+import { Howl, Howler } from 'howler';
 
 export default {
   name: 'Music',
@@ -471,6 +490,8 @@ export default {
       // percentage used to move the slider along the slide bar
       progress: 0,
       isDragging: false,
+      animationFrame: null,
+      songLength: '',
 
       paymentProcessing: false,
       purchaseButtonClicked: false,
@@ -815,32 +836,89 @@ export default {
     },
 
     // NEW MUSIC PLAYER IMPLEMENTATION
-    // SKIP TO NEXT TRACK
+    // THIS WORKS SKIP TO NEXT TRACK
     skipNext() {
       var last_track = this.tracks[this.tracks.length - 1].id
-      // if no songs have been played, play first track
+      // THIS WORKS if no songs have been played, play first track
       if (!this.currentAudioElement) {
         this.currentTrackPlaying = this.tracks[0].id
-        const newAudioElement = document.getElementById('audio-' + this.currentTrackPlaying);
+
+        var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
+        const currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        const newAudioElement = new Howl({
+            src: [currentSrc],
+            onplay: () => {
+              this.animationFrame = requestAnimationFrame(this.animateSlider)
+            },
+            onpause: () => {
+              cancelAnimationFrame(this.animationFrame)
+            },
+            onstop: () => {
+              cancelAnimationFrame(this.animationFrame)
+            },
+            // when the song finishes playing
+            onend: () => {
+              this.currentTrackPlaying = trackId
+              this.currentAudioElementPlaying = false
+              this.progress = 0
+
+            },
+            onloaderror: (error) => {
+              console.log('error loading audio file', error)
+            },
+            onplayerror: (error) => {
+              console.log('error playing audio file', error)
+            },
+        });
+  
         this.currentAudioElement = newAudioElement
         newAudioElement.play();
         this.currentAudioElement = newAudioElement;
         this.currentAudioElementPlaying = true;
 
       }
-      // else if this is the last track in the playlist, play the first track
+      // THIS WORKS else if this is the last track in the playlist, play the first track
       else if (this.currentTrackPlaying == last_track) {
         this.currentTrackPlaying = this.tracks[0].id
         this.currentAudioElement.currentTime = 0;
         this.currentAudioElement.pause();        
         this.currentAudioElementPlaying = false;
 
-        const newAudioElement = document.getElementById('audio-' + this.currentTrackPlaying);
+        var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
+        const currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        const newAudioElement = new Howl({
+            src: [currentSrc],
+            onplay: () => {
+             this.animationFrame = requestAnimationFrame(this.animateSlider)
+            },
+            onpause: () => {
+              cancelAnimationFrame(this.animationFrame)
+            },
+            onstop: () => {
+              cancelAnimationFrame(this.animationFrame)
+            },
+            // when the song finishes playing
+            onend: () => {
+              this.currentTrackPlaying = trackId
+              this.currentAudioElementPlaying = false
+              this.progress = 0
+
+            },
+            onloaderror: (error) => {
+              console.log('error loading audio file', error)
+            },
+            onplayerror: (error) => {
+              console.log('error playing audio file', error)
+            },
+        });
+
         this.currentAudioElement = newAudioElement
         this.currentAudioElement.play();        
         this.currentAudioElementPlaying = true;
 
       }
+
+      // THIS WORKS if the currently playing song is not the last track
       else {
         // local var containing the current track id needed for function below 
         var val = this.currentTrackPlaying
@@ -853,101 +931,287 @@ export default {
         this.currentAudioElement.currentTime = 0;
         this.currentAudioElement.pause();        
         this.currentAudioElementPlaying = false;
-        const newAudioElement = document.getElementById('audio-' + this.currentTrackPlaying);
+
+        var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
+        const currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        const newAudioElement = new Howl({
+            src: [currentSrc],
+            onplay: () => {
+             this.animationFrame = requestAnimationFrame(this.animateSlider)
+            },
+            onpause: () => {
+              cancelAnimationFrame(this.animationFrame)
+            },
+            onstop: () => {
+              cancelAnimationFrame(this.animationFrame)
+            },
+            // when the song finishes playing
+            onend: () => {
+              this.currentTrackPlaying = trackId
+              this.currentAudioElementPlaying = false
+              this.progress = 0
+
+            },
+            onloaderror: (error) => {
+              console.log('error loading audio file', error)
+            },
+            onplayerror: (error) => {
+              console.log('error playing audio file', error)
+            },
+        });
         this.currentAudioElement = newAudioElement
         this.currentAudioElement.play();        
         this.currentAudioElementPlaying = true;
       }
     },
-    // SKIP TO PREVIOUS TRACK
+    // THIS WORKS SKIP TO PREVIOUS TRACK
     skipPrev() {
       var first_track = this.tracks[0].id
       var last_track = this.tracks[this.tracks.length - 1].id
 
-      // if no songs have been played play the last track in the playlist
+
+      // THIS WORKS if no songs have been played, play the last track in the playlist
       if (!this.currentAudioElement) {
-        const newAudioElement = document.getElementById('audio-' + last_track);
-        this.currentAudioElement = newAudioElement
-        newAudioElement.play();
+        var getSrc = this.tracks.find((t) => t.id === last_track)
+        const currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        const newAudioElement = new Howl({
+            src: [currentSrc],
+            onplay: () => {
+              this.animationFrame = requestAnimationFrame(this.animateSlider)
+            },
+            onpause: () => {
+              cancelAnimationFrame(this.animationFrame)
+            },
+            onstop: () => {
+              cancelAnimationFrame(this.animationFrame)
+            },
+            // when the song finishes playing
+            onend: () => {
+              this.currentTrackPlaying = trackId
+              this.currentAudioElementPlaying = false
+              this.progress = 0
+
+            },
+            onloaderror: (error) => {
+              console.log('error loading audio file', error)
+            },
+            onplayerror: (error) => {
+              console.log('error playing audio file', error)
+            },
+        });
         this.currentAudioElement = newAudioElement;
+        this.currentAudioElement.play();
         this.currentAudioElementPlaying = true;
         this.currentTrackPlaying = last_track
       }
-      // skip back to the previous track
+      // THIS WORKS skip back to the previous track
       else {
-        // if current track is the first_track, play the last track
+        // THIS WORKS if the current track playing is the first_track, play the last track
         if (this.currentTrackPlaying == first_track) {
           this.currentAudioElement.currentTime = 0;
           this.currentAudioElement.pause();        
           this.currentAudioElementPlaying = false;
-          const newAudioElement = document.getElementById('audio-' + last_track);
+
+          var getSrc = this.tracks.find((t) => t.id === last_track)
+          const currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          const newAudioElement = new Howl({
+              src: [currentSrc],
+              onplay: () => {
+                this.animationFrame = requestAnimationFrame(this.animateSlider)
+              },
+              onpause: () => {
+                cancelAnimationFrame(this.animationFrame)
+              },
+              onstop: () => {
+                cancelAnimationFrame(this.animationFrame)
+              },
+              // when the song finishes playing
+              onend: () => {
+                this.currentTrackPlaying = trackId
+                this.currentAudioElementPlaying = false
+                this.progress = 0
+
+              },
+              onloaderror: (error) => {
+                console.log('error loading audio file', error)
+              },
+              onplayerror: (error) => {
+                console.log('error playing audio file', error)
+              },
+          });
           this.currentAudioElement = newAudioElement
           this.currentAudioElement.play();        
           this.currentAudioElementPlaying = true;
           this.currentTrackPlaying = last_track
-
         }
+
+        // THIS WORKS current track is not the first track
         else {
           this.currentAudioElement.currentTime = 0;
           this.currentAudioElement.pause();        
           this.currentAudioElementPlaying = false;
+
+
           var val = this.currentTrackPlaying
           var index = this.tracks.findIndex(function(item){
             return item.id === val;
           });
           this.currentTrackPlaying = this.tracks[index - 1].id
-          const newAudioElement = document.getElementById('audio-' + this.currentTrackPlaying);
-          newAudioElement.play();
+
+          var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
+          const currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          const newAudioElement = new Howl({
+              src: [currentSrc],
+              onplay: () => {
+                this.animationFrame = requestAnimationFrame(this.animateSlider)
+              },
+              onpause: () => {
+                cancelAnimationFrame(this.animationFrame)
+              },
+              onstop: () => {
+                cancelAnimationFrame(this.animationFrame)
+              },
+              // when the song finishes playing
+              onend: () => {
+                this.currentTrackPlaying = trackId
+                this.currentAudioElementPlaying = false
+                this.progress = 0
+
+              },
+              onloaderror: (error) => {
+                console.log('error loading audio file', error)
+              },
+              onplayerror: (error) => {
+                console.log('error playing audio file', error)
+              },
+          });
           this.currentAudioElement = newAudioElement;
+          newAudioElement.play();
           this.currentAudioElementPlaying = true;
         }
       }
     },
 
-    // PLAY/RESUME TRACK
-    setPlayOrPause(audioTrack, trackId) {
-      // set the currenttrack
-      this.currentTrackPlaying = trackId
-      // get the current tracks html id
-      const newAudioElement = document.getElementById(audioTrack);
+    // THIS WORKS PLAY/RESUME TRACK
+    setPlayOrPause(trackId) {
 
-      // if currentAudioElement is not null and is different from the incoming audio element
-      if (this.currentAudioElement && this.currentAudioElement !== newAudioElement) {
-        this.currentAudioElement.pause();
-        this.currentAudioElementPlaying = false;
-      }
+      var getSrc = this.tracks.find((t) => t.id === trackId)
+      const currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
 
-      if (newAudioElement.paused) {
-        newAudioElement.play();
-        this.currentAudioElementPlaying = true;
+      // THIS WORKS create Howl object
+      const newAudioElement = new Howl({
+          src: [currentSrc],
+          onplay: () => {
+            this.animationFrame = requestAnimationFrame(this.animateSlider)
+          },
+          onpause: () => {
+            cancelAnimationFrame(this.animationFrame)
+          },
+          onstop: () => {
+            cancelAnimationFrame(this.animationFrame)
+          },
+          // when the song finishes playing
+          onend: () => {
+            this.currentTrackPlaying = trackId
+            this.currentAudioElementPlaying = false
+          },
+          onloaderror: (error) => {
+            console.log('error loading audio file', error)
+          },
+          onplayerror: (error) => {
+            console.log('error playing audio file', error)
+          },
+      });
+
+      // THIS WORKS if no song has played yet, play the first one the user clicked 
+      if (!this.currentAudioElement) {
+        this.currentAudioElement = newAudioElement
+        this.currentAudioElement.play()
+        this.currentAudioElementPlaying = true
+        this.currentTrackPlaying = trackId
       } 
+      
+      // THIS WORKS this is not the first song played
       else {
-        newAudioElement.pause();
-        this.currentAudioElementPlaying = false;
+        // THIS WORKS play/pause/resume same song
+        if (this.currentTrackPlaying == trackId) {
+          // pause it
+          if (this.currentAudioElement.playing()) {
+            this.currentAudioElement.pause()
+            this.currentAudioElementPlaying = false
+            this.currentTrackPlaying = trackId
+            return
+          } 
+          // play it
+          else {
+            this.currentAudioElement.play()
+            this.currentAudioElementPlaying = true
+            // this.currentTrackPlaying = trackId
+            // return
+          }
+        }
+        // THIS WORKS this is a different song was chosen. Stop current song, set new song, and play it
+        else {
+          this.currentTrackPlaying = trackId
+          this.currentAudioElement.stop()
+          this.currentAudioElement = newAudioElement
+          this.currentAudioElement.play()
+          this.currentAudioElementPlaying = true
+        }
       }
-
-      this.currentAudioElement = newAudioElement;
     },
 
-    // FOR MAIN PLAY/PAUSE BUTTON
+    // THIS WORKS FOR PLAY/PAUSE BUTTON CONTROLLERS
     playFirstTrack() {
 
-      // If audio is currently playing, pause it and show the play icon
+      // THIS WORKS If audio is currently playing, pause it and show the play icon
       if (this.currentAudioElementPlaying) {
         this.currentAudioElement.pause();
         this.currentAudioElementPlaying = false;
       }
+      // THIS WORKS if audio is not currently playing
       else {
-        // if this is null, play the first song in the playlist
+        // THIS WORKS if this is null, play the first song in the playlist
         if (!this.currentAudioElement) {
-          // find the first track's index and play it
-          const audioElement = document.getElementById('audio-' + this.tracks[0].id);
-          audioElement.play();
-          this.currentAudioElement = audioElement;
+
+          var getSrc = this.tracks.find((t) => t.id === this.tracks[0].id)
+          var currentSrc = ''
+          getSrc.is_free ? currentSrc = getSrc.get_track : currentSrc = getSrc.get_sample
+
+          // howl instance
+          // const newAudioElement = new Howl({
+          //   src: [currentSrc],
+          // });
+          const newAudioElement = new Howl({
+              src: [currentSrc],
+              onplay: () => {
+                this.animationFrame = requestAnimationFrame(this.animateSlider)
+              },
+              onpause: () => {
+                cancelAnimationFrame(this.animationFrame)
+              },
+              onstop: () => {
+                cancelAnimationFrame(this.animationFrame)
+              },
+              // when the song finishes playing
+              onend: () => {
+                this.currentTrackPlaying = trackId
+                this.currentAudioElementPlaying = false
+              },
+              onloaderror: (error) => {
+                console.log('error loading audio file', error)
+              },
+              onplayerror: (error) => {
+                console.log('error playing audio file', error)
+              },
+          });
+          this.currentAudioElement = newAudioElement;
+
+          this.currentAudioElement.play();
           this.currentTrackPlaying = this.tracks[0].id
 
         }
-        // else play/resume current song
+        // THIS WORKS else play/resume current song
         else {
           this.currentAudioElement.play();
         }
@@ -964,54 +1228,93 @@ export default {
       this.currentAudioElementPlaying = false;
     },
 
-    // SLIDE BAR called by the audio tag
-    updateProgress() {
-      // while the song is playing, increment slider smoothly
-      if (!this.currentAudioElement.paused && !this.currentAudioElement.ended) {
-        // get the current playback time in seconds
-        const currentTime = this.currentAudioElement.currentTime
-        // get the song's duration
-        const duration = this.currentAudioElement.duration
+    // SLIDE BAR called by howl
+    animateSlider() {
+      // const currentTime = this.currentAudioElement.seek() || 0
+      const duration = this.currentAudioElement.duration() || 1
+      this.songLength = duration
+      // this.progress = (currentTime / duration) * 100
+      if (!this.isDragging) {
+        this.progress = ((this.currentAudioElement.seek() || 0) / duration) * 100
 
-        // get the current progress percentage
-        this.progress = (currentTime / duration) * 100;
-        
-        // give the slider a smoother transition
-        setTimeout(() => {
-          requestAnimationFrame(() => {
-            this.updateProgress();
-          });
-        }, 100);
       }
+      this.animationFrame = requestAnimationFrame(this.animateSlider)
     },
 
     beforeDestroy() {
       // stop the recursion when the component is destroyed
-      cancelAnimationFrame(this.updateProgress);
+      const slideBar = this.$refs.slideBar
+      slideBar.removeEventListener("mousedown", this.startDrag)
+      document.removeEventListener("mousemove", this.dragHandler)
+      document.removeEventListener("mouseup", this.endDrag)
+    },
+
+    // when clicking on the slidebar, jump the slider to the correct position
+    jumpSlider(event) {
+      // get the slidebar
+      const slideBar = this.$refs.slideBar
+      // get size of slidebar
+      const slideBarRect = slideBar.getBoundingClientRect()
+      // get the x-coordinate position where the user clicked
+      const x = event.clientX - slideBarRect.left
+      // calculate the percentage of the song played according to where the user clicked on the slidebar
+      // x / slideBarRect.width gives a decimal value between 0 (0%) and 1 (100%)
+      // Math.min ensures that the percentage is never greater than 100
+      // Math.max ensures that the value is never less than 0 
+      const progress = Math.min(Math.max(x / slideBarRect.width * 100, 0), 100)
+      const duration = this.currentAudioElement.duration()
+      this.songLength = duration
+      const seekTime = (progress / 100) * duration
+      this.currentAudioElement.seek(seekTime)
+      this.progress = progress
     },
 
     // called by the slidebar div
     startDrag(event) {
       this.isDragging = true
-      this.drag(event)
+      const slideBar = event.currentTarget
+      const slideBarRect = slideBar.getBoundingClientRect()
+      this.width = slideBarRect.width
+      if (event.type === 'touchstart') {
+        document.addEventListener("touchmove", this.dragHandler.bind(this));
+        document.addEventListener("touchend", this.endDrag.bind(this))
+      } else {
+        document.addEventListener("mousemove", this.dragHandler.bind(this));
+        document.addEventListener("mouseup", this.endDrag.bind(this))
+      }
     },
 
     // set the new slider position as the user is sliding it left or right
     drag(event) {
       if (this.isDragging) {
-        const slideBar = event.currentTarget
-        const slideBarRect = slideBar.getBoundingClientRect()
-        const x = event.clientX - slideBarRect.left
-        const width = slideBarRect.width
-        const progress = (x / width) * 100
+        event.preventDefault();
+        const x = (event.type === 'touchmove' ? event.touches[0].clientX : event.clientX) - this.slideBarRect.left
+        const progress = Math.min(Math.max(x / this.width * 100, 0), 100)
         this.progress = progress
       }
     },
     // when the user let's go of the slider, start playing from that position
     endDrag() {
       this.isDragging = false
-      const duration = this.currentAudioElement.duration
-      this.currentAudioElement.currentTime = (this.progress / 100) * duration
+      const duration = this.currentAudioElement.duration()
+      this.songLength = duration
+      const seekTime = (this.progress / 100) * duration
+      this.currentAudioElement.seek(seekTime)
+      // this.currentAudioElement.play()
+      if (!this.currentAudioElement.playing()) {
+        document.removeEventListener("touchmove", this.dragHandler)
+        document.removeEventListener("touchend", this.endDrag)
+        document.removeEventListener("mousemove", this.dragHandler)
+        document.removeEventListener("mouseup", this.endDrag)
+      }
+
+    },
+    dragHandler(event) {
+      if (this.isDragging) {
+        const slideBar = this.$refs.slideBar
+        this.slideBarRect = slideBar.getBoundingClientRect()
+        this.drag(event);
+      }    
     },
 
     // number the tracks for UI/UX media player
