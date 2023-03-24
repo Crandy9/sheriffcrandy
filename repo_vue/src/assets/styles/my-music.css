@@ -4,8 +4,8 @@
 ***/
 
 .main-music-section {
-    padding-left: 20rem;
-    padding-right: 20rem; 
+    padding-left: 5rem;
+    padding-right: 5rem; 
     margin-bottom: 10rem;
 }
 
@@ -15,52 +15,140 @@
     }
 }
 
-/* main title banner on top of page */
-/* .music-title {
-    border: 1px solid rgb(0, 199, 199);
-    padding: 1.2rem;
-} */
-
 /* file download procedures */
 .music-guide {
     padding: 1.2rem;
-    font-size: 16px !important;
+    font-size: 16px;
 }
 
 .file-links {
-    color:chartreuse !important; 
+    color:chartreuse; 
     text-decoration: none;
-    font-size: 13px !important;
+    font-size: 13px;
 }
 
 .file-links:hover {
-    color: white !important;
+    color: white;
 }
 
-/* audio player section */
+/* AUDIO PLAYER */
+/* for mobile */
+@media screen and (max-width: 1023px) {
+
+    .music-title {
+        font-size: 24px !important;
+    }
+
+    img.cover-art {
+        min-height: 14rem !important;
+        max-height: 14rem !important;
+        display: block;
+        -moz-transition: all .15s ease-in;
+        -o-transition: all .15s ease-in;
+        -webkit-transition: all .15s ease-in;
+        transition: all .15s ease-in;
+        border-radius: 8%;
+        box-shadow: 0 0px 40px rgba(255, 0, 0, 0.4);
+    }
+
+    /* PLAYER CONTROLS */
+    /* fwrapper to position div to right-most top of player*/
+    .music-player-controls-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+    /* space between icons */
+    .music-player-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 3rem !important;
+    }
+    /* fa fa-fast-backward */
+    .fa-fast-backward {
+        font-size: 18px !important;
+        margin-right: auto; /* push to leftmost position */
+    }
+
+    /* fa fa-fast-forward */
+    .fa-fast-forward {
+        font-size: 18px !important;
+        margin-left: auto; /* push to rightmost position */
+    }
+
+    /* play/pause control buttons */
+    .fa-play, .fa-pause {
+        font-size: 22px !important;
+    }
+    /* SLIDE BAR AND SLIDER */
+    .slider-container {
+        position: relative;
+        justify-content: center;
+        align-items: center;  
+      }
+    .slide-bar {
+        position: relative;
+        display: flex;
+        height: 4px;
+        border-radius: 4px;
+        background-color: #ffffff;
+        cursor: pointer;
+        margin-bottom: 0rem !important;
+        margin-left: 0.2rem !important;
+        margin-right: 0.2rem !important;
+    
+    }
+    .slider {
+        position: relative;
+        top: -0.3rem;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background-color: rgba(0, 238, 255);
+        cursor: pointer;
+        /* transform: translateX(-50%); */
+        transform: translateX(0);
+        transition: transform 0.3s linear; 
+    }
+
+    /* TRACK TIME DISPLAYS */
+    .track-time-displays {
+        margin-bottom: 1rem !important;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* start/end time */
+    .start-time, .end-time {
+        padding-top: 0.5rem;
+        padding-right: 0.3rem;
+        padding-left: 0.3rem;
+        color: rgb(189, 182, 182);
+        font-size: 13px;
+    }
+      
+     
+
+}
+
+/* cool little effect */
 .music-player-section {
-    box-shadow: 0 30px 40px rgba(0,0,0,.1);
+    box-shadow: 0 30px 40px rgba(0, 0, 0, 0.1);
 }
-
-/* media player div */
-/* section.audio-player-section {
-    transition: width 2s, height 2s, transform 2s;
-} */
 
 
 /* cover art positioning */
 .track-img {
     padding-top: 1.5rem;
-    display: flex; /* Set the container to use flexbox layout */
-    justify-content: center; /* Center the items horizontally */
-    align-items: center; /* Center the items vertically */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
 }
 
 /* track cover art */
 img.cover-art {
-    min-height: 18rem !important;
-    max-height: 18rem !important;
-    width: 30rem !important;
+    min-height: 18rem;
+    max-height: 18rem;
     display: block;
     -moz-transition: all .15s ease-in;
     -o-transition: all .15s ease-in;
@@ -68,7 +156,6 @@ img.cover-art {
     transition: all .15s ease-in;
     border-radius: 8%;
     box-shadow: 0 0px 40px rgba(255, 0, 0, 0.4);
-
 }
 
 /* fade cover image in */
@@ -107,12 +194,13 @@ img.cover-art {
 /* track title below image */
 .track-title-img {
     display: block;
-    display: flex; /* Set the container to use flexbox layout */
-    justify-content: center; /* Center the items horizontally */
-    align-items: center; /* Center the items vertically */ 
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
     padding-top: 2rem;
     color: rgb(255, 255, 255);
     font-size: small;
+    font-weight: bold;
 }
 
 
@@ -161,26 +249,20 @@ img.cover-art {
 }
 .slider-container {
     position: relative;
-    /* display: flex; */
-    /* align-items: center; */
+    justify-content: center;
+    align-items: center;  
   }
   
-  .start-time, .end-time {
-    padding-bottom: 2rem !important;
-  }
-  
-  .start-time {
-    position: absolute;
+/* .start-time {
     left: 0;
     top: 0;  
 }
   
 .end-time {
-    position: absolute;
     right: 0;
     top: 0;  
-}
-  
+} */
+ 
 /* SLIDE BAR AND SLIDER */
 .slide-bar {
     position: relative;
@@ -190,21 +272,19 @@ img.cover-art {
     background-color: #ffffff;
     cursor: pointer;
     margin-bottom: 2rem;
-    margin-left: 5rem !important;
-    margin-right: 5rem !important;
+    margin-left: 5rem;
+    margin-right: 5rem;
+
 }
 
 .slider {
-    /* needs to be absolute to move along the slide bar */
-    position: absolute;
+    position: relative;
     top: -0.3rem;
-    /* left: 0; */
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
-    background-color: rgba(0, 238, 255, 0.9);
+    background-color: rgba(0, 238, 255);
     cursor: pointer;
-    box-shadow: 0 0 10px #333;
     /* transform: translateX(-50%); */
     transform: translateX(0);
     transition: transform 0.3s linear; 
@@ -222,11 +302,6 @@ img.cover-art {
 }
 
 
-
-/* html audio player always hidden (play pause functionality handled by vue) */
-.hidden-player {
-    display: none;
-}
 
 .audio-player-ul {
     background-color: white;
