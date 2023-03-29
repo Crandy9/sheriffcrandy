@@ -11,7 +11,7 @@
 
 @media screen and (max-width: 1023px) {
     .main-music-section {
-        padding: 2rem;
+        padding: 1rem;
     }
 }
 
@@ -42,6 +42,7 @@
     img.cover-art {
         min-height: 14rem !important;
         max-height: 14rem !important;
+        max-width: 14rem !important;
         display: block;
         -moz-transition: all .15s ease-in;
         -o-transition: all .15s ease-in;
@@ -62,17 +63,18 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 3rem !important;
+        gap: 4rem !important;
+        padding-bottom: 1.5rem !important;
     }
     /* fa fa-fast-backward */
     .fa-fast-backward {
-        font-size: 18px !important;
+        font-size: 20px !important;
         margin-right: auto; /* push to leftmost position */
     }
 
     /* fa fa-fast-forward */
     .fa-fast-forward {
-        font-size: 18px !important;
+        font-size: 20px !important;
         margin-left: auto; /* push to rightmost position */
     }
 
@@ -87,18 +89,13 @@
         align-items: center;  
       }
     .slide-bar {
-        position: relative;
-        display: flex;
-        height: 4px;
-        border-radius: 4px;
-        background-color: #ffffff;
-        cursor: pointer;
         margin-bottom: 0rem !important;
-        margin-left: 0.2rem !important;
-        margin-right: 0.2rem !important;
-    
+        margin-left: 1rem !important;
+        margin-right: 1rem !important;
     }
+
     .slider {
+        margin-left: 0.5rem !important;
         position: relative;
         top: -0.3rem;
         width: 13px;
@@ -121,10 +118,11 @@
     /* start/end time */
     .start-time, .end-time {
         padding-top: 0.5rem;
-        padding-right: 0.3rem;
-        padding-left: 0.3rem;
-        color: rgb(189, 182, 182);
+        padding-right: 1rem;
+        padding-left: 1rem;
+        color: rgb(238, 234, 234);
         font-size: 13px;
+        font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     }
       
      
@@ -218,6 +216,18 @@ img.cover-art {
     gap: 8rem;
 }
 
+/* repeat controller */
+.repeat-controller {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.fa-repeat {
+    font-size: 24px;
+    color: white;
+}
+
 /* fa fa-fast-backward */
 .fa-fast-backward {
     color: rgb(255, 255, 255);
@@ -269,12 +279,12 @@ img.cover-art {
     display: flex;
     height: 4px;
     border-radius: 4px;
+    /* slide bar color */
     background-color: #ffffff;
     cursor: pointer;
     margin-bottom: 2rem;
     margin-left: 5rem;
     margin-right: 5rem;
-
 }
 
 .slider {

@@ -18,11 +18,11 @@
       </div>
     </section>
     <section class="music-player-section">
-      <!-- show img thumbnail for current track -->
-      <!-- or leave title up after song stops playing -->
+      <!-- show track img for current track -->
+      <!-- or leave title and track img up after song stops playing -->
       <!-- v-bind:key is used to optimize rendering -->
       <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-        <div v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && currentAudioElementPlaying == false)">
+        <div v-if="currentTrackPlaying == trackDisplay.id">
           <figure  class="track-img">
             <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
           </figure> 
@@ -31,15 +31,17 @@
           </h3>
         </div>
       </div>
-      <!-- skip play/pause controllers -->
+      <!-- skip play/pause repeat, shuffle controllers -->
       <div class="music-player-controls-wrapper">
         <div class="music-player-controls">
           <!-- skip previous -->
-          <span class="skip-back-controller" @click="skipPrev()">
+          <span class="skip-back-controller" 
+          @click="skipPrev()">
             <i class="fa fa-fast-backward"></i>
           </span>
           <!-- play controller showing when paused -->
-          <span class="play-controller" v-show="!currentAudioElementPlaying" @click="playFirstTrack()">
+          <span class="play-controller" v-show="!currentAudioElementPlaying" 
+          @click="playFirstTrack()">
             <i class="fas fa-play"></i>          
           </span>
           <!-- pause controller shown when playing -->
@@ -47,14 +49,15 @@
             <i class="fas fa-pause"></i>          
           </span>
           <!-- skip forward -->
-          <span class="skip-forward-controller" @click="skipNext()">
+          <span class="skip-forward-controller" 
+          @click="skipNext()">
             <i class="fa fa-fast-forward"></i>  
           </span>
         </div>
       </div>
       <div class="slider-container">
         <!-- slide bar -->
-        <div class="slide-bar" ref="slideBar" 
+        <div class="slide-bar" ref="slideBar" id="slideBar"
           @click="jumpSlider" 
           @mousedown="startDrag" 
           @mousemove="drag" 
@@ -62,7 +65,7 @@
           @touchstart="startDrag" 
           @touchmove="drag" 
           @touchend="endDrag">
-          <div class="slider" ref="slider" :style="{ left: progress - 1.3 + '%' }"></div>
+          <div class="slider" ref="slider" :style="{ left: progress - 2 + '%' }"></div>
         </div>
         <div class="track-time-displays">
           <span class="start-time">
@@ -489,7 +492,7 @@ export default {
       // smooth slider animation
       animationFrame: null,
       // should hold the song's length in minute:seconds 00:00
-      songLength: '--',
+      songLength: '- -',
       songProgress: '0:00',
       // percentage used to animate the slider along the slide bar
       progress: 0,
@@ -499,7 +502,13 @@ export default {
       currentSrc: '',
       // needed to prevent errors when slider is clicked before song starts playing
       slideBarRect: null,
+      // timer that updates the songprogress every second
       songTimer: '',
+      // repeat song
+      repeat: false,
+      // shuffle playlist
+      shuffle: false,
+
 
       paymentProcessing: false,
       purchaseButtonClicked: false,
@@ -541,14 +550,10 @@ export default {
           },      
       // check if this a USD or JPY payment
       isUsd: true,
-      // track number
-      trackNumber: 0,
-      // player status
-      play: false,
-      pause: false,
-      stop: true,
-      currentTrackPlaying: 0,
-      lastPlayedTrack: 0,
+    // number the tracks for UI/UX media player
+    trackNumber: 0,
+    currentTrackPlaying: 0,
+    lastPlayedTrack: 0,
     }
   },
 
@@ -838,6 +843,12 @@ export default {
     },
 
     // NEW MUSIC PLAYER IMPLEMENTATION
+    // update slidebar color when slider moves along slidebar
+    updateSlideBarBackground() {
+      const slideBar = document.getElementById('slideBar');
+      const gradient = `linear-gradient(to right, #00EEFF ${this.progress}%, #ffffff ${this.progress}%)`;
+      slideBar.style.background = gradient;
+    },
     // timer to display track playback time
     formatTime(secs) {
       let minutes = Math.floor(secs / 60) % 60;
@@ -870,14 +881,18 @@ export default {
               // Reset the song progress to 0:00
               this.songProgress = '0:00';
             },
-            // when the song finishes playing
+            // when the song finishes playing go to next song
             onend: () => {
-              this.currentAudioElementPlaying = false
-              // Stop the timer
-              clearInterval(this.songTimer);
-              this.songTimer = null;
-              // Reset the song progress to 0:00
-              this.songProgress = '0:00';
+              if (this.repeat === true) {
+                // repeat the same song
+              }
+              else if (this.shuffle === true) {
+                // play a random song in the playlist
+              }
+              // else play the next song in the playlist
+              else {
+                this.skipNext()
+              }
             },
             onloaderror: (error) => {
               console.log('error loading audio file', error)
@@ -903,8 +918,13 @@ export default {
         const newAudioElement = this.createHowlInstance(this.currentSrc)
   
         this.currentAudioElement = newAudioElement
-        this.currentAudioElement.play();
-        this.currentAudioElementPlaying = true;
+        // if the song was playing, then play, else reset song and pause
+        if (this.currentAudioElementPlaying === true) {
+          this.currentAudioElement.play()
+        }
+        else {
+          this.currentAudioElement.stop()
+        }
 
       }
       // THIS WORKS else if this is the last track in the playlist, play the first track
@@ -912,7 +932,6 @@ export default {
         this.currentTrackPlaying = this.tracks[0].id
         this.currentAudioElement.currentTime = 0;
         this.currentAudioElement.pause();        
-        this.currentAudioElementPlaying = false;
 
         var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
         // set currentSrc to be either a sample or the full length song
@@ -921,9 +940,17 @@ export default {
         this.songLength = getSrc.get_track_duration        
         const newAudioElement = this.createHowlInstance(this.currentSrc)
         this.currentAudioElement = newAudioElement
-        this.currentAudioElement.play();        
-        this.currentAudioElementPlaying = true;
 
+        // if the song was playing, then play, else reset song and pause
+        if (this.currentAudioElementPlaying === true) {
+          this.currentAudioElement.play()
+        }
+        else {
+          this.progress = 0
+          this.updateSlideBarBackground()
+          this.currentAudioElement.pause()
+          this.currentAudioElementPlaying = false;
+        }
       }
 
       // THIS WORKS if the currently playing song is not the last track
@@ -938,7 +965,7 @@ export default {
         this.currentTrackPlaying = this.tracks[index + 1].id
         this.currentAudioElement.currentTime = 0;
         this.currentAudioElement.pause();        
-        this.currentAudioElementPlaying = false;
+        // this.currentAudioElementPlaying = false;
 
         var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
         // set currentSrc to be either a sample or the full length song
@@ -947,12 +974,41 @@ export default {
         this.songLength = getSrc.get_track_duration
         const newAudioElement = this.createHowlInstance(this.currentSrc)
         this.currentAudioElement = newAudioElement
-        this.currentAudioElement.play();        
-        this.currentAudioElementPlaying = true;
+        // if the song was playing, then play, else reset song and pause
+        if (this.currentAudioElementPlaying === true) {
+          this.currentAudioElement.play()
+        }
+        else {
+          this.progress = 0
+          this.updateSlideBarBackground()
+          this.currentAudioElement.pause()
+          this.currentAudioElementPlaying = false;
+        }        
       }
     },
     // THIS WORKS SKIP TO PREVIOUS TRACK
     skipPrev() {
+
+      // get seconds from playback
+      const [minutes, seconds] = this.songProgress.split(":");
+      const secondsInt = parseFloat(seconds)
+
+      // if progress is 1.5 seconds or more, replay song
+      if (secondsInt >= 1) {
+        this.currentAudioElement.stop();  
+        this.progress = 0;
+        this.updateSlideBarBackground()
+        this.currentAudioElement.currentTime = 0; 
+
+        // if the song was playing, then play, else reset song and pause
+        if (this.currentAudioElementPlaying === true) {
+          this.currentAudioElement.play()
+        }
+        else {
+          this.currentAudioElement.pause()
+        }
+        return
+      }
       var first_track = this.tracks[0].id
       var last_track = this.tracks[this.tracks.length - 1].id
 
@@ -966,8 +1022,15 @@ export default {
         this.songLength = getSrc.get_track_duration
         const newAudioElement = this.createHowlInstance(this.currentSrc)
         this.currentAudioElement = newAudioElement;
-        this.currentAudioElement.play();
-        this.currentAudioElementPlaying = true;
+        // if the song was playing, then play, else reset song and pause
+        if (this.currentAudioElementPlaying === true) {
+          this.currentAudioElement.play()
+        }
+        else {
+          this.currentAudioElement.pause()
+          this.currentAudioElementPlaying = false;
+        }   
+
         this.currentTrackPlaying = last_track
       }
       // THIS WORKS skip back to the previous track
@@ -976,7 +1039,6 @@ export default {
         if (this.currentTrackPlaying == first_track) {
           this.currentAudioElement.currentTime = 0;
           this.currentAudioElement.pause();        
-          this.currentAudioElementPlaying = false;
 
           var getSrc = this.tracks.find((t) => t.id === last_track)
           // set currentSrc to be either a sample or the full length song
@@ -985,8 +1047,14 @@ export default {
           this.songLength = getSrc.get_track_duration
           const newAudioElement = this.createHowlInstance(this.currentSrc)
           this.currentAudioElement = newAudioElement
-          this.currentAudioElement.play();        
-          this.currentAudioElementPlaying = true;
+          // if the song was playing, then play, else reset song and pause
+          if (this.currentAudioElementPlaying === true) {
+            this.currentAudioElement.play()
+          }
+          else {
+            this.currentAudioElement.pause()
+            this.currentAudioElementPlaying = false;
+          }   
           this.currentTrackPlaying = last_track
         }
 
@@ -994,7 +1062,7 @@ export default {
         else {
           this.currentAudioElement.currentTime = 0;
           this.currentAudioElement.pause();        
-          this.currentAudioElementPlaying = false;
+          // this.currentAudioElementPlaying = false;
 
 
           var val = this.currentTrackPlaying
@@ -1010,8 +1078,13 @@ export default {
           this.songLength = getSrc.get_track_duration
           const newAudioElement = this.createHowlInstance(this.currentSrc)
           this.currentAudioElement = newAudioElement;
-          newAudioElement.play();
-          this.currentAudioElementPlaying = true;
+          if (this.currentAudioElementPlaying === true) {
+            this.currentAudioElement.play()
+          }
+          else {
+            this.currentAudioElement.pause()
+            this.currentAudioElementPlaying = false;
+          }  
         }
       }
     },
@@ -1043,6 +1116,7 @@ export default {
             this.currentAudioElement.pause()
             this.currentAudioElementPlaying = false
             this.currentTrackPlaying = trackId
+            this.updateSlideBarBackground()
             return
           } 
           // play it
@@ -1100,6 +1174,7 @@ export default {
       // get the slider
       const slider = this.$refs.slider
       this.progress = 0
+      this.updateSlideBarBackground()
       slider.style.left = 0
       this.currentAudioElementPlaying = false;
     },
@@ -1114,6 +1189,7 @@ export default {
       const duration = this.currentAudioElement.duration() || 1
       if (!this.isDragging) {
         this.progress = ((this.currentAudioElement.seek() || 0) / duration) * 100
+        this.updateSlideBarBackground()
 
       }
       this.animationFrame = requestAnimationFrame(this.animateSlider)
@@ -1152,6 +1228,7 @@ export default {
       this.currentAudioElement.seek(seekTime)
       this.songProgress = this.formatTime(seekTime)
       this.progress = progress
+      this.updateSlideBarBackground()
     },
 
     dragHandler(event) {
@@ -1171,6 +1248,7 @@ export default {
       this.isDragging = true
       const slideBar = event.currentTarget
       this.slideBarRect = slideBar.getBoundingClientRect()
+      // this.width is a vue instance property to be used in other related drag methods
       this.width = this.slideBarRect.width
       if (!this.slideBarRect) {
         return;
@@ -1198,7 +1276,8 @@ export default {
         const duration = this.currentAudioElement.duration()
         const dragTime = this.formatTime((progress / 100) * duration)
         this.songProgress = dragTime
-        this.progress = progress      
+        this.progress = progress
+        this.updateSlideBarBackground() 
       }
     },
     // when the user let's go of the slider, start playing from that position
@@ -1211,6 +1290,7 @@ export default {
       this.isDragging = false
       const duration = this.currentAudioElement.duration()
       const seekTime = (this.progress / 100) * duration
+      this.updateSlideBarBackground()
       this.currentAudioElement.seek(seekTime)
       // this.currentAudioElement.play()
       if (!this.currentAudioElement.playing()) {
