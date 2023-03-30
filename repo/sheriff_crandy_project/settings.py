@@ -73,6 +73,8 @@ INSTALLED_APPS = [
     'lctec_user',
     # order app
     'order_app',
+    # Django image processing
+    'imagekit',
 ]
 
 # frontend server. Change to live server address for production
