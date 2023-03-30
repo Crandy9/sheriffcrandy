@@ -48,23 +48,23 @@
           class="navbar-end" 
           v-bind:class="{'is-active':hamburgerClicked}">
           <!-- navbar items -->
-          <a href="/" class="navbar-item">{{$t('headerfooter.head.home')}}</a>
-          <a href="/music" class="navbar-item">{{$t('headerfooter.head.music')}}</a>
-          <a href="/flps" class="navbar-item">{{$t('headerfooter.head.flps')}}</a>
-          <a href="/tools" class="navbar-item">{{$t('headerfooter.head.tools')}}</a>
-          <a href="/bio" class="navbar-item">{{$t('headerfooter.head.bio')}}</a>
-          <a href="/contact" class="navbar-item">{{$t('headerfooter.head.contact')}}</a>
+          <router-link @click="hamburgerClicked = false" to="/" class="navbar-item">{{$t('headerfooter.head.home')}}</router-link>
+          <router-link @click="hamburgerClicked = false" to="/music" class="navbar-item">{{$t('headerfooter.head.music')}}</router-link>
+          <router-link @click="hamburgerClicked = false" to="/flps" class="navbar-item">{{$t('headerfooter.head.flps')}}</router-link>
+          <router-link @click="hamburgerClicked = false" to="/tools" class="navbar-item">{{$t('headerfooter.head.tools')}}</router-link>
+          <router-link @click="hamburgerClicked = false" to="/bio" class="navbar-item">{{$t('headerfooter.head.bio')}}</router-link>
+          <router-link @click="hamburgerClicked = false" to="/contact" class="navbar-item">{{$t('headerfooter.head.contact')}}</router-link>
           <!-- show my account link if user is authenticated -->
-          <a v-if="$store.state.isAuthenticated" href="/myaccount" class="navbar-item">{{$t('headerfooter.head.myaccount')}}</a>
+          <router-link @click="hamburgerClicked = false" to="/myaccount" v-if="$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.myaccount')}}</router-link>
           <!-- check if user is logged in or not -->
-          <a v-if="$store.state.isAuthenticated" href="/logout" class="navbar-item">{{$t('headerfooter.head.logout')}}</a>
-          <a v-if="!$store.state.isAuthenticated" href="/login" class="navbar-item">{{$t('headerfooter.head.login')}}</a>
-          <a v-if="!$store.state.isAuthenticated" href="/signup" class="navbar-item">{{$t('headerfooter.head.signup')}}</a>
-          <a href="/cart" class="navbar-item">
+          <router-link @click="hamburgerClicked = false" to="/logout" v-if="$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.logout')}}</router-link>
+          <router-link @click="hamburgerClicked = false" to="/login" v-if="!$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.login')}}</router-link>
+          <router-link @click="hamburgerClicked = false" to="/signup" v-if="!$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.signup')}}</router-link>
+          <router-link @click="hamburgerClicked = false" to="cart" class="navbar-item">
               <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
               <!-- cart item count -->
               <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
-          </a>
+          </router-link>
         </div>
         <!-- under here I want a horizontal list of SNS icons -->
         <div v-if="hamburgerClicked" class="navbar-sns-icons"
