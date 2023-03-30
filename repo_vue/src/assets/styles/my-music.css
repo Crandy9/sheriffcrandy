@@ -35,21 +35,17 @@
 /* for mobile */
 @media screen and (max-width: 1023px) {
 
-    .music-title {
-        font-size: 24px !important;
+    .track-cover-art-div {
+        height: 35vh !important; /* Change the height to a smaller percentage value */
     }
 
-    img.cover-art {
-        min-height: 14rem !important;
-        max-height: 14rem !important;
-        max-width: 14rem !important;
-        display: block;
-        -moz-transition: all .15s ease-in;
-        -o-transition: all .15s ease-in;
-        -webkit-transition: all .15s ease-in;
-        transition: all .15s ease-in;
-        border-radius: 8%;
-        box-shadow: 0 0px 40px rgba(255, 0, 0, 0.4);
+    .music-title {
+        font-size: 24px !important;
+        font-weight: bold;
+    }
+    .track-title-img {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
     }
 
     /* PLAYER CONTROLS */
@@ -82,30 +78,18 @@
     .fa-play, .fa-pause {
         font-size: 22px !important;
     }
-    /* SLIDE BAR AND SLIDER */
-    .slider-container {
-        position: relative;
-        justify-content: center;
-        align-items: center;  
-      }
-    .slide-bar {
-        margin-bottom: 0rem !important;
-        margin-left: 1rem !important;
-        margin-right: 1rem !important;
-    }
 
-    .slider {
-        margin-left: 0.5rem !important;
+    /* SLIDER */
+    .slide-bar {
         position: relative;
-        top: -0.3rem;
-        width: 13px;
-        height: 13px;
-        border-radius: 50%;
-        background-color: rgba(0, 238, 255);
+        display: flex;
+        height: 4px;
+        border-radius: 4px;
+        background-color: #ffffff;
         cursor: pointer;
-        /* transform: translateX(-50%); */
-        transform: translateX(0);
-        transition: transform 0.3s linear; 
+        margin-left: 1rem;
+        margin-right: 1rem;
+        margin-bottom: 0.5rem !important;
     }
 
     /* TRACK TIME DISPLAYS */
@@ -117,7 +101,6 @@
 
     /* start/end time */
     .start-time, .end-time {
-        padding-top: 0.5rem;
         padding-right: 1rem;
         padding-left: 1rem;
         color: rgb(238, 234, 234);
@@ -136,57 +119,22 @@
 
 
 /* cover art positioning */
-.track-img {
-    padding-top: 1.5rem;
+
+
+.track-cover-art-div {
     display: flex; 
     justify-content: center; 
     align-items: center; 
-}
-
-/* track cover art */
-img.cover-art {
-    min-height: 18rem;
-    max-height: 18rem;
-    display: block;
-    -moz-transition: all .15s ease-in;
-    -o-transition: all .15s ease-in;
-    -webkit-transition: all .15s ease-in;
+    background: no-repeat center/contain;
+    height: 50vh; /* Change the height to a percentage value */
+    width: 100%; 
     transition: all .15s ease-in;
-    border-radius: 8%;
-    box-shadow: 0 0px 40px rgba(255, 0, 0, 0.4);
+    animation: fadeIn 0.5s ease-in;
 }
 
-/* fade cover image in */
-.cover-art {
-    animation: fadeIn ease 1s;
-    -webkit-animation: fadeIn ease 1s;
-    -moz-animation: fadeIn ease 1s;
-    -o-animation: fadeIn ease 1s;
-    -ms-animation: fadeIn ease 1s;
-  }
 @keyframes fadeIn {
-    0% {opacity:0;}
-    100% {opacity:1;}
-}
-
-@-moz-keyframes fadeIn {
-    0% {opacity:0;}
-    100% {opacity:1;}
-}
-
-@-webkit-keyframes fadeIn {
-    0% {opacity:0;}
-    100% {opacity:1;}
-}
-
-@-o-keyframes fadeIn {
-    0% {opacity:0;}
-    100% {opacity:1;}
-}
-
-@-ms-keyframes fadeIn {
-    0% {opacity:0;}
-    100% {opacity:1;}
+    0% { opacity:0; }
+    100% { opacity:1; }
 }
 
 /* track title below image */
@@ -263,6 +211,34 @@ img.cover-art {
     align-items: center;  
   }
   
+ 
+/* SLIDE BAR AND SLIDER */
+.slide-bar {
+    position: relative;
+    display: flex;
+    height: 4px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    cursor: pointer;
+    margin-bottom: 2rem;
+}
+
+.slider {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: rgba(0, 238, 255);
+    cursor: pointer;
+    transition: transform 0.3s linear; 
+}
+
+  
+
+
 /* .start-time {
     left: 0;
     top: 0;  
@@ -272,33 +248,6 @@ img.cover-art {
     right: 0;
     top: 0;  
 } */
- 
-/* SLIDE BAR AND SLIDER */
-.slide-bar {
-    position: relative;
-    display: flex;
-    height: 4px;
-    border-radius: 4px;
-    /* slide bar color */
-    background-color: #ffffff;
-    cursor: pointer;
-    margin-bottom: 2rem;
-    margin-left: 5rem;
-    margin-right: 5rem;
-}
-
-.slider {
-    position: relative;
-    top: -0.3rem;
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background-color: rgba(0, 238, 255);
-    cursor: pointer;
-    /* transform: translateX(-50%); */
-    transform: translateX(0);
-    transition: transform 0.3s linear; 
-}
 
 /* change color on hover */
 @media screen and (min-width: 1024px) {

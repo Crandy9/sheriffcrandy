@@ -1,4 +1,6 @@
 import { createStore } from 'vuex'
+// import howler
+import { Howl, Howler } from 'howler';
 
 // cart implementation, authentication, etc.
 // 
@@ -151,13 +153,49 @@ export default createStore({
     freeDownload: '',
     freeDownloadId: '',
     downloadType: '',
+    // MUSIC PLAYER STATES
+    // the current track's html audio element playing
+    currentAudioElement: null,
+    // id of the current track playing
+    currentAudioElementPlaying: false,
+    // used as a determiner for dragging the slider
+    isDragging: false,
+    // smooth slider animation
+    animationFrame: null,
+    // should hold the song's length in minute:seconds 00:00
+    songLength: '- -',
+    songProgress: '0:00',
+    // percentage used to animate the slider along the slide bar
+    progress: 0,
+    // holds duration in 
+    // duration: 51000,
+    // the audio source of the track used by Howler.js
+    currentSrc: '',
+    // needed to prevent errors when slider is clicked before song starts playing
+    slideBarRect: null,
+    // timer that updates the songprogress every second
+    songTimer: '',
+    // repeat song
+    repeat: false,
+    // shuffle playlist
+    shuffle: false,
+    // used to persist the slidebar color
+    slideBarBackground: '',
+    // currentTrackPlaying brought in state to persist
+    currentTrackPlaying: 0,
+
+
   },
   getters: {
     getLanguage: (state) => state.language
   },
   // synchronous functions; change states
   mutations: {
-
+    
+    // FOR MUSIC PLAYER
+    setSlideBarBackground(state, background) {
+      state.slideBarBackground = background;
+    }, 
     // called on app load/page refresh in App.vue entry point
     initializeStore(state) {
 

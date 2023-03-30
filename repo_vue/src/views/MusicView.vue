@@ -12,21 +12,24 @@
       </div>
       <div>
         <!-- show this if no songs have been playing -->
-        <h3 v-if="currentTrackPlaying == 0" style="padding: 1rem; font-size: 16px !important;" class="is-size-5 has-text-warning">
+        <h3 v-if="$store.state.currentTrackPlaying == 0" style="padding: 1rem; font-size: 16px !important;" class="is-size-5 has-text-warning">
           {{$t('musicview.clicktohearsample')}}
         </h3>
       </div>
     </section>
     <section class="music-player-section">
+      <!-- need to wrap the v-for div in a parent div to allow scrolling on div -->
       <!-- show track img for current track -->
       <!-- or leave title and track img up after song stops playing -->
       <!-- v-bind:key is used to optimize rendering -->
-      <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-        <div v-if="currentTrackPlaying == trackDisplay.id">
-          <figure  class="track-img">
-            <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
-          </figure> 
-          <h3 class="track-title-img">
+      <div class="parent-element" style="overflow: auto;">
+        <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
+          <div class="track-cover-art-div" v-if="$store.state.currentTrackPlaying == trackDisplay.id" :style="{ backgroundImage: 'url(' + trackDisplay.get_cover_art + ')' }"
+            @contextmenu.prevent
+            @touchmove.prevent
+            style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">        
+          </div>
+          <h3 v-if="$store.state.currentTrackPlaying == trackDisplay.id" class="track-title-img">
             Sheriff Crandy - {{ trackDisplay.title }}
           </h3>
         </div>
@@ -40,12 +43,12 @@
             <i class="fa fa-fast-backward"></i>
           </span>
           <!-- play controller showing when paused -->
-          <span class="play-controller" v-show="!currentAudioElementPlaying" 
+          <span class="play-controller" v-show="!$store.state.currentAudioElementPlaying" 
           @click="playFirstTrack()">
             <i class="fas fa-play"></i>          
           </span>
           <!-- pause controller shown when playing -->
-          <span class="pause-controller" v-show="currentAudioElementPlaying" @click="playFirstTrack()">
+          <span class="pause-controller" v-show="$store.state.currentAudioElementPlaying" @click="playFirstTrack()">
             <i class="fas fa-pause"></i>          
           </span>
           <!-- skip forward -->
@@ -65,14 +68,14 @@
           @touchstart="startDrag" 
           @touchmove="drag" 
           @touchend="endDrag">
-          <div class="slider" ref="slider" :style="{ left: progress - 2 + '%' }"></div>
+          <div class="slider" ref="slider" :style="{ left: $store.state.progress + '%'}"></div>
         </div>
         <div class="track-time-displays">
           <span class="start-time">
-            {{ songProgress }}
+            {{ $store.state.songProgress }}
           </span>
-          <span v-show="songLength" class="end-time">
-            {{songLength}}
+          <span v-show="$store.state.songLength" class="end-time">
+            {{$store.state.songLength}}
           </span>
         </div>
       </div>
@@ -83,7 +86,7 @@
         <div v-for="track, index in tracks" v-bind:key="track.id" class="media-player">
           <li @click="setPlayOrPause(track.id)" class="track-list-item" v-bind:id="track.id">
             <!-- show play button on all tracks on hover -->
-            <a class="play-button" href="#" v-if="currentTrackPlaying != track.id"> 
+            <a class="play-button" href="#" v-if="$store.state.currentTrackPlaying != track.id"> 
               <span class="play-icon-span">
                 <svg 
                   class="play-icon-svg" 
@@ -96,7 +99,7 @@
             </a>
             <!-- show play button on paused track -->
             <a class="play-button-on-pause" href="#"
-              v-if="currentTrackPlaying == track.id && currentAudioElementPlaying == false">
+              v-if="$store.state.currentTrackPlaying == track.id && $store.state.currentAudioElementPlaying == false">
               <span class="play-icon-span">
                 <svg 
                   class="play-icon-svg" 
@@ -108,7 +111,7 @@
               </span>
             </a>
             <!-- show pause button while playing -->
-            <a class="pause-button" href="#" v-if="currentTrackPlaying == track.id && currentAudioElementPlaying == true">
+            <a class="pause-button" href="#" v-if="$store.state.currentTrackPlaying == track.id && $store.state.currentAudioElementPlaying == true">
               <!-- show pause button only on track that is currently playing -->
               <span class="pause-icon-span" style="display: block !important">
                 <svg 
@@ -123,7 +126,7 @@
               </span>
             </a>
             <!-- hide track number when track is playing -->
-            <span v-if="currentTrackPlaying != track.id" class="track-number">{{++index}}</span>
+            <span v-if="$store.state.currentTrackPlaying != track.id" class="track-number">{{++index}}</span>
             <!-- track title -->
             <div class="track-title">
               <span class="track-title-inner">
@@ -483,33 +486,6 @@ export default {
   // data() is a new obj returning tracks list used in for loop above
   data() {
     return {
-      // the current track's html audio element playing
-      currentAudioElement: null,
-      // id of the current track playing
-      currentAudioElementPlaying: false,
-      // used as a determiner for dragging the slider
-      isDragging: false,
-      // smooth slider animation
-      animationFrame: null,
-      // should hold the song's length in minute:seconds 00:00
-      songLength: '- -',
-      songProgress: '0:00',
-      // percentage used to animate the slider along the slide bar
-      progress: 0,
-      // holds duration in 
-      duration: 51000,
-      // the audio source of the track used by Howler.js
-      currentSrc: '',
-      // needed to prevent errors when slider is clicked before song starts playing
-      slideBarRect: null,
-      // timer that updates the songprogress every second
-      songTimer: '',
-      // repeat song
-      repeat: false,
-      // shuffle playlist
-      shuffle: false,
-
-
       paymentProcessing: false,
       purchaseButtonClicked: false,
       show: false,
@@ -552,7 +528,6 @@ export default {
       isUsd: true,
     // number the tracks for UI/UX media player
     trackNumber: 0,
-    currentTrackPlaying: 0,
     lastPlayedTrack: 0,
     }
   },
@@ -846,10 +821,15 @@ export default {
     // update slidebar color when slider moves along slidebar
     updateSlideBarBackground() {
       const slideBar = document.getElementById('slideBar');
-      const gradient = `linear-gradient(to right, #00EEFF ${this.progress}%, #ffffff ${this.progress}%)`;
+      if (!slideBar) {
+        return;
+      }
+
+      const gradient = `linear-gradient(to right, #00EEFF ${this.$store.state.progress}%, #ffffff ${this.$store.state.progress}%)`;
       slideBar.style.background = gradient;
+      this.$store.commit('setSlideBarBackground', gradient);
     },
-    // timer to display track playback time
+      // timer to display track playback time
     formatTime(secs) {
       let minutes = Math.floor(secs / 60) % 60;
       let seconds = Math.floor(secs % 60);
@@ -862,31 +842,31 @@ export default {
       return new Howl({
             src: [src],
             onplay: () => {
-              this.animationFrame = requestAnimationFrame(this.animateSlider)
+              this.$store.state.animationFrame = requestAnimationFrame(this.animateSlider)
                 // set the timer
-                this.songTimer = setInterval(() => {
+                this.$store.state.songTimer = setInterval(() => {
                 // Update the song progress every second
-                let seekTime = this.currentAudioElement.seek();
-                this.songProgress = this.formatTime(seekTime);
+                let seekTime = this.$store.state.currentAudioElement.seek();
+                this.$store.state.songProgress = this.formatTime(seekTime);
               }, 1000);
             },
             onpause: () => {
-              cancelAnimationFrame(this.animationFrame)
+              cancelAnimationFrame(this.$store.state.animationFrame)
             },
             onstop: () => {
-              cancelAnimationFrame(this.animationFrame)
+              cancelAnimationFrame(this.$store.state.animationFrame)
               // Stop the timer
-              clearInterval(this.songTimer);
-              this.songTimer = null;
+              clearInterval(this.$store.state.songTimer);
+              this.$store.state.songTimer = null;
               // Reset the song progress to 0:00
-              this.songProgress = '0:00';
+              this.$store.state.songProgress = '0:00';
             },
             // when the song finishes playing go to next song
             onend: () => {
-              if (this.repeat === true) {
+              if (this.$store.state.repeat === true) {
                 // repeat the same song
               }
-              else if (this.shuffle === true) {
+              else if (this.$store.state.shuffle === true) {
                 // play a random song in the playlist
               }
               // else play the next song in the playlist
@@ -906,83 +886,82 @@ export default {
     skipNext() {
       var last_track = this.tracks[this.tracks.length - 1].id
       // THIS WORKS if no songs have been played, play first track
-      if (!this.currentAudioElement) {
-        this.currentTrackPlaying = this.tracks[0].id
+      if (!this.$store.state.currentAudioElement) {
+        this.$store.state.currentTrackPlaying = this.tracks[0].id
 
-        var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
+        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
         // set currentSrc to be either a sample or the full length song
-        this.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
         // set song length
-        this.songLength = getSrc.get_track_duration
+        this.$store.state.songLength = getSrc.get_track_duration
 
-        const newAudioElement = this.createHowlInstance(this.currentSrc)
+        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
   
-        this.currentAudioElement = newAudioElement
+        this.$store.state.currentAudioElement = newAudioElement
         // if the song was playing, then play, else reset song and pause
-        if (this.currentAudioElementPlaying === true) {
-          this.currentAudioElement.play()
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
         }
         else {
-          this.currentAudioElement.stop()
+          this.$store.state.currentAudioElement.stop()
         }
 
       }
       // THIS WORKS else if this is the last track in the playlist, play the first track
-      else if (this.currentTrackPlaying == last_track) {
-        this.currentTrackPlaying = this.tracks[0].id
-        this.currentAudioElement.currentTime = 0;
-        this.currentAudioElement.pause();        
+      else if (this.$store.state.currentTrackPlaying == last_track) {
+        this.$store.state.currentTrackPlaying = this.tracks[0].id
+        this.$store.state.currentAudioElement.currentTime = 0;
+        this.$store.state.currentAudioElement.pause();        
 
-        var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
+        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
         // set currentSrc to be either a sample or the full length song
-        this.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
         // set song length
-        this.songLength = getSrc.get_track_duration        
-        const newAudioElement = this.createHowlInstance(this.currentSrc)
-        this.currentAudioElement = newAudioElement
+        this.$store.state.songLength = getSrc.get_track_duration        
+        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+        this.$store.state.currentAudioElement = newAudioElement
 
         // if the song was playing, then play, else reset song and pause
-        if (this.currentAudioElementPlaying === true) {
-          this.currentAudioElement.play()
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
         }
         else {
-          this.progress = 0
+          this.$store.state.progress = 0
           this.updateSlideBarBackground()
-          this.currentAudioElement.pause()
-          this.currentAudioElementPlaying = false;
+          this.$store.state.currentAudioElement.pause()
+          this.$store.state.currentAudioElementPlaying = false;
         }
       }
 
       // THIS WORKS if the currently playing song is not the last track
       else {
         // local var containing the current track id needed for function below 
-        var val = this.currentTrackPlaying
+        var val = this.$store.state.currentTrackPlaying
         // get the JSON object index of the current song in the playlist
         var index = this.tracks.findIndex(function(item){
           return item.id === val;
         });
         // get the id of the next track in the playlist
-        this.currentTrackPlaying = this.tracks[index + 1].id
-        this.currentAudioElement.currentTime = 0;
-        this.currentAudioElement.pause();        
-        // this.currentAudioElementPlaying = false;
+        this.$store.state.currentTrackPlaying = this.tracks[index + 1].id
+        this.$store.state.currentAudioElement.currentTime = 0;
+        this.$store.state.currentAudioElement.pause();        
 
-        var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
+        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
         // set currentSrc to be either a sample or the full length song
-        this.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
         // set song length
-        this.songLength = getSrc.get_track_duration
-        const newAudioElement = this.createHowlInstance(this.currentSrc)
-        this.currentAudioElement = newAudioElement
+        this.$store.state.songLength = getSrc.get_track_duration
+        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+        this.$store.state.currentAudioElement = newAudioElement
         // if the song was playing, then play, else reset song and pause
-        if (this.currentAudioElementPlaying === true) {
-          this.currentAudioElement.play()
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
         }
         else {
-          this.progress = 0
+          this.$store.state.progress = 0
           this.updateSlideBarBackground()
-          this.currentAudioElement.pause()
-          this.currentAudioElementPlaying = false;
+          this.$store.state.currentAudioElement.pause()
+          this.$store.state.currentAudioElementPlaying = false;
         }        
       }
     },
@@ -990,22 +969,22 @@ export default {
     skipPrev() {
 
       // get seconds from playback
-      const [minutes, seconds] = this.songProgress.split(":");
+      const [minutes, seconds] = this.$store.state.songProgress.split(":");
       const secondsInt = parseFloat(seconds)
 
       // if progress is 1.5 seconds or more, replay song
       if (secondsInt >= 1) {
-        this.currentAudioElement.stop();  
-        this.progress = 0;
+        this.$store.state.currentAudioElement.stop();  
+        this.$store.state.progress = 0;
         this.updateSlideBarBackground()
-        this.currentAudioElement.currentTime = 0; 
+        this.$store.state.currentAudioElement.currentTime = 0; 
 
         // if the song was playing, then play, else reset song and pause
-        if (this.currentAudioElementPlaying === true) {
-          this.currentAudioElement.play()
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
         }
         else {
-          this.currentAudioElement.pause()
+          this.$store.state.currentAudioElement.pause()
         }
         return
       }
@@ -1014,76 +993,74 @@ export default {
 
 
       // THIS WORKS if no songs have been played, play the last track in the playlist
-      if (!this.currentAudioElement) {
+      if (!this.$store.state.currentAudioElement) {
         var getSrc = this.tracks.find((t) => t.id === last_track)
         // set currentSrc to be either a sample or the full length song
-        this.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
         // set song length
-        this.songLength = getSrc.get_track_duration
-        const newAudioElement = this.createHowlInstance(this.currentSrc)
-        this.currentAudioElement = newAudioElement;
+        this.$store.state.songLength = getSrc.get_track_duration
+        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+        this.$store.state.currentAudioElement = newAudioElement;
         // if the song was playing, then play, else reset song and pause
-        if (this.currentAudioElementPlaying === true) {
-          this.currentAudioElement.play()
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
         }
         else {
-          this.currentAudioElement.pause()
-          this.currentAudioElementPlaying = false;
+          this.$store.state.currentAudioElement.pause()
+          this.$store.state.currentAudioElementPlaying = false;
         }   
 
-        this.currentTrackPlaying = last_track
+        this.$store.state.currentTrackPlaying = last_track
       }
       // THIS WORKS skip back to the previous track
       else {
         // THIS WORKS if the current track playing is the first_track, play the last track
-        if (this.currentTrackPlaying == first_track) {
-          this.currentAudioElement.currentTime = 0;
-          this.currentAudioElement.pause();        
+        if (this.$store.state.currentTrackPlaying == first_track) {
+          this.$store.state.currentAudioElement.currentTime = 0;
+          this.$store.state.currentAudioElement.pause();        
 
           var getSrc = this.tracks.find((t) => t.id === last_track)
           // set currentSrc to be either a sample or the full length song
-          this.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
           // set song length
-          this.songLength = getSrc.get_track_duration
-          const newAudioElement = this.createHowlInstance(this.currentSrc)
-          this.currentAudioElement = newAudioElement
+          this.$store.state.songLength = getSrc.get_track_duration
+          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+          this.$store.state.currentAudioElement = newAudioElement
           // if the song was playing, then play, else reset song and pause
-          if (this.currentAudioElementPlaying === true) {
-            this.currentAudioElement.play()
+          if (this.$store.state.currentAudioElementPlaying === true) {
+            this.$store.state.currentAudioElement.play()
           }
           else {
-            this.currentAudioElement.pause()
-            this.currentAudioElementPlaying = false;
+            this.$store.state.currentAudioElement.pause()
+            this.$store.state.currentAudioElementPlaying = false;
           }   
-          this.currentTrackPlaying = last_track
+          this.$store.state.currentTrackPlaying = last_track
         }
 
         // THIS WORKS current track is not the first track
         else {
-          this.currentAudioElement.currentTime = 0;
-          this.currentAudioElement.pause();        
-          // this.currentAudioElementPlaying = false;
+          this.$store.state.currentAudioElement.currentTime = 0;
+          this.$store.state.currentAudioElement.pause();        
 
-
-          var val = this.currentTrackPlaying
+          var val = this.$store.state.currentTrackPlaying
           var index = this.tracks.findIndex(function(item){
             return item.id === val;
           });
-          this.currentTrackPlaying = this.tracks[index - 1].id
+          this.$store.state.currentTrackPlaying = this.tracks[index - 1].id
 
-          var getSrc = this.tracks.find((t) => t.id === this.currentTrackPlaying)
+          var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
           // set currentSrc to be either a sample or the full length song
-          this.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
           // set song length
-          this.songLength = getSrc.get_track_duration
-          const newAudioElement = this.createHowlInstance(this.currentSrc)
-          this.currentAudioElement = newAudioElement;
-          if (this.currentAudioElementPlaying === true) {
-            this.currentAudioElement.play()
+          this.$store.state.songLength = getSrc.get_track_duration
+          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+          this.$store.state.currentAudioElement = newAudioElement;
+          if (this.$store.state.currentAudioElementPlaying === true) {
+            this.$store.state.currentAudioElement.play()
           }
           else {
-            this.currentAudioElement.pause()
-            this.currentAudioElementPlaying = false;
+            this.$store.state.currentAudioElement.pause()
+            this.$store.state.currentAudioElementPlaying = false;
           }  
         }
       }
@@ -1094,44 +1071,44 @@ export default {
 
       var getSrc = this.tracks.find((t) => t.id === trackId)
       // set currentSrc to be either a sample or the full length song
-      this.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+      this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
       // set song length
       this.songLength = getSrc.get_track_duration
       // THIS WORKS create Howl object
-      const newAudioElement = this.createHowlInstance(this.currentSrc)
+      const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
       // THIS WORKS if no song has played yet, play the first one the user clicked 
-      if (!this.currentAudioElement) {
-        this.currentAudioElement = newAudioElement
-        this.currentAudioElement.play()
-        this.currentAudioElementPlaying = true
-        this.currentTrackPlaying = trackId
+      if (!this.$store.state.currentAudioElement) {
+        this.$store.state.currentAudioElement = newAudioElement
+        this.$store.state.currentAudioElement.play()
+        this.$store.state.currentAudioElementPlaying = true
+        this.$store.state.currentTrackPlaying = trackId
       } 
       
       // THIS WORKS this is not the first song played
       else {
         // THIS WORKS play/pause/resume same song
-        if (this.currentTrackPlaying == trackId) {
+        if (this.$store.state.currentTrackPlaying == trackId) {
           // pause it
-          if (this.currentAudioElement.playing()) {
-            this.currentAudioElement.pause()
-            this.currentAudioElementPlaying = false
-            this.currentTrackPlaying = trackId
+          if (this.$store.state.currentAudioElement.playing()) {
+            this.$store.state.currentAudioElement.pause()
+            this.$store.state.currentAudioElementPlaying = false
+            this.$store.state.$store.state.currentTrackPlaying = trackId
             this.updateSlideBarBackground()
             return
           } 
           // play it
           else {
-            this.currentAudioElement.play()
-            this.currentAudioElementPlaying = true
+            this.$store.state.currentAudioElement.play()
+            this.$store.state.currentAudioElementPlaying = true
           }
         }
         // THIS WORKS this is a different song was chosen. Stop current song, set new song, and play it
         else {
-          this.currentTrackPlaying = trackId
-          this.currentAudioElement.stop()
-          this.currentAudioElement = newAudioElement
-          this.currentAudioElement.play()
-          this.currentAudioElementPlaying = true
+          this.$store.state.currentTrackPlaying = trackId
+          this.$store.state.currentAudioElement.stop()
+          this.$store.state.currentAudioElement = newAudioElement
+          this.$store.state.currentAudioElement.play()
+          this.$store.state.currentAudioElementPlaying = true
         }
       }
     },
@@ -1140,32 +1117,33 @@ export default {
     playFirstTrack() {
 
       // THIS WORKS If audio is currently playing, pause it and show the play icon
-      if (this.currentAudioElementPlaying) {
-        this.currentAudioElement.pause();
-        this.currentAudioElementPlaying = false;
+      if (this.$store.state.currentAudioElementPlaying) {
+        this.$store.state.currentAudioElement.pause();
+        this.$store.state.currentAudioElementPlaying = false;
       }
       // THIS WORKS if audio is not currently playing
       else {
         // THIS WORKS if this is null, play the first song in the playlist
-        if (!this.currentAudioElement) {
+        if (!this.$store.state.currentAudioElement) {
 
           var getSrc = this.tracks.find((t) => t.id === this.tracks[0].id)
           // set currentSrc to be either a sample or the full length song
-          this.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
           // set song length
-          this.songLength = getSrc.get_track_duration
+          this.$store.state.songLength = getSrc.get_track_duration
           // howl instance
-          this.currentAudioElement = this.createHowlInstance(this.currentSrc)
-          this.currentAudioElement.play();
-          this.formatTime(this.currentAudioElement.seek())
-          this.currentTrackPlaying = this.tracks[0].id
+          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+          this.$store.state.currentAudioElement = newAudioElement
+          this.$store.state.currentAudioElement.play();
+          this.formatTime(this.$store.state.currentAudioElement.seek())
+          this.$store.state.currentTrackPlaying = this.tracks[0].id
 
         }
         // THIS WORKS else play/resume current song
         else {
-          this.currentAudioElement.play();
+          this.$store.state.currentAudioElement.play();
         }
-        this.currentAudioElementPlaying = true;
+        this.$store.state.currentAudioElementPlaying = true;
       }
     },
 
@@ -1173,26 +1151,26 @@ export default {
     songEnded() {
       // get the slider
       const slider = this.$refs.slider
-      this.progress = 0
+      this.$store.state.progress = 0
       this.updateSlideBarBackground()
       slider.style.left = 0
-      this.currentAudioElementPlaying = false;
+      this.$store.state.currentAudioElementPlaying = false;
     },
 
     // SLIDE BAR called by howl
     animateSlider() {
 
       // return if slider is animated without a song being set
-      if (!this.currentAudioElement.duration()) {
+      if (!this.$store.state.currentAudioElement.duration()) {
         return;
       }
-      const duration = this.currentAudioElement.duration() || 1
-      if (!this.isDragging) {
-        this.progress = ((this.currentAudioElement.seek() || 0) / duration) * 100
+      const duration = this.$store.state.currentAudioElement.duration() || 1
+      if (!this.$store.state.isDragging) {
+        this.$store.state.progress = ((this.$store.state.currentAudioElement.seek() || 0) / duration) * 100
         this.updateSlideBarBackground()
 
       }
-      this.animationFrame = requestAnimationFrame(this.animateSlider)
+      this.$store.state.animationFrame = requestAnimationFrame(this.animateSlider)
     },
 
     beforeDestroy() {
@@ -1206,51 +1184,51 @@ export default {
     // when clicking on the slidebar, jump the slider to the correct position
     jumpSlider(event) {
       // return if slider is animated without a song being set
-      if (!this.currentAudioElement || !this.currentAudioElement.duration()) {
+      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration()) {
         return;
       }
       // get the slidebar
       const slideBar = this.$refs.slideBar
       // get size of slidebar
-      this.slideBarRect = slideBar.getBoundingClientRect()
-      if (!this.slideBarRect) {
+      this.$store.state.slideBarRect = slideBar.getBoundingClientRect()
+      if (!this.$store.state.slideBarRect) {
         return;
       }
       // get the x-coordinate position where the user clicked
-      const x = event.clientX - this.slideBarRect.left
+      const x = event.clientX - this.$store.state.slideBarRect.left
       // calculate the percentage of the song played according to where the user clicked on the slidebar
       // x / slideBarRect.width gives a decimal value between 0 (0%) and 1 (100%)
       // Math.min ensures that the percentage is never greater than 100
       // Math.max ensures that the value is never less than 0 
-      const progress = Math.min(Math.max(x / this.slideBarRect.width * 100, 0), 100)
-      const duration = this.currentAudioElement.duration()
+      const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+      const duration = this.$store.state.currentAudioElement.duration()
       const seekTime = (progress / 100) * duration
-      this.currentAudioElement.seek(seekTime)
-      this.songProgress = this.formatTime(seekTime)
-      this.progress = progress
+      this.$store.state.currentAudioElement.seek(seekTime)
+      this.$store.state.songProgress = this.formatTime(seekTime)
+      this.$store.state.progress = progress
       this.updateSlideBarBackground()
     },
 
     dragHandler(event) {
-      if (!this.currentAudioElement || !this.slideBarRect) {
+      if (!this.currentAudioElement || !this.$store.state.slideBarRect) {
         return;
       }
       // if the slider is sliding while a song is not being played
-      if (this.isDragging) {
+      if (this.$store.state.isDragging) {
         const slideBar = this.$refs.slideBar
-        this.slideBarRect = slideBar.getBoundingClientRect()
+        this.$store.state.slideBarRect = slideBar.getBoundingClientRect()
         this.drag(event);
       }    
     },
     
     // called by the slidebar div
     startDrag(event) {
-      this.isDragging = true
+      this.$store.state.isDragging = true
       const slideBar = event.currentTarget
-      this.slideBarRect = slideBar.getBoundingClientRect()
+      this.$store.state.slideBarRect = slideBar.getBoundingClientRect()
       // this.width is a vue instance property to be used in other related drag methods
-      this.width = this.slideBarRect.width
-      if (!this.slideBarRect) {
+      this.width = this.$store.state.slideBarRect.width
+      if (!this.$store.state.slideBarRect) {
         return;
       }
       if (event.type === 'touchstart') {
@@ -1265,35 +1243,35 @@ export default {
     // set the new slider position as the user is sliding it left or right
     drag(event) {
       // if the slider is sliding while a song is not being played
-      if (!this.currentAudioElement || !this.slideBarRect) {
-        this.isDragging = false
+      if (!this.$store.state.currentAudioElement || !this.$store.state.slideBarRect) {
+        this.$store.state.isDragging = false
         return;
       }
-      if (this.isDragging) {
+      if (this.$store.state.isDragging) {
         event.preventDefault();
-        const x = (event.type === 'touchmove' ? event.touches[0].clientX : event.clientX) - this.slideBarRect.left
+        const x = (event.type === 'touchmove' ? event.touches[0].clientX : event.clientX) - this.$store.state.slideBarRect.left
         const progress = Math.min(Math.max(x / this.width * 100, 0), 100)
-        const duration = this.currentAudioElement.duration()
+        const duration = this.$store.state.currentAudioElement.duration()
         const dragTime = this.formatTime((progress / 100) * duration)
-        this.songProgress = dragTime
-        this.progress = progress
+        this.$store.state.songProgress = dragTime
+        this.$store.state.progress = progress
         this.updateSlideBarBackground() 
       }
     },
     // when the user let's go of the slider, start playing from that position
     endDrag() {
       // return if slider is animated without a song being set
-      if (!this.currentAudioElement || !this.currentAudioElement.duration()) {
-        this.isDragging = false
+      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration()) {
+        this.$store.state.isDragging = false
         return;
       }
-      this.isDragging = false
-      const duration = this.currentAudioElement.duration()
-      const seekTime = (this.progress / 100) * duration
+      this.$store.state.isDragging = false
+      const duration = this.$store.state.currentAudioElement.duration()
+      const seekTime = (this.$store.state.progress / 100) * duration
       this.updateSlideBarBackground()
-      this.currentAudioElement.seek(seekTime)
+      this.$store.state.currentAudioElement.seek(seekTime)
       // this.currentAudioElement.play()
-      if (!this.currentAudioElement.playing()) {
+      if (!this.$store.state.currentAudioElement.playing()) {
         document.removeEventListener("touchmove", this.dragHandler)
         document.removeEventListener("touchend", this.endDrag)
         document.removeEventListener("mousemove", this.dragHandler)
