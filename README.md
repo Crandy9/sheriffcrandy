@@ -75,6 +75,7 @@ pip install social-auth-app-django (for 3rd party auth Facebook, Google, LinkedI
 pip install django-cors-headers (provides security between backend and API)
 pip install pip install djoser (assists with user auth)
 pip install pillow (image processing)
+pip install django-imagekit (django image processing)
 pip install pydub (audio file processing)
 pip install django-environ (for environment variables)
 pip install stripe (payment processor for handling secure payments)
@@ -128,8 +129,8 @@ npm i bulma-modal-fx
 npm install animate.css
 - install Howler js for audio library
 npm install howler
-- install i18n for internationalization (translating website)
-npm install vue-i18n@next
+- install swiper js for carousel
+npm i swiper
 - install vue-cli-plugin-i18n for internationalization (if you have Vue Cli 3.x) https://kazupon.github.io/vue-i18n
 vue add i18n
 - will install the following:
