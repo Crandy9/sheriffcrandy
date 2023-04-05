@@ -24,6 +24,7 @@
       <!-- v-bind:key is used to optimize rendering -->
       <div class="parent-element" style="overflow: auto;">
         <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
+          <!-- prevents users from right clicking bg img and stealing it -->
           <div class="track-cover-art-div" v-if="$store.state.currentTrackPlaying == trackDisplay.id" :style="{ backgroundImage: 'url(' + trackDisplay.get_cover_art + ')' }"
             @contextmenu.prevent
             @touchmove.prevent
@@ -60,14 +61,13 @@
       </div>
       <div class="slider-container">
         <!-- slide bar -->
-        <div class="slide-bar" ref="slideBar" id="slideBar"
-          @click="jumpSlider" 
-          @mousedown="startDrag" 
-          @mousemove="drag" 
-          @mouseup="endDrag"
-          @touchstart="startDrag" 
-          @touchmove="drag" 
-          @touchend="endDrag">
+        <div class="slide-bar" ref="slideBar" id="slideBar" 
+          @mousedown="sliderMoveDesktop" 
+          @mousemove="dragDesktop" 
+          @mouseup="endDragDesktop"
+          @touchstart="sliderMoveMobile" 
+          @touchmove="dragMobile" 
+          @touchend="endDragMobile">
           <div class="slider" ref="slider" :style="{ left: $store.state.progress + '%'}"></div>
         </div>
         <div class="track-time-displays">
@@ -480,6 +480,7 @@ import axios from 'axios'
 import { toast } from 'bulma-toast'
 // import howler
 import { Howl, Howler } from 'howler';
+import { storeKey } from 'vuex';
 
 export default {
   name: 'Music',
@@ -545,34 +546,605 @@ export default {
     this.card.mount('#card-element')
   },
 
-    computed: {
+  computed: {
 
-      calculateUsdTaxes() {
-        var taxAmount = (parseFloat(this.usdTaxRate * this.usdPrice))
-        this.usdTax = taxAmount.toFixed(2);
-        return this.usdTax
-      },
-      calculateUsdSubtotal() {
-        // prepending unary operator to these values to treat them as numbers
-        // instead of strings for tax calc
-        this.usdSubTotal = parseFloat(((this.usdPrice) + (+this.usdTax))).toFixed(2);
-        return this.usdSubTotal;
-      },
-
-      calculateJpyTaxes() {
-        var taxAmount = (parseFloat(this.jpyTaxRate * this.jpyPrice))
-        this.jpyTax = taxAmount;
-        return this.jpyTax
-      },
-      calculateJpySubtotal() {
-        this.jpySubtotal = parseFloat((this.jpyPrice + this.jpyTax));
-        return this.jpySubtotal
-      },
-
+    calculateUsdTaxes() {
+      var taxAmount = (parseFloat(this.usdTaxRate * this.usdPrice))
+      this.usdTax = taxAmount.toFixed(2);
+      return this.usdTax
     },
+    calculateUsdSubtotal() {
+      // prepending unary operator to these values to treat them as numbers
+      // instead of strings for tax calc
+      this.usdSubTotal = parseFloat(((this.usdPrice) + (+this.usdTax))).toFixed(2);
+      return this.usdSubTotal;
+    },
+
+    calculateJpyTaxes() {
+      var taxAmount = (parseFloat(this.jpyTaxRate * this.jpyPrice))
+      this.jpyTax = taxAmount;
+      return this.jpyTax
+    },
+    calculateJpySubtotal() {
+      this.jpySubtotal = parseFloat((this.jpyPrice + this.jpyTax));
+      return this.jpySubtotal
+    },
+
+  },
 
   // functions defined here
   methods: {
+
+    // NEW MUSIC PLAYER IMPLEMENTATION
+    // MOUSE CONTROLS
+    sliderMoveDesktop(event) {
+      
+      this.$store.state.slideBar = event.currentTarget
+      this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+      const x = event.clientX - this.$store.state.slideBarRect.left
+      this.$store.state.longClickTimeout = setTimeout(() => {
+        console.log('long click')
+        this.$store.state.isMouseDown = true
+        if (!this.$store.state.slideBarRect) {
+          return;
+        }
+        this.$store.state.isDragging = true
+        document.addEventListener("mousemove", this.dragHandlerDesktop.bind(this));
+        document.addEventListener("mouseup", this.endDragDesktop.bind(this))
+      }, 200);
+
+      if (this.$store.state.longClickTimeout) {
+        console.log('single click')
+        if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+          return;
+        }
+        this.$store.state.slideBar = this.$refs.slideBar
+        const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+        const duration = this.$store.state.currentAudioElement.duration()
+        const seekTime = (progress / 100) * duration
+        this.$store.state.currentAudioElement.seek(seekTime)
+        this.$store.state.songProgress = this.formatTime(seekTime)
+        this.$store.state.progress = progress
+        this.updateSlideBarBackground()
+      }
+      clearTimeout(this.$store.state.longClickTimeout);
+      this.$store.state.longClickTimeout = null;
+    },
+
+    dragHandlerDesktop(event) {
+      console.log('dragHandlerDesktop called')
+      if (!this.currentAudioElement || !this.$store.state.slideBarRect) {
+        return;
+      }
+      
+      if (this.$store.state.isDragging) {
+        this.$store.state.slideBar = this.$refs.slideBar
+        this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+        this.dragDesktop(event);
+      }    
+    },
+    dragDesktop(event) {
+      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || this.$store.state.isMouseDown === false) {
+        return;
+      }
+      if (this.$store.state.isDragging) {
+        console.log(event.type)
+        event.preventDefault();
+        const x = event.clientX - this.$store.state.slideBarRect.left
+        const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+        const duration = this.$store.state.currentAudioElement.duration()
+        const dragTime = this.formatTime((progress / 100) * duration)
+        this.$store.state.songProgress = dragTime
+        this.$store.state.progress = progress
+        this.updateSlideBarBackground() 
+      }
+    },
+    endDragDesktop() {
+      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration()) {
+        this.$store.state.isDragging = false
+        return;
+      }
+      this.$store.state.isDragging = false
+      const duration = this.$store.state.currentAudioElement.duration()
+      const seekTime = (this.$store.state.progress / 100) * duration
+      this.updateSlideBarBackground()
+      this.$store.state.currentAudioElement.seek(seekTime)
+      if (!this.$store.state.currentAudioElement.playing()) {
+        document.removeEventListener("mousemove", this.dragHandlerDesktop)
+        document.removeEventListener("mouseup", this.endDragDesktop)
+        this.$store.state.isMouseDown = false
+      }
+    },
+    // MOBILE CONTROLS
+    // user touched slidebar, determine if it is a single tap or a long press
+    sliderMoveMobile(event) {
+      
+      // set the states regardless of timer
+      this.$store.state.slideBar = event.currentTarget
+      this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+      // for mobile touches
+      // get the x-coordinate position (in pixels) where the user touched
+      const touch = event.changedTouches[0]
+      const x = touch.clientX - this.$store.state.slideBarRect.left
+      
+      // check if this is a long press
+      this.$store.state.longPressTimeout = setTimeout(() => {
+        console.log('long timeout touch')
+        if (!this.$store.state.slideBarRect) {
+          return;
+        }
+        this.$store.state.isDragging = true
+        console.log(this.$store.state.isDragging)
+        // the slider will continue sliding even when finger moves off of the 
+        // y-range of the slidebar because the event listeners are attached to the docuement obj
+        document.addEventListener("touchmove", this.dragHandlerMobile.bind(this),  { passive: false });
+        document.addEventListener("touchend", this.endDragMobile.bind(this))
+
+      }, 100);
+
+      console.log('single tap')
+
+      // don't move slider if a song hasn't been played yet (NEED TO FIX THIS LATER)
+      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration()) {
+        return;
+      }
+      // get the slidebar
+      this.$store.state.slideBar = this.$refs.slideBar
+      // get size of slidebar
+      if (!this.$store.state.slideBarRect) {
+        return;
+      }
+
+      // calculate the song playback time depending on where on the slidebar the user clicked
+      // slideBarRect.width is the width of the slidebar in pixels
+      // x / slideBarRect.width gives a decimal as between 0 and 100
+      // Math.min ensures that the percentage is never greater than 100
+      // Math.max ensures that the value is never less than 0 
+
+      // percentage of song length clicked 
+      // i.e. if progress = 44, the user clicked 44% of the song's duration on the slidebar
+      const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+
+      // indicates the current song's length in seconds i.e. 142.54 seconds is equal to 2 minutes and 22.54 seconds.
+      const duration = this.$store.state.currentAudioElement.duration()
+
+      // the calculated position where the song should start playing from based on where the user clicked on the slidebar
+      const seekTime = (progress / 100) * duration
+
+      // change the playback position of song to where user clicked
+      this.$store.state.currentAudioElement.seek(seekTime)
+
+      // playback position of song in minute second format used for music player time counter
+      this.$store.state.songProgress = this.formatTime(seekTime)
+      // setting state progress to progress percentage used to move slider along slidebar
+      this.$store.state.progress = progress
+      this.updateSlideBarBackground()
+    },
+
+    dragHandlerMobile(event) {
+      console.log('dragHandler called')
+      console.log(this.$store.state.isDragging)
+      if (!this.currentAudioElement || !this.$store.state.slideBarRect) {
+        return;
+      }
+      
+      if (this.$store.state.isDragging) {
+        this.$store.state.slideBar = this.$refs.slideBar
+        this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+        this.dragMobile(event);
+      }    
+    },
+    // set the new slider position as the user is sliding it left or right
+    dragMobile(event) {
+      console.log('dragMobile function')
+      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration()) {
+        return;
+      }
+      if (this.$store.state.isDragging) {
+        console.log(event.type)
+        event.preventDefault();
+        const x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+        console.log(x)
+        const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+        const duration = this.$store.state.currentAudioElement.duration()
+        const dragTime = this.formatTime((progress / 100) * duration)
+        this.$store.state.songProgress = dragTime
+        this.$store.state.progress = progress
+        this.updateSlideBarBackground() 
+      }
+      console.log(this.$store.state.isDragging)
+    },
+    // when the user let's go of the slider, start playing from that position
+    endDragMobile() {
+      // return if slider is animated without a song being set
+      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration()) {
+        this.$store.state.isDragging = false
+        return;
+      }
+      this.$store.state.isDragging = false
+      const duration = this.$store.state.currentAudioElement.duration()
+      const seekTime = (this.$store.state.progress / 100) * duration
+      this.updateSlideBarBackground()
+      this.$store.state.currentAudioElement.seek(seekTime)
+      // this.currentAudioElement.play()
+      if (!this.$store.state.currentAudioElement.playing()) {
+        document.removeEventListener("touchmove", this.dragHandlerMobile)
+        document.removeEventListener("touchend", this.endDragMobile)
+      }
+    },
+    // update slidebar color when slider moves along slidebar
+    updateSlideBarBackground() {
+      this.$store.state.slideBar = document.getElementById('slideBar'); 
+      if (!this.$store.state.slideBar) {
+        return;
+      }
+
+      const gradient = `linear-gradient(to right, #00EEFF ${this.$store.state.progress}%, #ffffff ${this.$store.state.progress}%)`;
+      this.$store.state.slideBar.style.background = gradient;
+      this.$store.commit('setSlideBarBackground', gradient);
+    },
+      // timer to display track playback time
+    formatTime(secs) {
+      let minutes = Math.floor(secs / 60) % 60;
+      let seconds = Math.floor(secs % 60);
+      // minutes = minutes.toString().length === 1 ? `${minutes}` : minutes;
+      seconds = seconds.toString().length === 1 ? `0${seconds}` : seconds;
+      return `${minutes}:${seconds}`;
+    },
+    // Howl js setter
+    createHowlInstance(src) {
+      return new Howl({
+            src: [src],
+            onplay: () => {
+                // Stop the timer
+                clearInterval(this.$store.state.songTimer);
+                this.$store.state.animationFrame = requestAnimationFrame(this.animateSlider)
+                // set the timer
+                this.$store.state.songTimer = setInterval(() => {
+                // Update the song progress every second
+                let seekTime = this.$store.state.currentAudioElement.seek();
+                this.$store.state.songProgress = this.formatTime(seekTime);
+              }, 1000);
+            },
+            onpause: () => {
+              // Stop the timer
+              clearInterval(this.$store.state.songTimer);
+              cancelAnimationFrame(this.$store.state.animationFrame)
+            },
+            onstop: () => {
+              cancelAnimationFrame(this.$store.state.animationFrame)
+              // Stop the timer
+              clearInterval(this.$store.state.songTimer);
+              this.$store.state.songTimer = null;
+              // Reset the song progress to 0:00
+              this.$store.state.songProgress = '0:00';
+            },
+            // when the song finishes playing go to next song
+            onend: () => {
+              if (this.$store.state.repeat === true) {
+                // repeat the same song
+              }
+              else if (this.$store.state.shuffle === true) {
+                // play a random song in the playlist
+              }
+              // else play the next song in the playlist
+              else {
+                this.$store.state.songTimer = setInterval(() => {
+                  this.skipNext()
+                }, 500);
+                // set a little delay before playing next song in playlist
+              }
+            },
+            onloaderror: (error) => {
+              console.log('error loading audio file', error)
+            },
+            onplayerror: (error) => {
+              console.log('error playing audio file', error)
+            },
+        }); 
+    },
+    // THIS WORKS SKIP TO NEXT TRACK
+    skipNext() {
+      var last_track = this.tracks[this.tracks.length - 1].id
+      // THIS WORKS if no songs have been played, play first track
+      if (!this.$store.state.currentAudioElement) {
+        this.$store.state.currentTrackPlaying = this.tracks[0].id
+
+        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
+        // set currentSrc to be either a sample or the full length song
+        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        this.$store.state.songLength = getSrc.get_track_duration
+
+        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+  
+        this.$store.state.currentAudioElement = newAudioElement
+        // if the song was playing, then skip next and play, else skip next and stop
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          
+          this.$store.state.currentAudioElement.play()
+        }
+        else {
+          this.$store.state.songProgress = '0:00'
+          this.$store.state.currentAudioElement.stop()
+        }
+
+      }
+      // THIS WORKS else if this is the last track in the playlist, play the first track
+      else if (this.$store.state.currentTrackPlaying == last_track) {
+        this.$store.state.currentTrackPlaying = this.tracks[0].id
+        this.$store.state.currentAudioElement.currentTime = 0;
+        this.$store.state.currentAudioElement.pause();        
+
+        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
+        // set currentSrc to be either a sample or the full length song
+        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        this.$store.state.songLength = getSrc.get_track_duration        
+        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+        this.$store.state.currentAudioElement = newAudioElement
+
+        // if the song was playing, then play, else reset song and pause
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
+        }
+        else {
+          this.$store.state.songProgress = '0:00'
+          this.$store.state.progress = 0
+          this.updateSlideBarBackground()
+          this.$store.state.currentAudioElement.pause()
+          this.$store.state.currentAudioElementPlaying = false;
+        }
+      }
+
+      // THIS WORKS if the currently playing song is not the last track
+      else {
+        // local var containing the current track id needed for function below 
+        var val = this.$store.state.currentTrackPlaying
+        // get the JSON object index of the current song in the playlist
+        var index = this.tracks.findIndex(function(item){
+          return item.id === val;
+        });
+        // get the id of the next track in the playlist
+        this.$store.state.currentTrackPlaying = this.tracks[index + 1].id
+        this.$store.state.currentAudioElement.currentTime = 0;
+        this.$store.state.currentAudioElement.pause();        
+
+        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
+        // set currentSrc to be either a sample or the full length song
+        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        this.$store.state.songLength = getSrc.get_track_duration
+        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+        this.$store.state.currentAudioElement = newAudioElement
+        // if the song was playing, then play, else reset song and pause
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
+        }
+        else {
+          this.$store.state.songProgress = '0:00'
+          this.$store.state.progress = 0
+          this.updateSlideBarBackground()
+          this.$store.state.currentAudioElement.pause()
+          this.$store.state.currentAudioElementPlaying = false;
+        }        
+      }
+    },
+    // THIS WORKS SKIP TO PREVIOUS TRACK
+    skipPrev() {
+
+      // get seconds from playback
+      const [minutes, seconds] = this.$store.state.songProgress.split(":");
+      const secondsInt = parseFloat(seconds)
+
+      // if progress is 1.5 seconds or more, replay song
+      if (secondsInt >= 1) {
+        this.$store.state.currentAudioElement.stop();  
+        this.$store.state.progress = 0;
+        this.updateSlideBarBackground()
+        this.$store.state.currentAudioElement.currentTime = 0; 
+
+        // if the song was playing, then play, else reset song and pause
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
+        }
+        else {
+          this.$store.state.currentAudioElement.pause()
+        }
+        return
+      }
+      var first_track = this.tracks[0].id
+      var last_track = this.tracks[this.tracks.length - 1].id
+
+
+      // THIS WORKS if no songs have been played, play the last track in the playlist
+      if (!this.$store.state.currentAudioElement) {
+        var getSrc = this.tracks.find((t) => t.id === last_track)
+        // set currentSrc to be either a sample or the full length song
+        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        this.$store.state.songLength = getSrc.get_track_duration
+        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+        this.$store.state.currentAudioElement = newAudioElement;
+        // if the song was playing, then play, else reset song and pause
+        if (this.$store.state.currentAudioElementPlaying === true) {
+          this.$store.state.currentAudioElement.play()
+        }
+        else {
+          this.$store.state.currentAudioElement.pause()
+          this.$store.state.currentAudioElementPlaying = false;
+        }   
+
+        this.$store.state.currentTrackPlaying = last_track
+      }
+      // THIS WORKS skip back to the previous track
+      else {
+        // THIS WORKS if the current track playing is the first_track, play the last track
+        if (this.$store.state.currentTrackPlaying == first_track) {
+          this.$store.state.currentAudioElement.currentTime = 0;
+          this.$store.state.currentAudioElement.pause();        
+
+          var getSrc = this.tracks.find((t) => t.id === last_track)
+          // set currentSrc to be either a sample or the full length song
+          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          // set song length
+          this.$store.state.songLength = getSrc.get_track_duration
+          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+          this.$store.state.currentAudioElement = newAudioElement
+          // if the song was playing, then play, else reset song and pause
+          if (this.$store.state.currentAudioElementPlaying === true) {
+            this.$store.state.currentAudioElement.play()
+          }
+          else {
+            this.$store.state.currentAudioElement.pause()
+            this.$store.state.currentAudioElementPlaying = false;
+          }   
+          this.$store.state.currentTrackPlaying = last_track
+        }
+
+        // THIS WORKS current track is not the first track
+        else {
+          this.$store.state.currentAudioElement.currentTime = 0;
+          this.$store.state.currentAudioElement.pause();        
+
+          var val = this.$store.state.currentTrackPlaying
+          var index = this.tracks.findIndex(function(item){
+            return item.id === val;
+          });
+          this.$store.state.currentTrackPlaying = this.tracks[index - 1].id
+
+          var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
+          // set currentSrc to be either a sample or the full length song
+          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          // set song length
+          this.$store.state.songLength = getSrc.get_track_duration
+          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+          this.$store.state.currentAudioElement = newAudioElement;
+          if (this.$store.state.currentAudioElementPlaying === true) {
+            this.$store.state.currentAudioElement.play()
+          }
+          else {
+            this.$store.state.currentAudioElement.pause()
+            this.$store.state.currentAudioElementPlaying = false;
+          }  
+        }
+      }
+    },
+
+    // THIS WORKS PLAY/RESUME TRACK
+    setPlayOrPause(trackId) {
+
+      var getSrc = this.tracks.find((t) => t.id === trackId)
+      // set currentSrc to be either a sample or the full length song
+      this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+      // set song length
+      this.$store.state.songLength = getSrc.get_track_duration
+      // THIS WORKS create Howl object
+      const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+      // THIS WORKS if no song has played yet, play the first one the user clicked 
+      if (!this.$store.state.currentAudioElement) {
+        this.$store.state.currentAudioElement = newAudioElement
+        this.$store.state.currentAudioElement.play()
+        this.$store.state.currentAudioElementPlaying = true
+        this.$store.state.currentTrackPlaying = trackId
+      } 
+      
+      // THIS WORKS this is not the first song played
+      else {
+        // THIS WORKS play/pause/resume same song
+        if (this.$store.state.currentTrackPlaying == trackId) {
+          // pause it
+          if (this.$store.state.currentAudioElement.playing()) {
+            this.$store.state.currentAudioElement.pause()
+            this.$store.state.currentAudioElementPlaying = false
+            this.$store.state.currentTrackPlaying = trackId
+            this.updateSlideBarBackground()
+            return
+          } 
+          // play it
+          else {
+            this.$store.state.currentAudioElement.play()
+            this.$store.state.currentAudioElementPlaying = true
+          }
+        }
+        // THIS WORKS this is a different song was chosen. Stop current song, set new song, and play it
+        else {
+          this.$store.state.currentTrackPlaying = trackId
+          this.$store.state.currentAudioElement.stop()
+          this.$store.state.currentAudioElement = newAudioElement
+          this.$store.state.currentAudioElement.play()
+          this.$store.state.currentAudioElementPlaying = true
+        }
+      }
+    },
+
+    // THIS WORKS FOR PLAY/PAUSE BUTTON CONTROLLERS
+    playFirstTrack() {
+
+      // THIS WORKS If audio is currently playing, pause it and show the play icon
+      if (this.$store.state.currentAudioElementPlaying) {
+        this.$store.state.currentAudioElement.pause();
+        this.$store.state.currentAudioElementPlaying = false;
+      }
+      // THIS WORKS if audio is not currently playing
+      else {
+        // THIS WORKS if this is null, play the first song in the playlist
+        if (!this.$store.state.currentAudioElement) {
+
+          var getSrc = this.tracks.find((t) => t.id === this.tracks[0].id)
+          // set currentSrc to be either a sample or the full length song
+          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          // set song length
+          this.$store.state.songLength = getSrc.get_track_duration
+          // howl instance
+          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+          this.$store.state.currentAudioElement = newAudioElement
+          this.$store.state.currentAudioElement.play();
+          this.formatTime(this.$store.state.currentAudioElement.seek())
+          this.$store.state.currentTrackPlaying = this.tracks[0].id
+
+        }
+        // THIS WORKS else play/resume current song
+        else {
+          this.$store.state.currentAudioElement.play();
+        }
+        this.$store.state.currentAudioElementPlaying = true;
+      }
+    },
+
+    // FOR UI/UX WHEN TRACK ENDS
+    songEnded() {
+      // get the slider
+      const slider = this.$refs.slider
+      this.$store.state.progress = 0
+      this.updateSlideBarBackground()
+      slider.style.left = 0
+      this.$store.state.currentAudioElementPlaying = false;
+    },
+
+    // SLIDE BAR called by howl
+    animateSlider() {
+
+      // return if slider is animated without a song being set
+      if (!this.$store.state.currentAudioElement.duration()) {
+        return;
+      }
+      const duration = this.$store.state.currentAudioElement.duration() || 1
+      if (!this.$store.state.isDragging) {
+        this.$store.state.progress = ((this.$store.state.currentAudioElement.seek() || 0) / duration) * 100
+        this.updateSlideBarBackground()
+
+      }
+      this.$store.state.animationFrame = requestAnimationFrame(this.animateSlider)
+    },
+
+    beforeDestroy() {
+      // stop the recursion when the component is destroyed
+      this.$store.state.slideBar = this.$refs.slideBar
+      this.$store.state.slideBar.removeEventListener("mousedown", this.touchStartMobile)
+      document.removeEventListener("mousemove", this.dragHandler)
+      document.removeEventListener("mouseup", this.endDrag)
+    },
 
     // redirect to login screen
     redirectToLogin() {
@@ -814,468 +1386,6 @@ export default {
       else if (this.modalOpened === true) {
         this.modalOpened = false;
 
-      }
-    },
-
-    // NEW MUSIC PLAYER IMPLEMENTATION
-    // update slidebar color when slider moves along slidebar
-    updateSlideBarBackground() {
-      const slideBar = document.getElementById('slideBar');
-      if (!slideBar) {
-        return;
-      }
-
-      const gradient = `linear-gradient(to right, #00EEFF ${this.$store.state.progress}%, #ffffff ${this.$store.state.progress}%)`;
-      slideBar.style.background = gradient;
-      this.$store.commit('setSlideBarBackground', gradient);
-    },
-      // timer to display track playback time
-    formatTime(secs) {
-      let minutes = Math.floor(secs / 60) % 60;
-      let seconds = Math.floor(secs % 60);
-      // minutes = minutes.toString().length === 1 ? `${minutes}` : minutes;
-      seconds = seconds.toString().length === 1 ? `0${seconds}` : seconds;
-      return `${minutes}:${seconds}`;
-    },
-    // Howl js setter
-    createHowlInstance(src) {
-      return new Howl({
-            src: [src],
-            onplay: () => {
-              this.$store.state.animationFrame = requestAnimationFrame(this.animateSlider)
-                // set the timer
-                this.$store.state.songTimer = setInterval(() => {
-                // Update the song progress every second
-                let seekTime = this.$store.state.currentAudioElement.seek();
-                this.$store.state.songProgress = this.formatTime(seekTime);
-              }, 1000);
-            },
-            onpause: () => {
-              cancelAnimationFrame(this.$store.state.animationFrame)
-            },
-            onstop: () => {
-              cancelAnimationFrame(this.$store.state.animationFrame)
-              // Stop the timer
-              clearInterval(this.$store.state.songTimer);
-              this.$store.state.songTimer = null;
-              // Reset the song progress to 0:00
-              this.$store.state.songProgress = '0:00';
-            },
-            // when the song finishes playing go to next song
-            onend: () => {
-              if (this.$store.state.repeat === true) {
-                // repeat the same song
-              }
-              else if (this.$store.state.shuffle === true) {
-                // play a random song in the playlist
-              }
-              // else play the next song in the playlist
-              else {
-                this.skipNext()
-              }
-            },
-            onloaderror: (error) => {
-              console.log('error loading audio file', error)
-            },
-            onplayerror: (error) => {
-              console.log('error playing audio file', error)
-            },
-        }); 
-    },
-    // THIS WORKS SKIP TO NEXT TRACK
-    skipNext() {
-      var last_track = this.tracks[this.tracks.length - 1].id
-      // THIS WORKS if no songs have been played, play first track
-      if (!this.$store.state.currentAudioElement) {
-        this.$store.state.currentTrackPlaying = this.tracks[0].id
-
-        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-        // set currentSrc to be either a sample or the full length song
-        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        this.$store.state.songLength = getSrc.get_track_duration
-
-        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-  
-        this.$store.state.currentAudioElement = newAudioElement
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.currentAudioElement.stop()
-        }
-
-      }
-      // THIS WORKS else if this is the last track in the playlist, play the first track
-      else if (this.$store.state.currentTrackPlaying == last_track) {
-        this.$store.state.currentTrackPlaying = this.tracks[0].id
-        this.$store.state.currentAudioElement.currentTime = 0;
-        this.$store.state.currentAudioElement.pause();        
-
-        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-        // set currentSrc to be either a sample or the full length song
-        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        this.$store.state.songLength = getSrc.get_track_duration        
-        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-        this.$store.state.currentAudioElement = newAudioElement
-
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.progress = 0
-          this.updateSlideBarBackground()
-          this.$store.state.currentAudioElement.pause()
-          this.$store.state.currentAudioElementPlaying = false;
-        }
-      }
-
-      // THIS WORKS if the currently playing song is not the last track
-      else {
-        // local var containing the current track id needed for function below 
-        var val = this.$store.state.currentTrackPlaying
-        // get the JSON object index of the current song in the playlist
-        var index = this.tracks.findIndex(function(item){
-          return item.id === val;
-        });
-        // get the id of the next track in the playlist
-        this.$store.state.currentTrackPlaying = this.tracks[index + 1].id
-        this.$store.state.currentAudioElement.currentTime = 0;
-        this.$store.state.currentAudioElement.pause();        
-
-        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-        // set currentSrc to be either a sample or the full length song
-        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        this.$store.state.songLength = getSrc.get_track_duration
-        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-        this.$store.state.currentAudioElement = newAudioElement
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.progress = 0
-          this.updateSlideBarBackground()
-          this.$store.state.currentAudioElement.pause()
-          this.$store.state.currentAudioElementPlaying = false;
-        }        
-      }
-    },
-    // THIS WORKS SKIP TO PREVIOUS TRACK
-    skipPrev() {
-
-      // get seconds from playback
-      const [minutes, seconds] = this.$store.state.songProgress.split(":");
-      const secondsInt = parseFloat(seconds)
-
-      // if progress is 1.5 seconds or more, replay song
-      if (secondsInt >= 1) {
-        this.$store.state.currentAudioElement.stop();  
-        this.$store.state.progress = 0;
-        this.updateSlideBarBackground()
-        this.$store.state.currentAudioElement.currentTime = 0; 
-
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.currentAudioElement.pause()
-        }
-        return
-      }
-      var first_track = this.tracks[0].id
-      var last_track = this.tracks[this.tracks.length - 1].id
-
-
-      // THIS WORKS if no songs have been played, play the last track in the playlist
-      if (!this.$store.state.currentAudioElement) {
-        var getSrc = this.tracks.find((t) => t.id === last_track)
-        // set currentSrc to be either a sample or the full length song
-        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        this.$store.state.songLength = getSrc.get_track_duration
-        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-        this.$store.state.currentAudioElement = newAudioElement;
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.currentAudioElement.pause()
-          this.$store.state.currentAudioElementPlaying = false;
-        }   
-
-        this.$store.state.currentTrackPlaying = last_track
-      }
-      // THIS WORKS skip back to the previous track
-      else {
-        // THIS WORKS if the current track playing is the first_track, play the last track
-        if (this.$store.state.currentTrackPlaying == first_track) {
-          this.$store.state.currentAudioElement.currentTime = 0;
-          this.$store.state.currentAudioElement.pause();        
-
-          var getSrc = this.tracks.find((t) => t.id === last_track)
-          // set currentSrc to be either a sample or the full length song
-          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-          // set song length
-          this.$store.state.songLength = getSrc.get_track_duration
-          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-          this.$store.state.currentAudioElement = newAudioElement
-          // if the song was playing, then play, else reset song and pause
-          if (this.$store.state.currentAudioElementPlaying === true) {
-            this.$store.state.currentAudioElement.play()
-          }
-          else {
-            this.$store.state.currentAudioElement.pause()
-            this.$store.state.currentAudioElementPlaying = false;
-          }   
-          this.$store.state.currentTrackPlaying = last_track
-        }
-
-        // THIS WORKS current track is not the first track
-        else {
-          this.$store.state.currentAudioElement.currentTime = 0;
-          this.$store.state.currentAudioElement.pause();        
-
-          var val = this.$store.state.currentTrackPlaying
-          var index = this.tracks.findIndex(function(item){
-            return item.id === val;
-          });
-          this.$store.state.currentTrackPlaying = this.tracks[index - 1].id
-
-          var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-          // set currentSrc to be either a sample or the full length song
-          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-          // set song length
-          this.$store.state.songLength = getSrc.get_track_duration
-          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-          this.$store.state.currentAudioElement = newAudioElement;
-          if (this.$store.state.currentAudioElementPlaying === true) {
-            this.$store.state.currentAudioElement.play()
-          }
-          else {
-            this.$store.state.currentAudioElement.pause()
-            this.$store.state.currentAudioElementPlaying = false;
-          }  
-        }
-      }
-    },
-
-    // THIS WORKS PLAY/RESUME TRACK
-    setPlayOrPause(trackId) {
-
-      var getSrc = this.tracks.find((t) => t.id === trackId)
-      // set currentSrc to be either a sample or the full length song
-      this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-      // set song length
-      this.songLength = getSrc.get_track_duration
-      // THIS WORKS create Howl object
-      const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-      // THIS WORKS if no song has played yet, play the first one the user clicked 
-      if (!this.$store.state.currentAudioElement) {
-        this.$store.state.currentAudioElement = newAudioElement
-        this.$store.state.currentAudioElement.play()
-        this.$store.state.currentAudioElementPlaying = true
-        this.$store.state.currentTrackPlaying = trackId
-      } 
-      
-      // THIS WORKS this is not the first song played
-      else {
-        // THIS WORKS play/pause/resume same song
-        if (this.$store.state.currentTrackPlaying == trackId) {
-          // pause it
-          if (this.$store.state.currentAudioElement.playing()) {
-            this.$store.state.currentAudioElement.pause()
-            this.$store.state.currentAudioElementPlaying = false
-            this.$store.state.$store.state.currentTrackPlaying = trackId
-            this.updateSlideBarBackground()
-            return
-          } 
-          // play it
-          else {
-            this.$store.state.currentAudioElement.play()
-            this.$store.state.currentAudioElementPlaying = true
-          }
-        }
-        // THIS WORKS this is a different song was chosen. Stop current song, set new song, and play it
-        else {
-          this.$store.state.currentTrackPlaying = trackId
-          this.$store.state.currentAudioElement.stop()
-          this.$store.state.currentAudioElement = newAudioElement
-          this.$store.state.currentAudioElement.play()
-          this.$store.state.currentAudioElementPlaying = true
-        }
-      }
-    },
-
-    // THIS WORKS FOR PLAY/PAUSE BUTTON CONTROLLERS
-    playFirstTrack() {
-
-      // THIS WORKS If audio is currently playing, pause it and show the play icon
-      if (this.$store.state.currentAudioElementPlaying) {
-        this.$store.state.currentAudioElement.pause();
-        this.$store.state.currentAudioElementPlaying = false;
-      }
-      // THIS WORKS if audio is not currently playing
-      else {
-        // THIS WORKS if this is null, play the first song in the playlist
-        if (!this.$store.state.currentAudioElement) {
-
-          var getSrc = this.tracks.find((t) => t.id === this.tracks[0].id)
-          // set currentSrc to be either a sample or the full length song
-          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-          // set song length
-          this.$store.state.songLength = getSrc.get_track_duration
-          // howl instance
-          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-          this.$store.state.currentAudioElement = newAudioElement
-          this.$store.state.currentAudioElement.play();
-          this.formatTime(this.$store.state.currentAudioElement.seek())
-          this.$store.state.currentTrackPlaying = this.tracks[0].id
-
-        }
-        // THIS WORKS else play/resume current song
-        else {
-          this.$store.state.currentAudioElement.play();
-        }
-        this.$store.state.currentAudioElementPlaying = true;
-      }
-    },
-
-    // FOR UI/UX WHEN TRACK ENDS
-    songEnded() {
-      // get the slider
-      const slider = this.$refs.slider
-      this.$store.state.progress = 0
-      this.updateSlideBarBackground()
-      slider.style.left = 0
-      this.$store.state.currentAudioElementPlaying = false;
-    },
-
-    // SLIDE BAR called by howl
-    animateSlider() {
-
-      // return if slider is animated without a song being set
-      if (!this.$store.state.currentAudioElement.duration()) {
-        return;
-      }
-      const duration = this.$store.state.currentAudioElement.duration() || 1
-      if (!this.$store.state.isDragging) {
-        this.$store.state.progress = ((this.$store.state.currentAudioElement.seek() || 0) / duration) * 100
-        this.updateSlideBarBackground()
-
-      }
-      this.$store.state.animationFrame = requestAnimationFrame(this.animateSlider)
-    },
-
-    beforeDestroy() {
-      // stop the recursion when the component is destroyed
-      const slideBar = this.$refs.slideBar
-      slideBar.removeEventListener("mousedown", this.startDrag)
-      document.removeEventListener("mousemove", this.dragHandler)
-      document.removeEventListener("mouseup", this.endDrag)
-    },
-
-    // when clicking on the slidebar, jump the slider to the correct position
-    jumpSlider(event) {
-      // return if slider is animated without a song being set
-      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration()) {
-        return;
-      }
-      // get the slidebar
-      const slideBar = this.$refs.slideBar
-      // get size of slidebar
-      this.$store.state.slideBarRect = slideBar.getBoundingClientRect()
-      if (!this.$store.state.slideBarRect) {
-        return;
-      }
-      // get the x-coordinate position where the user clicked
-      const x = event.clientX - this.$store.state.slideBarRect.left
-      // calculate the percentage of the song played according to where the user clicked on the slidebar
-      // x / slideBarRect.width gives a decimal value between 0 (0%) and 1 (100%)
-      // Math.min ensures that the percentage is never greater than 100
-      // Math.max ensures that the value is never less than 0 
-      const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
-      const duration = this.$store.state.currentAudioElement.duration()
-      const seekTime = (progress / 100) * duration
-      this.$store.state.currentAudioElement.seek(seekTime)
-      this.$store.state.songProgress = this.formatTime(seekTime)
-      this.$store.state.progress = progress
-      this.updateSlideBarBackground()
-    },
-
-    dragHandler(event) {
-      if (!this.currentAudioElement || !this.$store.state.slideBarRect) {
-        return;
-      }
-      // if the slider is sliding while a song is not being played
-      if (this.$store.state.isDragging) {
-        const slideBar = this.$refs.slideBar
-        this.$store.state.slideBarRect = slideBar.getBoundingClientRect()
-        this.drag(event);
-      }    
-    },
-    
-    // called by the slidebar div
-    startDrag(event) {
-      this.$store.state.isDragging = true
-      const slideBar = event.currentTarget
-      this.$store.state.slideBarRect = slideBar.getBoundingClientRect()
-      // this.width is a vue instance property to be used in other related drag methods
-      this.width = this.$store.state.slideBarRect.width
-      if (!this.$store.state.slideBarRect) {
-        return;
-      }
-      if (event.type === 'touchstart') {
-        document.addEventListener("touchmove", this.dragHandler.bind(this),  { passive: false });
-        document.addEventListener("touchend", this.endDrag.bind(this))
-      } else {
-        document.addEventListener("mousemove", this.dragHandler.bind(this));
-        document.addEventListener("mouseup", this.endDrag.bind(this))
-      }
-    },
-
-    // set the new slider position as the user is sliding it left or right
-    drag(event) {
-      // if the slider is sliding while a song is not being played
-      if (!this.$store.state.currentAudioElement || !this.$store.state.slideBarRect) {
-        this.$store.state.isDragging = false
-        return;
-      }
-      if (this.$store.state.isDragging) {
-        event.preventDefault();
-        const x = (event.type === 'touchmove' ? event.touches[0].clientX : event.clientX) - this.$store.state.slideBarRect.left
-        const progress = Math.min(Math.max(x / this.width * 100, 0), 100)
-        const duration = this.$store.state.currentAudioElement.duration()
-        const dragTime = this.formatTime((progress / 100) * duration)
-        this.$store.state.songProgress = dragTime
-        this.$store.state.progress = progress
-        this.updateSlideBarBackground() 
-      }
-    },
-    // when the user let's go of the slider, start playing from that position
-    endDrag() {
-      // return if slider is animated without a song being set
-      if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration()) {
-        this.$store.state.isDragging = false
-        return;
-      }
-      this.$store.state.isDragging = false
-      const duration = this.$store.state.currentAudioElement.duration()
-      const seekTime = (this.$store.state.progress / 100) * duration
-      this.updateSlideBarBackground()
-      this.$store.state.currentAudioElement.seek(seekTime)
-      // this.currentAudioElement.play()
-      if (!this.$store.state.currentAudioElement.playing()) {
-        document.removeEventListener("touchmove", this.dragHandler)
-        document.removeEventListener("touchend", this.endDrag)
-        document.removeEventListener("mousemove", this.dragHandler)
-        document.removeEventListener("mouseup", this.endDrag)
       }
     },
     // number the tracks for UI/UX media player

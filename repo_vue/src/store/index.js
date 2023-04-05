@@ -171,30 +171,40 @@ export default createStore({
     // duration: 51000,
     // the audio source of the track used by Howler.js
     currentSrc: '',
+    // slidebar (shared between persistent music player and music view )
+    slideBar: '',
     // needed to prevent errors when slider is clicked before song starts playing
     slideBarRect: null,
+    // used to persist the slidebar color
+    slideBarBackground: '',
     // timer that updates the songprogress every second
     songTimer: '',
     // repeat song
     repeat: false,
     // shuffle playlist
     shuffle: false,
-    // used to persist the slidebar color
-    slideBarBackground: '',
     // currentTrackPlaying brought in state to persist
     currentTrackPlaying: 0,
-
-
+    // for songProgress
+    minutes: '',
+    seconds: '',
+    // differentiate between single tap and long press for mobile
+    longPressTimeout: null,
+    // single or long mouse clicks
+    longClickTimeout: null,
+    // need this prevent event from firing when mouse hovers over slidebar
+    isMouseDown: false
   },
   getters: {
     getLanguage: (state) => state.language
   },
   // synchronous functions; change states
   mutations: {
-    
+  
     // FOR MUSIC PLAYER
-    setSlideBarBackground(state, background) {
-      state.slideBarBackground = background;
+    // for music view, not persistant music player
+    setSlideBarBackground(state, gradient) {
+      state.slideBarBackground = gradient;
     }, 
     // called on app load/page refresh in App.vue entry point
     initializeStore(state) {

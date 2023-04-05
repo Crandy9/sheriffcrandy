@@ -289,15 +289,37 @@
   </div>
 		<!-- Footer only stays at the bottom in this file, not App.vue-->
 		<footer class="my-footer">
-      <!-- cool little api ip/region integration but not really needed. Keeping code for -->
-      <div class="location-beacon" style="padding: 1rem;">
-        <!-- <div class="circle"></div> -->
+      <!-- <div class="location-beacon" style="padding: 1rem;">
+        <div class="circle"></div>
         <p style="font-size: smaller; padding: 0.2rem; color: white; display:inline-block;">
-        <!-- Location: {{ $store.state.regionFromIpAPI }} -->
+        Location: {{ $store.state.regionFromIpAPI }}
         <p>
-          <!-- IP: {{ $store.state.clientIp }} -->
+          IP: {{ $store.state.clientIp }}
         </p>
       </p>
+      </div> -->
+      <!-- region language -->
+      <div class="my-region-language-div">
+        <!-- region button -->
+        <div class="my-region">
+          <button v-if="$store.state.region === 'JP'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
+            <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
+            日本 (Japan)
+          </button>
+          <button v-else-if="$store.state.region === 'US'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
+              <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
+            United States
+            </button>
+        </div>
+        <!-- Language button -->
+        <div class="my-language">
+          <button v-if="$store.state.language === 'ja'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
+            日本語
+          </button>
+          <button v-else-if="$store.state.language === 'en'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
+            English
+          </button>
+        </div>
       </div>
 			<div style="font-size: small; padding: 1rem;">
         <!-- SNS icons -->
@@ -474,31 +496,19 @@
 						- Jesus Christ is King
 				</div>
 			</div>
-      <!-- region language -->
-      <div class="my-region-language-div">
-        <!-- region button -->
-        <div class="my-region">
-          <button v-if="$store.state.region === 'JP'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
-            <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
-            日本 (Japan)
-          </button>
-          <button v-else-if="$store.state.region === 'US'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
-              <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
-            United States
-            </button>
-        </div>
-        <!-- Language button -->
-        <div class="my-language">
-          <button v-if="$store.state.language === 'ja'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
-            日本語
-          </button>
-          <button v-else-if="$store.state.language === 'en'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
-            English
-          </button>
-        </div>
-      </div>
 		</footer>
 		<!-- end Footer -->
+    <!-- PERSISTANT MUSIC PLAYER -->
+    <div class="persist-mini-music-player-container">
+      <div class="persist-mini-music-player">
+        <!-- slidebar -->
+        <div class="persist-mini-slide-bar">
+        </div>
+        <!-- slider -->
+        <div class="persist-mini-slider" ref="slider" :style="{ left: $store.state.progress + '%'}">
+        </div>
+      </div>
+    </div>
 </template>
 
 <!-- import bulma -->

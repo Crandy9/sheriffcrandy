@@ -18,6 +18,7 @@ body {
     background-position: 90% 50%; */
     background-color:rgb(34, 34, 34);
     overflow-x: hidden;
+    overflow-y: scroll; /* Always show scrollbar */
 }
 /* remove bulma default padding for all sections */
 .section {

@@ -3,6 +3,57 @@
 
 ***/
 
+
+
+/* PERSISTANT MUSIC PLAYER */
+.persist-mini-music-player-container {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding-bottom: 10px; /* add padding to make space for the slide bar */
+    background-color: rgb(14, 27, 27);
+}
+
+.persist-mini-music-player {
+    display: grid;
+    height: 56px;
+    padding: 8px;
+    position: relative;
+}
+
+.persist-mini-slide-bar {
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 4px;
+    background-color: #ffffff;
+    cursor: pointer;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.persist-mini-slider {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translate(-20%, 40%);
+    width: 5px;
+    height: 10px;
+    /* border-radius: 50%; */
+    background-color: rgba(0, 238, 255);
+    cursor: pointer;
+    transition: transform 0.3s linear; 
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+/* MUSIC VIEW */
 .main-music-section {
     padding-left: 5rem;
     padding-right: 5rem; 
@@ -81,12 +132,6 @@
 
     /* SLIDER */
     .slide-bar {
-        position: relative;
-        display: flex;
-        height: 4px;
-        border-radius: 4px;
-        background-color: #ffffff;
-        cursor: pointer;
         margin-left: 1rem;
         margin-right: 1rem;
         margin-bottom: 0.5rem !important;
