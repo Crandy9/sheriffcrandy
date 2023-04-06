@@ -755,16 +755,6 @@ export default {
       return `${minutes}:${seconds}`;
     },
 
-    // FOR UI/UX WHEN TRACK ENDS
-    songEnded() {
-      // get the slider
-      const slider = this.$refs.slider
-      this.$store.state.progress = 0
-      this.updateSlideBarBackground()
-      slider.style.left = 0
-      this.$store.state.currentAudioElementPlaying = false;
-    },
-
     // SLIDE BAR called by howl
     animateSlider() {
 
@@ -825,6 +815,24 @@ export default {
               else if (this.$store.state.shuffle === true) {
                 // play a random song in the playlist
               }
+              // else the end of the playlist was reached. Go back to first track and standby
+              else if (this.$store.state.currentTrackPlaying == this.$store.state.last_track) {
+                this.$store.state.currentTrackPlaying = this.tracks[0].id
+                this.$store.state.currentAudioElement.currentTime = 0;
+                this.$store.state.songProgress = '0:00'
+                this.$store.state.progress = 0
+                this.updateSlideBarBackground()
+                var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
+                // set currentSrc to be either a sample or the full length song
+                this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+                // set song length
+                this.$store.state.songLength = getSrc.get_track_duration
+                // howl instance
+                const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
+                this.$store.state.currentAudioElement = newAudioElement                
+                this.$store.state.currentAudioElement.stop()
+                this.$store.state.currentAudioElementPlaying = false;
+              }
               // else play the next song in the playlist
               else {
                 this.$store.state.songTimer = setInterval(() => {
@@ -841,10 +849,10 @@ export default {
             },
         }); 
     },
-    // THIS WORKS SKIP TO NEXT TRACK
+    // SKIP TO NEXT TRACK
     skipNext() {
-      var last_track = this.tracks[this.tracks.length - 1].id
-      // THIS WORKS if no songs have been played, play first track
+      this.$store.state.last_track = this.tracks[this.tracks.length - 1].id
+      // if no songs have been played, play first track
       if (!this.$store.state.currentAudioElement) {
         this.$store.state.currentTrackPlaying = this.tracks[0].id
 
@@ -868,8 +876,8 @@ export default {
         }
 
       }
-      // THIS WORKS else if this is the last track in the playlist, play the first track
-      else if (this.$store.state.currentTrackPlaying == last_track) {
+      // else if this is the last track in the playlist, play the first track
+      else if (this.$store.state.currentTrackPlaying == this.$store.state.last_track) {
         this.$store.state.currentTrackPlaying = this.tracks[0].id
         this.$store.state.currentAudioElement.currentTime = 0;
         this.$store.state.currentAudioElement.pause();        
@@ -895,7 +903,7 @@ export default {
         }
       }
 
-      // THIS WORKS if the currently playing song is not the last track
+      // if the currently playing song is not the last track
       else {
         // local var containing the current track id needed for function below 
         var val = this.$store.state.currentTrackPlaying
@@ -952,12 +960,12 @@ export default {
         return
       }
       var first_track = this.tracks[0].id
-      var last_track = this.tracks[this.tracks.length - 1].id
+      this.$store.state.last_track = this.tracks[this.tracks.length - 1].id
 
 
       // THIS WORKS if no songs have been played, play the last track in the playlist
       if (!this.$store.state.currentAudioElement) {
-        var getSrc = this.tracks.find((t) => t.id === last_track)
+        var getSrc = this.tracks.find((t) => t.id === this.$store.state.last_track)
         // set currentSrc to be either a sample or the full length song
         this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
         // set song length
@@ -973,7 +981,7 @@ export default {
           this.$store.state.currentAudioElementPlaying = false;
         }   
 
-        this.$store.state.currentTrackPlaying = last_track
+        this.$store.state.currentTrackPlaying = this.$store.state.last_track
       }
       // THIS WORKS skip back to the previous track
       else {
@@ -982,7 +990,7 @@ export default {
           this.$store.state.currentAudioElement.currentTime = 0;
           this.$store.state.currentAudioElement.pause();        
 
-          var getSrc = this.tracks.find((t) => t.id === last_track)
+          var getSrc = this.tracks.find((t) => t.id === this.$store.state.last_track)
           // set currentSrc to be either a sample or the full length song
           this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
           // set song length
@@ -997,7 +1005,7 @@ export default {
             this.$store.state.currentAudioElement.pause()
             this.$store.state.currentAudioElementPlaying = false;
           }   
-          this.$store.state.currentTrackPlaying = last_track
+          this.$store.state.currentTrackPlaying = this.$store.state.last_track
         }
 
         // THIS WORKS current track is not the first track
