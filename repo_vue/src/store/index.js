@@ -188,10 +188,7 @@ export default createStore({
     // for songProgress
     minutes: '',
     seconds: '',
-    // single or long mouse clicks
-    longClickTimeout: null,
-    // need this prevent event from firing when mouse hovers over slidebar
-    isMouseDown: false
+    last_track: ''
   },
   getters: {
     getLanguage: (state) => state.language
