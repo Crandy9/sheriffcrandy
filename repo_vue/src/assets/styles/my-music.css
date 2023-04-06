@@ -167,7 +167,7 @@
     justify-content: center; 
     align-items: center; 
     background: no-repeat center/contain;
-    height: 42vh; /* Change the height to a percentage value */
+    height: 40vh; /* Change the height to a percentage value */
     width: 100%; 
     transition: all .15s ease-in;
     animation: fadeIn 0.5s ease-in;
@@ -250,7 +250,7 @@
     position: relative;
     justify-content: center;
     align-items: center; 
-    margin: 0 15%;
+    margin: 0 20%;
 }
   
  
@@ -262,7 +262,7 @@
     border-radius: 4px;
     background-color: #ffffff;
     cursor: pointer;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
     user-select: none;
 
 }
@@ -279,19 +279,20 @@
     cursor: pointer;
     transition: transform 0.3s linear; 
 }
+/* TRACK TIME DISPLAYS */
+.track-time-displays {
+    margin-bottom: 1rem !important;
+    display: flex;
+    justify-content: space-between;
+}
 
-  
-
-
-/* .start-time {
-    left: 0;
-    top: 0;  
+/* start/end time */
+.start-time, .end-time {
+    color: rgb(238, 234, 234);
+    font-size: 13px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
   
-.end-time {
-    right: 0;
-    top: 0;  
-} */
 
 /* change color on hover */
 @media screen and (min-width: 1024px) {
@@ -308,6 +309,7 @@
 
 .audio-player-ul {
     background-color: white;
+    margin:0 15%;
 }
 
 /* for each track list item */
