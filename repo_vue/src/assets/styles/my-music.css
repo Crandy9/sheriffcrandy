@@ -62,12 +62,6 @@
     margin-bottom: 10rem;
 }
 
-@media screen and (max-width: 1023px) {
-    .main-music-section {
-        padding: 1rem;
-    }
-}
-
 /* file download procedures */
 .music-guide {
     padding: 1.2rem;
@@ -87,7 +81,9 @@
 /* AUDIO PLAYER */
 /* for mobile */
 @media screen and (max-width: 1023px) {
-
+    .main-music-section {
+        padding: 1rem;
+    }
     .track-cover-art-div {
         height: 35vh !important; /* Change the height to a smaller percentage value */
     }
@@ -166,14 +162,12 @@
 
 
 /* cover art positioning */
-
-
 .track-cover-art-div {
     display: flex; 
     justify-content: center; 
     align-items: center; 
     background: no-repeat center/contain;
-    height: 50vh; /* Change the height to a percentage value */
+    height: 42vh; /* Change the height to a percentage value */
     width: 100%; 
     transition: all .15s ease-in;
     animation: fadeIn 0.5s ease-in;
@@ -255,8 +249,9 @@
 .slider-container {
     position: relative;
     justify-content: center;
-    align-items: center;  
-  }
+    align-items: center; 
+    margin: 0 15%;
+}
   
  
 /* SLIDE BAR AND SLIDER */
