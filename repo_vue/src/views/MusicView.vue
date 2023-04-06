@@ -738,7 +738,7 @@ export default {
 
     // update slidebar color when slider moves along slidebar
     updateSlideBarBackground() {
-      // this.$store.state.slideBar = document.getElementById('slideBar'); 
+      this.$store.state.slideBar = document.getElementById('slideBar'); 
       if (!this.$store.state.slideBar) {
         return;
       }
@@ -1100,7 +1100,6 @@ export default {
           this.$store.state.currentAudioElement.play();
           this.formatTime(this.$store.state.currentAudioElement.seek())
           this.$store.state.currentTrackPlaying = this.tracks[0].id
-
         }
         // THIS WORKS else play/resume current song
         else {
