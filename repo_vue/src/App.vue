@@ -499,7 +499,7 @@
 		</footer>
 		<!-- end Footer -->
     <!-- PERSISTANT MUSIC PLAYER -->
-    <div class="persist-mini-music-player-container">
+    <div class="persist-mini-music-player-container" :style="{ display: $route.name !== 'Music' ? 'block' : 'none' }">
       <div class="persist-mini-music-player">
         <!-- slidebar -->
         <div class="persist-mini-slide-bar">

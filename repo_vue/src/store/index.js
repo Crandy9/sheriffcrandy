@@ -188,8 +188,6 @@ export default createStore({
     // for songProgress
     minutes: '',
     seconds: '',
-    // differentiate between single tap and long press for mobile
-    longPressTimeout: null,
     // single or long mouse clicks
     longClickTimeout: null,
     // need this prevent event from firing when mouse hovers over slidebar
@@ -200,12 +198,7 @@ export default createStore({
   },
   // synchronous functions; change states
   mutations: {
-  
-    // FOR MUSIC PLAYER
-    // for music view, not persistant music player
-    setSlideBarBackground(state, gradient) {
-      state.slideBarBackground = gradient;
-    }, 
+
     // called on app load/page refresh in App.vue entry point
     initializeStore(state) {
 
