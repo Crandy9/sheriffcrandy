@@ -217,6 +217,13 @@
     color: white;
 }
 
+/* shuffle controller */
+.shuffle-controller {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
 /* fa fa-fast-backward */
 .fa-fast-backward {
     color: rgb(255, 255, 255);

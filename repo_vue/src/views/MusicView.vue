@@ -35,27 +35,36 @@
           </h3>
         </div>
       </div>
-      <!-- skip play/pause repeat, shuffle controllers -->
+      <!-- skip, play/pause, repeat, shuffle controllers -->
       <div class="music-player-controls-wrapper">
         <div class="music-player-controls">
+          <!-- repeat controller -->
+          <span class="repeat-controller" 
+          @click.prevent="toggleRepeat">
+            <p style="color:white">REPEAT {{ $store.state.repeat }}</p>
+          </span>
           <!-- skip previous -->
           <span class="skip-back-controller" 
-          @click="skipPrev()">
+          @click.prevent="skipPrevController()">
             <i class="fa fa-fast-backward"></i>
           </span>
           <!-- play controller showing when paused -->
-          <span class="play-controller" v-show="!$store.state.currentAudioElementPlaying" 
-          @click="playFirstTrack()">
+          <span class="play-controller" v-if="!$store.state.currentAudioElementPlaying" 
+          @click.prevent="playPauseController()">
             <i class="fas fa-play"></i>          
           </span>
           <!-- pause controller shown when playing -->
-          <span class="pause-controller" v-show="$store.state.currentAudioElementPlaying" @click="playFirstTrack()">
+          <span class="pause-controller" v-if="$store.state.currentAudioElementPlaying" @click.prevent="playPauseController()">
             <i class="fas fa-pause"></i>          
           </span>
           <!-- skip forward -->
           <span class="skip-forward-controller" 
-          @click="skipNext()">
+          @click.prevent="skipForwardController()">
             <i class="fa fa-fast-forward"></i>  
+          </span>
+          <span class="shuffle-controller" 
+          @click.prevent="toggleShuffle">
+            <p style="color:white"> SHUFFLE {{ $store.state.shuffle }}</p>
           </span>
         </div>
       </div>
@@ -476,8 +485,6 @@ import axios from 'axios'
 import { toast } from 'bulma-toast'
 // import howler
 import { Howl, Howler } from 'howler';
-import { storeKey } from 'vuex';
-
 export default {
   name: 'Music',
   // data() is a new obj returning tracks list used in for loop above
@@ -540,6 +547,9 @@ export default {
     const elements = this.stripe.elements();
     this.card = elements.create('card', { hidePostalCode: true })
     this.card.mount('#card-element')
+    // set slidebar in mount?
+    this.$store.state.slideBar = document.getElementById('slideBar'); 
+
   },
 
   computed: {
@@ -588,11 +598,12 @@ export default {
         clickTimeout = setTimeout(() => {
           isClicking = true;
         }, 200);
+        this.$store.state.isDragging = true;
       };
 
       const endDragDesktop = (event) => {
         if (!isClicking) {
-          this.$store.state.isDragging = false
+          this.$store.state.isDragging = false;
           if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
             clearTimeout(clickTimeout);
             clickTimeout = null;
@@ -601,15 +612,20 @@ export default {
             document.removeEventListener('mouseup', endDragDesktop);
             return;
           }
+
+
           this.$store.state.slideBar = this.$refs.slideBar
           const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
 
           const duration = this.$store.state.currentAudioElement.duration()
           seekTime = (progress / 100) * duration
-          this.updateSlideBarBackground()
+
           this.$store.state.currentAudioElement.seek(seekTime)
-          this.$store.state.songProgress = this.formatTime(seekTime)
+
+          this.$store.commit('formatTime', seekTime)
+
           this.$store.state.progress = progress
+          this.updateSlideBarBackground()
         }
         else {
           this.$store.state.isDragging = false
@@ -638,15 +654,17 @@ export default {
             let x = event.clientX - this.$store.state.slideBarRect.left
             const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
             const duration = this.$store.state.currentAudioElement.duration()
+            this.$store.commit('formatTime', (progress / 100) * duration)
+            // this is used to update the seek playback position whenever the mouse is lifted
             seekTime = (this.$store.state.progress / 100) * duration
-            const dragTime = this.formatTime((progress / 100) * duration)
-            this.$store.state.songProgress = dragTime
+
             this.$store.state.progress = progress
-            this.updateSlideBarBackground() 
+            this.updateSlideBarBackground()
           }
 
         } else {
           isClicking = false;
+          this.$store.state.isDragging = false
         }
       };
 
@@ -697,10 +715,13 @@ export default {
 
           const duration = this.$store.state.currentAudioElement.duration()
           seekTime = (progress / 100) * duration
-          this.updateSlideBarBackground()
           this.$store.state.currentAudioElement.seek(seekTime)
-          this.$store.state.songProgress = this.formatTime(seekTime)
+
+          this.$store.commit('formatTime', seekTime)
+          // this.$store.state.songProgress = this.$store.state.minsecs
+
           this.$store.state.progress = progress
+          this.updateSlideBarBackground()
         }
         // long press events. See const DragMobile
         else {
@@ -724,11 +745,11 @@ export default {
           let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
           const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
           const duration = this.$store.state.currentAudioElement.duration()
+          this.$store.commit('formatTime', (progress / 100) * duration)
           seekTime = (this.$store.state.progress / 100) * duration
-          const dragTime = this.formatTime((progress / 100) * duration)
-          this.$store.state.songProgress = dragTime
+
           this.$store.state.progress = progress
-          this.updateSlideBarBackground() 
+          this.updateSlideBarBackground()
         }
       };
       
@@ -739,37 +760,16 @@ export default {
     // update slidebar color when slider moves along slidebar
     updateSlideBarBackground() {
       this.$store.state.slideBar = document.getElementById('slideBar'); 
-      if (!this.$store.state.slideBar) {
-        return;
-      }
-
-      const gradient = `linear-gradient(to right, #00EEFF ${this.$store.state.progress}%, #ffffff ${this.$store.state.progress}%)`;
-      this.$store.state.slideBar.style.background = gradient;
+      this.$store.commit('updateSlideBarBackground')
     },
       // timer to display track playback time
     formatTime(secs) {
-      let minutes = Math.floor(secs / 60) % 60;
-      let seconds = Math.floor(secs % 60);
-      // minutes = minutes.toString().length === 1 ? `${minutes}` : minutes;
-      seconds = seconds.toString().length === 1 ? `0${seconds}` : seconds;
-      return `${minutes}:${seconds}`;
+      this.$store.commit('formatTime', secs)
     },
 
     // SLIDE BAR called by howl
     animateSlider() {
-
-      // return if slider is animated without a song being set
-      if (!this.$store.state.currentAudioElement.duration()) {
-        return;
-      }
-      const duration = this.$store.state.currentAudioElement.duration() || 1
-      if (!this.$store.state.isDragging) {
-        this.$store.state.progress = ((this.$store.state.currentAudioElement.seek() || 0) / duration) * 100
-
-          this.updateSlideBarBackground()
-
-      }
-      this.$store.state.animationFrame = requestAnimationFrame(this.animateSlider)
+      this.$store.commit('animateSlider')
     },
 
     beforeDestroy() {
@@ -779,344 +779,38 @@ export default {
       document.removeEventListener("mousemove", this.dragHandler)
       document.removeEventListener("mouseup", this.endDrag)
     },
-    // Howl js setter
-    createHowlInstance(src) {
-      return new Howl({
-            src: [src],
-            onplay: () => {
-                // Stop the timer
-                clearInterval(this.$store.state.songTimer);
-                this.$store.state.animationFrame = requestAnimationFrame(this.animateSlider)
-                // set the timer
-                this.$store.state.songTimer = setInterval(() => {
-                // Update the song progress every second
-                let seekTime = this.$store.state.currentAudioElement.seek();
-                this.$store.state.songProgress = this.formatTime(seekTime);
-              }, 1000);
-            },
-            onpause: () => {
-              // Stop the timer
-              clearInterval(this.$store.state.songTimer);
-              cancelAnimationFrame(this.$store.state.animationFrame)
-            },
-            onstop: () => {
-              cancelAnimationFrame(this.$store.state.animationFrame)
-              // Stop the timer
-              clearInterval(this.$store.state.songTimer);
-              this.$store.state.songTimer = null;
-              // Reset the song progress to 0:00
-              this.$store.state.songProgress = '0:00';
-            },
-            // when the song finishes playing go to next song
-            onend: () => {
-              if (this.$store.state.repeat === true) {
-                // repeat the same song
-              }
-              else if (this.$store.state.shuffle === true) {
-                // play a random song in the playlist
-              }
-              // else the end of the playlist was reached. Go back to first track and standby
-              else if (this.$store.state.currentTrackPlaying == this.$store.state.last_track) {
-                this.$store.state.currentTrackPlaying = this.tracks[0].id
-                this.$store.state.currentAudioElement.currentTime = 0;
-                this.$store.state.songProgress = '0:00'
-                this.$store.state.progress = 0
-                this.updateSlideBarBackground()
-                var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-                // set currentSrc to be either a sample or the full length song
-                this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-                // set song length
-                this.$store.state.songLength = getSrc.get_track_duration
-                // howl instance
-                const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-                this.$store.state.currentAudioElement = newAudioElement                
-                this.$store.state.currentAudioElement.stop()
-                this.$store.state.currentAudioElementPlaying = false;
-              }
-              // else play the next song in the playlist
-              else {
-                this.$store.state.songTimer = setInterval(() => {
-                  this.skipNext()
-                }, 500);
-                // set a little delay before playing next song in playlist
-              }
-            },
-            onloaderror: (error) => {
-              console.log('error loading audio file', error)
-            },
-            onplayerror: (error) => {
-              console.log('error playing audio file', error)
-            },
-        }); 
+
+    // CONTROLLERS
+    // SHUFFLE
+    populateShuffleArray() {
+      this.$store.commit('populateShuffleArray', this.tracks)
+    },
+    // TOGGLE SHUFFLE
+    toggleShuffle() {
+      this.$store.commit('toggleShuffle')
+    },
+    // TOGGLE REPEAT
+    toggleRepeat() {
+      this.$store.commit('toggleRepeat')
     },
     // SKIP TO NEXT TRACK
-    skipNext() {
-      this.$store.state.last_track = this.tracks[this.tracks.length - 1].id
-      // if no songs have been played, play first track
-      if (!this.$store.state.currentAudioElement) {
-        this.$store.state.currentTrackPlaying = this.tracks[0].id
-
-        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-        // set currentSrc to be either a sample or the full length song
-        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        this.$store.state.songLength = getSrc.get_track_duration
-
-        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-  
-        this.$store.state.currentAudioElement = newAudioElement
-        // if the song was playing, then skip next and play, else skip next and stop
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.songProgress = '0:00'
-          this.$store.state.currentAudioElement.stop()
-        }
-
-      }
-      // else if this is the last track in the playlist, play the first track
-      else if (this.$store.state.currentTrackPlaying == this.$store.state.last_track) {
-        this.$store.state.currentTrackPlaying = this.tracks[0].id
-        this.$store.state.currentAudioElement.currentTime = 0;
-        this.$store.state.currentAudioElement.pause();        
-
-        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-        // set currentSrc to be either a sample or the full length song
-        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        this.$store.state.songLength = getSrc.get_track_duration        
-        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-        this.$store.state.currentAudioElement = newAudioElement
-
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.songProgress = '0:00'
-          this.$store.state.progress = 0
-          this.updateSlideBarBackground()
-          this.$store.state.currentAudioElement.pause()
-          this.$store.state.currentAudioElementPlaying = false;
-        }
-      }
-
-      // if the currently playing song is not the last track
-      else {
-        // local var containing the current track id needed for function below 
-        var val = this.$store.state.currentTrackPlaying
-        // get the JSON object index of the current song in the playlist
-        var index = this.tracks.findIndex(function(item){
-          return item.id === val;
-        });
-        // get the id of the next track in the playlist
-        this.$store.state.currentTrackPlaying = this.tracks[index + 1].id
-        this.$store.state.currentAudioElement.currentTime = 0;
-        this.$store.state.currentAudioElement.pause();        
-
-        var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-        // set currentSrc to be either a sample or the full length song
-        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        this.$store.state.songLength = getSrc.get_track_duration
-        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-        this.$store.state.currentAudioElement = newAudioElement
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.songProgress = '0:00'
-          this.$store.state.progress = 0
-          this.updateSlideBarBackground()
-          this.$store.state.currentAudioElement.pause()
-          this.$store.state.currentAudioElementPlaying = false;
-        }        
-      }
+    skipForwardController() {
+      this.$store.commit('skipForwardController', this.tracks)
     },
-    // THIS WORKS SKIP TO PREVIOUS TRACK
-    skipPrev() {
-
-      // get seconds from playback
-      const [minutes, seconds] = this.$store.state.songProgress.split(":");
-      const secondsInt = parseFloat(seconds)
-
-      // if progress is 1.5 seconds or more, replay song
-      if (secondsInt >= 1) {
-        this.$store.state.currentAudioElement.stop();  
-        this.$store.state.progress = 0;
-        this.updateSlideBarBackground()
-        this.$store.state.currentAudioElement.currentTime = 0; 
-
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.currentAudioElement.pause()
-        }
-        return
-      }
-      var first_track = this.tracks[0].id
-      this.$store.state.last_track = this.tracks[this.tracks.length - 1].id
-
-
-      // THIS WORKS if no songs have been played, play the last track in the playlist
-      if (!this.$store.state.currentAudioElement) {
-        var getSrc = this.tracks.find((t) => t.id === this.$store.state.last_track)
-        // set currentSrc to be either a sample or the full length song
-        this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        this.$store.state.songLength = getSrc.get_track_duration
-        const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-        this.$store.state.currentAudioElement = newAudioElement;
-        // if the song was playing, then play, else reset song and pause
-        if (this.$store.state.currentAudioElementPlaying === true) {
-          this.$store.state.currentAudioElement.play()
-        }
-        else {
-          this.$store.state.currentAudioElement.pause()
-          this.$store.state.currentAudioElementPlaying = false;
-        }   
-
-        this.$store.state.currentTrackPlaying = this.$store.state.last_track
-      }
-      // THIS WORKS skip back to the previous track
-      else {
-        // THIS WORKS if the current track playing is the first_track, play the last track
-        if (this.$store.state.currentTrackPlaying == first_track) {
-          this.$store.state.currentAudioElement.currentTime = 0;
-          this.$store.state.currentAudioElement.pause();        
-
-          var getSrc = this.tracks.find((t) => t.id === this.$store.state.last_track)
-          // set currentSrc to be either a sample or the full length song
-          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-          // set song length
-          this.$store.state.songLength = getSrc.get_track_duration
-          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-          this.$store.state.currentAudioElement = newAudioElement
-          // if the song was playing, then play, else reset song and pause
-          if (this.$store.state.currentAudioElementPlaying === true) {
-            this.$store.state.currentAudioElement.play()
-          }
-          else {
-            this.$store.state.currentAudioElement.pause()
-            this.$store.state.currentAudioElementPlaying = false;
-          }   
-          this.$store.state.currentTrackPlaying = this.$store.state.last_track
-        }
-
-        // THIS WORKS current track is not the first track
-        else {
-          this.$store.state.currentAudioElement.currentTime = 0;
-          this.$store.state.currentAudioElement.pause();        
-
-          var val = this.$store.state.currentTrackPlaying
-          var index = this.tracks.findIndex(function(item){
-            return item.id === val;
-          });
-          this.$store.state.currentTrackPlaying = this.tracks[index - 1].id
-
-          var getSrc = this.tracks.find((t) => t.id === this.$store.state.currentTrackPlaying)
-          // set currentSrc to be either a sample or the full length song
-          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-          // set song length
-          this.$store.state.songLength = getSrc.get_track_duration
-          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-          this.$store.state.currentAudioElement = newAudioElement;
-          if (this.$store.state.currentAudioElementPlaying === true) {
-            this.$store.state.currentAudioElement.play()
-          }
-          else {
-            this.$store.state.currentAudioElement.pause()
-            this.$store.state.currentAudioElementPlaying = false;
-          }  
-        }
-      }
+    // SKIP TO PREVIOUS TRACK
+    skipPrevController() {
+      this.$store.commit('skipPreviousController', this.tracks)
     },
+    // FOR PLAY/PAUSE BUTTON CONTROLLERS
+    playPauseController() {
+      this.$store.commit('playPauseController', this.tracks)
 
-    // THIS WORKS PLAY/RESUME TRACK
+    },
+    // Individual PLAY/RESUME TRACK
     setPlayOrPause(trackId) {
-
-      var getSrc = this.tracks.find((t) => t.id === trackId)
-      // set currentSrc to be either a sample or the full length song
-      this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-      // set song length
-      this.$store.state.songLength = getSrc.get_track_duration
-      // THIS WORKS create Howl object
-      const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-      // THIS WORKS if no song has played yet, play the first one the user clicked 
-      if (!this.$store.state.currentAudioElement) {
-        this.$store.state.currentAudioElement = newAudioElement
-        this.$store.state.currentAudioElement.play()
-        this.$store.state.currentAudioElementPlaying = true
-        this.$store.state.currentTrackPlaying = trackId
-      } 
-      
-      // THIS WORKS this is not the first song played
-      else {
-        // THIS WORKS play/pause/resume same song
-        if (this.$store.state.currentTrackPlaying == trackId) {
-          // pause it
-          if (this.$store.state.currentAudioElement.playing()) {
-            this.$store.state.currentAudioElement.pause()
-            this.$store.state.currentAudioElementPlaying = false
-            this.$store.state.currentTrackPlaying = trackId
-            this.updateSlideBarBackground()
-            return
-          } 
-          // play it
-          else {
-            this.$store.state.currentAudioElement.play()
-            this.$store.state.currentAudioElementPlaying = true
-          }
-        }
-        // THIS WORKS this is a different song was chosen. Stop current song, set new song, and play it
-        else {
-          this.$store.state.currentTrackPlaying = trackId
-          this.$store.state.currentAudioElement.stop()
-          this.$store.state.currentAudioElement = newAudioElement
-          this.$store.state.currentAudioElement.play()
-          this.$store.state.currentAudioElementPlaying = true
-        }
-      }
+      // can only send one param to vuex mutations
+      this.$store.commit('setPlayOrPause', { trackId, track_playlist: this.tracks })
     },
-
-    // THIS WORKS FOR PLAY/PAUSE BUTTON CONTROLLERS
-    playFirstTrack() {
-
-      // THIS WORKS If audio is currently playing, pause it and show the play icon
-      if (this.$store.state.currentAudioElementPlaying) {
-        this.$store.state.currentAudioElement.pause();
-        this.$store.state.currentAudioElementPlaying = false;
-      }
-      // THIS WORKS if audio is not currently playing
-      else {
-        // THIS WORKS if this is null, play the first song in the playlist
-        if (!this.$store.state.currentAudioElement) {
-
-          var getSrc = this.tracks.find((t) => t.id === this.tracks[0].id)
-          // set currentSrc to be either a sample or the full length song
-          this.$store.state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-          // set song length
-          this.$store.state.songLength = getSrc.get_track_duration
-          // howl instance
-          const newAudioElement = this.createHowlInstance(this.$store.state.currentSrc)
-          this.$store.state.currentAudioElement = newAudioElement
-          this.$store.state.currentAudioElement.play();
-          this.formatTime(this.$store.state.currentAudioElement.seek())
-          this.$store.state.currentTrackPlaying = this.tracks[0].id
-        }
-        // THIS WORKS else play/resume current song
-        else {
-          this.$store.state.currentAudioElement.play();
-        }
-        this.$store.state.currentAudioElementPlaying = true;
-      }
-    },
-
     // redirect to login screen
     redirectToLogin() {
 
@@ -1378,6 +1072,7 @@ export default {
           this.tracks = response.data
           // set the tab title
           document.title = 'Music'
+          this.populateShuffleArray();
         })
         .catch(error => {
           console.log("ERROR BOYY: " + error)
