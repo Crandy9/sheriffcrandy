@@ -33,7 +33,7 @@
           src="https://www.youtube.com/embed/CNSDBPqTANo" 
           title="YouTube video player" 
           frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen>
         </iframe>
         <h3 id="yt-section-title" class="is-size-4 has-text-centered has-text-white" >
           "The Streets of Whiterun"
@@ -44,7 +44,7 @@
           src="https://www.youtube.com/embed/UJkRxT4gb6A" 
           title="YouTube video player" 
           frameborder="0" 
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen>
         </iframe>
         <h3 v-if="$i18n.locale === 'en'" class="is-size-4 has-text-white has-text-centered" style="padding-top: 3rem;">
           {{$t('homeview.body.purchaseNowMusicLink')}}<a class="music-links" href="/music"> {{$t('homeview.body.here')}}</a>
