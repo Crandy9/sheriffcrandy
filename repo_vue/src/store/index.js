@@ -289,18 +289,15 @@ export default createStore({
               if (state.shuffle) {
                 currentPlaylist = state.shuffleArray
                 currentLastTrack = state.shuffleArray_last_track
-                console.log('Last track of shuffle array')
-                console.log('title: ' + currentLastTrack)
               }
               else {
                 currentPlaylist = state.playlist
                 currentLastTrack = state.playlist_last_track
-                console.log('Last track of playlist array')
-                console.log('title: ' + currentLastTrack)
               }
 
               if (state.repeat) {
                 // repeat the same song
+                state.currentAudioElement.play()
                 return
               }
               // else the end of the playlist was reached. Go back to first track and standby
