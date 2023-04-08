@@ -45,7 +45,7 @@
           </span>
           <!-- skip previous -->
           <span class="skip-back-controller" 
-          @click.prevent="skipPrevController()">
+          @click.prevent="skipPreviousController()">
             <i class="fa fa-fast-backward"></i>
           </span>
           <!-- play controller showing when paused -->
@@ -582,7 +582,7 @@ export default {
   methods: {
 
     // NEW MUSIC PLAYER IMPLEMENTATION
-    // MOUSE CONTROLS
+    // MOUSE SLIDEBAR CONTROLS
     sliderMoveDesktop(event) {
       let isClicking = false;
       let clickTimeout = null;
@@ -673,7 +673,7 @@ export default {
       document.addEventListener('mouseup', endDragDesktop);
     },
 
-    // MOBILE CONTROLS
+    // MOBILE SLIDEBAR CONTROLS
     // user touched slidebar, determine if it is a single tap or a long press
     sliderMoveMobile(event) {
       
@@ -772,6 +772,7 @@ export default {
       this.$store.commit('animateSlider')
     },
 
+    // remove event listeners if they are still active
     beforeDestroy() {
       // stop the recursion when the component is destroyed
       this.$store.state.slideBar = this.$refs.slideBar
@@ -780,11 +781,32 @@ export default {
       document.removeEventListener("mouseup", this.endDrag)
     },
 
-    // CONTROLLERS
-    // SHUFFLE
-    populateShuffleArray() {
-      this.$store.commit('populateShuffleArray', this.tracks)
+    // MUSIC CONTROLLERS
+    // SKIP TO NEXT TRACK
+    skipForwardController() {
+      this.$store.commit('skipForwardController')
     },
+    // SKIP TO PREVIOUS TRACK
+    skipPreviousController() {
+      this.$store.commit('skipPreviousController')
+    },
+    // FOR PLAY/PAUSE BUTTON CONTROLLERS
+    playPauseController() {
+      this.$store.commit('playPauseController')
+    },
+    // Individual PLAY/RESUME TRACK
+    setPlayOrPause(trackId) {
+      // can only send one param to vuex mutations
+      this.$store.commit('setPlayOrPause', trackId)
+    },
+    // SHUFFLE PLAYLIST
+    populatePlaylist() {
+      this.$store.commit('populatePlaylist', this.tracks)
+    },
+    // SHUFFLE PLAYLIST
+    // populateShufflePlaylist() {
+    //   this.$store.commit('populateShufflePlaylist')
+    // },
     // TOGGLE SHUFFLE
     toggleShuffle() {
       this.$store.commit('toggleShuffle')
@@ -792,24 +814,6 @@ export default {
     // TOGGLE REPEAT
     toggleRepeat() {
       this.$store.commit('toggleRepeat')
-    },
-    // SKIP TO NEXT TRACK
-    skipForwardController() {
-      this.$store.commit('skipForwardController', this.tracks)
-    },
-    // SKIP TO PREVIOUS TRACK
-    skipPrevController() {
-      this.$store.commit('skipPreviousController', this.tracks)
-    },
-    // FOR PLAY/PAUSE BUTTON CONTROLLERS
-    playPauseController() {
-      this.$store.commit('playPauseController', this.tracks)
-
-    },
-    // Individual PLAY/RESUME TRACK
-    setPlayOrPause(trackId) {
-      // can only send one param to vuex mutations
-      this.$store.commit('setPlayOrPause', { trackId, track_playlist: this.tracks })
     },
     // redirect to login screen
     redirectToLogin() {
@@ -1072,7 +1076,8 @@ export default {
           this.tracks = response.data
           // set the tab title
           document.title = 'Music'
-          this.populateShuffleArray();
+          // set playlists
+          this.populatePlaylist();
         })
         .catch(error => {
           console.log("ERROR BOYY: " + error)
