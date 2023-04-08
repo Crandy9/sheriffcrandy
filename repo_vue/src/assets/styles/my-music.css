@@ -108,7 +108,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 4rem !important;
+        gap: 3rem !important;
         padding-bottom: 1.5rem !important;
     }
     /* fa fa-fast-backward */
@@ -130,8 +130,8 @@
 
     /* SLIDER */
     .slide-bar {
-        margin-left: 1rem;
-        margin-right: 1rem;
+        /* margin-left: 0.5rem;
+        margin-right: 0.5rem; */
         margin-bottom: 0.5rem !important;
     }
 
@@ -151,8 +151,13 @@
         font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     }
       
-     
+    .audio-player-ul {
+        margin:0 5% !important;
+    }
 
+    .slider-container {
+        margin: 0 8% !important;
+    }
 }
 
 /* cool little effect */
@@ -202,7 +207,7 @@
     justify-content: space-between;
     padding: 1rem;
     align-items: center;
-    gap: 8rem;
+    gap: 4rem;
 }
 
 /* repeat controller */
@@ -212,11 +217,17 @@
     align-items: center;
     cursor: pointer;
 }
-.fa-repeat {
-    font-size: 24px;
+.fa-sync {
+    font-size: 17px;
     color: white;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+  
+.fa-sync.rotate {
+    transform: rotate(180deg);
+    color: rgb(238, 255, 7);
 }
-
+  
 /* shuffle controller */
 .shuffle-controller {
     display: flex;
@@ -224,6 +235,18 @@
     align-items: center;
     cursor: pointer;
 }
+
+.fa-random {
+    font-size: 18px;
+    color: white;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+
+.fa-random.invert {
+    transform: rotateX(180deg);
+    color: rgb(35, 240, 255);
+}
+
 /* fa fa-fast-backward */
 .fa-fast-backward {
     color: rgb(255, 255, 255);
