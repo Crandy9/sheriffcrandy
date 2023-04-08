@@ -41,7 +41,7 @@
           <!-- repeat controller -->
           <span class="repeat-controller" 
           @click.prevent="toggleRepeat">
-            <p style="color:white">REPEAT {{ $store.state.repeat }}</p>
+            <i class="fas fa-sync" :class="{ rotate: isRotated}"></i>
           </span>
           <!-- skip previous -->
           <span class="skip-back-controller" 
@@ -64,7 +64,7 @@
           </span>
           <span class="shuffle-controller" 
           @click.prevent="toggleShuffle">
-            <p style="color:white"> SHUFFLE {{ $store.state.shuffle }}</p>
+            <i class="fas fa-random" :class="{ invert: isInverted}"></i>
           </span>
         </div>
       </div>
@@ -533,6 +533,10 @@ export default {
     // number the tracks for UI/UX media player
     trackNumber: 0,
     lastPlayedTrack: 0,
+    // for repeat icon
+    isRotated: false,
+    // shuffle icon
+    isInverted: false,
     }
   },
 
@@ -547,7 +551,7 @@ export default {
     const elements = this.stripe.elements();
     this.card = elements.create('card', { hidePostalCode: true })
     this.card.mount('#card-element')
-    // set slidebar in mount?
+    // set slidebar in mount
     this.$store.state.slideBar = document.getElementById('slideBar'); 
 
   },
@@ -809,10 +813,18 @@ export default {
     // },
     // TOGGLE SHUFFLE
     toggleShuffle() {
+      this.isInverted = !this.isInverted;
+      if (this.isInverted) {
+        this.isRotated = false
+      }
       this.$store.commit('toggleShuffle')
     },
     // TOGGLE REPEAT
     toggleRepeat() {
+      this.isRotated = !this.isRotated;
+      if (this.isRotated) {
+        this.isInverted = false
+      }
       this.$store.commit('toggleRepeat')
     },
     // redirect to login screen
