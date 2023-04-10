@@ -183,6 +183,9 @@ export default createStore({
     slideBarRect: null,
     // used to persist the slidebar color
     slideBarBackground: '',
+    isSlidebarHovering: false,
+    // used to hide show the slider
+    slider: null,
     // timer that updates the songprogress every second
     songTimer: '',
     // repeat song
@@ -223,12 +226,36 @@ export default createStore({
     // update slidebar color
     updateSlideBarBackground(state) {
       if (!state.slideBar) {
-        console.log('what the heeeeeeeeeeeee')
         return;
       }
-      const gradient = `linear-gradient(to right, #00EEFF ${state.progress}%, #ffffff ${state.progress}%)`;
-      state.slideBar.style.background = gradient;
+      const defaultColor = '#00EEFF'
+      const progress = state.progress;
+      const isMobileScreen = window.innerWidth <= 1023;
+
+      if (isMobileScreen) {
+        const gradient = `linear-gradient(to right, ${defaultColor} ${progress}%, #ffffff ${progress}%)`;
+        state.slideBar.style.background = gradient;
+      } 
+      
+      else {
+        const hoverColor = '#FFFF00'; // define the hover color
+        const gradient = `linear-gradient(to right, ${defaultColor} ${progress}%, #ffffff ${progress}%)`;
+        const hoverGradient = `linear-gradient(to right, ${hoverColor} ${progress}%, #ffffff ${progress}%)`;
+        const background = state.isDragging || state.isSlidebarHovering ? hoverGradient : gradient;
+        state.slideBar.style.background = background;
+      }
     },
+
+    // show slider
+    updateSliderDisplay(state) {
+      if (!state.slider) {
+        return;
+      }
+      else if (state.isDragging) {
+        state.slider.style.display = 'block';
+      }
+    },
+    
     // animate slider
     animateSlider(state) {
       // return if slider is animated without a song being set
@@ -238,9 +265,7 @@ export default createStore({
       const duration = state.currentAudioElement.duration() || 1
       if (!state.isDragging) {
           state.progress = ((state.currentAudioElement.seek() || 0) / duration) * 100
-
           this.commit('updateSlideBarBackground')
-
       }
       state.animationFrame = requestAnimationFrame(() => {
         this.commit('animateSlider')
@@ -303,9 +328,6 @@ export default createStore({
               // else the end of the playlist was reached. Go back to first track and standby
               else if (state.currentTrackPlaying == currentLastTrack) {
 
-                console.log('shuffle is true: ' + state.shuffle)
-                state.shuffle == true ? console.log('Last track hit in playlist. Reseting player and standing by') : console.log('Last track hit in shuffle playlist. Reseting player and standing by')
-                console.log('last track: ' + currentLastTrack)
                 state.currentTrackPlaying = currentPlaylist[0].id
                 state.currentAudioElement.currentTime = 0;
                 state.songProgress = '0:00'
@@ -347,12 +369,10 @@ export default createStore({
     // PLAY/PAUSE CONTROLLERS
     playPauseController(state) {
 
-      
       let currentPlayList = []
       state.shuffle === true ? currentPlayList = state.shuffleArray : currentPlayList = state.playlist
 
-      // THIS WORKS if audio is not currently playing
-      // THIS WORKS if this is null, play the first song in the state.playlist
+      // if song is null, play the first song in the state.playlist
       if (!state.currentAudioElement) {
 
         var getSrc = currentPlayList.find((t) => t.id === currentPlayList[0].id)
@@ -667,14 +687,25 @@ export default createStore({
       }
 
       state.playlist = tracksList.slice(); // Make a copy of the array
-      console.log('playlist')
-      console.log(state.playlist)
       if (state.shuffle == false) {
         state.playlist_last_track = state.playlist[state.playlist.length - 1].id
       }
     },
     // POPULATE SHUFFLE Playlist
     populateShufflePlaylist(state) {
+
+      // check if no song has played yet, and the user is spamming the shuffle button
+      if (!state.currentTrackPlaying && state.shuffleArray.length !== 0) {
+        return
+      }
+
+
+      // if there is already a shuffled playlist created
+      // and the currently playing track is at the 0th index, 
+      // that means the user turned the shuffle button on and off. Don't create a new playlist
+      if (state.shuffleArray.length !== 0 && state.shuffleArray[0].id === state.currentTrackPlaying) {
+        return
+      }
 
       const shuffledArray = [];
       const originalArray = state.playlist.slice();
@@ -687,11 +718,33 @@ export default createStore({
         }
         shuffledArray[randomIndex] = originalArray[i];
       }
+
+      // if there was a song currently playing when the shuffle button
+      // was turned on, find the currently playing song's position in the shuffled array,
+      // and swap it's position with the 0th index of the shuffled array
+
+      if (state.currentTrackPlaying) {
+        const currentTrackIndex = shuffledArray.findIndex(track => track.id === state.currentTrackPlaying);
+
+        // if the currently playing song is already the first element by chance, good to go
+        if (shuffledArray[currentTrackIndex] == shuffledArray[0]) {
+          return
+        }
+
+        // else swap it with the current 0th element
+        else {
+          let placeholder = shuffledArray[0]
+          shuffledArray[0] = shuffledArray[currentTrackIndex]
+          shuffledArray[currentTrackIndex] = placeholder
+        }
+
+
+      }
+
       // set the state
       state.shuffleArray = shuffledArray;
       state.shuffleArray_last_track = shuffledArray[shuffledArray.length - 1].id;
-      console.log('new shuffled playlist');
-      console.log(state.shuffleArray);
+    
     },
 
     // SHUFFLE CONTROLLER

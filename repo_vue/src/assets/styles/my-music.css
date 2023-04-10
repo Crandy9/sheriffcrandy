@@ -108,7 +108,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 3rem !important;
+        gap: 2.5rem !important;
         padding-bottom: 1.5rem !important;
     }
     /* fa fa-fast-backward */
@@ -129,10 +129,16 @@
     }
 
     /* SLIDER */
+    .slider-container {
+        margin: 0 8% !important;
+    }
     .slide-bar {
         /* margin-left: 0.5rem;
         margin-right: 0.5rem; */
         margin-bottom: 0.5rem !important;
+    }
+    .slider {
+        display: block !important;
     }
 
     /* TRACK TIME DISPLAYS */
@@ -153,10 +159,6 @@
       
     .audio-player-ul {
         margin:0 5% !important;
-    }
-
-    .slider-container {
-        margin: 0 8% !important;
     }
 }
 
@@ -239,21 +241,23 @@
 .fa-random {
     font-size: 18px;
     color: white;
-    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
-  }
-
-.fa-random.invert {
-    transform: rotateX(180deg);
-    color: rgb(35, 240, 255);
+    transition: color 0.5s ease-in-out, transform 0.3s ease-in-out;
 }
 
-/* fa fa-fast-backward */
+.fa-random.invert {
+    transform: rotate3d(1, 0, 0, 180deg) rotate3d(0, 1, 0, 180deg);
+    color: rgb(7, 238, 255);
+}
+
+/* skip previous controller */
 .fa-fast-backward {
     color: rgb(255, 255, 255);
     cursor: pointer;
     font-size: 24px;
+    padding-top: 0.4rem;
     margin-right: auto; /* push to leftmost position */
 }
+
 
 /* draw a circle around the play/pause control buttons */
 .play-controller, .pause-controller {
@@ -273,6 +277,7 @@
     color: rgb(255, 255, 255);
     cursor: pointer;
     font-size: 24px;
+    padding-top: 0.4rem;
     margin-left: auto; /* push to rightmost position */
 
 }
@@ -285,6 +290,11 @@
   
  
 /* SLIDE BAR AND SLIDER */
+
+/* .slideBar:hover {
+    background: linear-gradient(to right, red 0%, #ffffff 0%);
+} */
+
 .slide-bar {
     position: relative;
     display: flex;
@@ -294,10 +304,10 @@
     cursor: pointer;
     margin-bottom: 0.5rem;
     user-select: none;
-
 }
 
 .slider {
+    display: none;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -305,10 +315,18 @@
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background-color: rgba(0, 238, 255);
+    background-color: rgb(0, 238, 255);
+    /* background-color: white; */
     cursor: pointer;
     transition: transform 0.3s linear; 
 }
+
+/* show the slider on hover or when dragging the slide */
+.slide-bar:hover .slider,
+.slide-bar .slider.dragging {
+    display: block;
+}
+
 /* TRACK TIME DISPLAYS */
 .track-time-displays {
     margin-bottom: 1rem !important;

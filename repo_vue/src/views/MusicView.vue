@@ -24,7 +24,6 @@
       <!-- v-bind:key is used to optimize rendering -->
       <div class="parent-element" style="overflow: auto;">
         <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-          <!-- prevents users from right clicking bg img and stealing it -->
           <div class="track-cover-art-div" v-if="$store.state.currentTrackPlaying == trackDisplay.id" :style="{ backgroundImage: 'url(' + trackDisplay.get_cover_art + ')' }"
             @contextmenu.prevent
             @touchmove.prevent
@@ -72,8 +71,10 @@
         <!-- slide bar -->
         <div class="slide-bar" ref="slideBar" id="slideBar" 
           @mousedown="sliderMoveDesktop"
-          @touchstart="sliderMoveMobile">
-          <div class="slider" ref="slider" :style="{ left: $store.state.progress + '%'}"></div>
+          @touchstart="sliderMoveMobile"
+          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
+          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          <div class="slider" ref="slider" id="slider" :style="{ left: $store.state.progress + '%'}"></div>
         </div>
         <div class="track-time-displays">
           <span class="start-time">
@@ -533,6 +534,8 @@ export default {
     // number the tracks for UI/UX media player
     trackNumber: 0,
     lastPlayedTrack: 0,
+    // to change slidebar color on hover
+    slideBarHovering: false,
     // for repeat icon
     isRotated: false,
     // shuffle icon
@@ -545,14 +548,16 @@ export default {
   // Vue lifecycle hook mounted() is called when this component is added to the DOM
   // so I guess on page load, getTracks() is called  
   mounted() {
+
     this.getTracks();
     document.addEventListener('click', this.closeModalOnWindowClick);
     this.$store.state.region === 'US' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
     const elements = this.stripe.elements();
     this.card = elements.create('card', { hidePostalCode: true })
     this.card.mount('#card-element')
-    // set slidebar in mount
+    // set slidebar and slider in mount
     this.$store.state.slideBar = document.getElementById('slideBar'); 
+    this.$store.state.slider = document.getElementById('slider'); 
 
   },
 
@@ -603,11 +608,48 @@ export default {
           isClicking = true;
         }, 200);
         this.$store.state.isDragging = true;
+        this.slideBarHovering = true
+        this.$store.state.slider.classList.add('dragging');
+
+      };
+
+      const dragDesktop = (event) => {
+        if (isClicking) {
+          clearTimeout(clickTimeout);
+          clickTimeout = null;
+          event.preventDefault();
+
+          this.$store.state.isDragging = true
+          this.slideBarHovering = true
+          // Add the 'dragging' class to the slider element
+          this.$store.state.slider.classList.add('dragging');
+
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            return;
+          }
+            this.$store.state.slideBar = this.$refs.slideBar
+            this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+            let x = event.clientX - this.$store.state.slideBarRect.left
+            const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+            const duration = this.$store.state.currentAudioElement.duration()
+            this.$store.commit('formatTime', (progress / 100) * duration)
+            // this is used to update the seek playback position whenever the mouse is lifted
+            seekTime = (this.$store.state.progress / 100) * duration
+
+            this.$store.state.progress = progress
+            this.updateSlideBarBackground()
+          }
       };
 
       const endDragDesktop = (event) => {
         if (!isClicking) {
+
           this.$store.state.isDragging = false;
+          this.slideBarHovering = false
+          
+          // Remove the 'dragging' class from the slider element
+          this.$refs.slideBar.classList.remove('dragging');
+
           if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
             clearTimeout(clickTimeout);
             clickTimeout = null;
@@ -632,7 +674,15 @@ export default {
           this.updateSlideBarBackground()
         }
         else {
+          if (!this.$store.state.currentAudioElement) {
+            return
+          }
           this.$store.state.isDragging = false
+          this.slideBarHovering = false
+          
+          // Remove the 'dragging' class from the slider element
+          this.$refs.slideBar.classList.remove('dragging');
+
           this.$store.state.currentAudioElement.seek(seekTime)
         }
         clearTimeout(clickTimeout);
@@ -640,36 +690,10 @@ export default {
         document.removeEventListener('mousedown', startDragDesktop);
         document.removeEventListener('mousemove', dragDesktop);
         document.removeEventListener('mouseup', endDragDesktop);
-      };
-
-      const dragDesktop = (event) => {
-        if (isClicking) {
-          clearTimeout(clickTimeout);
-          clickTimeout = null;
-          event.preventDefault();
-
-          this.$store.state.isDragging = true
-          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
-            return;
-          }
-          if (this.$store.state.isDragging) {
-            this.$store.state.slideBar = this.$refs.slideBar
-            this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
-            let x = event.clientX - this.$store.state.slideBarRect.left
-            const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
-            const duration = this.$store.state.currentAudioElement.duration()
-            this.$store.commit('formatTime', (progress / 100) * duration)
-            // this is used to update the seek playback position whenever the mouse is lifted
-            seekTime = (this.$store.state.progress / 100) * duration
-
-            this.$store.state.progress = progress
-            this.updateSlideBarBackground()
-          }
-
-        } else {
-          isClicking = false;
-          this.$store.state.isDragging = false
-        }
+        
+        this.slideBarHovering = false
+        // Remove the 'dragging' class from the slider element
+        this.$store.state.slider.classList.remove('dragging');
       };
 
       document.addEventListener('mousedown', startDragDesktop);
@@ -704,6 +728,25 @@ export default {
         isTouching = false;
       };
       
+      // for dragging slider
+      const dragMobile = (event) => {
+        clearTouchTimeout();
+        this.$store.state.isDragging = true
+        if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+          return;
+        }
+          this.$store.state.slideBar = this.$refs.slideBar
+          this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+          let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+          const duration = this.$store.state.currentAudioElement.duration()
+          this.$store.commit('formatTime', (progress / 100) * duration)
+          seekTime = (this.$store.state.progress / 100) * duration
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+      };
+
       // handles single tap and long press events
       const endDragMobile = (event) => {        
         // single taps
@@ -736,26 +779,6 @@ export default {
         // clear timeout and remove event listeners
         clearTouchTimeout();
       };
-      // for dragging slider
-      const dragMobile = (event) => {
-        clearTouchTimeout();
-        this.$store.state.isDragging = true
-        if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
-          return;
-        }
-        if (this.$store.state.isDragging) {
-          this.$store.state.slideBar = this.$refs.slideBar
-          this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
-          let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
-          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
-          const duration = this.$store.state.currentAudioElement.duration()
-          this.$store.commit('formatTime', (progress / 100) * duration)
-          seekTime = (this.$store.state.progress / 100) * duration
-
-          this.$store.state.progress = progress
-          this.updateSlideBarBackground()
-        }
-      };
       
       event.target.addEventListener('touchmove', dragMobile, { passive: true });
       event.target.addEventListener('touchend', endDragMobile, { once: true });
@@ -765,6 +788,9 @@ export default {
     updateSlideBarBackground() {
       this.$store.state.slideBar = document.getElementById('slideBar'); 
       this.$store.commit('updateSlideBarBackground')
+    },
+    updateSliderDisplay() {
+      this.$store.commit('updateSliderDisplay')
     },
       // timer to display track playback time
     formatTime(secs) {
