@@ -24,7 +24,8 @@
       <!-- v-bind:key is used to optimize rendering -->
       <div class="parent-element" style="overflow: auto;">
         <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-          <div class="track-cover-art-div" v-if="$store.state.currentTrackPlaying == trackDisplay.id" :style="{ backgroundImage: 'url(' + trackDisplay.get_cover_art + ')' }"
+          <div class="track-cover-art-div" v-if="$store.state.currentTrackPlaying == trackDisplay.id" 
+            :style="{ backgroundImage: 'url(' + trackDisplay.get_cover_art + ')' }"
             @contextmenu.prevent
             @touchmove.prevent
             style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">        
@@ -74,7 +75,12 @@
           @touchstart="sliderMoveMobile"
           @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
           @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
-          <div class="slider" ref="slider" id="slider" :style="{ left: $store.state.progress + '%'}"></div>
+          <div 
+            class="slider" 
+            ref="slider" 
+            id="slider" 
+            :style="{ left: $store.state.progress + '%'}">
+          </div>
         </div>
         <div class="track-time-displays">
           <span class="start-time">
@@ -830,10 +836,6 @@ export default {
       this.$store.commit('setPlayOrPause', trackId)
     },
     // SHUFFLE PLAYLIST
-    populatePlaylist() {
-      this.$store.commit('populatePlaylist', this.tracks)
-    },
-    // SHUFFLE PLAYLIST
     // populateShufflePlaylist() {
     //   this.$store.commit('populateShufflePlaylist')
     // },
@@ -1114,8 +1116,6 @@ export default {
           this.tracks = response.data
           // set the tab title
           document.title = 'Music'
-          // set playlists
-          this.populatePlaylist();
         })
         .catch(error => {
           console.log("ERROR BOYY: " + error)

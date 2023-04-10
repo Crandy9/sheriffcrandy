@@ -164,6 +164,8 @@ export default createStore({
     currentAudioElement: null,
     // id of the current track playing
     currentAudioElementPlaying: null,
+    // get the current img
+    currentTrackImg: null,
     // used as a determiner for dragging the slider
     isDragging: false,
     // smooth slider animation

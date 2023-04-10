@@ -498,24 +498,44 @@
 			</div>
 		</footer>
 		<!-- end Footer -->
+
+
     <!-- PERSISTANT MUSIC PLAYER -->
     <div class="persist-mini-music-player-container" :style="{ display: $route.name !== 'Music' ? 'block' : 'none' }">
       <div class="persist-mini-music-player">
-        <!-- slidebar -->
-        <div class="persist-mini-slide-bar">
+        <!-- track img -->
+        <div 
+          class="persist-mini-track-cover-art-div" 
+          v-if="$store.state.currentTrackPlaying" 
+          :style="{ backgroundImage: 'url(' + $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).get_cover_art + ')' }"
+          @contextmenu.prevent
+          @touchmove.prevent
+          style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">        
         </div>
-        <!-- slider -->
-        <div class="persist-mini-slider" ref="slider" :style="{ left: $store.state.progress + '%'}">
+        <!-- slide bar -->
+        <div class="persist-mini-slide-bar" ref="slideBar" id="slideBar" 
+          @mousedown="sliderMoveDesktop"
+          @touchstart="sliderMoveMobile"
+          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
+          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          <div 
+            class="persist-mini-slider" 
+            ref="slider" 
+            id="slider" 
+            :style="{ left: $store.state.progress + '%'}">
+          </div>
         </div>
       </div>
     </div>
+
+
 </template>
 
 <!-- import bulma -->
 <style lang="scss">
   @import '../node_modules/bulma';
 
-  // loading bar styling UNTESTED
+  // loading bar styling
   .lds-dual-ring {
     display: inline-block;
     width: 80px;
@@ -589,6 +609,8 @@ export default {
       cart: {
         itemsInCart: []
       },
+      // music stuff
+      tracks: [],
     }
   },
   // initialize the store. First method that is called when app is loaded/page refreshed
@@ -614,7 +636,11 @@ export default {
     // mount cart
     this.cart = this.$store.state.cart
     document.addEventListener('click', this.closeModalOnWindowClick);
-
+    // set slidebar and slider in mount
+    this.$store.state.slideBar = document.getElementById('slideBar'); 
+    this.$store.state.slider = document.getElementById('slider'); 
+    // get tracks for persistent music player
+    this.getTracks();
   },
   // whenever cart changes, cart count will automatically update
   computed: {
@@ -630,7 +656,259 @@ export default {
 
   // methods 
   methods: {
+    
+    // have to generate the playlist on app load
+    async getTracks() {
+      
+      // loading bar while api data is getting fetched
+      this.$store.commit('setIsLoading', true);
+      // replace the API path with env var
+      // .get requests API data from server via HTTP GET
+      // .then will take the response data and populate the empty tracks list above
+      await axios.get(process.env.VUE_APP_TRACKS_API_URL)
+        .then(response => {
+          this.tracks = response.data
+          // set playlists
+          this.populatePlaylist();
+        })
+        .catch(error => {
+          console.log("ERROR BOYY: " + error)
+        })
 
+      // stop loading bar after api data is fetched
+      this.$store.commit('setIsLoading', false);
+    },
+    // PERSIST MINI AND MUSIC PLAYER
+    // GET THE TRACK IMG
+    getCoverArt() {
+
+      // trackDisplay
+
+    },
+    // MOUSE SLIDEBAR CONTROLS
+    sliderMoveDesktop(event) {
+      let isClicking = false;
+      let clickTimeout = null;
+
+      // need to set up variables that are used by both single touch and long press events
+      let seekTime = ''
+      this.$store.state.slideBar = event.currentTarget
+      this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+      let x = event.clientX - this.$store.state.slideBarRect.left
+
+      const startDragDesktop = (event) => {
+        isClicking = false;
+        clickTimeout = setTimeout(() => {
+          isClicking = true;
+        }, 200);
+        this.$store.state.isDragging = true;
+        this.slideBarHovering = true
+        this.$store.state.slider.classList.add('dragging');
+
+      };
+
+      const dragDesktop = (event) => {
+        if (isClicking) {
+          clearTimeout(clickTimeout);
+          clickTimeout = null;
+          event.preventDefault();
+
+          this.$store.state.isDragging = true
+          this.slideBarHovering = true
+          // Add the 'dragging' class to the slider element
+          this.$store.state.slider.classList.add('dragging');
+
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            return;
+          }
+            this.$store.state.slideBar = this.$refs.slideBar
+            this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+            let x = event.clientX - this.$store.state.slideBarRect.left
+            const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+            const duration = this.$store.state.currentAudioElement.duration()
+            this.$store.commit('formatTime', (progress / 100) * duration)
+            // this is used to update the seek playback position whenever the mouse is lifted
+            seekTime = (this.$store.state.progress / 100) * duration
+
+            this.$store.state.progress = progress
+            this.updateSlideBarBackground()
+          }
+      };
+
+      const endDragDesktop = (event) => {
+        if (!isClicking) {
+
+          this.$store.state.isDragging = false;
+          this.slideBarHovering = false
+          
+          // Remove the 'dragging' class from the slider element
+          this.$refs.slideBar.classList.remove('dragging');
+
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            clearTimeout(clickTimeout);
+            clickTimeout = null;
+            document.removeEventListener('mousedown', startDragDesktop);
+            document.removeEventListener('mousemove', dragDesktop);
+            document.removeEventListener('mouseup', endDragDesktop);
+            return;
+          }
+
+
+          this.$store.state.slideBar = this.$refs.slideBar
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+
+          const duration = this.$store.state.currentAudioElement.duration()
+          seekTime = (progress / 100) * duration
+
+          this.$store.state.currentAudioElement.seek(seekTime)
+
+          this.$store.commit('formatTime', seekTime)
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+        }
+        else {
+          if (!this.$store.state.currentAudioElement) {
+            return
+          }
+          this.$store.state.isDragging = false
+          this.slideBarHovering = false
+          
+          // Remove the 'dragging' class from the slider element
+          this.$refs.slideBar.classList.remove('dragging');
+
+          this.$store.state.currentAudioElement.seek(seekTime)
+        }
+        clearTimeout(clickTimeout);
+        clickTimeout = null;
+        document.removeEventListener('mousedown', startDragDesktop);
+        document.removeEventListener('mousemove', dragDesktop);
+        document.removeEventListener('mouseup', endDragDesktop);
+        
+        this.slideBarHovering = false
+        // Remove the 'dragging' class from the slider element
+        this.$store.state.slider.classList.remove('dragging');
+      };
+
+      document.addEventListener('mousedown', startDragDesktop);
+      document.addEventListener('mousemove', dragDesktop);
+      document.addEventListener('mouseup', endDragDesktop);
+    },
+
+    // MOBILE SLIDEBAR CONTROLS
+    // user touched slidebar, determine if it is a single tap or a long press
+    sliderMoveMobile(event) {
+      
+      // prevent the screen from scrolling up and down
+      // Check if scrolling is in progress
+      if (event.cancelable && !event.defaultPrevented) {
+        event.preventDefault();
+      }      
+
+      // need to set up variables that are used by both single touch and long press events
+      let seekTime = ''
+      this.$store.state.slideBar = event.currentTarget
+      this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+      let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+      let isTouching = true;
+
+
+      let touchTimeout = setTimeout(() => {
+        isTouching = false;
+      }, 300);
+      
+      const clearTouchTimeout = () => {
+        clearTimeout(touchTimeout);
+        isTouching = false;
+      };
+      
+      // for dragging slider
+      const dragMobile = (event) => {
+        clearTouchTimeout();
+        this.$store.state.isDragging = true
+        if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+          return;
+        }
+          this.$store.state.slideBar = this.$refs.slideBar
+          this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+          let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+          const duration = this.$store.state.currentAudioElement.duration()
+          this.$store.commit('formatTime', (progress / 100) * duration)
+          seekTime = (this.$store.state.progress / 100) * duration
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+      };
+
+      // handles single tap and long press events
+      const endDragMobile = (event) => {        
+        // single taps
+        if (isTouching) {
+          clearTouchTimeout();
+          this.$store.state.isDragging = false
+          // don't move slider if a song hasn't been played yet (NEED TO FIX THIS LATER)
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            return;
+          }
+          this.$store.state.slideBar = this.$refs.slideBar
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+
+          const duration = this.$store.state.currentAudioElement.duration()
+          seekTime = (progress / 100) * duration
+          this.$store.state.currentAudioElement.seek(seekTime)
+
+          this.$store.commit('formatTime', seekTime)
+          // this.$store.state.songProgress = this.$store.state.minsecs
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+        }
+        // long press events. See const DragMobile
+        else {
+          this.$store.state.isDragging = false
+          // set playtime based on seekTime var calculated in dragMobile
+          this.$store.state.currentAudioElement.seek(seekTime)
+        }
+        // clear timeout and remove event listeners
+        clearTouchTimeout();
+      };
+      
+      event.target.addEventListener('touchmove', dragMobile, { passive: true });
+      event.target.addEventListener('touchend', endDragMobile, { once: true });
+    },
+
+    // update slidebar color when slider moves along slidebar
+    updateSlideBarBackground() {
+      this.$store.state.slideBar = document.getElementById('slideBar'); 
+      this.$store.commit('updateSlideBarBackground')
+    },
+    updateSliderDisplay() {
+      this.$store.commit('updateSliderDisplay')
+    },
+      // timer to display track playback time
+    formatTime(secs) {
+      this.$store.commit('formatTime', secs)
+    },
+
+    // SLIDE BAR called by howl
+    animateSlider() {
+      this.$store.commit('animateSlider')
+    },
+
+    // remove event listeners if they are still active
+    beforeDestroy() {
+      // stop the recursion when the component is destroyed
+      this.$store.state.slideBar = this.$refs.slideBar
+      this.$store.state.slideBar.removeEventListener("mousedown", this.touchStartMobile)
+      document.removeEventListener("mousemove", this.dragHandler)
+      document.removeEventListener("mouseup", this.endDrag)
+    },
+
+    // SHUFFLE PLAYLIST
+    populatePlaylist() {
+      this.$store.commit('populatePlaylist', this.tracks)
+    },
     // change language button click
     changeLanguageButton(language) {
       this.$store.commit('setLanguage',language)

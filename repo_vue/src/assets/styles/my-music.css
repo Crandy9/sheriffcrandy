@@ -19,6 +19,13 @@
     background-color: rgb(14, 27, 27);
 }
 
+/* img cover art */
+.persist-mini-track-cover-art-div {
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    padding-bottom: 2rem;
+}
+
 .persist-mini-music-player {
     display: grid;
     height: 56px;
@@ -37,6 +44,7 @@
     cursor: pointer;
     margin-left: 1rem;
     margin-right: 1rem;
+    margin-bottom: 0px;
 }
 
 .persist-mini-slider {
@@ -47,12 +55,9 @@
     transform: translate(-20%, 40%);
     width: 5px;
     height: 10px;
-    /* border-radius: 50%; */
     background-color: rgba(0, 238, 255);
     cursor: pointer;
     transition: transform 0.3s linear; 
-    margin-left: 1rem;
-    margin-right: 1rem;
 }
 
 /* MUSIC VIEW */
