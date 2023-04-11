@@ -501,8 +501,10 @@
 
 
     <!-- PERSISTANT MUSIC PLAYER -->
+    <!-- only shown on views other than music player -->
     <div class="persist-mini-music-player-container" :style="{ display: $route.name !== 'Music' ? 'block' : 'none' }">
-      <div class="persist-mini-music-player">
+      <!-- img container -->
+      <div class="persist-mini-track-cover-art-and-controllers-container">
         <!-- track img -->
         <div 
           class="persist-mini-track-cover-art-div" 
@@ -510,25 +512,74 @@
           :style="{ backgroundImage: 'url(' + $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).get_cover_art + ')' }"
           @contextmenu.prevent
           @touchmove.prevent
-          style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">        
+          style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">
         </div>
+          <!-- track title -->
+        <div v-if="$store.state.currentTrackPlaying" class="persist-mini-track-title" ref="trackTitle">
+          <p style="color: white">Sheriff Crandy - </p>
+          <p ref="titleTag" style="color: white">{{ $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).title }}</p>
+        </div>
+        <!-- CONTROLLERS -->
+        <div class="persist-mini-music-player-controls">
+          <!-- repeat controller -->
+          <span class="persist-mini-repeat-controller" 
+          @click.prevent="toggleRepeat">
+            <i id="persist-mini-repeat" class="fas fa-sync" :class="{ rotate: $store.state.isRotated}"></i>
+          </span>
+          <!-- skip previous -->
+          <span class="persist-mini-skip-back-controller" 
+          @click.prevent="skipPreviousController()">
+            <i id="persist-mini-skip-back" class="fa fa-fast-backward"></i>
+          </span>
+          <!-- play controller showing when paused -->
+          <span class="persist-mini-play-controller" v-if="!$store.state.currentAudioElementPlaying" 
+          @click.prevent="playPauseController()">
+            <i id="persist-mini-play" class="fas fa-play"></i>          
+          </span>
+          <!-- pause controller shown when playing -->
+          <span class="persist-mini-pause-controller" v-if="$store.state.currentAudioElementPlaying" @click.prevent="playPauseController()">
+            <i id="persist-mini-pause" class="fas fa-pause"></i>          
+          </span>
+          <!-- skip forward -->
+          <span class="persist-mini-skip-forward-controller" 
+          @click.prevent="skipForwardController()">
+            <i id="persist-mini-skip-forward" class="fa fa-fast-forward"></i>  
+          </span>
+          <span class="persist-mini-shuffle-controller" 
+          @click.prevent="toggleShuffle">
+            <i id="persist-mini-shuffle" class="fas fa-random" :class="{ invert: $store.state.isInverted}"></i>
+          </span>
+        </div>
+      </div>
+      <div class="persist-mini-music-player">
         <!-- slide bar -->
-        <div class="persist-mini-slide-bar" ref="slideBar" id="slideBar" 
+        <div 
+          class="persist-mini-slide-bar" 
+          ref="slideBar" 
+          id="persist-mini-slideBar" 
           @mousedown="sliderMoveDesktop"
           @touchstart="sliderMoveMobile"
           @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
           @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          <!-- slider -->
           <div 
             class="persist-mini-slider" 
             ref="slider" 
-            id="slider" 
+            id="persist-mini-slider" 
             :style="{ left: $store.state.progress + '%'}">
           </div>
         </div>
+        <!-- time displays -->
+        <div class="persist-mini-track-time-displays">
+          <span class="persist-mini-start-time">
+            {{ $store.state.songProgress }}
+          </span>
+          <span v-show="$store.state.songLength" class="persist-mini-end-time">
+            {{$store.state.songLength}}
+          </span>
+        </div>
       </div>
     </div>
-
-
 </template>
 
 <!-- import bulma -->
@@ -611,6 +662,8 @@ export default {
       },
       // music stuff
       tracks: [],
+      isRotated: false,
+      isInverted: false
     }
   },
   // initialize the store. First method that is called when app is loaded/page refreshed
@@ -637,10 +690,11 @@ export default {
     this.cart = this.$store.state.cart
     document.addEventListener('click', this.closeModalOnWindowClick);
     // set slidebar and slider in mount
-    this.$store.state.slideBar = document.getElementById('slideBar'); 
-    this.$store.state.slider = document.getElementById('slider'); 
+    this.$store.state.slideBar = document.getElementById('persist-mini-slideBar'); 
+    this.$store.state.slider = document.getElementById('persist-mini-slider'); 
     // get tracks for persistent music player
     this.getTracks();
+    this.updateSlideBarBackground();
   },
   // whenever cart changes, cart count will automatically update
   computed: {
@@ -656,7 +710,7 @@ export default {
 
   // methods 
   methods: {
-    
+
     // have to generate the playlist on app load
     async getTracks() {
       
@@ -679,13 +733,7 @@ export default {
       this.$store.commit('setIsLoading', false);
     },
     // PERSIST MINI AND MUSIC PLAYER
-    // GET THE TRACK IMG
-    getCoverArt() {
-
-      // trackDisplay
-
-    },
-    // MOUSE SLIDEBAR CONTROLS
+    // MOUSE SLIDEBAR CONTROLS copied from music view
     sliderMoveDesktop(event) {
       let isClicking = false;
       let clickTimeout = null;
@@ -880,8 +928,8 @@ export default {
 
     // update slidebar color when slider moves along slidebar
     updateSlideBarBackground() {
-      this.$store.state.slideBar = document.getElementById('slideBar'); 
-      this.$store.commit('updateSlideBarBackground')
+      this.$store.state.slideBar = document.getElementById('persist-mini-slideBar'); 
+      this.$store.commit('updateSlideBarBackground', this.$store.state.slideBar)
     },
     updateSliderDisplay() {
       this.$store.commit('updateSliderDisplay')
@@ -890,7 +938,16 @@ export default {
     formatTime(secs) {
       this.$store.commit('formatTime', secs)
     },
+    
+    // TOGGLE SHUFFLE
+    toggleShuffle() {
+      this.$store.commit('toggleShuffle')
+    },
 
+    // TOGGLE REPEAT
+    toggleRepeat() {
+      this.$store.commit('toggleRepeat')
+    },
     // SLIDE BAR called by howl
     animateSlider() {
       this.$store.commit('animateSlider')
@@ -904,7 +961,19 @@ export default {
       document.removeEventListener("mousemove", this.dragHandler)
       document.removeEventListener("mouseup", this.endDrag)
     },
-
+    // MUSIC CONTROLLERS
+    // SKIP TO NEXT TRACK
+    skipForwardController() {
+      this.$store.commit('skipForwardController')
+    },
+    // SKIP TO PREVIOUS TRACK
+    skipPreviousController() {
+      this.$store.commit('skipPreviousController')
+    },
+    // FOR PLAY/PAUSE BUTTON CONTROLLERS
+    playPauseController() {
+      this.$store.commit('playPauseController')
+    },
     // SHUFFLE PLAYLIST
     populatePlaylist() {
       this.$store.commit('populatePlaylist', this.tracks)
@@ -933,13 +1002,11 @@ export default {
       current_width = window.innerWidth;
 
       if (current_width > 1024) {
-        console.log(window.innerWidth)
         return {
           myWidth: "100"
         }
       }
       else {
-        console.log(window.innerWidth)
         return {
           myWidth: "0"
         }

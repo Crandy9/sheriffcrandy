@@ -69,5 +69,9 @@ export default {
       document.title = 'Home' 
     },
 
+    methods: {
+      
+    }
+
 }
 </script>

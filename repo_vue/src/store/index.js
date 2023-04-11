@@ -179,7 +179,7 @@ export default createStore({
     // duration: 51000,
     // the audio source of the track used by Howler.js
     currentSrc: '',
-    // slidebar (shared between persistent music player and music view )
+    // slidebar music view
     slideBar: '',
     // needed to prevent errors when slider is clicked before song starts playing
     slideBarRect: null,
@@ -207,6 +207,11 @@ export default createStore({
     // for songProgress
     minutes: '',
     seconds: '',
+    // shuffle repeat states
+    // repeat icon
+    isRotated: false,
+    isInverted: false
+
 
   },
   getters: {
@@ -226,10 +231,16 @@ export default createStore({
       state.songProgress = `${minutes}:${seconds}`
     },
     // update slidebar color
-    updateSlideBarBackground(state) {
+    updateSlideBarBackground(state, currentSlideBar) {
+
+      // set the slidebar as either mini persist, persist, or music view player
+      state.slideBar = currentSlideBar
+
       if (!state.slideBar) {
         return;
       }
+
+
       const defaultColor = '#00EEFF'
       const progress = state.progress;
       const isMobileScreen = window.innerWidth <= 1023;
@@ -267,7 +278,7 @@ export default createStore({
       const duration = state.currentAudioElement.duration() || 1
       if (!state.isDragging) {
           state.progress = ((state.currentAudioElement.seek() || 0) / duration) * 100
-          this.commit('updateSlideBarBackground')
+          this.commit('updateSlideBarBackground', state.slideBar)
       }
       state.animationFrame = requestAnimationFrame(() => {
         this.commit('animateSlider')
@@ -334,7 +345,7 @@ export default createStore({
                 state.currentAudioElement.currentTime = 0;
                 state.songProgress = '0:00'
                 state.progress = 0
-                this.commit('updateSlideBarBackground')
+                this.commit('updateSlideBarBackground', state.slideBar)
                 var getSrc = currentPlaylist.find((t) => t.id === state.currentTrackPlaying)
                 // set currentSrc to be either a sample or the full length song
                 state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
@@ -442,7 +453,7 @@ export default createStore({
             state.currentAudioElement.pause()
             state.currentAudioElementPlaying = false
             state.currentTrackPlaying = trackId
-            this.commit('updateSlideBarBackground')
+            this.commit('updateSlideBarBackground', state.slideBar)
             return
           } 
           // play it
@@ -516,7 +527,7 @@ export default createStore({
         else {
           state.songProgress = '0:00'
           state.progress = 0
-          this.commit('updateSlideBarBackground')
+          this.commit('updateSlideBarBackground', state.slideBar)
           state.currentAudioElement.pause()
           state.currentAudioElementPlaying = false;
         }
@@ -554,7 +565,7 @@ export default createStore({
         else {
           state.songProgress = '0:00'
           state.progress = 0
-          this.commit('updateSlideBarBackground')
+          this.commit('updateSlideBarBackground', state.slideBar)
           state.currentAudioElement.pause()
           state.currentAudioElementPlaying = false;
         }        
@@ -578,7 +589,7 @@ export default createStore({
       if (secondsInt >= 1) {
         state.currentAudioElement.stop();  
         state.progress = 0;
-        this.commit('updateSlideBarBackground')
+        this.commit('updateSlideBarBackground', state.slideBar)
         state.currentAudioElement.currentTime = 0; 
 
         // if the song was playing, then play, else reset song and pause
@@ -751,7 +762,11 @@ export default createStore({
 
     // SHUFFLE CONTROLLER
     toggleShuffle(state) {
-      
+
+      state.isInverted = !state.isInverted;
+      if (state.isInverted) {
+        state.isRotated = false
+      }
       // if repeat is true, set shuffle to false
       if (state.repeat && !state.shuffle) {
         state.repeat = false;
@@ -768,6 +783,12 @@ export default createStore({
 
     // REPEAT CONTROLLER
     toggleRepeat(state) {
+
+      state.isRotated = !state.isRotated;
+      if (state.isRotated) {
+        state.isInverted = false
+      }
+
       if (state.shuffle && !state.repeat) {
         // if shuffle is true, set repeat to false
         state.shuffle = false;

@@ -41,7 +41,7 @@
           <!-- repeat controller -->
           <span class="repeat-controller" 
           @click.prevent="toggleRepeat">
-            <i class="fas fa-sync" :class="{ rotate: isRotated}"></i>
+            <i class="fas fa-sync" :class="{ rotate: $store.state.isRotated}"></i>
           </span>
           <!-- skip previous -->
           <span class="skip-back-controller" 
@@ -64,7 +64,7 @@
           </span>
           <span class="shuffle-controller" 
           @click.prevent="toggleShuffle">
-            <i class="fas fa-random" :class="{ invert: isInverted}"></i>
+            <i class="fas fa-random" :class="{ invert: $store.state.isInverted}"></i>
           </span>
         </div>
       </div>
@@ -793,7 +793,7 @@ export default {
     // update slidebar color when slider moves along slidebar
     updateSlideBarBackground() {
       this.$store.state.slideBar = document.getElementById('slideBar'); 
-      this.$store.commit('updateSlideBarBackground')
+      this.$store.commit('updateSlideBarBackground', this.$store.state.slideBar)
     },
     updateSliderDisplay() {
       this.$store.commit('updateSliderDisplay')
@@ -841,18 +841,10 @@ export default {
     // },
     // TOGGLE SHUFFLE
     toggleShuffle() {
-      this.isInverted = !this.isInverted;
-      if (this.isInverted) {
-        this.isRotated = false
-      }
       this.$store.commit('toggleShuffle')
     },
     // TOGGLE REPEAT
     toggleRepeat() {
-      this.isRotated = !this.isRotated;
-      if (this.isRotated) {
-        this.isInverted = false
-      }
       this.$store.commit('toggleRepeat')
     },
     // redirect to login screen

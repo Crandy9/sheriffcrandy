@@ -3,48 +3,271 @@
 
 ***/
 
-
-
 /* PERSISTANT MUSIC PLAYER */
+/* for mobile */
+@media screen and (max-width: 1023px) {
+
+    .persist-mini-music-player-container {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: rgb(14, 27, 27);
+    
+    }
+    
+    /* img cover art container and controller */
+    .persist-mini-track-cover-art-and-controllers-container {
+        display: flex;
+        justify-content: space-between;     
+        align-items: flex-start;
+        position: relative;
+        margin-right: 2rem;
+    }
+
+    /* img cover art */
+    .persist-mini-track-cover-art-div {
+        order: 1;
+        width: 42px !important; /* set the width of the div */
+        height: 42px !important; /* set the height of the div */
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-top: 0.5rem;
+        margin-left: 1rem !important;
+    }
+
+    .persist-mini-track-title {
+        margin-top: 0.6rem !important;
+        font-size: 13px !important;
+        margin-left: 1rem !important;
+    }
+
+    /* show full title and animate it if it's too long */
+    .persist-mini-scrolling-text {
+        white-space: nowrap;
+        overflow: hidden;
+        animation: scroll-left 10s linear infinite;
+    }
+
+    /* conrtollers */
+    .persist-mini-music-player-controls {
+        margin-top: 1rem !important;
+        margin-left: 1rem !important;
+        margin-right: 0 !important;
+        gap: 1.2rem !important;
+    }
+    
+    /* repeat and shuffle controller */
+    .persist-mini-repeat-controller, 
+    .persist-mini-shuffle-controller,
+    .persist-mini-skip-back-controller,
+    .persist-mini-play-controller,
+    .persist-mini-pause-controller,
+    .persist-mini-skip-forward-controller {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative; 
+        cursor: pointer;
+        padding-bottom: 0.5rem;
+    }
+
+    #persist-mini-pause {
+        font-size: 16px !important;
+    }
+    #persist-mini-play {
+        font-size: 16px !important;
+    }    
+    #persist-mini-skip-forward {
+        font-size: 16px !important;
+    }    
+    #persist-mini-skip-back {
+        font-size: 16px !important;
+    }
+    
+    #persist-mini-repeat {
+        font-size: 14px !important;
+        color: white;
+        transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+    
+    #persist-mini-repeat.rotate {
+        transform: rotate(180deg);
+        color: rgb(238, 255, 7);
+    }
+
+    #persist-mini-shuffle{
+        font-size: 16px !important;
+        color: white;
+        transition: color 0.5s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    #persist-mini-shuffle.invert {
+        transform: rotate3d(1, 0, 0, 180deg) rotate3d(0, 1, 0, 180deg);
+        color: rgb(7, 238, 255);
+    }
+
+    
+    .persist-mini-slide-bar {
+        height: 2px !important;
+    }
+    
+    .persist-mini-slider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: translate(-20%, 40%);
+        width: 5px;
+        height: 10px;
+        background-color: rgba(0, 238, 255);
+        cursor: pointer;
+        transition: transform 0.3s linear; 
+    }
+    
+    /* time stamps */
+    .persist-mini-track-time-displays {
+        padding-bottom: 0.2rem;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    /* start/end time */
+    .persist-mini-start-time, .persist-mini-end-time {
+        padding-top: 1rem;
+        margin-inline: 2.5rem;
+        color: rgb(238, 234, 234);
+        font-size: 13px;
+        font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+}
+
+/* for desktop */
 
 .persist-mini-music-player-container {
-    display: none;
     position: sticky;
     bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
     box-sizing: border-box;
-    padding-bottom: 10px; /* add padding to make space for the slide bar */
     background-color: rgb(14, 27, 27);
+
+}
+
+/* img cover art container and controller */
+.persist-mini-track-cover-art-and-controllers-container {
+    display: flex;
+    justify-content: space-between;     
+    align-items: flex-start;
+    position: relative;
+    margin-right: 2rem;
 }
 
 /* img cover art */
 .persist-mini-track-cover-art-div {
-    background-size: 40px 40px;
+    order: 1;
+    width: 60px; /* set the width of the div */
+    height: 60px; /* set the height of the div */
+    background-size: cover;
     background-repeat: no-repeat;
-    padding-bottom: 2rem;
+    margin-top: 0.5rem;
+    margin-left: 2.2rem;
 }
 
-.persist-mini-music-player {
-    display: grid;
-    height: 56px;
-    padding: 8px;
-    position: relative;
+.persist-mini-track-title {
+    order: 2;
+    margin-right: auto;
+    margin-left: 3rem;
+    margin-top: 1.1rem;
+    font-size: 16px;
 }
+
+/* show full title and animate it if it's too long */
+.persist-mini-scrolling-text {
+    white-space: nowrap;
+    overflow: hidden;
+    animation: scroll-left 10s linear infinite;
+}
+
+/* conrtollers */
+.persist-mini-music-player-controls {
+    order: 3;
+    margin-top: 1.5rem;
+    margin-right: 1.5rem;
+    margin-left: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+}
+
+/* repeat and shuffle controller */
+.persist-mini-repeat-controller, 
+.persist-mini-shuffle-controller,
+.persist-mini-skip-back-controller,
+.persist-mini-play-controller,
+.persist-mini-pause-controller,
+.persist-mini-skip-forward-controller {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; 
+    cursor: pointer;
+    padding-bottom: 0.5rem;
+}
+
+#persist-mini-pause {
+    font-size: 24px;
+}
+#persist-mini-play {
+    font-size: 24px;
+}    
+#persist-mini-skip-forward {
+    font-size: 24px;
+}    
+#persist-mini-skip-back {
+    font-size: 24px;
+}
+
+#persist-mini-repeat {
+    font-size: 20px;
+    color: white;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+#persist-mini-repeat.rotate {
+    transform: rotate(180deg);
+    color: rgb(238, 255, 7);
+}
+
+#persist-mini-shuffle {
+    font-size: 24px;
+    color: white;
+    transition: color 0.5s ease-in-out, transform 0.3s ease-in-out;
+}
+
+#persist-mini-shuffle.invert {
+    transform: rotate3d(1, 0, 0, 180deg) rotate3d(0, 1, 0, 180deg);
+    color: rgb(7, 238, 255);
+}
+
 
 .persist-mini-slide-bar {
-    height: 2px;
+    height: 3px;
     position: absolute;
-    bottom: 0;
+    bottom: 1.5rem; /* add some space from the bottom edge */
     left: 0;
     right: 0;
     border-radius: 4px;
     background-color: #ffffff;
     cursor: pointer;
-    margin-left: 1rem;
-    margin-right: 1rem;
-    margin-bottom: 0px;
+    margin-left: 2rem;
+    margin-right: 2rem;
 }
 
 .persist-mini-slider {
@@ -59,6 +282,25 @@
     cursor: pointer;
     transition: transform 0.3s linear; 
 }
+
+/* time stamps */
+.persist-mini-track-time-displays {
+    padding-bottom: 0.2rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* start/end time */
+.persist-mini-start-time, .persist-mini-end-time {
+    padding-top: 1rem;
+    margin-inline: 2.5rem;
+    color: rgb(238, 234, 234);
+    font-size: 13px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+/* END PERSISTANT MUSIC PLAYER */
+
+
 
 /* MUSIC VIEW */
 .main-music-section {
