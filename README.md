@@ -50,9 +50,9 @@ SHERIFFCRANDY-
 
 ```
 
-**** 
+
         Django setup:
-****
+
 - make dir on local machine where this project will be located
 
 - clone this repo from github (ssh or https)
