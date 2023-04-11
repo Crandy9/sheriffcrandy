@@ -51,7 +51,7 @@ SHERIFFCRANDY-
 ```
 
 
-        Django setup:
+ Django setup:
 
 - make dir on local machine where this project will be located
 
@@ -92,9 +92,7 @@ django-admin startproject yourprojectname
 python manage.py startapp my app name
 
 
-****   
-        Vue.js setup:
-****
+ Vue.js setup:
 
 - open a new terminal and cd to yourprojectname dir and install vue cli:
 npm install -g @vue/cli (if you get a bunch of permission errors, run again with sudo)
