@@ -564,6 +564,7 @@ export default {
     // set slidebar and slider in mount
     this.$store.state.slideBar = document.getElementById('slideBar'); 
     this.$store.state.slider = document.getElementById('slider'); 
+    this.updateSlideBarBackground();
 
   },
 
@@ -599,6 +600,10 @@ export default {
     // NEW MUSIC PLAYER IMPLEMENTATION
     // MOUSE SLIDEBAR CONTROLS
     sliderMoveDesktop(event) {
+      // if no song has played, don't set events
+      if (!this.$store.state.currentTrackPlaying) {
+        return
+      }
       let isClicking = false;
       let clickTimeout = null;
 
@@ -711,6 +716,10 @@ export default {
     // user touched slidebar, determine if it is a single tap or a long press
     sliderMoveMobile(event) {
       
+      // if no song has played, don't set events
+      if (!this.$store.state.currentTrackPlaying) {
+        return
+      }
       // prevent the screen from scrolling up and down
       // Check if scrolling is in progress
       if (event.cancelable && !event.defaultPrevented) {

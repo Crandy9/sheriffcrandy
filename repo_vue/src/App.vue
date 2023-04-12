@@ -735,6 +735,10 @@ export default {
     // PERSIST MINI AND MUSIC PLAYER
     // MOUSE SLIDEBAR CONTROLS copied from music view
     sliderMoveDesktop(event) {
+      // if no song has played, don't set events
+      if (!this.$store.state.currentTrackPlaying) {
+        return
+      }
       let isClicking = false;
       let clickTimeout = null;
 
@@ -846,6 +850,11 @@ export default {
     // MOBILE SLIDEBAR CONTROLS
     // user touched slidebar, determine if it is a single tap or a long press
     sliderMoveMobile(event) {
+
+      // if no song has played, don't set events
+      if (!this.$store.state.currentTrackPlaying) {
+        return
+      }
       
       // prevent the screen from scrolling up and down
       // Check if scrolling is in progress
@@ -877,16 +886,17 @@ export default {
         if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
           return;
         }
-          this.$store.state.slideBar = this.$refs.slideBar
-          this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
-          let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
-          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
-          const duration = this.$store.state.currentAudioElement.duration()
-          this.$store.commit('formatTime', (progress / 100) * duration)
-          seekTime = (this.$store.state.progress / 100) * duration
+        
+        this.$store.state.slideBar = this.$refs.slideBar
+        this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+        let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+        const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+        const duration = this.$store.state.currentAudioElement.duration()
+        this.$store.commit('formatTime', (progress / 100) * duration)
+        seekTime = (this.$store.state.progress / 100) * duration
 
-          this.$store.state.progress = progress
-          this.updateSlideBarBackground()
+        this.$store.state.progress = progress
+        this.updateSlideBarBackground()
       };
 
       // handles single tap and long press events
