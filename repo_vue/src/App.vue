@@ -48,19 +48,19 @@
           class="navbar-end" 
           v-bind:class="{'is-active':hamburgerClicked}">
           <!-- navbar items -->
-          <router-link @click="hamburgerClicked = false" to="/" class="navbar-item">{{$t('headerfooter.head.home')}}</router-link>
-          <router-link @click="hamburgerClicked = false" to="/music" class="navbar-item">{{$t('headerfooter.head.music')}}</router-link>
-          <router-link @click="hamburgerClicked = false" to="/flps" class="navbar-item">{{$t('headerfooter.head.flps')}}</router-link>
-          <router-link @click="hamburgerClicked = false" to="/tools" class="navbar-item">{{$t('headerfooter.head.tools')}}</router-link>
-          <router-link @click="hamburgerClicked = false" to="/bio" class="navbar-item">{{$t('headerfooter.head.bio')}}</router-link>
-          <router-link @click="hamburgerClicked = false" to="/contact" class="navbar-item">{{$t('headerfooter.head.contact')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/" class="navbar-item">{{$t('headerfooter.head.home')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/music" class="navbar-item">{{$t('headerfooter.head.music')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/flps" class="navbar-item">{{$t('headerfooter.head.flps')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/tools" class="navbar-item">{{$t('headerfooter.head.tools')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/bio" class="navbar-item">{{$t('headerfooter.head.bio')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/contact" class="navbar-item">{{$t('headerfooter.head.contact')}}</router-link>
           <!-- show my account link if user is authenticated -->
-          <router-link @click="hamburgerClicked = false" to="/myaccount" v-if="$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.myaccount')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/myaccount" v-if="$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.myaccount')}}</router-link>
           <!-- check if user is logged in or not -->
-          <router-link @click="hamburgerClicked = false" to="/logout" v-if="$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.logout')}}</router-link>
-          <router-link @click="hamburgerClicked = false" to="/login" v-if="!$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.login')}}</router-link>
-          <router-link @click="hamburgerClicked = false" to="/signup" v-if="!$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.signup')}}</router-link>
-          <router-link @click="hamburgerClicked = false" to="cart" class="navbar-item">
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/logout" v-if="$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.logout')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/login" v-if="!$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.login')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/signup" v-if="!$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.signup')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="cart" class="navbar-item">
               <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
               <!-- cart item count -->
               <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
@@ -500,22 +500,30 @@
 		<!-- end Footer -->
 
 
-    <!-- PERSISTANT MUSIC PLAYER -->
+    <!-- persistent MINI MUSIC PLAYER -->
     <!-- only shown on views other than music player -->
-    <div class="persist-mini-music-player-container" :style="{ display: $route.name !== 'Music' ? 'block' : 'none' }">
+    <div 
+      @click.self="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
+      class="persist-mini-music-player-container" 
+      :style="{ display: $route.name !== 'Music' ? 'block' : 'none' }">
       <!-- img container -->
       <div class="persist-mini-track-cover-art-and-controllers-container">
         <!-- track img -->
         <div 
-          class="persist-mini-track-cover-art-div" 
           v-if="$store.state.currentTrackPlaying" 
+          class="persist-mini-track-cover-art-div" 
           :style="{ backgroundImage: 'url(' + $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).get_cover_art + ')' }"
           @contextmenu.prevent
           @touchmove.prevent
+          @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
           style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">
         </div>
           <!-- track title -->
-        <div v-if="$store.state.currentTrackPlaying" class="persist-mini-track-title" ref="trackTitle">
+        <div 
+          v-if="$store.state.currentTrackPlaying" 
+          class="persist-mini-track-title" 
+          ref="trackTitle"
+          @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
           <p style="color: white">Sheriff Crandy - </p>
           <p ref="titleTag" style="color: white">{{ $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).title }}</p>
         </div>
@@ -523,30 +531,31 @@
         <div class="persist-mini-music-player-controls">
           <!-- repeat controller -->
           <span class="persist-mini-repeat-controller" 
-          @click.prevent="toggleRepeat">
+          @click.stop="toggleRepeat">
             <i id="persist-mini-repeat" class="fas fa-sync" :class="{ rotate: $store.state.isRotated}"></i>
           </span>
           <!-- skip previous -->
           <span class="persist-mini-skip-back-controller" 
-          @click.prevent="skipPreviousController()">
+          @click.stop="skipPreviousController()">
             <i id="persist-mini-skip-back" class="fa fa-fast-backward"></i>
           </span>
           <!-- play controller showing when paused -->
           <span class="persist-mini-play-controller" v-if="!$store.state.currentAudioElementPlaying" 
-          @click.prevent="playPauseController()">
+          @click.stop="playPauseController()">
             <i id="persist-mini-play" class="fas fa-play"></i>          
           </span>
           <!-- pause controller shown when playing -->
-          <span class="persist-mini-pause-controller" v-if="$store.state.currentAudioElementPlaying" @click.prevent="playPauseController()">
+          <span class="persist-mini-pause-controller" v-if="$store.state.currentAudioElementPlaying" 
+          @click.stop="playPauseController()">
             <i id="persist-mini-pause" class="fas fa-pause"></i>          
           </span>
           <!-- skip forward -->
           <span class="persist-mini-skip-forward-controller" 
-          @click.prevent="skipForwardController()">
+          @click.stop="skipForwardController()">
             <i id="persist-mini-skip-forward" class="fa fa-fast-forward"></i>  
           </span>
           <span class="persist-mini-shuffle-controller" 
-          @click.prevent="toggleShuffle">
+          @click.stop="toggleShuffle">
             <i id="persist-mini-shuffle" class="fas fa-random" :class="{ invert: $store.state.isInverted}"></i>
           </span>
         </div>
@@ -575,6 +584,93 @@
             {{ $store.state.songProgress }}
           </span>
           <span v-show="$store.state.songLength" class="persist-mini-end-time">
+            {{$store.state.songLength}}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- persistent MAIN MUSIC PLAYER -->
+    <div 
+      class="main-persistent-music-play-container"
+      v-bind:class="{'is-active':showMainMusicPlayer}"
+      :style="showMainMusicPlayer === true ? 'height: 100%' : 'height: 0'">
+      <!-- img -->
+      <div 
+        v-if="$store.state.currentTrackPlaying" 
+        class="main-persistent-music-player-cover-art-div" 
+        :style="{ backgroundImage: 'url(' + $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).get_cover_art + ')' }"
+        @contextmenu.prevent
+        @touchmove.prevent
+        @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
+        style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">
+      </div>
+      <!-- track title -->
+      <div 
+        class="main-persistent-music-player-track-title"
+        v-if="$store.state.currentTrackPlaying" 
+        @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
+        <p >
+          Sheriff Crandy - {{ $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).title }}
+        </p>
+      </div>
+      <!-- controllers -->
+      <!-- CONTROLLERS -->
+      <div class="main-persistent-music-player-controls">
+        <!-- repeat controller -->
+        <span class="main-persistent-repeat-controller" 
+        @click.stop="toggleRepeat">
+          <i id="mainrepeat" class="fas fa-sync" :class="{ rotate: $store.state.isRotated}"></i>
+        </span>
+        <!-- skip previous -->
+        <span class="main-persistent-skip-back-controller" 
+        @click.stop="skipPreviousController()">
+          <i id="main-skip-back" class="fa fa-fast-backward"></i>
+        </span>
+        <!-- play controller showing when paused -->
+        <span class="main-persistent-play-controller" v-if="!$store.state.currentAudioElementPlaying" 
+        @click.stop="playPauseController()">
+          <i id="main-play" class="fas fa-play"></i>          
+        </span>
+        <!-- pause controller shown when playing -->
+        <span class="main-pause-controller" v-if="$store.state.currentAudioElementPlaying" 
+        @click.stop="playPauseController()">
+          <i id="main-pause" class="fas fa-pause"></i>          
+        </span>
+        <!-- skip forward -->
+        <span class="main-persistent-skip-forward-controller" 
+        @click.stop="skipForwardController()">
+          <i id="main-skip-forward" class="fa fa-fast-forward"></i>  
+        </span>
+        <span class="main-persistent-shuffle-controller" 
+        @click.stop="toggleShuffle">
+          <i id="main-shuffle" class="fas fa-random" :class="{ invert: $store.state.isInverted}"></i>
+        </span>
+      </div>
+      <!-- slider and slidebar -->
+      <div class="main-persistent-slider-container">
+        <!-- slide bar -->
+        <div 
+          class="main-persistent-slide-bar" 
+          ref="mainPersistentSlideBar" 
+          @mousedown="sliderMoveDesktop"
+          @touchstart="sliderMoveMobile"
+          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
+          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          <div 
+            class="main-persistent-slider" 
+            ref="mainPersistentSlider" 
+            :style="{ left: $store.state.progress + '%'}">
+          </div>
+        </div>
+        <!-- time stamps -->
+        <div class="main-persistent-track-time-displays">
+          <span class="main-persistent-start-time">
+            {{ $store.state.songProgress }}
+          </span>
+          <span 
+            v-show="$store.state.songLength" 
+            class="main-persistent-end-time">
             {{$store.state.songLength}}
           </span>
         </div>
@@ -662,8 +758,7 @@ export default {
       },
       // music stuff
       tracks: [],
-      isRotated: false,
-      isInverted: false
+      showMainMusicPlayer: false
     }
   },
   // initialize the store. First method that is called when app is loaded/page refreshed
@@ -689,7 +784,7 @@ export default {
     // mount cart
     this.cart = this.$store.state.cart
     document.addEventListener('click', this.closeModalOnWindowClick);
-    // set slidebar and slider in mount
+    // set slidebar and slider in mount for mini music player
     this.$store.state.slideBar = document.getElementById('persist-mini-slideBar'); 
     this.$store.state.slider = document.getElementById('persist-mini-slider'); 
     // get tracks for persistent music player
@@ -732,7 +827,15 @@ export default {
       // stop loading bar after api data is fetched
       this.$store.commit('setIsLoading', false);
     },
-    // PERSIST MINI AND MUSIC PLAYER
+    // PERSIST MINI AND MAIN MUSIC PLAYER
+
+    // PERSIST MAIN PLAYER 
+    openPersistPlayer() {
+
+      console.log(this.$store.state.slideBar)
+      this.updateSlideBarBackground()
+    },
+
     // MOUSE SLIDEBAR CONTROLS copied from music view
     sliderMoveDesktop(event) {
       // if no song has played, don't set events
@@ -773,7 +876,9 @@ export default {
           if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
             return;
           }
-            this.$store.state.slideBar = this.$refs.slideBar
+            // this.$store.state.slideBar = this.$refs.slideBar
+            this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+
             this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
             let x = event.clientX - this.$store.state.slideBarRect.left
             const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
@@ -805,8 +910,10 @@ export default {
             return;
           }
 
+          // this.$store.state.slideBar = this.$refs.slideBar
 
-          this.$store.state.slideBar = this.$refs.slideBar
+          this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+
           const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
 
           const duration = this.$store.state.currentAudioElement.duration()
@@ -881,13 +988,16 @@ export default {
       
       // for dragging slider
       const dragMobile = (event) => {
+
         clearTouchTimeout();
         this.$store.state.isDragging = true
         if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
           return;
         }
-        
-        this.$store.state.slideBar = this.$refs.slideBar
+
+        // this.$store.state.slideBar = this.$refs.slideBar
+        this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+
         this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
         let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
         const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
@@ -909,7 +1019,9 @@ export default {
           if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
             return;
           }
-          this.$store.state.slideBar = this.$refs.slideBar
+          // this.$store.state.slideBar = this.$refs.slideBar
+          this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+
           const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
 
           const duration = this.$store.state.currentAudioElement.duration()
@@ -938,11 +1050,9 @@ export default {
 
     // update slidebar color when slider moves along slidebar
     updateSlideBarBackground() {
-      this.$store.state.slideBar = document.getElementById('persist-mini-slideBar'); 
+      // reset slideBar
+      this.showMainMusicPlayer == true ? this.$store.state.slideBar = document.getElementById('main-persistent-slide-bar') : this.$store.state.slideBar = document.getElementById('persist-mini-slideBar')
       this.$store.commit('updateSlideBarBackground', this.$store.state.slideBar)
-    },
-    updateSliderDisplay() {
-      this.$store.commit('updateSliderDisplay')
     },
       // timer to display track playback time
     formatTime(secs) {
@@ -966,7 +1076,8 @@ export default {
     // remove event listeners if they are still active
     beforeDestroy() {
       // stop the recursion when the component is destroyed
-      this.$store.state.slideBar = this.$refs.slideBar
+      // this.$store.state.slideBar = this.$refs.slideBar
+      this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
       this.$store.state.slideBar.removeEventListener("mousedown", this.touchStartMobile)
       document.removeEventListener("mousemove", this.dragHandler)
       document.removeEventListener("mouseup", this.endDrag)

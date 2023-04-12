@@ -3,7 +3,147 @@
 
 ***/
 
-/* PERSISTANT MUSIC PLAYER */
+/* MAIN persistent MUSIC PLAYER */
+@media screen and (max-width: 1023px) {
+
+    .main-persistent-music-play-container {
+        height: 0%;
+        width: 100%;
+        position: fixed;
+        z-index: 1;
+        bottom: 0;
+        right: 0;
+        overflow-x: hidden;
+        /* transition out of sight */
+        transition: 0.6s;
+    }
+    /* show music player from bottom to top */
+    .main-persistent-music-play-container.is-active {
+        height: 100%;
+        position: fixed;
+        z-index: 999;
+        background-color: rgb(14, 27, 27);
+        /* backdrop-filter: blur(1rem); */
+        overflow-x: hidden;
+        /* transition into view */
+        transition: 0.3s;
+    }
+    
+    .main-persistent-music-player-cover-art-div {
+        margin-top: 8rem;
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        background: no-repeat center/contain;
+        height: 40vh; /* Change the height to a percentage value */
+        width: 100%; 
+        transition: all .15s ease-in;
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    .main-persistent-music-player-track-title {
+        padding-top: 2rem;
+        text-align: center;
+        color: white;
+        font-size: 20px;
+        align-items: baseline;
+    }
+
+    /* controllers */
+    .main-persistent-music-player-controls {
+        margin-top: 2rem;
+        margin-inline: 3rem;
+        display: flex;
+        justify-content: space-between;
+        padding: 1rem;
+        align-items: center;
+        gap: 1.5rem !important;
+    }
+
+    #main-skip-forward,
+    #main-skip-back {
+        margin-bottom: 0.6rem !important;
+    }
+
+    #main-skip-back, 
+    #main-play, 
+    #main-pause, 
+    #main-skip-forward {
+        font-size: 30px !important; 
+    }
+    
+    #mainrepeat {
+        font-size: 23px;
+    }
+    #main-shuffle {
+        font-size: 24px;
+
+    }
+    .main-persistent-slider-container {
+        position: relative;
+        justify-content: center;
+        align-items: center; 
+        margin: 0 6%;
+    }
+
+    /* slider slidebar and time displays */
+    .main-persistent-slide-bar {
+        margin-top: 2rem;
+        position: relative;
+        display: flex;
+        height: 4px;
+        border-radius: 4px;
+        background-color: #ffffff;
+        cursor: pointer;
+        margin-bottom: 0.5rem;
+        user-select: none;
+    }
+
+    .main-persistent-slider {
+        display: block !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background-color: rgb(0, 238, 255);
+        cursor: pointer;
+        transition: transform 0.3s linear; 
+    }
+
+    .main-persistent-track-time-displays {
+        margin-bottom: 1rem !important;
+        display: flex;
+        justify-content: space-between;
+        color: rgb(221, 216, 216);
+    }
+
+}
+
+/* desktop */
+.main-persistent-slider {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: rgb(0, 238, 255);
+    /* background-color: white; */
+    cursor: pointer;
+    transition: transform 0.3s linear; 
+}
+
+
+
+/* END persistent MAIN MUSIC PLAYER */
+
+
+/* persistent MINI MUSIC PLAYER */
 /* for mobile */
 @media screen and (max-width: 1023px) {
 
@@ -298,7 +438,7 @@
     font-size: 13px;
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
-/* END PERSISTANT MUSIC PLAYER */
+/* END persistent MUSIC PLAYER */
 
 
 
@@ -325,7 +465,6 @@
     color: white;
 }
 
-/* AUDIO PLAYER */
 /* for mobile */
 @media screen and (max-width: 1023px) {
     .main-music-section {
@@ -470,7 +609,7 @@
     font-size: 17px;
     color: white;
     transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
-  }
+}
   
 .fa-sync.rotate {
     transform: rotate(180deg);

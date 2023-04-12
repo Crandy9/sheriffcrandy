@@ -804,9 +804,6 @@ export default {
       this.$store.state.slideBar = document.getElementById('slideBar'); 
       this.$store.commit('updateSlideBarBackground', this.$store.state.slideBar)
     },
-    updateSliderDisplay() {
-      this.$store.commit('updateSliderDisplay')
-    },
       // timer to display track playback time
     formatTime(secs) {
       this.$store.commit('formatTime', secs)

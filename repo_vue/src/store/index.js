@@ -210,8 +210,8 @@ export default createStore({
     // shuffle repeat states
     // repeat icon
     isRotated: false,
-    isInverted: false
-
+    isInverted: false,
+    showMainMusicPlayer: false
 
   },
   getters: {
@@ -256,16 +256,6 @@ export default createStore({
         const hoverGradient = `linear-gradient(to right, ${hoverColor} ${progress}%, #ffffff ${progress}%)`;
         const background = state.isDragging || state.isSlidebarHovering ? hoverGradient : gradient;
         state.slideBar.style.background = background;
-      }
-    },
-
-    // show slider
-    updateSliderDisplay(state) {
-      if (!state.slider) {
-        return;
-      }
-      else if (state.isDragging) {
-        state.slider.style.display = 'block';
       }
     },
     
