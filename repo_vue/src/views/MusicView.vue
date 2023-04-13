@@ -540,8 +540,6 @@ export default {
     // number the tracks for UI/UX media player
     trackNumber: 0,
     lastPlayedTrack: 0,
-    // to change slidebar color on hover
-    slideBarHovering: false,
     // for repeat icon
     isRotated: false,
     // shuffle icon
@@ -565,7 +563,6 @@ export default {
     this.$store.state.slideBar = document.getElementById('slideBar'); 
     this.$store.state.slider = document.getElementById('slider'); 
     this.updateSlideBarBackground();
-
   },
 
   computed: {
@@ -619,7 +616,6 @@ export default {
           isClicking = true;
         }, 200);
         this.$store.state.isDragging = true;
-        this.slideBarHovering = true
         this.$store.state.slider.classList.add('dragging');
 
       };
@@ -631,7 +627,6 @@ export default {
           event.preventDefault();
 
           this.$store.state.isDragging = true
-          this.slideBarHovering = true
           // Add the 'dragging' class to the slider element
           this.$store.state.slider.classList.add('dragging');
 
@@ -656,7 +651,6 @@ export default {
         if (!isClicking) {
 
           this.$store.state.isDragging = false;
-          this.slideBarHovering = false
           
           // Remove the 'dragging' class from the slider element
           this.$refs.slideBar.classList.remove('dragging');
@@ -689,7 +683,6 @@ export default {
             return
           }
           this.$store.state.isDragging = false
-          this.slideBarHovering = false
           
           // Remove the 'dragging' class from the slider element
           this.$refs.slideBar.classList.remove('dragging');
@@ -702,7 +695,6 @@ export default {
         document.removeEventListener('mousemove', dragDesktop);
         document.removeEventListener('mouseup', endDragDesktop);
         
-        this.slideBarHovering = false
         // Remove the 'dragging' class from the slider element
         this.$store.state.slider.classList.remove('dragging');
       };
