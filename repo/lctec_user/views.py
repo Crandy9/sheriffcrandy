@@ -16,6 +16,14 @@ from flps_app.serializers import FlpSerializer
 user = get_user_model()
 
 
+# get user data
+@api_view(['GET'])
+def get_user_device(request):
+    user_agent = request.META.get('HTTP_USER_AGENT', None)    
+    print('\nuser_agent: ' + str(user_agent) + '\n')
+    # do something with user_ip
+    return Response({'message': 'success'})
+
 # get user's cart data after they have authenticated (logged in)
 @api_view(['GET'])
 @authentication_classes([authentication.TokenAuthentication])
