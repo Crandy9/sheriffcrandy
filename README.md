@@ -50,9 +50,9 @@ SHERIFFCRANDY-
 
 ```
 
-**** 
-        Django setup:
-****
+
+ Django setup:
+
 - make dir on local machine where this project will be located
 
 - clone this repo from github (ssh or https)
@@ -66,6 +66,7 @@ python3 -m venv env
 . env/bin/activate (you'll see '(env)' on the left-most side the terminal signature when activated)
 
 - Once your env is activated, install Django and other dependencies:
+
 
 pip install django (the backend framework)
 pip install django-rest-framework (creating the backend API, creates djangorestframework dir as well)
@@ -82,6 +83,20 @@ pip install stripe (payment processor for handling secure payments)
 pip3 install --upgrade stripe (upgrade stripe)
 pip install psycopg2 (database adapter for PostgreSQL DB)
 install pgadmin4 desktop tool for DB management (https://www.pgadmin.org/download/)
+- pip install django (the backend framework)
+- pip install django-rest-framework (creating the backend API, creates djangorestframework dir as well)
+- pip install djangorestframework-simplejwt (Simple JWT provides a JSON Web Token authentication backend for the Django REST Framework. Updated framework from djangorestframework-jwt which is now deprecated)
+- pip install pyjwt (Python library which allows you to encode and decode JSON Web Tokens JWT)
+- pip install social-auth-app-django (for 3rd party auth Facebook, Google, LinkedIn, etc.)
+- pip install django-cors-headers (provides security between backend and API)
+- pip install pip install djoser (assists with user auth)
+- pip install pillow (image processing)
+- pip install pydub (audio file processing)
+- pip install django-environ (for environment variables)
+- pip install stripe (payment processor for handling secure payments)
+- pip3 install --upgrade stripe (upgrade stripe)
+- pip install psycopg2 (database adapter for PostgreSQL DB)
+- install pgadmin4 desktop tool for DB management (https://www.pgadmin.org/download/)
 
 *** Note: You need to create empty DB in either psql shell or pgadmin tool before running python manage.py makemigrations and python manage.py migrate (If you want to use custom user model, DO NOT RUN python manage.py makemigrations/migrate until you have created your custom user model, otherwise Django will revert to its default User Model. Changing from Django's default user model to a custom user model is possible, but unsupported and prone to many errors. Do this first before anything else if that's what you want for your app)
 - activate env
@@ -93,9 +108,7 @@ django-admin startproject yourprojectname
 python manage.py startapp my app name
 
 
-****   
-        Vue.js setup:
-****
+ Vue.js setup:
 
 - open a new terminal and cd to yourprojectname dir and install vue cli:
 npm install -g @vue/cli (if you get a bunch of permission errors, run again with sudo)
