@@ -527,6 +527,15 @@
           <p style="color: white">Sheriff Crandy - </p>
           <p ref="titleTag" style="color: white">{{ $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).title }}</p>
         </div>
+        <!-- exit icon -->
+        <div 
+          v-if="$store.state.currentTrackPlaying"
+          class="persist-mini-exit-icon-container"
+          @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
+          <i 
+            class="persist-mini-exit-icon fas fa-chevron-down"
+            :class="{ close: !showMainMusicPlayer }"></i>
+        </div>
         <!-- CONTROLLERS -->
         <div class="persist-mini-music-player-controls">
           <!-- repeat controller -->
@@ -590,12 +599,20 @@
       </div>
     </div>
     
-    <!-- persistent MAIN MUSIC PLAYER -->
+    <!-- PERSISTENT MAIN MUSIC PLAYER -->
     <div 
       class="main-persistent-music-play-container"
       v-bind:class="{'is-active':showMainMusicPlayer}"
       :style="showMainMusicPlayer === true ? 'height: 100%' : 'height: 0'">
-      <!-- img -->
+      <!-- exit icon -->
+      <div 
+      class="main-persistent-exit-icon-container"
+      @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
+        <i 
+          class="main-persistent-exit-icon fas fa-chevron-down"
+          :class="{ close: !showMainMusicPlayer }"></i>
+      </div>
+      <!-- track img -->
       <div 
         v-if="$store.state.currentTrackPlaying" 
         class="main-persistent-music-player-cover-art-div" 
@@ -614,9 +631,9 @@
           Sheriff Crandy - {{ $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).title }}
         </p>
       </div>
-      <!-- controllers -->
       <!-- CONTROLLERS -->
-      <div class="main-persistent-music-player-controls">
+      <div 
+        class="main-persistent-music-player-controls">
         <!-- repeat controller -->
         <span class="main-persistent-repeat-controller" 
         @click.stop="toggleRepeat">
@@ -647,19 +664,22 @@
           <i id="main-shuffle" class="fas fa-random" :class="{ invert: $store.state.isInverted}"></i>
         </span>
       </div>
-      <!-- slider and slidebar -->
+      <!-- slider slidebar and time stamps -->
       <div class="main-persistent-slider-container">
         <!-- slide bar -->
         <div 
           class="main-persistent-slide-bar" 
           ref="mainPersistentSlideBar" 
+          id="main-persistent-slide-bar-id"
           @mousedown="sliderMoveDesktop"
           @touchstart="sliderMoveMobile"
           @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
           @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          <!-- slider -->
           <div 
             class="main-persistent-slider" 
-            ref="mainPersistentSlider" 
+            ref="mainPersistentSlider"
+            id="main-persistent-slider"
             :style="{ left: $store.state.progress + '%'}">
           </div>
         </div>
@@ -758,7 +778,7 @@ export default {
       },
       // music stuff
       tracks: [],
-      showMainMusicPlayer: false
+      showMainMusicPlayer: false,
     }
   },
   // initialize the store. First method that is called when app is loaded/page refreshed
@@ -781,14 +801,15 @@ export default {
   },
 
   mounted() {
+    this.getTracks();
     // mount cart
     this.cart = this.$store.state.cart
     document.addEventListener('click', this.closeModalOnWindowClick);
     // set slidebar and slider in mount for mini music player
     this.$store.state.slideBar = document.getElementById('persist-mini-slideBar'); 
-    this.$store.state.slider = document.getElementById('persist-mini-slider'); 
+    this.$store.state.slideBar = document.getElementById('persist-mini-slider'); 
+
     // get tracks for persistent music player
-    this.getTracks();
     this.updateSlideBarBackground();
   },
   // whenever cart changes, cart count will automatically update
@@ -827,16 +848,16 @@ export default {
       // stop loading bar after api data is fetched
       this.$store.commit('setIsLoading', false);
     },
+
+
     // PERSIST MINI AND MAIN MUSIC PLAYER
-
-    // PERSIST MAIN PLAYER 
+    // OPEN/CLOSE PERSIST MAIN PLAYER 
     openPersistPlayer() {
-
-      console.log(this.$store.state.slideBar)
+      // set slidebar
       this.updateSlideBarBackground()
     },
 
-    // MOUSE SLIDEBAR CONTROLS copied from music view
+    // MINI/MAIN SLIDEBAR DESKTOP CONTROLS copied from music view
     sliderMoveDesktop(event) {
       // if no song has played, don't set events
       if (!this.$store.state.currentTrackPlaying) {
@@ -857,7 +878,6 @@ export default {
           isClicking = true;
         }, 200);
         this.$store.state.isDragging = true;
-        this.slideBarHovering = true
         this.$store.state.slider.classList.add('dragging');
 
       };
@@ -869,7 +889,6 @@ export default {
           event.preventDefault();
 
           this.$store.state.isDragging = true
-          this.slideBarHovering = true
           // Add the 'dragging' class to the slider element
           this.$store.state.slider.classList.add('dragging');
 
@@ -896,7 +915,6 @@ export default {
         if (!isClicking) {
 
           this.$store.state.isDragging = false;
-          this.slideBarHovering = false
           
           // Remove the 'dragging' class from the slider element
           this.$refs.slideBar.classList.remove('dragging');
@@ -931,7 +949,6 @@ export default {
             return
           }
           this.$store.state.isDragging = false
-          this.slideBarHovering = false
           
           // Remove the 'dragging' class from the slider element
           this.$refs.slideBar.classList.remove('dragging');
@@ -944,7 +961,6 @@ export default {
         document.removeEventListener('mousemove', dragDesktop);
         document.removeEventListener('mouseup', endDragDesktop);
         
-        this.slideBarHovering = false
         // Remove the 'dragging' class from the slider element
         this.$store.state.slider.classList.remove('dragging');
       };
@@ -954,7 +970,7 @@ export default {
       document.addEventListener('mouseup', endDragDesktop);
     },
 
-    // MOBILE SLIDEBAR CONTROLS
+    // MINI SLIDEBAR MOBILE CONTROLS
     // user touched slidebar, determine if it is a single tap or a long press
     sliderMoveMobile(event) {
 
@@ -1050,8 +1066,16 @@ export default {
 
     // update slidebar color when slider moves along slidebar
     updateSlideBarBackground() {
-      // reset slideBar
-      this.showMainMusicPlayer == true ? this.$store.state.slideBar = document.getElementById('main-persistent-slide-bar') : this.$store.state.slideBar = document.getElementById('persist-mini-slideBar')
+      // reset slideBar and slider
+      if (this.showMainMusicPlayer == true) {
+        this.$store.state.slideBar = document.getElementById('main-persistent-slide-bar-id'); 
+        this.$store.state.slider = document.getElementById('main-persistent-slider');
+      }
+      else {
+        this.$store.state.slideBar = document.getElementById('persist-mini-slideBar');
+        this.$store.state.slider = document.getElementById('persist-mini-slider');
+
+      }
       this.$store.commit('updateSlideBarBackground', this.$store.state.slideBar)
     },
       // timer to display track playback time

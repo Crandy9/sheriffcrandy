@@ -4,60 +4,176 @@
 ***/
 
 /* MAIN persistent MUSIC PLAYER */
-@media screen and (max-width: 1023px) {
+.main-persistent-music-play-container {
+    height: 0%;
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+    bottom: 0;
+    right: 0;
+    overflow-x: hidden;
+    transition: 0.6s;
+    z-index: 9999;
+}
 
-    .main-persistent-music-play-container {
-        height: 0%;
-        width: 100%;
-        position: fixed;
-        z-index: 1;
-        bottom: 0;
-        right: 0;
-        overflow-x: hidden;
-        /* transition out of sight */
-        transition: 0.6s;
-    }
-    /* show music player from bottom to top */
-    .main-persistent-music-play-container.is-active {
-        height: 100%;
-        position: fixed;
-        z-index: 999;
-        background-color: rgb(14, 27, 27);
-        /* backdrop-filter: blur(1rem); */
-        overflow-x: hidden;
-        /* transition into view */
-        transition: 0.3s;
-    }
+.main-persistent-music-play-container.is-active {
+    height: 100%;
+    position: fixed;
+    z-index: 9999;
+    background-color: rgb(14, 27, 27);
+    overflow-x: hidden;
+    transition: 0.3s;
+}
+
+/* exit button */
+.main-persistent-exit-icon-container {
+    padding-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-persistent-exit-icon {
+    color: white;
+    font-size: 36px;
+    cursor: pointer;
+    transition: transform 0.9s; /* Set longer duration for initial transform */
+}
+
+.main-persistent-exit-icon.close {
+    transform: rotate3d(1, 0, 0, 180deg);
+    transition-duration: 0.3s; /* Set shorter duration for subsequent transforms */
+}
+
+.main-persistent-music-player-cover-art-div {
+    margin-top: 4rem;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    background: no-repeat center/contain;
+    height: 45vh;
+    width: 100%; 
+    transition: all .15s ease-in;
+    animation: fadeIn 0.5s ease-in;
+}
+.main-persistent-music-player-track-title {
+    padding-top: 2rem;
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    align-items: baseline;
+}
+
+/* controllers */
+.main-persistent-music-player-controls {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    align-items: center;
+    gap: 5rem;
+}
+
+
+#main-skip-forward,
+#main-skip-back {
+    margin-bottom: 0.6rem !important;
+}
+
+#main-skip-back, 
+#main-play, 
+#main-pause, 
+#main-skip-forward {
+    font-size: 30px !important; 
+}
+
+#mainrepeat {
+    font-size: 23px;
+}
+#main-shuffle {
+    font-size: 24px;
+}
+
+.main-persistent-slider-container {
+    position: relative;
+    justify-content: center;
+    align-items: center; 
+    margin: 0 15%;
+}
+
+/* slider slidebar and time displays */
+.main-persistent-slide-bar {
+    margin-top: 2rem;
+    position: relative;
+    display: flex;
+    height: 4px;
+    border-radius: 4px;
+    background-color: #ffffff;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    user-select: none;
+}
+
+.main-persistent-slider {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background-color: rgb(0, 238, 255);
+    cursor: pointer;
+    transition: transform 0.3s linear; 
+}
+
+/* show the slider on hover or when dragging the slide */
+.main-persistent-slide-bar:hover .main-persistent-slider,
+.main-persistent-slide-bar .main-persistent-slider.dragging {
+    display: block;
+}
+
+.main-persistent-track-time-displays {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    color: rgb(221, 216, 216);
+}
+
+/* END DESKTOP */
+/* MOBILE */
+@media screen and (max-width: 1023px) {
     
+
+    /* exit button */
+    .main-persistent-exit-icon-container {
+        padding-top: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .main-persistent-exit-icon {
+        color: white;
+        font-size: 36px;
+    }
+
     .main-persistent-music-player-cover-art-div {
-        margin-top: 8rem;
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        background: no-repeat center/contain;
-        height: 40vh; /* Change the height to a percentage value */
-        width: 100%; 
-        transition: all .15s ease-in;
-        animation: fadeIn 0.5s ease-in;
+        margin-top: 3rem !important;
+        height: 40vh !important;
     }
 
     .main-persistent-music-player-track-title {
-        padding-top: 2rem;
-        text-align: center;
-        color: white;
-        font-size: 20px;
-        align-items: baseline;
+        font-size: 20px !important;
     }
 
     /* controllers */
     .main-persistent-music-player-controls {
-        margin-top: 2rem;
-        margin-inline: 3rem;
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem;
-        align-items: center;
-        gap: 1.5rem !important;
+        margin-top: 3rem !important;
+        margin-inline: 3rem !important;
+        align-items: center !important;
+        gap: 2.5rem !important;
     }
 
     #main-skip-forward,
@@ -69,76 +185,30 @@
     #main-play, 
     #main-pause, 
     #main-skip-forward {
-        font-size: 30px !important; 
+        font-size: 25px !important; 
     }
     
     #mainrepeat {
-        font-size: 23px;
+        font-size: 20px !important;
     }
     #main-shuffle {
-        font-size: 24px;
+        font-size: 21px !important;
 
     }
     .main-persistent-slider-container {
-        position: relative;
-        justify-content: center;
-        align-items: center; 
-        margin: 0 6%;
-    }
-
-    /* slider slidebar and time displays */
-    .main-persistent-slide-bar {
-        margin-top: 2rem;
-        position: relative;
-        display: flex;
-        height: 4px;
-        border-radius: 4px;
-        background-color: #ffffff;
-        cursor: pointer;
-        margin-bottom: 0.5rem;
-        user-select: none;
+        margin: 0 6% !important;
     }
 
     .main-persistent-slider {
         display: block !important;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 13px;
-        height: 13px;
-        border-radius: 50%;
-        background-color: rgb(0, 238, 255);
-        cursor: pointer;
-        transition: transform 0.3s linear; 
     }
 
     .main-persistent-track-time-displays {
-        margin-bottom: 1rem !important;
-        display: flex;
-        justify-content: space-between;
-        color: rgb(221, 216, 216);
+        margin-top: 0.3rem !important;
+        margin-inline: 0.5rem !important;
+        font-size: 14px !important;
     }
-
 }
-
-/* desktop */
-.main-persistent-slider {
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    background-color: rgb(0, 238, 255);
-    /* background-color: white; */
-    cursor: pointer;
-    transition: transform 0.3s linear; 
-}
-
-
 
 /* END persistent MAIN MUSIC PLAYER */
 
@@ -160,11 +230,11 @@
     
     /* img cover art container and controller */
     .persist-mini-track-cover-art-and-controllers-container {
-        display: flex;
+        /* display: flex;
         justify-content: space-between;     
         align-items: flex-start;
         position: relative;
-        margin-right: 2rem;
+        margin-right: 2rem; */
     }
 
     /* img cover art */
@@ -183,7 +253,7 @@
         font-size: 13px !important;
         margin-left: 1rem !important;
     }
-
+    
     /* show full title and animate it if it's too long */
     .persist-mini-scrolling-text {
         white-space: nowrap;
@@ -193,9 +263,10 @@
 
     /* conrtollers */
     .persist-mini-music-player-controls {
-        margin-top: 1rem !important;
+        margin-top: 1.3rem !important;
         margin-left: 1rem !important;
         margin-right: 0 !important;
+        margin-bottom: 0 !important;
         gap: 1.2rem !important;
     }
     
@@ -285,8 +356,32 @@
     }
 }
 
-/* for desktop */
+/* EXIT ICON FOR  */
+@media screen and (min-width: 503px) and (max-width: 1023px) {
+    /* exit icon */
+    .persist-mini-exit-icon-container {
+        margin-left: 2rem !important;
+        margin-top: 0.7rem !important;
+    }
+    .persist-mini-exit-icon {
+        color: white;
+        font-size: 26px !important;
+    }
 
+    .persist-mini-exit-icon.close {
+        transform: rotate3d(1, 0, 0, 180deg);
+        transition-duration: 0.3s; /* Set shorter duration for subsequent transforms */
+    }
+}
+/* turn off the exit button on super small screens not enough space */
+@media screen and (max-width: 503px) {
+    /* exit icon */
+    .persist-mini-exit-icon-container {
+        display: none !important;
+    }
+}
+
+/* DESKTOP */
 .persist-mini-music-player-container {
     position: sticky;
     bottom: 0;
@@ -301,8 +396,8 @@
 /* img cover art container and controller */
 .persist-mini-track-cover-art-and-controllers-container {
     display: flex;
-    justify-content: space-between;     
-    align-items: flex-start;
+    justify-content: flex-end;     
+    align-items: flex-end;
     position: relative;
     margin-right: 2rem;
 }
@@ -321,8 +416,8 @@
 .persist-mini-track-title {
     order: 2;
     margin-right: auto;
-    margin-left: 3rem;
-    margin-top: 1.1rem;
+    margin-left: 2rem;
+    margin-bottom: 0.1rem;
     font-size: 16px;
 }
 
@@ -333,14 +428,34 @@
     animation: scroll-left 10s linear infinite;
 }
 
+/* exit icon */
+.persist-mini-exit-icon-container {
+    order: 2;
+    margin-right: auto;
+    margin-left: 4.5rem;
+    margin-bottom: 1.3rem;
+}
+.persist-mini-exit-icon {
+    color: white;
+    font-size: 36px;
+    cursor: pointer;
+    transition: transform 0.9s; /* Set longer duration for initial transform */
+}
+
+.persist-mini-exit-icon.close {
+    transform: rotate3d(1, 0, 0, 180deg);
+    transition-duration: 0.3s; /* Set shorter duration for subsequent transforms */
+}
+
+
 /* conrtollers */
 .persist-mini-music-player-controls {
     order: 3;
     margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
     margin-right: 1.5rem;
     margin-left: 1rem;
     display: flex;
-    justify-content: space-between;
     align-items: flex-end;
     gap: 2rem;
 }
