@@ -796,12 +796,14 @@ export default {
         return this.totalJpyPrice;
       },
       calculateJpyTaxes() {
-        var taxAmount = (parseFloat(this.jpyTaxRate * this.totalJpyPrice))
+        var taxAmount = Math.round(parseFloat(this.jpyTaxRate * this.totalJpyPrice));
         this.jpyTax = taxAmount;
         return this.jpyTax
       },
       calculateJpySubtotal() {
-        this.jpySubtotal = parseFloat((this.totalJpyPrice + this.jpyTax));
+
+        this.jpySubtotal = Math.round(parseFloat(this.totalJpyPrice + this.jpyTax));
+
         return this.jpySubtotal
       },
     }

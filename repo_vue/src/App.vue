@@ -499,7 +499,6 @@
 		</footer>
 		<!-- end Footer -->
 
-
     <!-- persistent MINI MUSIC PLAYER -->
     <!-- only shown on views other than music player -->
     <div 
@@ -762,7 +761,6 @@
 
 // import axios for retrieving web token from backend api
 import axios from 'axios'
-
 
 // change hamburger clicked boolean
 export default {

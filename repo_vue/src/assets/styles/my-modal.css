@@ -48,12 +48,17 @@
     background-color: rgba(212, 211, 206, 0.3);
 }
 
-/* for region modal */
+/* for mobile */
 @media screen and (max-width: 1024px) {
     .my-region-modal-card-title {
         font-size: large;
         text-align: center;
         color: white;
+    }
+    .my-modal-button-buy-now, 
+    .my-modal-button-add-to-cart {
+        max-width: 45%;
+        font-size: 14px;
     }
 }
 
@@ -102,9 +107,9 @@ for mobile */
     .modal {
         padding: 1.5rem;
     }
-
-    /* pay cancel buttons */
-    .modal-card-foot {
-        justify-content: center;
-    }
+}
+/* pay cancel buttons */
+.modal-card-foot {
+    justify-content: center !important;
+    align-items: center !important;
 }

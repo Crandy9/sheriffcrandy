@@ -390,6 +390,7 @@
     width: 100%;
     box-sizing: border-box;
     background-color: rgb(14, 27, 27);
+    z-index: 4;
 
 }
 

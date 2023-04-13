@@ -447,12 +447,14 @@
       },
 
       calculateJpyTaxes() {
-        var taxAmount = (parseFloat(this.jpyTaxRate * this.jpyPrice))
+        var taxAmount = Math.round(parseFloat(this.jpyTaxRate * this.jpyPrice));
+
         this.jpyTax = taxAmount;
         return this.jpyTax
       },
       calculateJpySubtotal() {
-        this.jpySubtotal = parseFloat((this.jpyPrice + this.jpyTax));
+        this.jpySubtotal = Math.round(parseFloat(this.jpyPrice + this.jpyTax));
+
         return this.jpySubtotal
       },
 

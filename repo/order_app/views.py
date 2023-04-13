@@ -46,7 +46,7 @@ def createZip(fileList):
             print('\nCOMPRESSING FLP FILE\n')
             # get the filename only
             fdir, fname = os.path.split(file)
-            print('\nWAV FILE NAME fname: ' + str(fname))
+            print('\FLP FILE NAME fname: ' + str(fname))
             try:
                 zip_file.write(str(file), str(fname), compress_type= zipfile.ZIP_DEFLATED)
                 print('\n\nSUCCESSFULLY WROTE FLP FILE\n\n')
@@ -318,23 +318,6 @@ def checkout(request):
         
         if track_dict_serializer.is_valid():
 
-            # if isUsd:
-            #     for item in track_dict_serializer.validated_data['track_items']:
-            #         if item.get('track').is_free:
-            #             print('\ntrack ' + str(item.get('track').title) + ' is a free track\n')
-            #             pass
-            #         else: 
-            #             track_usd_paid_amount += item.get('track').usd_price
-            # else:
-            #     for item in track_dict_serializer.validated_data['track_items']:
-            #         if item.get('track').is_free:
-            #             print('\ntrack ' + str(item.get('track').title) + ' is a free track\n')
-            #             pass
-            #         else: 
-            #             track_jpy_paid_amount += item.get('track').jpy_price
-        
-            # track_amountStripeWillCharge = int(TOTAL_USD_PAID * 100) if isUsd is True else TOTAL_JPY_PAID
-            
             # if there are flps to process, don't create stripe charge or return any data yet
             try:
                 if not 'no_flps' in str(flp_dict):
@@ -426,27 +409,6 @@ def checkout(request):
     
 
         if flp_dict_serializer.is_valid():
-            # usd_paid_amount = 0
-            # jpy_paid_amount = 0
-            # check if this was jpy or usd purchase (usd is default)
-            # if isUsd:
-            #     for item in flp_dict_serializer.validated_data['flp_items']:
-            #         if item.get('flp').flp_is_free:
-            #             print('\nflp ' + str(item.get('flp').flp_name) + ' is a free flp\n')
-            #             pass
-            #         else: 
-            #             usd_paid_amount += item.get('flp').usd_price
-            # # for jpy
-            # else:
-            #     for item in flp_dict_serializer.validated_data['flp_items']:
-            #         if item.get('flp').flp_is_free:
-            #             print('\flp ' + str(item.get('flp').flp_name) + ' is a free flp\n')
-            #             pass
-            #         else: 
-            #             jpy_paid_amount += item.get('flp').jpy_price
-        
-            # flp_amountStripeWillCharge = int(TOTAL_USD_PAID * 100) if isUsd is True else TOTAL_USD_PAID
-            
             # if there are tracks and flps to process, process them
             try:
                 if not 'no_tracks' in str(track_dict):
@@ -587,4 +549,3 @@ def checkout(request):
     
         # if something is wrong with flp_dict_serializer
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
