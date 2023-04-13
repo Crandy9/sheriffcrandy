@@ -553,7 +553,8 @@ export default {
   // so I guess on page load, getTracks() is called  
   mounted() {
 
-    this.getTracks();
+    // this.getTracks();
+    this.tracks = this.$store.state.playlist
     document.addEventListener('click', this.closeModalOnWindowClick);
     this.$store.state.region === 'US' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
     const elements = this.stripe.elements();
@@ -1095,26 +1096,26 @@ export default {
 
     // make this method async and axios.get to await to make sure setIsLoading isn't set to false
     // until axios finished fetching api data
-    async getTracks() {
+    // async getTracks() {
       
-      // loading bar while api data is getting fetched
-      this.$store.commit('setIsLoading', true);
-      // replace the API path with env var
-      // .get requests API data from server via HTTP GET
-      // .then will take the response data and populate the empty tracks list above
-      await axios.get(process.env.VUE_APP_TRACKS_API_URL)
-        .then(response => {
-          this.tracks = response.data
-          // set the tab title
-          document.title = 'Music'
-        })
-        .catch(error => {
-          console.log("ERROR BOYY: " + error)
-        })
+    //   // loading bar while api data is getting fetched
+    //   this.$store.commit('setIsLoading', true);
+    //   // replace the API path with env var
+    //   // .get requests API data from server via HTTP GET
+    //   // .then will take the response data and populate the empty tracks list above
+    //   await axios.get(process.env.VUE_APP_TRACKS_API_URL)
+    //     .then(response => {
+    //       this.tracks = response.data
+    //       // set the tab title
+    //       document.title = 'Music'
+    //     })
+    //     .catch(error => {
+    //       console.log("ERROR BOYY: " + error)
+    //     })
 
-      // stop loading bar after api data is fetched
-      this.$store.commit('setIsLoading', false);
-    },
+    //   // stop loading bar after api data is fetched
+    //   this.$store.commit('setIsLoading', false);
+    // },
 
     // add to cart
     addTrackToCart(addTrackIdToCart) {

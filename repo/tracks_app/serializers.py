@@ -15,14 +15,28 @@ class TrackSerializer(serializers.ModelSerializer):
             "id",
             "track",
             "title",
-            "get_absolute_url",
             "description",
             "usd_price",
             "jpy_price",         
             "get_track",
             "get_sample",
             "get_cover_art",
-            "date_added",
             "is_free",
+            "get_track_duration",
+        )
+
+# get paid tracks
+class GetPurchasedTrackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Track 
+        # configure which fields we want to use in frontend. Data is a tuple
+        # will be shown in API at DOMAIN/api/v1/latest-tracks/
+        fields = (
+            "id",
+            "track",
+            "title",
+            "description",      
+            "get_track",
+            "get_cover_art",
             "get_track_duration",
         )

@@ -211,7 +211,9 @@ export default createStore({
     // repeat icon
     isRotated: false,
     isInverted: false,
-    showMainMusicPlayer: false
+    showMainMusicPlayer: false,
+    // list of paid tracks
+    purchasedTracksList: null
 
   },
   getters: {
@@ -220,8 +222,11 @@ export default createStore({
   // synchronous functions; change states
   mutations: {
 
+    // populate purchased tracks array
+    populatePurchasedTrackArray(state, purchasedTracksList) {
+      state.purchasedTracksList = purchasedTracksList
+    },
     // MUSIC FUNCTIONS:
-
     // format playback time under slidebar
     formatTime(state, secs) {
 
@@ -380,6 +385,7 @@ export default createStore({
 
         var getSrc = currentPlayList.find((t) => t.id === currentPlayList[0].id)
         // set currentSrc to be either a sample or the full length song
+        // check if this song was purchased by user
         state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
         // set song length
         state.songLength = getSrc.get_track_duration

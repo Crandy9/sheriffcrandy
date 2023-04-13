@@ -15,9 +15,10 @@ from rest_framework.response import Response
 from .serializers import OrderFlpSerializer, OrderTrackSerializer
 # import flps+app and tracks_app serializers
 from flps_app.serializers import FlpSerializer
-from tracks_app.serializers import TrackSerializer
+from tracks_app.serializers import TrackSerializer, GetPurchasedTrackSerializer
 
 # import track and flp models
+from order_app.models import *
 from flps_app.models import *
 from tracks_app.models import *
 
@@ -26,8 +27,6 @@ import copy
 
 # import modules to zip up multiple files
 import zipfile
-
-
 
 
 # zip up mulitple files
@@ -66,6 +65,7 @@ def createZip(fileList):
                 print('\n\nCOULDNT WRITE TRACK FILE\n\n')
     zip_file.close()
     return (tmp_path + 'sheriff_crandy_downloadables.zip')
+
 
 @api_view(['POST'])
 @authentication_classes([authentication.TokenAuthentication])
@@ -271,14 +271,12 @@ def freeDownload(request):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-
-    
-
 # when user hits buy button in cart checkout, request comes here
 @api_view(['POST'])
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def checkout(request):
+
 
     # bool to check if this is a US or Japan payment
     isUsd = None
@@ -549,3 +547,23 @@ def checkout(request):
     
         # if something is wrong with flp_dict_serializer
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+
+# get user track orders to unlock full song
+# pass in the user, get a list of tracks that they bought
+@api_view(['GET'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_track_orders(request):
+    user = request.user
+    # will return None if not found
+    order_track_items = OrderTrackItem.objects.filter(order__user=user).select_related('track')
+    track_ids = [item.track.id for item in order_track_items]
+    tracks = Track.objects.filter(id__in=track_ids)
+    # if the user hasn't bought any tracks, return an empty list
+    if not tracks: # check if queryset is empty
+        return Response([])
+    # convert these objects into JSON. Pass in tracks and set many=True because we have more than one obj
+    serializer = GetPurchasedTrackSerializer(tracks, many=True)
+
+    return Response(serializer.data)

@@ -799,6 +799,7 @@ export default {
   },
 
   mounted() {
+    this.getPurchasedTracks();
     this.getTracks();
     // mount cart
     this.cart = this.$store.state.cart
@@ -824,6 +825,23 @@ export default {
 
   // methods 
   methods: {
+
+    async getPurchasedTracks() {
+
+      await axios.get(process.env.VUE_APP_GET_TRACK_ORDERS_URL, {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+        .then(response => {
+          if (response.data.length === 0) {
+            console.log('no purchased track data')
+          }
+          else {
+            this.$store.commit('populatePurchasedTrackArray', response.data)
+
+          }
+        })
+        .catch( error => {
+          console.log('WHAT THE HEEEEEEEEEE')
+        })
+    },
 
     // have to generate the playlist on app load
     async getTracks() {
