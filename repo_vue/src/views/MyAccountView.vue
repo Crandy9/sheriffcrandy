@@ -12,5 +12,9 @@ import { toast } from 'bulma-toast'
 
 export default {
 
+    data() {
+        return {
+        }
+    },
 }
 </script>

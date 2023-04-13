@@ -139,7 +139,8 @@ li.instagram, li.youtube, li.twitter, li.gab, li.apple, li.spotify, li.amazon {
 .lctec-brand {
     color: rgb(173, 236, 255);
     text-align: center;
-    padding-top: 7rem; 
+    /* padding-top: 7rem;  */
+    padding-bottom: 5rem;
 }
 
 /* lctec icon */
@@ -157,7 +158,7 @@ a.company_link:hover {
 
 .my-region-language-div {
     padding-top: 2rem;
-    padding-bottom: 2rem;
+    /* margin-bottom: 2rem; */
     padding-left: 0.5rem;
     display: inline-block !important;
 }
@@ -169,12 +170,11 @@ a.company_link:hover {
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.5);
     padding-top: 0.5rem !important;
-    margin: 0.1rem !important;
-    height: 2.5em; 
+    margin-right: 0.1rem !important;
 }
 
 .my-lang-button {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.6);
     color: #ffffff;
     font-size: 13px;
     border-width: 1px;
@@ -183,8 +183,8 @@ a.company_link:hover {
     box-shadow: none !important;   
     outline-style: none !important; 
     padding-top: 0.5rem !important;
-    margin: 0.1rem !important;
-    height: 2.5em; 
+    margin-right: 1rem !important;
+    margin-top: 0.5rem !important;    
 }
 
 .my-lang-button:focus {

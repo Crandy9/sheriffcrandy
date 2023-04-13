@@ -10,48 +10,95 @@
           Sheriff Crandy Music
         </h2>
       </div>
-      <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
-        <!-- show img thumbnail for current track -->
-        <!-- or leave title up after song stops playing -->
-        <figure v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)" class="track-img">
-          <img class="cover-art" v-bind:src="trackDisplay.get_cover_art">
-        </figure> 
-        <h3 class="track-title-img" v-if="currentTrackPlaying == trackDisplay.id || (lastPlayedTrack == trackDisplay.id && stop == true)">
-          Sheriff Crandy - {{ trackDisplay.title }}
-        </h3>
-      </div>
       <div>
-        <h3 style="padding: 1rem; font-size: 16px !important;" v-if="currentTrackPlaying == 0" class="is-size-5 has-text-warning">
+        <!-- show this if no songs have been playing -->
+        <h3 v-if="$store.state.currentTrackPlaying == 0" style="padding: 1rem; font-size: 16px !important;" class="is-size-5 has-text-warning">
           {{$t('musicview.clicktohearsample')}}
         </h3>
       </div>
-      <div class="skip-icons-wrapper">
-        <div class="skip-icons">
-          <span @click="prevTrack()">
+    </section>
+    <section class="music-player-section">
+      <!-- need to wrap the v-for div in a parent div to allow scrolling on div -->
+      <!-- show track img for current track -->
+      <!-- or leave title and track img up after song stops playing -->
+      <!-- v-bind:key is used to optimize rendering -->
+      <div class="parent-element" style="overflow: auto;">
+        <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
+          <div class="track-cover-art-div" v-if="$store.state.currentTrackPlaying == trackDisplay.id" 
+            :style="{ backgroundImage: 'url(' + trackDisplay.get_cover_art + ')' }"
+            @contextmenu.prevent
+            @touchmove.prevent
+            style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">        
+          </div>
+          <h3 v-if="$store.state.currentTrackPlaying == trackDisplay.id" class="track-title-img">
+            Sheriff Crandy - {{ trackDisplay.title }}
+          </h3>
+        </div>
+      </div>
+      <!-- skip, play/pause, repeat, shuffle controllers -->
+      <div class="music-player-controls-wrapper">
+        <div class="music-player-controls">
+          <!-- repeat controller -->
+          <span class="repeat-controller" 
+          @click.prevent="toggleRepeat">
+            <i class="fas fa-sync" :class="{ rotate: $store.state.isRotated}"></i>
+          </span>
+          <!-- skip previous -->
+          <span class="skip-back-controller" 
+          @click.prevent="skipPreviousController()">
             <i class="fa fa-fast-backward"></i>
           </span>
-          <span @click="nextTrack()">
+          <!-- play controller showing when paused -->
+          <span class="play-controller" v-if="!$store.state.currentAudioElementPlaying" 
+          @click.prevent="playPauseController()">
+            <i class="fas fa-play"></i>          
+          </span>
+          <!-- pause controller shown when playing -->
+          <span class="pause-controller" v-if="$store.state.currentAudioElementPlaying" @click.prevent="playPauseController()">
+            <i class="fas fa-pause"></i>          
+          </span>
+          <!-- skip forward -->
+          <span class="skip-forward-controller" 
+          @click.prevent="skipForwardController()">
             <i class="fa fa-fast-forward"></i>  
+          </span>
+          <span class="shuffle-controller" 
+          @click.prevent="toggleShuffle">
+            <i class="fas fa-random" :class="{ invert: $store.state.isInverted}"></i>
           </span>
         </div>
       </div>
-    </section>
-    <section class="music-player-section">
+      <div class="slider-container">
+        <!-- slide bar -->
+        <div class="slide-bar" ref="slideBar" id="slideBar" 
+          @mousedown="sliderMoveDesktop"
+          @touchstart="sliderMoveMobile"
+          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
+          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          <div 
+            class="slider" 
+            ref="slider" 
+            id="slider" 
+            :style="{ left: $store.state.progress + '%'}">
+          </div>
+        </div>
+        <div class="track-time-displays">
+          <span class="start-time">
+            {{ $store.state.songProgress }}
+          </span>
+          <span v-show="$store.state.songLength" class="end-time">
+            {{$store.state.songLength}}
+          </span>
+        </div>
+      </div>
       <!-- currently playing song -->
       <!-- unordered list of track -->
       <ul class="audio-player-ul">
         <!-- Vue for loop -->
         <div v-for="track, index in tracks" v-bind:key="track.id" class="media-player">
-          <!-- play audio if play is true -->
-          <audio class="hidden-player" controls autoplay v-if="play == true && pause == false && currentTrackPlaying == track.id">
-            <source :src="track.get_sample" type="audio/mpeg">
-            Your browser does not support the audio element.
-          </audio>
-          <div>
-          </div>
           <li @click="setPlayOrPause(track.id)" class="track-list-item" v-bind:id="track.id">
             <!-- show play button on all tracks on hover -->
-            <a class="play-button" href="#" v-if="currentTrackPlaying != track.id"> 
+            <a class="play-button" href="#" v-if="$store.state.currentTrackPlaying != track.id"> 
               <span class="play-icon-span">
                 <svg 
                   class="play-icon-svg" 
@@ -64,7 +111,7 @@
             </a>
             <!-- show play button on paused track -->
             <a class="play-button-on-pause" href="#"
-              v-if="(currentTrackPlaying == track.id && play == false && pause == true) || (lastPlayedTrack == track.id && play == false && pause == false && stop == true)">
+              v-if="$store.state.currentTrackPlaying == track.id && $store.state.currentAudioElementPlaying == false">
               <span class="play-icon-span">
                 <svg 
                   class="play-icon-svg" 
@@ -76,7 +123,7 @@
               </span>
             </a>
             <!-- show pause button while playing -->
-            <a class="pause-button" href="#" v-if="currentTrackPlaying == track.id && play == true && pause == false">
+            <a class="pause-button" href="#" v-if="$store.state.currentTrackPlaying == track.id && $store.state.currentAudioElementPlaying == true">
               <!-- show pause button only on track that is currently playing -->
               <span class="pause-icon-span" style="display: block !important">
                 <svg 
@@ -91,7 +138,7 @@
               </span>
             </a>
             <!-- hide track number when track is playing -->
-            <span v-if="currentTrackPlaying != track.id" class="track-number">{{++index}}</span>
+            <span v-if="$store.state.currentTrackPlaying != track.id" class="track-number">{{++index}}</span>
             <!-- track title -->
             <div class="track-title">
               <span class="track-title-inner">
@@ -111,8 +158,8 @@
                   @click.stop="modalOpened = false; removeFromCart(track.id)" data-target="my-modal-id">
                   {{$t('cartview.addedtocart')}}
                 </a>
-                <!-- open modal. click.stop prevents the parent click even from firing
-                  doesn't play/pause the song, adds this item to cart only
+                <!-- open modal. click.stop prevents the parent click even from firing.
+                  Doesn't play/pause the song, adds this item to cart only
                 -->
                 <a class="button is-small is-black price-button has-text-weight-medium" 
                   v-else-if="track.is_free" 
@@ -443,7 +490,8 @@
 import axios from 'axios'
 // for pop up notifying user about added item to cart
 import { toast } from 'bulma-toast'
-
+// import howler
+import { Howl, Howler } from 'howler';
 export default {
   name: 'Music',
   // data() is a new obj returning tracks list used in for loop above
@@ -489,20 +537,13 @@ export default {
           },      
       // check if this a USD or JPY payment
       isUsd: true,
-      // track number
-      trackNumber: 0,
-      // player status
-      play: false,
-      pause: false,
-      stop: true,
-      currentTrackPlaying: 0,
-      lastPlayedTrack: 0,
-      currentTimer: '',
-      currentSeconds: 0,
-      currentInterval: '',
-      // play sample for 51 seconds 
-      duration: 51000,
-      timeRemaining: 0,
+    // number the tracks for UI/UX media player
+    trackNumber: 0,
+    lastPlayedTrack: 0,
+    // for repeat icon
+    isRotated: false,
+    // shuffle icon
+    isInverted: false,
     }
   },
 
@@ -511,43 +552,299 @@ export default {
   // Vue lifecycle hook mounted() is called when this component is added to the DOM
   // so I guess on page load, getTracks() is called  
   mounted() {
+
     this.getTracks();
     document.addEventListener('click', this.closeModalOnWindowClick);
     this.$store.state.region === 'US' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
     const elements = this.stripe.elements();
     this.card = elements.create('card', { hidePostalCode: true })
     this.card.mount('#card-element')
+    // set slidebar and slider in mount
+    this.$store.state.slideBar = document.getElementById('slideBar'); 
+    this.$store.state.slider = document.getElementById('slider'); 
+    this.updateSlideBarBackground();
   },
 
-    computed: {
+  computed: {
 
-      calculateUsdTaxes() {
-        var taxAmount = (parseFloat(this.usdTaxRate * this.usdPrice))
-        this.usdTax = taxAmount.toFixed(2);
-        return this.usdTax
-      },
-      calculateUsdSubtotal() {
-        // prepending unary operator to these values to treat them as numbers
-        // instead of strings for tax calc
-        this.usdSubTotal = parseFloat(((this.usdPrice) + (+this.usdTax))).toFixed(2);
-        return this.usdSubTotal;
-      },
-
-      calculateJpyTaxes() {
-        var taxAmount = (parseFloat(this.jpyTaxRate * this.jpyPrice))
-        this.jpyTax = taxAmount;
-        return this.jpyTax
-      },
-      calculateJpySubtotal() {
-        this.jpySubtotal = parseFloat((this.jpyPrice + this.jpyTax));
-        return this.jpySubtotal
-      },
-
+    calculateUsdTaxes() {
+      var taxAmount = (parseFloat(this.usdTaxRate * this.usdPrice))
+      this.usdTax = taxAmount.toFixed(2);
+      return this.usdTax
     },
+    calculateUsdSubtotal() {
+      // prepending unary operator to these values to treat them as numbers
+      // instead of strings for tax calc
+      this.usdSubTotal = parseFloat(((this.usdPrice) + (+this.usdTax))).toFixed(2);
+      return this.usdSubTotal;
+    },
+
+    calculateJpyTaxes() {
+      var taxAmount = (parseFloat(this.jpyTaxRate * this.jpyPrice))
+      this.jpyTax = taxAmount;
+      return this.jpyTax
+    },
+    calculateJpySubtotal() {
+      this.jpySubtotal = parseFloat((this.jpyPrice + this.jpyTax));
+      return this.jpySubtotal
+    },
+
+  },
 
   // functions defined here
   methods: {
 
+    // NEW MUSIC PLAYER IMPLEMENTATION
+    // MOUSE SLIDEBAR CONTROLS
+    sliderMoveDesktop(event) {
+      // if no song has played, don't set events
+      if (!this.$store.state.currentTrackPlaying) {
+        return
+      }
+      let isClicking = false;
+      let clickTimeout = null;
+
+      // need to set up variables that are used by both single touch and long press events
+      let seekTime = ''
+      this.$store.state.slideBar = event.currentTarget
+      this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+      let x = event.clientX - this.$store.state.slideBarRect.left
+
+      const startDragDesktop = (event) => {
+        isClicking = false;
+        clickTimeout = setTimeout(() => {
+          isClicking = true;
+        }, 200);
+        this.$store.state.isDragging = true;
+        this.$store.state.slider.classList.add('dragging');
+
+      };
+
+      const dragDesktop = (event) => {
+        if (isClicking) {
+          clearTimeout(clickTimeout);
+          clickTimeout = null;
+          event.preventDefault();
+
+          this.$store.state.isDragging = true
+          // Add the 'dragging' class to the slider element
+          this.$store.state.slider.classList.add('dragging');
+
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            return;
+          }
+            this.$store.state.slideBar = this.$refs.slideBar
+            this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+            let x = event.clientX - this.$store.state.slideBarRect.left
+            const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+            const duration = this.$store.state.currentAudioElement.duration()
+            this.$store.commit('formatTime', (progress / 100) * duration)
+            // this is used to update the seek playback position whenever the mouse is lifted
+            seekTime = (this.$store.state.progress / 100) * duration
+
+            this.$store.state.progress = progress
+            this.updateSlideBarBackground()
+          }
+      };
+
+      const endDragDesktop = (event) => {
+        if (!isClicking) {
+
+          this.$store.state.isDragging = false;
+          
+          // Remove the 'dragging' class from the slider element
+          this.$refs.slideBar.classList.remove('dragging');
+
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            clearTimeout(clickTimeout);
+            clickTimeout = null;
+            document.removeEventListener('mousedown', startDragDesktop);
+            document.removeEventListener('mousemove', dragDesktop);
+            document.removeEventListener('mouseup', endDragDesktop);
+            return;
+          }
+
+
+          this.$store.state.slideBar = this.$refs.slideBar
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+
+          const duration = this.$store.state.currentAudioElement.duration()
+          seekTime = (progress / 100) * duration
+
+          this.$store.state.currentAudioElement.seek(seekTime)
+
+          this.$store.commit('formatTime', seekTime)
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+        }
+        else {
+          if (!this.$store.state.currentAudioElement) {
+            return
+          }
+          this.$store.state.isDragging = false
+          
+          // Remove the 'dragging' class from the slider element
+          this.$refs.slideBar.classList.remove('dragging');
+
+          this.$store.state.currentAudioElement.seek(seekTime)
+        }
+        clearTimeout(clickTimeout);
+        clickTimeout = null;
+        document.removeEventListener('mousedown', startDragDesktop);
+        document.removeEventListener('mousemove', dragDesktop);
+        document.removeEventListener('mouseup', endDragDesktop);
+        
+        // Remove the 'dragging' class from the slider element
+        this.$store.state.slider.classList.remove('dragging');
+      };
+
+      document.addEventListener('mousedown', startDragDesktop);
+      document.addEventListener('mousemove', dragDesktop);
+      document.addEventListener('mouseup', endDragDesktop);
+    },
+
+    // MOBILE SLIDEBAR CONTROLS
+    // user touched slidebar, determine if it is a single tap or a long press
+    sliderMoveMobile(event) {
+      
+      // if no song has played, don't set events
+      if (!this.$store.state.currentTrackPlaying) {
+        return
+      }
+      // prevent the screen from scrolling up and down
+      // Check if scrolling is in progress
+      if (event.cancelable && !event.defaultPrevented) {
+        event.preventDefault();
+      }      
+
+      // need to set up variables that are used by both single touch and long press events
+      let seekTime = ''
+      this.$store.state.slideBar = event.currentTarget
+      this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+      let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+      let isTouching = true;
+
+
+      let touchTimeout = setTimeout(() => {
+        isTouching = false;
+      }, 300);
+      
+      const clearTouchTimeout = () => {
+        clearTimeout(touchTimeout);
+        isTouching = false;
+      };
+      
+      // for dragging slider
+      const dragMobile = (event) => {
+        clearTouchTimeout();
+        this.$store.state.isDragging = true
+        if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+          return;
+        }
+          this.$store.state.slideBar = this.$refs.slideBar
+          this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+          let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+          const duration = this.$store.state.currentAudioElement.duration()
+          this.$store.commit('formatTime', (progress / 100) * duration)
+          seekTime = (this.$store.state.progress / 100) * duration
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+      };
+
+      // handles single tap and long press events
+      const endDragMobile = (event) => {        
+        // single taps
+        if (isTouching) {
+          clearTouchTimeout();
+          this.$store.state.isDragging = false
+          // don't move slider if a song hasn't been played yet (NEED TO FIX THIS LATER)
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            return;
+          }
+          this.$store.state.slideBar = this.$refs.slideBar
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+
+          const duration = this.$store.state.currentAudioElement.duration()
+          seekTime = (progress / 100) * duration
+          this.$store.state.currentAudioElement.seek(seekTime)
+
+          this.$store.commit('formatTime', seekTime)
+          // this.$store.state.songProgress = this.$store.state.minsecs
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+        }
+        // long press events. See const DragMobile
+        else {
+          this.$store.state.isDragging = false
+          // set playtime based on seekTime var calculated in dragMobile
+          this.$store.state.currentAudioElement.seek(seekTime)
+        }
+        // clear timeout and remove event listeners
+        clearTouchTimeout();
+      };
+      
+      event.target.addEventListener('touchmove', dragMobile, { passive: true });
+      event.target.addEventListener('touchend', endDragMobile, { once: true });
+    },
+
+    // update slidebar color when slider moves along slidebar
+    updateSlideBarBackground() {
+      this.$store.state.slideBar = document.getElementById('slideBar'); 
+      this.$store.commit('updateSlideBarBackground', this.$store.state.slideBar)
+    },
+      // timer to display track playback time
+    formatTime(secs) {
+      this.$store.commit('formatTime', secs)
+    },
+
+    // SLIDE BAR called by howl
+    animateSlider() {
+      this.$store.commit('animateSlider')
+    },
+
+    // remove event listeners if they are still active
+    beforeDestroy() {
+      // stop the recursion when the component is destroyed
+      this.$store.state.slideBar = this.$refs.slideBar
+      this.$store.state.slideBar.removeEventListener("mousedown", this.touchStartMobile)
+      document.removeEventListener("mousemove", this.dragHandler)
+      document.removeEventListener("mouseup", this.endDrag)
+    },
+
+    // MUSIC CONTROLLERS
+    // SKIP TO NEXT TRACK
+    skipForwardController() {
+      this.$store.commit('skipForwardController')
+    },
+    // SKIP TO PREVIOUS TRACK
+    skipPreviousController() {
+      this.$store.commit('skipPreviousController')
+    },
+    // FOR PLAY/PAUSE BUTTON CONTROLLERS
+    playPauseController() {
+      this.$store.commit('playPauseController')
+    },
+    // Individual PLAY/RESUME TRACK
+    setPlayOrPause(trackId) {
+      // can only send one param to vuex mutations
+      this.$store.commit('setPlayOrPause', trackId)
+    },
+    // SHUFFLE PLAYLIST
+    // populateShufflePlaylist() {
+    //   this.$store.commit('populateShufflePlaylist')
+    // },
+    // TOGGLE SHUFFLE
+    toggleShuffle() {
+      this.$store.commit('toggleShuffle')
+    },
+    // TOGGLE REPEAT
+    toggleRepeat() {
+      this.$store.commit('toggleRepeat')
+    },
     // redirect to login screen
     redirectToLogin() {
 
@@ -790,183 +1087,9 @@ export default {
 
       }
     },
-
-    // skip track forward
-    nextTrack() {
-      var last_track = this.tracks[this.tracks.length - 1].id
-      // if no songs have been played, skip to second track in playlist 
-      if (this.currentTrackPlaying == 0) {
-        this.currentTrackPlaying = this.tracks[0].id
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
-      }
-      // else if this is the last track in the playlist, play the first track
-      else if (this.currentTrackPlaying == last_track) {
-        this.currentTrackPlaying = this.tracks[0].id
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
-      }
-      else {
-        // local var containing the current track id needed for function below 
-        var val = this.currentTrackPlaying
-        // get the JSON object index of the current song in the playlist
-        var index = this.tracks.findIndex(function(item){
-          return item.id === val;
-        });
-        // get the id of the next track in the playlist
-        this.currentTrackPlaying = this.tracks[index + 1].id
-
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
-      }
-    },
-    prevTrack() {
-      var first_track = this.tracks[0].id
-      var last_track = this.tracks[this.tracks.length - 1].id
-
-      // if no songs have been played or if current track is the first_track, play the last track in the playlist
-      if (this.currentTrackPlaying == 0 || this.currentTrackPlaying == first_track) {
-        this.currentTrackPlaying = last_track
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
-      }
-      // skip back to the previous track
-      else {
-        // same setup for nextTrack only reversed
-        var val = this.currentTrackPlaying
-        var index = this.tracks.findIndex(function(item){
-          return item.id === val;
-        });
-        // get the id of the prev track in the playlist
-        this.currentTrackPlaying = this.tracks[index - 1].id
-
-        this.play = true;
-        this.stop = false;
-        this.pause = false;
-        clearTimeout(this.currentTimer)
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);
-      }
-
-    },
     // number the tracks for UI/UX media player
     increment() {
       this.trackNumber++;
-    },
-    // for playing/pausing track
-    setPlayOrPause(track) {
-
-      // if currentTrackPlaying is 0, it means no song has been played
-       if (this.currentTrackPlaying == 0 && this.play == false && this.pause == false && this.stop == true) {
-        // set the current track to the track selected by user
-        this.currentTrackPlaying = track
-        this.play = true;
-        this.stop = false;
-        // start timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration);        
-      }
-      // either pausing, resuming, or playing current track again
-      else if (this.currentTrackPlaying == track) {
-        // if the song is currently playing, pause it
-        if (this.play == true && this.pause == false && this.stop == false) {
-          this.pause = true;
-          this.play = false;
-          // get how many more seconds the song has to play
-        }
-        // if song is currently paused, resume it
-        else if (this.play == false && this.pause == true && this.stop == false){
-          this.pause = false;
-          this.play = true;
-          // 
-          clearTimeout(this.currentTimer)
-          // resume timeout
-          // start new timer and set stop = true if full song plays
-          this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration); 
-        }
-        //  else if the song played all the way through and the user clicks it again, play it again
-        else {
-          this.pause = false;
-          this.play = true;
-          this.stop = false;
-          clearTimeout(this.currentTimer)
-          // resume timeout
-          // start new timer and set stop = true if full song plays
-          this.currentTimer = setTimeout(() => {
-            this.stop = true; 
-            this.lastPlayedTrack = this.currentTrackPlaying;
-            this.play = false;
-            this.pause = false;
-          }, this.duration); 
-        }
-      }
-      // stop current track and play new track
-      else {
-        // clear the timer that was playing
-        clearTimeout(this.currentTimer)
-        // set the new track
-        this.currentTrackPlaying = track;
-        this.play = true
-        this.stop = false;
-        this.pause = false;
-        // start new timer
-        this.currentTimer = setTimeout(() => {
-            this.stop = true;
-            this.lastPlayedTrack = this.currentTrackPlaying; 
-            this.play = false;
-            this.pause = false;
-          }, this.duration);         
-      }
     },
 
     // make this method async and axios.get to await to make sure setIsLoading isn't set to false

@@ -6,6 +6,10 @@ from pydub import AudioSegment
 from django.core.files import File
 from pathlib import Path
 import os
+# img processing libs
+from PIL import Image
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFill
 
 
 class Track(models.Model):
@@ -30,7 +34,9 @@ class Track(models.Model):
     sample = models.FileField(upload_to='samples', blank=True, null=True)
     # thumbail for audio track art
     # uploads to /media/cover_art dir
-    cover_art = models.ImageField(upload_to='cover_art', blank=True, null=True)
+    # cover_art = models.ImageField(upload_to='cover_art', blank=True, null=True)
+    # django image processor automatically resizes images when uploaded
+    cover_art_v2 = ProcessedImageField(upload_to='cover_art', blank=True, null=True, processors=[ResizeToFill(2048, 2048)], format='JPEG', options={'quality': 90},max_length=255)
     # datetime stamp
     date_added = models.DateTimeField(auto_now_add=True)
     # check if download is free
@@ -75,9 +81,10 @@ class Track(models.Model):
         # else if the track isn't created, return an empty string
         return ''
 
+    # need to resize images to 2048px x 2048px
     def get_cover_art(self):
-        if self.cover_art:
-            return settings.env('DOMAIN') + self.cover_art.url
+        if self.cover_art_v2:
+            return settings.env('DOMAIN') + self.cover_art_v2.url
         return ''
 
     # get the length of the track in mm:ss

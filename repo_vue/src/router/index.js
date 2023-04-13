@@ -100,6 +100,20 @@ const router = createRouter({
 })
 
 router.beforeEach((to,from,next) => {
+
+  if (store.state.currentTrackPlaying) {
+    if (to.name === 'Music') {
+      // if navigating to the Music view, use the #slidebar element but wait for DOM to load view 
+      // before trying to access the slidebar div, otherwise it will pass null to the mutation
+      document.addEventListener('DOMContentLoaded', () => {
+        store.commit('updateSlideBarBackground', document.getElementById('slidebar'))
+      })
+
+    } else {
+      // otherwise, use the #persist-mini-slideBar element
+      store.commit('updateSlideBarBackground', document.getElementById('persist-mini-slideBar'))
+    }
+  }
   // prevent unauthenticated users from accessing logout view. Redirect to homepage
   if (to.matched.some(record => record.meta.requireLogin) && !store.state.isAuthenticated) {
     next({ path: '/' });

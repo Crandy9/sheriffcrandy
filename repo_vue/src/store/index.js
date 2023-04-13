@@ -1,4 +1,6 @@
 import { createStore } from 'vuex'
+// import howler
+import { Howl, Howler } from 'howler';
 
 // cart implementation, authentication, etc.
 // 
@@ -151,12 +153,641 @@ export default createStore({
     freeDownload: '',
     freeDownloadId: '',
     downloadType: '',
+
+
+    // MUSIC PLAYER STATES
+    // howl instance
+    howlInstance: null,
+     // add a new state property to store the seek time
+    seekTime: 0,
+    // the current track's html audio element playing
+    currentAudioElement: null,
+    // id of the current track playing
+    currentAudioElementPlaying: null,
+    // get the current img
+    currentTrackImg: null,
+    // used as a determiner for dragging the slider
+    isDragging: false,
+    // smooth slider animation
+    animationFrame: null,
+    // should hold the song's length in minute:seconds 00:00
+    songLength: '- -',
+    songProgress: '0:00',
+    // percentage used to animate the slider along the slide bar
+    progress: 0,
+    // holds duration in 
+    // duration: 51000,
+    // the audio source of the track used by Howler.js
+    currentSrc: '',
+    // slidebar music view
+    slideBar: '',
+    // needed to prevent errors when slider is clicked before song starts playing
+    slideBarRect: null,
+    // used to persist the slidebar color
+    slideBarBackground: '',
+    isSlidebarHovering: false,
+    // used to hide show the slider
+    slider: null,
+    // timer that updates the songprogress every second
+    songTimer: '',
+    // repeat song
+    repeat: false,
+    // shuffle flag
+    shuffle: false,
+    // array to hold ids of chosen shuffled tracks to not play duplicates
+    shuffleArray: [],
+    // last track of shuffle array
+    shuffleArray_last_track: null,
+    // playlist array needed by howlerjs
+    // last track of playlist
+    playlist_last_track: null,
+    playlist: [],
+    // currentTrackPlaying brought in state to persist
+    currentTrackPlaying: null,
+    // for songProgress
+    minutes: '',
+    seconds: '',
+    // shuffle repeat states
+    // repeat icon
+    isRotated: false,
+    isInverted: false,
+    showMainMusicPlayer: false
+
   },
   getters: {
     getLanguage: (state) => state.language
   },
   // synchronous functions; change states
   mutations: {
+
+    // MUSIC FUNCTIONS:
+
+    // format playback time under slidebar
+    formatTime(state, secs) {
+
+      let minutes = Math.floor(secs / 60) % 60;
+      let seconds = Math.floor(secs % 60);
+      seconds = seconds.toString().length === 1 ? `0${seconds}` : seconds;
+      state.songProgress = `${minutes}:${seconds}`
+    },
+    // update slidebar color
+    updateSlideBarBackground(state, currentSlideBar) {
+
+      // set the slidebar as either mini persist, persist, or music view player
+      state.slideBar = currentSlideBar
+
+      if (!state.slideBar) {
+        return;
+      }
+
+
+      const defaultColor = '#00EEFF'
+      const progress = state.progress;
+      const isMobileScreen = window.innerWidth <= 1023;
+
+      if (isMobileScreen) {
+        const gradient = `linear-gradient(to right, ${defaultColor} ${progress}%, #ffffff ${progress}%)`;
+        state.slideBar.style.background = gradient;
+      } 
+      
+      else {
+        const hoverColor = '#FFFF00'; // define the hover color
+        const gradient = `linear-gradient(to right, ${defaultColor} ${progress}%, #ffffff ${progress}%)`;
+        const hoverGradient = `linear-gradient(to right, ${hoverColor} ${progress}%, #ffffff ${progress}%)`;
+        const background = state.isDragging || state.isSlidebarHovering ? hoverGradient : gradient;
+        state.slideBar.style.background = background;
+      }
+    },
+    
+    // animate slider
+    animateSlider(state) {
+      // return if slider is animated without a song being set
+      if (!state.currentAudioElement.duration()) {
+        return;
+      }
+      const duration = state.currentAudioElement.duration() || 1
+      if (!state.isDragging) {
+          state.progress = ((state.currentAudioElement.seek() || 0) / duration) * 100
+          this.commit('updateSlideBarBackground', state.slideBar)
+      }
+      state.animationFrame = requestAnimationFrame(() => {
+        this.commit('animateSlider')
+      })
+    },
+    // howler instance
+    createHowlInstance(state , src) {
+      const newHowlInstance = new Howl({
+            src: [src],
+            onplay: () => {
+              
+              // Stop the timer
+              clearInterval(state.songTimer);
+
+              state.animationFrame = requestAnimationFrame(() => {
+                this.commit('animateSlider')
+              })         
+              // set the timer
+              state.songTimer = setInterval(() => {
+                // Update the song progress every second
+                let seekTime = state.currentAudioElement.seek();
+                // state.songProgress = this.formatTime(seekTime);
+                this.commit('formatTime',seekTime)
+              }, 1000);
+              
+            },
+            onpause: () => {
+              // Stop the timer
+              clearInterval(state.songTimer);
+              cancelAnimationFrame(state.animationFrame)
+            },
+            onstop: () => {
+              cancelAnimationFrame(state.animationFrame)
+              // Stop the timer
+              clearInterval(state.songTimer);
+              state.songTimer = null;
+              // Reset the song progress to 0:00
+              state.songProgress = '0:00';
+            },
+            // when the song finishes playing go to next song
+            onend: () => {
+
+              let currentPlaylist = []
+              let currentLastTrack = null
+
+              if (state.shuffle) {
+                currentPlaylist = state.shuffleArray
+                currentLastTrack = state.shuffleArray_last_track
+              }
+              else {
+                currentPlaylist = state.playlist
+                currentLastTrack = state.playlist_last_track
+              }
+
+              if (state.repeat) {
+                // repeat the same song
+                state.currentAudioElement.play()
+                return
+              }
+              // else the end of the playlist was reached. Go back to first track and standby
+              else if (state.currentTrackPlaying == currentLastTrack) {
+
+                state.currentTrackPlaying = currentPlaylist[0].id
+                state.currentAudioElement.currentTime = 0;
+                state.songProgress = '0:00'
+                state.progress = 0
+                this.commit('updateSlideBarBackground', state.slideBar)
+                var getSrc = currentPlaylist.find((t) => t.id === state.currentTrackPlaying)
+                // set currentSrc to be either a sample or the full length song
+                state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+                // set song length
+                state.songLength = getSrc.get_track_duration
+
+                // howl instance
+                this.commit('createHowlInstance', state.currentSrc)
+                const newAudioElement = state.howlInstance
+
+                state.currentAudioElement = newAudioElement 
+                state.currentAudioElementPlaying = false;               
+                state.currentAudioElement.stop()
+              }
+              // else play the next song in the playlist
+              else {
+                state.songTimer = setInterval(() => {
+                  this.commit('skipForwardController')
+                }, 400);
+                // set a little delay before playing next song in playlist
+              }
+            },
+            onloaderror: (error) => {
+              console.log('error loading audio file', error)
+            },
+            onplayerror: (error) => {
+              console.log('error playing audio file', error)
+            },
+      }); 
+      state.howlInstance = newHowlInstance 
+    },
+
+    // MUSIC CONTROLLERS
+    // PLAY/PAUSE CONTROLLERS
+    playPauseController(state) {
+
+      let currentPlayList = []
+      state.shuffle === true ? currentPlayList = state.shuffleArray : currentPlayList = state.playlist
+
+      // if song is null, play the first song in the state.playlist
+      if (!state.currentAudioElement) {
+
+        var getSrc = currentPlayList.find((t) => t.id === currentPlayList[0].id)
+        // set currentSrc to be either a sample or the full length song
+        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        state.songLength = getSrc.get_track_duration
+
+        // howl instance
+        this.commit('createHowlInstance', state.currentSrc)
+        const newAudioElement = state.howlInstance
+
+        state.currentAudioElement = newAudioElement
+        state.currentAudioElement.play();
+        state.currentAudioElementPlaying = true;
+        this.commit('formatTime', state.currentAudioElement.seek())
+        state.currentTrackPlaying = currentPlayList[0].id
+
+      }
+      // THIS WORKS else play/resume current song
+      else if (state.currentAudioElementPlaying === false) {
+        state.currentAudioElementPlaying = true;
+        state.currentAudioElement.play();
+      }
+      // pause song
+      else {
+        state.currentAudioElementPlaying = false;
+        state.currentAudioElement.pause();
+      }
+    },
+
+    // Individual PLAY/RESUME TRACK
+    setPlayOrPause(state, currentTrackId) {
+
+      let currentPlayList = []
+      const trackId = currentTrackId
+      // const track_playlist = payload.track_playlist
+
+      state.shuffle === true ? currentPlayList = state.shuffleArray : currentPlayList = state.playlist
+      var getSrc = currentPlayList.find((t) => t.id === trackId)
+      // set currentSrc to be either a sample or the full length song
+      state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+      // set song length
+      state.songLength = getSrc.get_track_duration
+      // THIS WORKS create Howl object
+
+      // howl instance
+      this.commit('createHowlInstance', state.currentSrc)
+      const newAudioElement = state.howlInstance
+
+      // THIS WORKS if no song has played yet, play the first one the user clicked 
+      if (!state.currentAudioElement) {
+        state.currentAudioElement = newAudioElement
+        state.currentAudioElement.play()
+        state.currentAudioElementPlaying = true
+        state.currentTrackPlaying = trackId
+      } 
+      
+      // THIS WORKS this is not the first song played
+      else {
+        // THIS WORKS play/pause/resume same song
+        if (state.currentTrackPlaying == trackId) {
+          // pause it
+          if (state.currentAudioElement.playing()) {
+            state.currentAudioElement.pause()
+            state.currentAudioElementPlaying = false
+            state.currentTrackPlaying = trackId
+            this.commit('updateSlideBarBackground', state.slideBar)
+            return
+          } 
+          // play it
+          else {
+            state.currentAudioElement.play()
+            state.currentAudioElementPlaying = true
+          }
+        }
+        // THIS WORKS this is a different song was chosen. Stop current song, set new song, and play it
+        else {
+          state.currentTrackPlaying = trackId
+          state.currentAudioElement.stop()
+          state.currentAudioElement = newAudioElement
+          state.currentAudioElement.play()
+          state.currentAudioElementPlaying = true
+        }
+      }
+    },
+
+    // SKIP FORWARD CONTROLLER
+    skipForwardController(state) {
+
+      // set the currentPlayList as either shuffle or normal
+      let currentPlayList = []
+      let currentLastTrack = null
+
+      state.shuffle === true ? (currentPlayList = state.shuffleArray, currentLastTrack = state.shuffleArray_last_track) : (currentPlayList = state.playlist, currentLastTrack = state.playlist_last_track)
+
+      // if no songs have been played, play first track
+      if (!state.currentAudioElement) {
+        state.currentTrackPlaying = currentPlayList[0].id
+
+        var getSrc = currentPlayList.find((t) => t.id === state.currentTrackPlaying)
+        // set currentSrc to be either a sample or the full length song
+        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        state.songLength = getSrc.get_track_duration
+
+        // set new audio element
+        this.commit('createHowlInstance', state.currentSrc)
+        const newAudioElement = state.howlInstance
+  
+        state.currentAudioElement = newAudioElement
+        state.currentAudioElementPlaying = false
+        state.songProgress = '0:00'
+        state.currentAudioElement.stop()
+      }
+      // else if this is the last track in the currentPlayList, play the first track
+      else if (state.currentTrackPlaying == currentLastTrack) {
+
+        state.currentTrackPlaying = currentPlayList[0].id
+        state.currentAudioElement.currentTime = 0;
+        state.currentAudioElement.pause();        
+
+        var getSrc = currentPlayList.find((t) => t.id === state.currentTrackPlaying)
+        // set currentSrc to be either a sample or the full length song
+        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        state.songLength = getSrc.get_track_duration   
+
+        // howl instance
+        this.commit('createHowlInstance', state.currentSrc)
+        const newAudioElement = state.howlInstance
+              
+        state.currentAudioElement = newAudioElement
+
+        // if the song was playing, then play, else reset song and pause
+        if (state.currentAudioElementPlaying === true) {
+          state.currentAudioElement.play()
+        }
+        else {
+          state.songProgress = '0:00'
+          state.progress = 0
+          this.commit('updateSlideBarBackground', state.slideBar)
+          state.currentAudioElement.pause()
+          state.currentAudioElementPlaying = false;
+        }
+      }
+
+      // if the currently playing song is not the last track
+      else {
+        // local var containing the current track id needed for function below 
+        var val = state.currentTrackPlaying
+        // get the JSON object index of the current song in the currentPlayList
+        var index = currentPlayList.findIndex(function(item){
+          return item.id === val;
+        });
+
+        // get the id of the next track in the currentPlayList
+        state.currentTrackPlaying = currentPlayList[index + 1].id
+        state.currentAudioElement.currentTime = 0;
+        state.currentAudioElement.pause();        
+
+        var getSrc = currentPlayList.find((t) => t.id === state.currentTrackPlaying)
+        // set currentSrc to be either a sample or the full length song
+        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        state.songLength = getSrc.get_track_duration
+
+        // howl instance
+        this.commit('createHowlInstance', state.currentSrc)
+        const newAudioElement = state.howlInstance
+
+        state.currentAudioElement = newAudioElement
+        // if the song was playing, then play, else reset song and pause
+        if (state.currentAudioElementPlaying === true) {
+          state.currentAudioElement.play()
+        }
+        else {
+          state.songProgress = '0:00'
+          state.progress = 0
+          this.commit('updateSlideBarBackground', state.slideBar)
+          state.currentAudioElement.pause()
+          state.currentAudioElementPlaying = false;
+        }        
+      }
+    },
+
+    // SKIP PREVIOUS CONTROLLER
+    skipPreviousController(state) {
+      
+      // set the currentPlayList as either shuffle or normal
+      let currentPlayList = []
+      let currentLastTrack = null
+
+      state.shuffle === true ? (currentPlayList = state.shuffleArray, currentLastTrack = state.shuffleArray_last_track) : (currentPlayList = state.playlist, currentLastTrack = state.playlist_last_track)
+
+      // get seconds from playback
+      const [minutes, seconds] = state.songProgress.split(":");
+      const secondsInt = parseFloat(seconds)
+
+      // if progress is 1.5 seconds or more, replay song
+      if (secondsInt >= 1) {
+        state.currentAudioElement.stop();  
+        state.progress = 0;
+        this.commit('updateSlideBarBackground', state.slideBar)
+        state.currentAudioElement.currentTime = 0; 
+
+        // if the song was playing, then play, else reset song and pause
+        if (state.currentAudioElementPlaying === true) {
+          state.currentAudioElement.play()
+        }
+        else {
+          state.currentAudioElement.pause()
+        }
+        return
+      }
+      var first_track = currentPlayList[0].id
+  
+
+      // THIS WORKS if no songs have been played, play the last track in the currentPlayList
+      if (!state.currentAudioElement) {
+        var getSrc = currentPlayList.find((t) => t.id === currentLastTrack)
+        // set currentSrc to be either a sample or the full length song
+        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+        // set song length
+        state.songLength = getSrc.get_track_duration
+
+        // howl instance
+        this.commit('createHowlInstance', state.currentSrc)
+        const newAudioElement = state.howlInstance     
+
+        state.currentAudioElement = newAudioElement;
+        // if the song was playing, then play, else reset song and pause
+        if (state.currentAudioElementPlaying === true) {
+          state.currentAudioElement.play()
+        }
+        else {
+          state.currentAudioElement.pause()
+          state.currentAudioElementPlaying = false;
+        }   
+
+        state.currentTrackPlaying = currentLastTrack
+      }
+
+      // THIS WORKS skip back to the previous track
+      else {
+        // THIS WORKS if the current track playing is the first_track, play the last track
+        if (state.currentTrackPlaying == first_track) {
+          state.currentAudioElement.currentTime = 0;
+          state.currentAudioElement.pause();        
+
+          var getSrc = currentPlayList.find((t) => t.id === currentLastTrack)
+          // set currentSrc to be either a sample or the full length song
+          state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          // set song length
+          state.songLength = getSrc.get_track_duration
+
+          // howl instance
+          this.commit('createHowlInstance', state.currentSrc)
+          const newAudioElement = state.howlInstance  
+
+          state.currentAudioElement = newAudioElement
+          // if the song was playing, then play, else reset song and pause
+          if (state.currentAudioElementPlaying === true) {
+            state.currentAudioElement.play()
+          }
+          else {
+            state.currentAudioElement.pause()
+            state.currentAudioElementPlaying = false;
+          }   
+          state.currentTrackPlaying = currentLastTrack
+        }
+
+        // THIS WORKS current track is not the first track
+        else {
+          state.currentAudioElement.currentTime = 0;
+          state.currentAudioElement.pause();        
+
+          var val = state.currentTrackPlaying
+          var index = currentPlayList.findIndex(function(item){
+            return item.id === val;
+          });
+          state.currentTrackPlaying = currentPlayList[index - 1].id
+
+          var getSrc = currentPlayList.find((t) => t.id === state.currentTrackPlaying)
+          // set currentSrc to be either a sample or the full length song
+          state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
+          // set song length
+          state.songLength = getSrc.get_track_duration
+
+          // howl instance
+          this.commit('createHowlInstance', state.currentSrc)
+          const newAudioElement = state.howlInstance  
+
+          state.currentAudioElement = newAudioElement;
+          if (state.currentAudioElementPlaying === true) {
+            state.currentAudioElement.play()
+          }
+          else {
+            state.currentAudioElement.pause()
+            state.currentAudioElementPlaying = false;
+          }  
+        }
+      }
+    },
+
+    // END CONTROLLERS
+
+    // POPULATE PLAYLIST
+    populatePlaylist(state, tracksList) {
+      if (state.playlist.length) {
+        return;
+      }
+
+      state.playlist = tracksList.slice(); // Make a copy of the array
+      if (state.shuffle == false) {
+        state.playlist_last_track = state.playlist[state.playlist.length - 1].id
+      }
+    },
+    // POPULATE SHUFFLE Playlist
+    populateShufflePlaylist(state) {
+
+      // check if no song has played yet, and the user is spamming the shuffle button
+      if (!state.currentTrackPlaying && state.shuffleArray.length !== 0) {
+        return
+      }
+
+
+      // if there is already a shuffled playlist created
+      // and the currently playing track is at the 0th index, 
+      // that means the user turned the shuffle button on and off. Don't create a new playlist
+      if (state.shuffleArray.length !== 0 && state.shuffleArray[0].id === state.currentTrackPlaying) {
+        return
+      }
+
+      const shuffledArray = [];
+      const originalArray = state.playlist.slice();
+      
+
+      for (let i = 0; i < originalArray.length; i++) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        if (randomIndex !== i) {
+          shuffledArray[i] = shuffledArray[randomIndex];
+        }
+        shuffledArray[randomIndex] = originalArray[i];
+      }
+
+      // if there was a song currently playing when the shuffle button
+      // was turned on, find the currently playing song's position in the shuffled array,
+      // and swap it's position with the 0th index of the shuffled array
+
+      if (state.currentTrackPlaying) {
+        const currentTrackIndex = shuffledArray.findIndex(track => track.id === state.currentTrackPlaying);
+
+        // if the currently playing song is already the first element by chance, good to go
+        if (shuffledArray[currentTrackIndex] == shuffledArray[0]) {
+          return
+        }
+
+        // else swap it with the current 0th element
+        else {
+          let placeholder = shuffledArray[0]
+          shuffledArray[0] = shuffledArray[currentTrackIndex]
+          shuffledArray[currentTrackIndex] = placeholder
+        }
+
+
+      }
+
+      // set the state
+      state.shuffleArray = shuffledArray;
+      state.shuffleArray_last_track = shuffledArray[shuffledArray.length - 1].id;
+    
+    },
+
+    // SHUFFLE CONTROLLER
+    toggleShuffle(state) {
+
+      state.isInverted = !state.isInverted;
+      if (state.isInverted) {
+        state.isRotated = false
+      }
+      // if repeat is true, set shuffle to false
+      if (state.repeat && !state.shuffle) {
+        state.repeat = false;
+        state.shuffle = true;
+      } 
+      else {
+        // otherwise toggle shuffle
+        state.shuffle = !state.shuffle;
+      }
+      if (state.shuffle) {
+        this.commit('populateShufflePlaylist')
+      }
+    },
+
+    // REPEAT CONTROLLER
+    toggleRepeat(state) {
+
+      state.isRotated = !state.isRotated;
+      if (state.isRotated) {
+        state.isInverted = false
+      }
+
+      if (state.shuffle && !state.repeat) {
+        // if shuffle is true, set repeat to false
+        state.shuffle = false;
+        state.repeat = true;
+      } else {
+        // otherwise toggle repeat
+        state.repeat = !state.repeat;
+      }
+    },
 
     // called on app load/page refresh in App.vue entry point
     initializeStore(state) {
@@ -372,6 +1003,7 @@ export default createStore({
   },
   // asynchronous vars
   actions: {
+
   },
   modules: {
   }

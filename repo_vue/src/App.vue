@@ -48,23 +48,23 @@
           class="navbar-end" 
           v-bind:class="{'is-active':hamburgerClicked}">
           <!-- navbar items -->
-          <a href="/" class="navbar-item">{{$t('headerfooter.head.home')}}</a>
-          <a href="/music" class="navbar-item">{{$t('headerfooter.head.music')}}</a>
-          <a href="/flps" class="navbar-item">{{$t('headerfooter.head.flps')}}</a>
-          <a href="/tools" class="navbar-item">{{$t('headerfooter.head.tools')}}</a>
-          <a href="/bio" class="navbar-item">{{$t('headerfooter.head.bio')}}</a>
-          <a href="/contact" class="navbar-item">{{$t('headerfooter.head.contact')}}</a>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/" class="navbar-item">{{$t('headerfooter.head.home')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/music" class="navbar-item">{{$t('headerfooter.head.music')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/flps" class="navbar-item">{{$t('headerfooter.head.flps')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/tools" class="navbar-item">{{$t('headerfooter.head.tools')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/bio" class="navbar-item">{{$t('headerfooter.head.bio')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/contact" class="navbar-item">{{$t('headerfooter.head.contact')}}</router-link>
           <!-- show my account link if user is authenticated -->
-          <a v-if="$store.state.isAuthenticated" href="/myaccount" class="navbar-item">{{$t('headerfooter.head.myaccount')}}</a>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/myaccount" v-if="$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.myaccount')}}</router-link>
           <!-- check if user is logged in or not -->
-          <a v-if="$store.state.isAuthenticated" href="/logout" class="navbar-item">{{$t('headerfooter.head.logout')}}</a>
-          <a v-if="!$store.state.isAuthenticated" href="/login" class="navbar-item">{{$t('headerfooter.head.login')}}</a>
-          <a v-if="!$store.state.isAuthenticated" href="/signup" class="navbar-item">{{$t('headerfooter.head.signup')}}</a>
-          <a href="/cart" class="navbar-item">
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/logout" v-if="$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.logout')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/login" v-if="!$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.login')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="/signup" v-if="!$store.state.isAuthenticated" class="navbar-item">{{$t('headerfooter.head.signup')}}</router-link>
+          <router-link @click="hamburgerClicked = false, showMainMusicPlayer= false" to="cart" class="navbar-item">
               <span class="cart-icon"><i class="fas fa-shopping-cart"></i></span>
               <!-- cart item count -->
               <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
-          </a>
+          </router-link>
         </div>
         <!-- under here I want a horizontal list of SNS icons -->
         <div v-if="hamburgerClicked" class="navbar-sns-icons"
@@ -289,15 +289,37 @@
   </div>
 		<!-- Footer only stays at the bottom in this file, not App.vue-->
 		<footer class="my-footer">
-      <!-- cool little api ip/region integration but not really needed. Keeping code for -->
-      <div class="location-beacon" style="padding: 1rem;">
-        <!-- <div class="circle"></div> -->
+      <!-- <div class="location-beacon" style="padding: 1rem;">
+        <div class="circle"></div>
         <p style="font-size: smaller; padding: 0.2rem; color: white; display:inline-block;">
-        <!-- Location: {{ $store.state.regionFromIpAPI }} -->
+        Location: {{ $store.state.regionFromIpAPI }}
         <p>
-          <!-- IP: {{ $store.state.clientIp }} -->
+          IP: {{ $store.state.clientIp }}
         </p>
       </p>
+      </div> -->
+      <!-- region language -->
+      <div class="my-region-language-div">
+        <!-- region button -->
+        <div class="my-region">
+          <button v-if="$store.state.region === 'JP'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
+            <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
+            日本 (Japan)
+          </button>
+          <button v-else-if="$store.state.region === 'US'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
+              <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
+            United States
+            </button>
+        </div>
+        <!-- Language button -->
+        <div class="my-language">
+          <button v-if="$store.state.language === 'ja'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
+            日本語
+          </button>
+          <button v-else-if="$store.state.language === 'en'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
+            English
+          </button>
+        </div>
       </div>
 			<div style="font-size: small; padding: 1rem;">
         <!-- SNS icons -->
@@ -474,38 +496,213 @@
 						- Jesus Christ is King
 				</div>
 			</div>
-      <!-- region language -->
-      <div class="my-region-language-div">
-        <!-- region button -->
-        <div class="my-region">
-          <button v-if="$store.state.region === 'JP'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
-            <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
-            日本 (Japan)
-          </button>
-          <button v-else-if="$store.state.region === 'US'" @click.stop="regionModalOpened = true;" data-target="my-modal-id" class="my-region-button button">
-              <i class="fas fa-globe" style="color: white; padding-right: 0.4rem;"></i>
-            United States
-            </button>
-        </div>
-        <!-- Language button -->
-        <div class="my-language">
-          <button v-if="$store.state.language === 'ja'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
-            日本語
-          </button>
-          <button v-else-if="$store.state.language === 'en'" @click.stop="langModalOpened = true;" data-target="my-modal-id" class="my-lang-button button">
-            English
-          </button>
-        </div>
-      </div>
 		</footer>
 		<!-- end Footer -->
+
+
+    <!-- persistent MINI MUSIC PLAYER -->
+    <!-- only shown on views other than music player -->
+    <div 
+      @click.self="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
+      class="persist-mini-music-player-container" 
+      :style="{ display: $route.name !== 'Music' ? 'block' : 'none' }">
+      <!-- img container -->
+      <div class="persist-mini-track-cover-art-and-controllers-container">
+        <!-- track img -->
+        <div 
+          v-if="$store.state.currentTrackPlaying" 
+          class="persist-mini-track-cover-art-div" 
+          :style="{ backgroundImage: 'url(' + $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).get_cover_art + ')' }"
+          @contextmenu.prevent
+          @touchmove.prevent
+          @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
+          style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">
+        </div>
+          <!-- track title -->
+        <div 
+          v-if="$store.state.currentTrackPlaying" 
+          class="persist-mini-track-title" 
+          ref="trackTitle"
+          @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
+          <p style="color: white">Sheriff Crandy - </p>
+          <p ref="titleTag" style="color: white">{{ $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).title }}</p>
+        </div>
+        <!-- exit icon -->
+        <div 
+          v-if="$store.state.currentTrackPlaying"
+          class="persist-mini-exit-icon-container"
+          @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
+          <i 
+            class="persist-mini-exit-icon fas fa-chevron-down"
+            :class="{ close: !showMainMusicPlayer }"></i>
+        </div>
+        <!-- CONTROLLERS -->
+        <div class="persist-mini-music-player-controls">
+          <!-- repeat controller -->
+          <span class="persist-mini-repeat-controller" 
+          @click.stop="toggleRepeat">
+            <i id="persist-mini-repeat" class="fas fa-sync" :class="{ rotate: $store.state.isRotated}"></i>
+          </span>
+          <!-- skip previous -->
+          <span class="persist-mini-skip-back-controller" 
+          @click.stop="skipPreviousController()">
+            <i id="persist-mini-skip-back" class="fa fa-fast-backward"></i>
+          </span>
+          <!-- play controller showing when paused -->
+          <span class="persist-mini-play-controller" v-if="!$store.state.currentAudioElementPlaying" 
+          @click.stop="playPauseController()">
+            <i id="persist-mini-play" class="fas fa-play"></i>          
+          </span>
+          <!-- pause controller shown when playing -->
+          <span class="persist-mini-pause-controller" v-if="$store.state.currentAudioElementPlaying" 
+          @click.stop="playPauseController()">
+            <i id="persist-mini-pause" class="fas fa-pause"></i>          
+          </span>
+          <!-- skip forward -->
+          <span class="persist-mini-skip-forward-controller" 
+          @click.stop="skipForwardController()">
+            <i id="persist-mini-skip-forward" class="fa fa-fast-forward"></i>  
+          </span>
+          <span class="persist-mini-shuffle-controller" 
+          @click.stop="toggleShuffle">
+            <i id="persist-mini-shuffle" class="fas fa-random" :class="{ invert: $store.state.isInverted}"></i>
+          </span>
+        </div>
+      </div>
+      <div class="persist-mini-music-player">
+        <!-- slide bar -->
+        <div 
+          class="persist-mini-slide-bar" 
+          ref="slideBar" 
+          id="persist-mini-slideBar" 
+          @mousedown="sliderMoveDesktop"
+          @touchstart="sliderMoveMobile"
+          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
+          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          <!-- slider -->
+          <div 
+            class="persist-mini-slider" 
+            ref="slider" 
+            id="persist-mini-slider" 
+            :style="{ left: $store.state.progress + '%'}">
+          </div>
+        </div>
+        <!-- time displays -->
+        <div class="persist-mini-track-time-displays">
+          <span class="persist-mini-start-time">
+            {{ $store.state.songProgress }}
+          </span>
+          <span v-show="$store.state.songLength" class="persist-mini-end-time">
+            {{$store.state.songLength}}
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- PERSISTENT MAIN MUSIC PLAYER -->
+    <div 
+      class="main-persistent-music-play-container"
+      v-bind:class="{'is-active':showMainMusicPlayer}"
+      :style="showMainMusicPlayer === true ? 'height: 100%' : 'height: 0'">
+      <!-- exit icon -->
+      <div 
+      class="main-persistent-exit-icon-container"
+      @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
+        <i 
+          class="main-persistent-exit-icon fas fa-chevron-down"
+          :class="{ close: !showMainMusicPlayer }"></i>
+      </div>
+      <!-- track img -->
+      <div 
+        v-if="$store.state.currentTrackPlaying" 
+        class="main-persistent-music-player-cover-art-div" 
+        :style="{ backgroundImage: 'url(' + $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).get_cover_art + ')' }"
+        @contextmenu.prevent
+        @touchmove.prevent
+        @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
+        style="-webkit-touch-callout: none; -webkit-user-select: none; -ms-touch-action: none; touch-action: none;">
+      </div>
+      <!-- track title -->
+      <div 
+        class="main-persistent-music-player-track-title"
+        v-if="$store.state.currentTrackPlaying" 
+        @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
+        <p >
+          Sheriff Crandy - {{ $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).title }}
+        </p>
+      </div>
+      <!-- CONTROLLERS -->
+      <div 
+        class="main-persistent-music-player-controls">
+        <!-- repeat controller -->
+        <span class="main-persistent-repeat-controller" 
+        @click.stop="toggleRepeat">
+          <i id="mainrepeat" class="fas fa-sync" :class="{ rotate: $store.state.isRotated}"></i>
+        </span>
+        <!-- skip previous -->
+        <span class="main-persistent-skip-back-controller" 
+        @click.stop="skipPreviousController()">
+          <i id="main-skip-back" class="fa fa-fast-backward"></i>
+        </span>
+        <!-- play controller showing when paused -->
+        <span class="main-persistent-play-controller" v-if="!$store.state.currentAudioElementPlaying" 
+        @click.stop="playPauseController()">
+          <i id="main-play" class="fas fa-play"></i>          
+        </span>
+        <!-- pause controller shown when playing -->
+        <span class="main-pause-controller" v-if="$store.state.currentAudioElementPlaying" 
+        @click.stop="playPauseController()">
+          <i id="main-pause" class="fas fa-pause"></i>          
+        </span>
+        <!-- skip forward -->
+        <span class="main-persistent-skip-forward-controller" 
+        @click.stop="skipForwardController()">
+          <i id="main-skip-forward" class="fa fa-fast-forward"></i>  
+        </span>
+        <span class="main-persistent-shuffle-controller" 
+        @click.stop="toggleShuffle">
+          <i id="main-shuffle" class="fas fa-random" :class="{ invert: $store.state.isInverted}"></i>
+        </span>
+      </div>
+      <!-- slider slidebar and time stamps -->
+      <div class="main-persistent-slider-container">
+        <!-- slide bar -->
+        <div 
+          class="main-persistent-slide-bar" 
+          ref="mainPersistentSlideBar" 
+          id="main-persistent-slide-bar-id"
+          @mousedown="sliderMoveDesktop"
+          @touchstart="sliderMoveMobile"
+          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
+          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          <!-- slider -->
+          <div 
+            class="main-persistent-slider" 
+            ref="mainPersistentSlider"
+            id="main-persistent-slider"
+            :style="{ left: $store.state.progress + '%'}">
+          </div>
+        </div>
+        <!-- time stamps -->
+        <div class="main-persistent-track-time-displays">
+          <span class="main-persistent-start-time">
+            {{ $store.state.songProgress }}
+          </span>
+          <span 
+            v-show="$store.state.songLength" 
+            class="main-persistent-end-time">
+            {{$store.state.songLength}}
+          </span>
+        </div>
+      </div>
+    </div>
 </template>
 
 <!-- import bulma -->
 <style lang="scss">
   @import '../node_modules/bulma';
 
-  // loading bar styling UNTESTED
+  // loading bar styling
   .lds-dual-ring {
     display: inline-block;
     width: 80px;
@@ -579,6 +776,9 @@ export default {
       cart: {
         itemsInCart: []
       },
+      // music stuff
+      tracks: [],
+      showMainMusicPlayer: false,
     }
   },
   // initialize the store. First method that is called when app is loaded/page refreshed
@@ -601,10 +801,16 @@ export default {
   },
 
   mounted() {
+    this.getTracks();
     // mount cart
     this.cart = this.$store.state.cart
     document.addEventListener('click', this.closeModalOnWindowClick);
+    // set slidebar and slider in mount for mini music player
+    this.$store.state.slideBar = document.getElementById('persist-mini-slideBar'); 
+    this.$store.state.slideBar = document.getElementById('persist-mini-slider'); 
 
+    // get tracks for persistent music player
+    this.updateSlideBarBackground();
   },
   // whenever cart changes, cart count will automatically update
   computed: {
@@ -621,6 +827,302 @@ export default {
   // methods 
   methods: {
 
+    // have to generate the playlist on app load
+    async getTracks() {
+      
+      // loading bar while api data is getting fetched
+      this.$store.commit('setIsLoading', true);
+      // replace the API path with env var
+      // .get requests API data from server via HTTP GET
+      // .then will take the response data and populate the empty tracks list above
+      await axios.get(process.env.VUE_APP_TRACKS_API_URL)
+        .then(response => {
+          this.tracks = response.data
+          // set playlists
+          this.populatePlaylist();
+        })
+        .catch(error => {
+          console.log("ERROR BOYY: " + error)
+        })
+
+      // stop loading bar after api data is fetched
+      this.$store.commit('setIsLoading', false);
+    },
+
+
+    // PERSIST MINI AND MAIN MUSIC PLAYER
+    // OPEN/CLOSE PERSIST MAIN PLAYER 
+    openPersistPlayer() {
+      // set slidebar
+      this.updateSlideBarBackground()
+    },
+
+    // MINI/MAIN SLIDEBAR DESKTOP CONTROLS copied from music view
+    sliderMoveDesktop(event) {
+      // if no song has played, don't set events
+      if (!this.$store.state.currentTrackPlaying) {
+        return
+      }
+      let isClicking = false;
+      let clickTimeout = null;
+
+      // need to set up variables that are used by both single touch and long press events
+      let seekTime = ''
+      this.$store.state.slideBar = event.currentTarget
+      this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+      let x = event.clientX - this.$store.state.slideBarRect.left
+
+      const startDragDesktop = (event) => {
+        isClicking = false;
+        clickTimeout = setTimeout(() => {
+          isClicking = true;
+        }, 200);
+        this.$store.state.isDragging = true;
+        this.$store.state.slider.classList.add('dragging');
+
+      };
+
+      const dragDesktop = (event) => {
+        if (isClicking) {
+          clearTimeout(clickTimeout);
+          clickTimeout = null;
+          event.preventDefault();
+
+          this.$store.state.isDragging = true
+          // Add the 'dragging' class to the slider element
+          this.$store.state.slider.classList.add('dragging');
+
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            return;
+          }
+            // this.$store.state.slideBar = this.$refs.slideBar
+            this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+
+            this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+            let x = event.clientX - this.$store.state.slideBarRect.left
+            const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+            const duration = this.$store.state.currentAudioElement.duration()
+            this.$store.commit('formatTime', (progress / 100) * duration)
+            // this is used to update the seek playback position whenever the mouse is lifted
+            seekTime = (this.$store.state.progress / 100) * duration
+
+            this.$store.state.progress = progress
+            this.updateSlideBarBackground()
+          }
+      };
+
+      const endDragDesktop = (event) => {
+        if (!isClicking) {
+
+          this.$store.state.isDragging = false;
+          
+          // Remove the 'dragging' class from the slider element
+          this.$refs.slideBar.classList.remove('dragging');
+
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            clearTimeout(clickTimeout);
+            clickTimeout = null;
+            document.removeEventListener('mousedown', startDragDesktop);
+            document.removeEventListener('mousemove', dragDesktop);
+            document.removeEventListener('mouseup', endDragDesktop);
+            return;
+          }
+
+          // this.$store.state.slideBar = this.$refs.slideBar
+
+          this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+
+          const duration = this.$store.state.currentAudioElement.duration()
+          seekTime = (progress / 100) * duration
+
+          this.$store.state.currentAudioElement.seek(seekTime)
+
+          this.$store.commit('formatTime', seekTime)
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+        }
+        else {
+          if (!this.$store.state.currentAudioElement) {
+            return
+          }
+          this.$store.state.isDragging = false
+          
+          // Remove the 'dragging' class from the slider element
+          this.$refs.slideBar.classList.remove('dragging');
+
+          this.$store.state.currentAudioElement.seek(seekTime)
+        }
+        clearTimeout(clickTimeout);
+        clickTimeout = null;
+        document.removeEventListener('mousedown', startDragDesktop);
+        document.removeEventListener('mousemove', dragDesktop);
+        document.removeEventListener('mouseup', endDragDesktop);
+        
+        // Remove the 'dragging' class from the slider element
+        this.$store.state.slider.classList.remove('dragging');
+      };
+
+      document.addEventListener('mousedown', startDragDesktop);
+      document.addEventListener('mousemove', dragDesktop);
+      document.addEventListener('mouseup', endDragDesktop);
+    },
+
+    // MINI SLIDEBAR MOBILE CONTROLS
+    // user touched slidebar, determine if it is a single tap or a long press
+    sliderMoveMobile(event) {
+
+      // if no song has played, don't set events
+      if (!this.$store.state.currentTrackPlaying) {
+        return
+      }
+      
+      // prevent the screen from scrolling up and down
+      // Check if scrolling is in progress
+      if (event.cancelable && !event.defaultPrevented) {
+        event.preventDefault();
+      }      
+
+      // need to set up variables that are used by both single touch and long press events
+      let seekTime = ''
+      this.$store.state.slideBar = event.currentTarget
+      this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+      let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+      let isTouching = true;
+
+
+      let touchTimeout = setTimeout(() => {
+        isTouching = false;
+      }, 300);
+      
+      const clearTouchTimeout = () => {
+        clearTimeout(touchTimeout);
+        isTouching = false;
+      };
+      
+      // for dragging slider
+      const dragMobile = (event) => {
+
+        clearTouchTimeout();
+        this.$store.state.isDragging = true
+        if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+          return;
+        }
+
+        // this.$store.state.slideBar = this.$refs.slideBar
+        this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+
+        this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()
+        let x = event.touches[0].clientX - this.$store.state.slideBarRect.left
+        const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+        const duration = this.$store.state.currentAudioElement.duration()
+        this.$store.commit('formatTime', (progress / 100) * duration)
+        seekTime = (this.$store.state.progress / 100) * duration
+
+        this.$store.state.progress = progress
+        this.updateSlideBarBackground()
+      };
+
+      // handles single tap and long press events
+      const endDragMobile = (event) => {        
+        // single taps
+        if (isTouching) {
+          clearTouchTimeout();
+          this.$store.state.isDragging = false
+          // don't move slider if a song hasn't been played yet (NEED TO FIX THIS LATER)
+          if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
+            return;
+          }
+          // this.$store.state.slideBar = this.$refs.slideBar
+          this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+
+          const progress = Math.min(Math.max(x / this.$store.state.slideBarRect.width * 100, 0), 100)
+
+          const duration = this.$store.state.currentAudioElement.duration()
+          seekTime = (progress / 100) * duration
+          this.$store.state.currentAudioElement.seek(seekTime)
+
+          this.$store.commit('formatTime', seekTime)
+          // this.$store.state.songProgress = this.$store.state.minsecs
+
+          this.$store.state.progress = progress
+          this.updateSlideBarBackground()
+        }
+        // long press events. See const DragMobile
+        else {
+          this.$store.state.isDragging = false
+          // set playtime based on seekTime var calculated in dragMobile
+          this.$store.state.currentAudioElement.seek(seekTime)
+        }
+        // clear timeout and remove event listeners
+        clearTouchTimeout();
+      };
+      
+      event.target.addEventListener('touchmove', dragMobile, { passive: true });
+      event.target.addEventListener('touchend', endDragMobile, { once: true });
+    },
+
+    // update slidebar color when slider moves along slidebar
+    updateSlideBarBackground() {
+      // reset slideBar and slider
+      if (this.showMainMusicPlayer == true) {
+        this.$store.state.slideBar = document.getElementById('main-persistent-slide-bar-id'); 
+        this.$store.state.slider = document.getElementById('main-persistent-slider');
+      }
+      else {
+        this.$store.state.slideBar = document.getElementById('persist-mini-slideBar');
+        this.$store.state.slider = document.getElementById('persist-mini-slider');
+
+      }
+      this.$store.commit('updateSlideBarBackground', this.$store.state.slideBar)
+    },
+      // timer to display track playback time
+    formatTime(secs) {
+      this.$store.commit('formatTime', secs)
+    },
+    
+    // TOGGLE SHUFFLE
+    toggleShuffle() {
+      this.$store.commit('toggleShuffle')
+    },
+
+    // TOGGLE REPEAT
+    toggleRepeat() {
+      this.$store.commit('toggleRepeat')
+    },
+    // SLIDE BAR called by howl
+    animateSlider() {
+      this.$store.commit('animateSlider')
+    },
+
+    // remove event listeners if they are still active
+    beforeDestroy() {
+      // stop the recursion when the component is destroyed
+      // this.$store.state.slideBar = this.$refs.slideBar
+      this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
+      this.$store.state.slideBar.removeEventListener("mousedown", this.touchStartMobile)
+      document.removeEventListener("mousemove", this.dragHandler)
+      document.removeEventListener("mouseup", this.endDrag)
+    },
+    // MUSIC CONTROLLERS
+    // SKIP TO NEXT TRACK
+    skipForwardController() {
+      this.$store.commit('skipForwardController')
+    },
+    // SKIP TO PREVIOUS TRACK
+    skipPreviousController() {
+      this.$store.commit('skipPreviousController')
+    },
+    // FOR PLAY/PAUSE BUTTON CONTROLLERS
+    playPauseController() {
+      this.$store.commit('playPauseController')
+    },
+    // SHUFFLE PLAYLIST
+    populatePlaylist() {
+      this.$store.commit('populatePlaylist', this.tracks)
+    },
     // change language button click
     changeLanguageButton(language) {
       this.$store.commit('setLanguage',language)
@@ -645,13 +1147,11 @@ export default {
       current_width = window.innerWidth;
 
       if (current_width > 1024) {
-        console.log(window.innerWidth)
         return {
           myWidth: "100"
         }
       }
       else {
-        console.log(window.innerWidth)
         return {
           myWidth: "0"
         }
