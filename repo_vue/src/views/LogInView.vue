@@ -57,7 +57,7 @@
                                     <button class="button login-signup-button">{{$t('loginsignupview.logintitle')}}</button>
                                 </div>
                                 <p class="forgot-password-link">
-                                    <a style="color:aqua !important; text-decoration: underline;" href="">{{$t('loginsignupview.forgotpassword')}}</a>
+                                    <a style="color:aqua !important; text-decoration: underline;" href="/forgotpassword">{{$t('loginsignupview.forgotpassword')}}</a>
                                 </p>  
                             </div>
                             <p v-if="$i18n.locale === 'en'" class="signup-login-reroute">

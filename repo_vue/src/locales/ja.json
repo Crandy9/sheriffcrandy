@@ -81,6 +81,15 @@
         "email@symbolerror": "有効なEメールアドレスを入力してください"
     },
 
+    "forgotpasswordview": {
+        "forgotpasswordtitle": "Enter your email to receieve a one time password reset link",
+        "email": "Eメール",
+        "submit": "Submit",
+        "errors": {
+            "emailerror": "Please enter your email address to reset your password"
+        }
+    },
+
     "bioview": {
         "biotitle": "バイオ"
     },

@@ -85,6 +85,16 @@
     "email@symbolerror": "Please enter a valid email address"
   },
 
+  "forgotpasswordview": {
+    "forgotpasswordtitle": "Enter your email to receieve a one time password reset link",
+    "email": "email",
+    "submit": "Submit",
+    "errors": {
+      "emailerror": "Please enter your email address to reset your password"
+    }
+
+  },
+
   "bioview": {
       "biotitle": "Bio"
   },
