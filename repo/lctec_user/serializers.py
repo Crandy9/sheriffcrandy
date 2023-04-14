@@ -7,9 +7,3 @@ from django.contrib.auth.password_validation import validate_password
 
 # return authenticated user as well as user's cart data
 User = get_user_model()
-class LctecSerializer(serializers.ModelSerializer):
-    cart_data = serializers.JSONField()
-
-    class Meta(object):
-        model = User
-        fields = ('id', 'username', 'email', 'cart_data')
