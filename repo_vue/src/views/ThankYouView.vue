@@ -67,10 +67,8 @@ export default {
                         this.isSingleTrack = false;
                         this.isSingleFlp = true;
                         this.isMultFile = false;
-                        for (var i = 0; i < this.$store.state.downloadableItems.length; i++) {
 
-                            this.downloadWithAxios(this.$store.state.downloadableItems[0].flp_zip, this.$store.state.downloadableItems[0].flp_name)
-                        }
+                        this.downloadWithAxios(this.$store.state.downloadableItems[0].flp_zip, this.$store.state.downloadableItems[0].flp_name)
                         this.$store.state.downloadableItems = []
                     }
                 }
@@ -92,38 +90,51 @@ export default {
 
                 // single track download/purchase
                 if (this.isSingleTrack === true) {
-                    this.forceDownloadSingleTrack(response, title)
+                    this.downloadSingleTrack(response, title)
                 }
                 // single flp download/purchase
                 else if (this.isSingleFlp === true) {
-                    this.forceDownloadSingleFlp(response, title)
+                    this.downloadSingleFlp(response, title)
                 }
 
             }).catch((error) =>  console.log(error))
             
         },
-        forceDownloadSingleTrack(response, title) {
+        downloadSingleTrack(response, title) {
             const url = window.URL.createObjectURL(new Blob([response.data]))
             const link = document.createElement('a')
             link.href= url
             // if it is a single wav file
             link.setAttribute('download', title + '.wav')
-            // else for multiple wav files, or single flp or multiple flp files, or combinations of both
-            // it should be zipped
             document.body.appendChild(link)
             link.click()
         },
-        forceDownloadSingleFlp(response, title) {
+        downloadSingleFlp(response, title) {
             const url = window.URL.createObjectURL(new Blob([response.data]))
             const link = document.createElement('a')
             link.href= url
             // if it is a single wav file
             link.setAttribute('download', title + '.zip')
-            // else for multiple wav files, or single flp or multiple flp files, or combinations of both
-            // it should be zipped
             document.body.appendChild(link)
             link.click()
         },
+
+        // get new list of purchased tracks
+        async getPurchasedTracks() {
+
+            await axios.get(process.env.VUE_APP_GET_TRACK_ORDERS_URL, { headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+            .then(response => {
+                if (response.data.length === 0) {
+                }
+                else {
+                    console.log('repopulating purchased tracks array from thank you page')
+                    this.$store.commit('populatePurchasedTrackArray', response.data)
+                }
+            })
+            .catch( error => {
+                console.log('ERROR')
+            })
+        }
 
     },
     created() {
@@ -132,6 +143,7 @@ export default {
     mounted () {
         document.title = "Thank you!";
         this.getFiles()
+        this.getPurchasedTracks();
     },
 }
 </script>

@@ -128,8 +128,9 @@
     "clicktohearsample": "Click on a song to hear a sample!",
     "about": "Click the links on the right to purchase/download the .wav audio file for the song you want.  After purchasing the song (or downloading if free), a download of the .wav file will begin in your browser. Save the .wav file to your computer and enjoy the tunes.",
     "cputoandroid": "- Transfer wav files from computer to Android",
-    "cputoiphone": "- Transfer wav files from computer to iPhone"
-
+    "cputoiphone": "- Transfer wav files from computer to iPhone",
+    "purchasedDownloadAgain": "Download",
+    "sample": "sample"
   },
 
   "flpview": {

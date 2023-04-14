@@ -213,7 +213,7 @@ export default createStore({
     isInverted: false,
     showMainMusicPlayer: false,
     // list of paid tracks
-    purchasedTracksList: null
+    purchasedTracksList: []
 
   },
   getters: {
@@ -224,8 +224,15 @@ export default createStore({
 
     // populate purchased tracks array
     populatePurchasedTrackArray(state, purchasedTracksList) {
+
       state.purchasedTracksList = purchasedTracksList
     },
+    // remove all data from purchasedarray onlogout
+    clearPurchasedTrackList(state) {
+
+      state.purchasedTracksList = [];
+    },
+
     // MUSIC FUNCTIONS:
     // format playback time under slidebar
     formatTime(state, secs) {
@@ -342,10 +349,18 @@ export default createStore({
                 state.progress = 0
                 this.commit('updateSlideBarBackground', state.slideBar)
                 var getSrc = currentPlaylist.find((t) => t.id === state.currentTrackPlaying)
+
                 // set currentSrc to be either a sample or the full length song
-                state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-                // set song length
-                state.songLength = getSrc.get_track_duration
+                // if this current source is a purchased track or free, show full song details
+                if(state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+                  state.currentSrc = getSrc.get_track
+                  state.songLength = getSrc.get_track_duration
+                }
+                else {
+                  state.currentSrc = getSrc.get_sample;
+                  // set song length to sample rate
+                  state.songLength = '0:49'
+                }
 
                 // howl instance
                 this.commit('createHowlInstance', state.currentSrc)
@@ -384,11 +399,18 @@ export default createStore({
       if (!state.currentAudioElement) {
 
         var getSrc = currentPlayList.find((t) => t.id === currentPlayList[0].id)
+
         // set currentSrc to be either a sample or the full length song
         // check if this song was purchased by user
-        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        state.songLength = getSrc.get_track_duration
+        if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+          state.currentSrc = getSrc.get_track
+          state.songLength = getSrc.get_track_duration
+        }
+        else {
+          state.currentSrc = getSrc.get_sample;
+          // set song length to sample rate
+          state.songLength = '0:49'
+        }
 
         // howl instance
         this.commit('createHowlInstance', state.currentSrc)
@@ -422,11 +444,18 @@ export default createStore({
 
       state.shuffle === true ? currentPlayList = state.shuffleArray : currentPlayList = state.playlist
       var getSrc = currentPlayList.find((t) => t.id === trackId)
+
       // set currentSrc to be either a sample or the full length song
-      state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-      // set song length
-      state.songLength = getSrc.get_track_duration
-      // THIS WORKS create Howl object
+      // if this current source is a purchased track or free, show full song details
+      if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+        state.currentSrc = getSrc.get_track
+        state.songLength = getSrc.get_track_duration
+      }
+      else {
+        state.currentSrc = getSrc.get_sample;
+        // set song length to sample rate
+        state.songLength = '0:49'
+      }
 
       // howl instance
       this.commit('createHowlInstance', state.currentSrc)
@@ -483,10 +512,18 @@ export default createStore({
         state.currentTrackPlaying = currentPlayList[0].id
 
         var getSrc = currentPlayList.find((t) => t.id === state.currentTrackPlaying)
+
         // set currentSrc to be either a sample or the full length song
-        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        state.songLength = getSrc.get_track_duration
+        // if this current source is a purchased track or free, show full song details
+        if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+          state.currentSrc = getSrc.get_track
+          state.songLength = getSrc.get_track_duration
+        }
+        else {
+          state.currentSrc = getSrc.get_sample;
+          // set song length to sample rate
+          state.songLength = '0:49'
+        }
 
         // set new audio element
         this.commit('createHowlInstance', state.currentSrc)
@@ -505,10 +542,18 @@ export default createStore({
         state.currentAudioElement.pause();        
 
         var getSrc = currentPlayList.find((t) => t.id === state.currentTrackPlaying)
+
         // set currentSrc to be either a sample or the full length song
-        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        state.songLength = getSrc.get_track_duration   
+        // if this current source is a purchased track or free, show full song details
+        if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+          state.currentSrc = getSrc.get_track
+          state.songLength = getSrc.get_track_duration
+        }
+        else {
+          state.currentSrc = getSrc.get_sample;
+          // set song length to sample rate
+          state.songLength = '0:49'
+        }
 
         // howl instance
         this.commit('createHowlInstance', state.currentSrc)
@@ -544,10 +589,18 @@ export default createStore({
         state.currentAudioElement.pause();        
 
         var getSrc = currentPlayList.find((t) => t.id === state.currentTrackPlaying)
+
         // set currentSrc to be either a sample or the full length song
-        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        state.songLength = getSrc.get_track_duration
+        // if this current source is a purchased track or free, show full song details
+        if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+          state.currentSrc = getSrc.get_track
+          state.songLength = getSrc.get_track_duration
+        }
+        else {
+          state.currentSrc = getSrc.get_sample;
+          // set song length to sample rate
+          state.songLength = '0:49'
+        }
 
         // howl instance
         this.commit('createHowlInstance', state.currentSrc)
@@ -603,10 +656,18 @@ export default createStore({
       // THIS WORKS if no songs have been played, play the last track in the currentPlayList
       if (!state.currentAudioElement) {
         var getSrc = currentPlayList.find((t) => t.id === currentLastTrack)
+
         // set currentSrc to be either a sample or the full length song
-        state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-        // set song length
-        state.songLength = getSrc.get_track_duration
+        // if this current source is a purchased track or free, show full song details
+        if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+          state.currentSrc = getSrc.get_track
+          state.songLength = getSrc.get_track_duration
+        }
+        else {
+          state.currentSrc = getSrc.get_sample;
+          // set song length to sample rate
+          state.songLength = '0:49'
+        }
 
         // howl instance
         this.commit('createHowlInstance', state.currentSrc)
@@ -633,10 +694,18 @@ export default createStore({
           state.currentAudioElement.pause();        
 
           var getSrc = currentPlayList.find((t) => t.id === currentLastTrack)
+
           // set currentSrc to be either a sample or the full length song
-          state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-          // set song length
-          state.songLength = getSrc.get_track_duration
+          // if this current source is a purchased track or free, show full song details
+          if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+            state.currentSrc = getSrc.get_track
+            state.songLength = getSrc.get_track_duration
+          }
+          else {
+            state.currentSrc = getSrc.get_sample;
+            // set song length to sample rate
+            state.songLength = '0:49'
+          }
 
           // howl instance
           this.commit('createHowlInstance', state.currentSrc)
@@ -666,10 +735,18 @@ export default createStore({
           state.currentTrackPlaying = currentPlayList[index - 1].id
 
           var getSrc = currentPlayList.find((t) => t.id === state.currentTrackPlaying)
+
           // set currentSrc to be either a sample or the full length song
-          state.currentSrc = getSrc.is_free ? getSrc.get_track : getSrc.get_sample;
-          // set song length
-          state.songLength = getSrc.get_track_duration
+          // if this current source is a purchased track or free, show full song details
+          if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
+            state.currentSrc = getSrc.get_track
+            state.songLength = getSrc.get_track_duration
+          }
+          else {
+            state.currentSrc = getSrc.get_sample;
+            // set song length to sample rate
+            state.songLength = '0:49'
+          }
 
           // howl instance
           this.commit('createHowlInstance', state.currentSrc)

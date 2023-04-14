@@ -799,7 +799,11 @@ export default {
   },
 
   mounted() {
-    this.getPurchasedTracks();
+
+    if (this.$store.state.isAuthenticated == true) {
+      this.getPurchasedTracks();
+    }
+
     this.getTracks();
     // mount cart
     this.cart = this.$store.state.cart
@@ -831,7 +835,6 @@ export default {
       await axios.get(process.env.VUE_APP_GET_TRACK_ORDERS_URL, {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
         .then(response => {
           if (response.data.length === 0) {
-            console.log('no purchased track data')
           }
           else {
             this.$store.commit('populatePurchasedTrackArray', response.data)
@@ -839,7 +842,7 @@ export default {
           }
         })
         .catch( error => {
-          console.log('WHAT THE HEEEEEEEEEE')
+          console.log('ERROR')
         })
     },
 

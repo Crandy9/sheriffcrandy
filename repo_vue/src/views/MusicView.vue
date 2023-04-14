@@ -12,15 +12,14 @@
       </div>
       <div>
         <!-- show this if no songs have been playing -->
-        <h3 v-if="$store.state.currentTrackPlaying == 0" style="padding: 1rem; font-size: 16px !important;" class="is-size-5 has-text-warning">
+        <h3 v-if="$store.state.currentTrackPlaying === null" style="padding: 1rem; font-size: 16px !important;" class="is-size-5 has-text-warning">
           {{$t('musicview.clicktohearsample')}}
         </h3>
       </div>
     </section>
     <section class="music-player-section">
       <!-- need to wrap the v-for div in a parent div to allow scrolling on div -->
-      <!-- show track img for current track -->
-      <!-- or leave title and track img up after song stops playing -->
+      <!-- show track img for current track or leave title and track img up after song stops playing -->
       <!-- v-bind:key is used to optimize rendering -->
       <div class="parent-element" style="overflow: auto;">
         <div v-for="trackDisplay in tracks" v-bind:key="trackDisplay.id">
@@ -123,7 +122,8 @@
               </span>
             </a>
             <!-- show pause button while playing -->
-            <a class="pause-button" href="#" v-if="$store.state.currentTrackPlaying == track.id && $store.state.currentAudioElementPlaying == true">
+            <a class="pause-button" href="#" 
+              v-if="$store.state.currentTrackPlaying == track.id && $store.state.currentAudioElementPlaying == true">
               <!-- show pause button only on track that is currently playing -->
               <span class="pause-icon-span" style="display: block !important">
                 <svg 
@@ -143,8 +143,17 @@
             <div class="track-title">
               <span class="track-title-inner">
                 {{ track.title }}
-                <span class="track-dur">
+                <span v-if="track.is_free == true" class="track-dur">
                   {{ track.get_track_duration }}
+                </span>
+                <span v-else-if="track.is_free === false && $store.state.purchasedTracksList.some(item => item.id === track.id)" class="track-dur">
+                  {{ track.get_track_duration }}
+                </span>
+                <span v-if="track.is_free == false && !$store.state.purchasedTracksList.some(item => item.id === track.id)" class="track-dur">
+                  {{ track.get_track_duration }}
+                  <span style="color: #FF0426; font-weight: bold;">
+                    ({{$t('musicview.sample')}})
+                  </span>
                 </span>
               </span>
             </div>
@@ -152,9 +161,18 @@
             <div class="field has-addons">
               <!-- had to change class name because 'control' was being used by login/signup forms -->
               <div class="sheriff-crandy-music-ctrl-panel">
+                <!-- check for any purchased tracks first -->
+                <!-- if track was purchased, allow the user to download the song again -->
+                <a 
+                  @click.stop="downloadFreeNow(track.id);"
+                  class="purcahsed-song-button button is-small price-button has-text-weight-medium"
+                  v-if="track.is_free === false && $store.state.purchasedTracksList.some(item => item.id === track.id)">
+                  {{$t('musicview.purchasedDownloadAgain')}}
+                  <i class="fas fa-download"></i>
+              </a>
                 <!-- check if this item is already in the cart -->
                 <a class="music-in-cart-button button is-small price-button has-text-weight-medium" 
-                  v-if="checkIfTrackIsInCart(track)" 
+                  v-else-if="checkIfTrackIsInCart(track)" 
                   @click.stop="modalOpened = false; removeFromCart(track.id)" data-target="my-modal-id">
                   {{$t('cartview.addedtocart')}}
                 </a>
@@ -165,7 +183,6 @@
                   v-else-if="track.is_free" 
                   @click.stop="modalOpened = true; setTrack(track.id);" data-target="my-modal-id">
                   {{$t('cartview.free')}}
-
                 </a>
                 <a class="button is-small is-black price-button has-text-weight-medium" 
                   v-else-if="track.usd_price && $store.state.region === 'US'"
@@ -211,7 +228,7 @@
             </section>
             <footer class="modal-card-foot">
               <div v-if="$store.state.isAuthenticated">
-                <button v-if="isFree" @click="modalOpened = false; show = false; purchaseButtonClicked = false; downloadFreeNow(setTrackTitle, setTrackID);" class="my-modal-button-buy-now button">{{$t('cartview.downloadnow')}}</button>
+                <button v-if="isFree" @click="modalOpened = false; show = false; purchaseButtonClicked = false; downloadFreeNow(setTrackID);" class="my-modal-button-buy-now button">{{$t('cartview.downloadnow')}}</button>
                 <!-- trigger stripe payment on this item only -->
                 <button v-else @click="modalOpened = false; show = true; purchaseButtonClicked = true; buyNow(); scrollToBottom();" class="my-modal-button-buy-now button">{{$t('cartview.buynow')}}</button>
                 <!-- if adding to cart, add the item to cart and close modal -->
@@ -509,7 +526,7 @@ export default {
       usdSubTotal: '',
       jpySubtotal:'',
       modalOpened: false,
-      tracks: [],
+      tracks: null,
       setTrackID: '',
       setTrackTitle: '',
       isFree: '',
@@ -553,8 +570,13 @@ export default {
   // so I guess on page load, getTracks() is called  
   mounted() {
 
-    // this.getTracks();
-    this.tracks = this.$store.state.playlist
+    // if this is the first page navigated to, get the tracks from the backend
+    if (!this.tracks) {
+      this.getTracks();
+    } else {
+      this.tracks = this.$store.state.playlist
+    }
+
     document.addEventListener('click', this.closeModalOnWindowClick);
     this.$store.state.region === 'US' ? this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'en'}) : this.stripe = Stripe(process.env.VUE_APP_STRIPEPK, {locale: 'ja'})
     const elements = this.stripe.elements();
@@ -1019,10 +1041,8 @@ export default {
     },
 
     // download one free track now
-    async downloadFreeNow(track, id) {
+    async downloadFreeNow(id) {
       // FOR FRONTEND TO PREPARE FOR DOWNLOADS
-      this.$store.state.freeDownload = track;
-      this.$store.state.freeDownloadId = id;
       this.$store.state.isSingleTrackDownload = true;
       this.$store.state.downloadType = 'fromMusicView'; 
       var index = this.tracks.findIndex(x => x.id === id);
@@ -1030,10 +1050,11 @@ export default {
         track: this.tracks[index].track,
         title: this.tracks[index].title
       }
+
       this.$store.state.downloadableItems = []
       this.$store.state.downloadableItems.push(track_obj)
 
-      // SEND DATA TO BACKEND
+      // NEED EMPTY FLP DATA FOR BACKEND
       const flp_items = []
       const flp_obj = {
             no_flps: ''
@@ -1042,7 +1063,8 @@ export default {
 
       const track_items = []
         const track_obj_for_backend = {
-          track: this.setTrackID,
+          // track: this.setTrackID,
+          track: id
         }
           track_items.push(track_obj_for_backend)
 
@@ -1070,12 +1092,13 @@ export default {
 
     },
 
-    setTrack(track) {
+    // takes in the track's id
+    setTrack(tracksId) {
       // set track name as well to show in modal popup
-      const item = this.tracks.find(item => item.id === track)
+      const item = this.tracks.find(item => item.id === tracksId)
       this.setTrackTitle = item.title;
       this.isFree = item.is_free;
-      this.setTrackID = track;
+      this.setTrackID = tracksId;
       this.usdPrice = item.usd_price;
       this.jpyPrice = item.jpy_price;
     },
@@ -1096,26 +1119,26 @@ export default {
 
     // make this method async and axios.get to await to make sure setIsLoading isn't set to false
     // until axios finished fetching api data
-    // async getTracks() {
+    async getTracks() {
       
-    //   // loading bar while api data is getting fetched
-    //   this.$store.commit('setIsLoading', true);
-    //   // replace the API path with env var
-    //   // .get requests API data from server via HTTP GET
-    //   // .then will take the response data and populate the empty tracks list above
-    //   await axios.get(process.env.VUE_APP_TRACKS_API_URL)
-    //     .then(response => {
-    //       this.tracks = response.data
-    //       // set the tab title
-    //       document.title = 'Music'
-    //     })
-    //     .catch(error => {
-    //       console.log("ERROR BOYY: " + error)
-    //     })
+      // loading bar while api data is getting fetched
+      this.$store.commit('setIsLoading', true);
+      // replace the API path with env var
+      // .get requests API data from server via HTTP GET
+      // .then will take the response data and populate the empty tracks list above
+      await axios.get(process.env.VUE_APP_TRACKS_API_URL)
+        .then(response => {
+          this.tracks = response.data
+          // set the tab title
+          document.title = 'Music'
+        })
+        .catch(error => {
+          console.log("ERROR BOYY: " + error)
+        })
 
-    //   // stop loading bar after api data is fetched
-    //   this.$store.commit('setIsLoading', false);
-    // },
+      // stop loading bar after api data is fetched
+      this.$store.commit('setIsLoading', false);
+    },
 
     // add to cart
     addTrackToCart(addTrackIdToCart) {

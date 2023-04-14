@@ -45,7 +45,7 @@
       <p v-else style="color:white; padding: 2rem;" >{{$t('cartview.emptycart')}} :(</p>
     </div>
     <!-- end cart body -->
-    <!-- cart footer USD -->
+    <!-- cart footer US -->
     <footer v-if="cart.itemsInCart.length && $store.state.region === 'US'" class="my-cart-footer">
       <a class="my-clear-cart-button" @click="show = false; purchaseButtonClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
       <p class="my-subtotal">
@@ -67,7 +67,7 @@
         <a v-else="cartTotalLength >= 1 && calculateUsdSubtotal !== '0.00'" @click="show = true; purchaseButtonClicked = true; scrollToBottom();"  rel="noindex" class="my-checkout-button" >{{$t('cartview.checkout')}}</a>
       </div>
     </footer>
-      <!-- cart footer USD -->
+      <!-- cart footer JP -->
       <footer v-if="cart.itemsInCart.length && $store.state.region === 'JP'" class="my-cart-footer">
         <a class="my-clear-cart-button" @click="show = false; purchaseButtonClicked = false; clearCart();">{{$t('cartview.clearcart')}}</a>
         <p class="my-subtotal">

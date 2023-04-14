@@ -157,7 +157,6 @@ export default {
                             .then(response => {
 
                                 const cart_data = response.data.cart;
-                                console.log(cart_data.length)
                                 if (cart_data.length === 0) {
                                 }
                                 else {
@@ -170,6 +169,8 @@ export default {
                                         this.$store.commit('addToCart', item)
                                     }
                                 }
+                                // populate purchasedTracksList
+                                this.getPurchasedTracks();
                             })
                             .catch(error => {
                                 console.log('user cart data get request failed. Printing error')
@@ -210,6 +211,20 @@ export default {
         },
         toggleShowPassword() {
             this.showPassword = !this.showPassword;
+        },
+        async getPurchasedTracks() {
+
+            await axios.get(process.env.VUE_APP_GET_TRACK_ORDERS_URL, {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
+                .then(response => {
+                if (response.data.length === 0) {
+                }
+                else {
+                    this.$store.commit('populatePurchasedTrackArray', response.data)
+                }
+                })
+                .catch( error => {
+                console.log('ERROR')
+                })
         },
     }
 }

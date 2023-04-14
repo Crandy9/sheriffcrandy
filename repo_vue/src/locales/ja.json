@@ -123,7 +123,10 @@
         "clicktohearsample": "曲をクリックするとサンプルが聴けます！",
         "about": " 購入/ダウンロードするには、右のリンクをクリックしてください必要な曲の .wav オーディオ ファイル。 曲を購入（または無料の場合はダウンロード）した後、ブラウザで .wav ファイルのダウンロードが開始されます。.wav ファイルをコンピューターに保存して、曲をお楽しみください。",
         "cputoandroid": "- コンピューターから Android に wav ファイルを転送する",
-        "cputoiphone": "- パソコンからiPhoneにwavファイルを転送"
+        "cputoiphone": "- パソコンからiPhoneにwavファイルを転送",
+        "purchasedDownloadAgain": "ダウンロード",
+        "sample": "サンプル"
+
     },
   
     "flpview": {

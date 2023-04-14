@@ -25,6 +25,7 @@ export default {
           this.$store.commit('removeToken')
           // empty cart (or save it for the user's web token)
           this.$store.commit('clearCart')
+          this.$store.commit('clearPurchasedTrackList')
           // add toast message
           toast({
               message: this.$t('modals.logout'),
