@@ -36,6 +36,7 @@ def get_user_cart(request):
             'cart': cart_data
         })
 
+# get user's cart data, if any
 def get_cart_data(user):
     # get the cart, use filter().first() to avoid NotFound error. 
     # will return None if not found
