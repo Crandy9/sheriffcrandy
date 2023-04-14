@@ -89,6 +89,7 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
 # set custom user model
 from django.contrib.auth import get_user_model
 User = get_user_model()
+
 # user's cart
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
