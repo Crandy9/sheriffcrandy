@@ -151,7 +151,7 @@
                 </span>
                 <span v-if="track.is_free == false && !$store.state.purchasedTracksList.some(item => item.id === track.id)" class="track-dur">
                   {{ track.get_track_duration }}
-                  <span style="color: #FF0426; font-weight: bold;">
+                  <span style="color: #E200C4; font-weight: bold;">
                     ({{$t('musicview.sample')}})
                   </span>
                 </span>
