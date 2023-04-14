@@ -476,7 +476,6 @@ export default {
                 data, 
                 {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}, responseType: 'arraybuffer'})
           .then(response => {
-              console.log('it worked bic boiiii')
               const url = window.URL.createObjectURL(new Blob([response.data]))
               const link = document.createElement('a')
               link.href = url
@@ -692,7 +691,6 @@ export default {
             // reset store
             this.$store.state.downloadableItems = []
             this.$store.state.downloadableItems = response.data
-            console.log('it worked bic boiiii')
             const url = window.URL.createObjectURL(new Blob([response.data]))
             const link = document.createElement('a')
             link.href = url

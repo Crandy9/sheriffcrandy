@@ -127,7 +127,6 @@ export default {
                 if (response.data.length === 0) {
                 }
                 else {
-                    console.log('repopulating purchased tracks array from thank you page')
                     this.$store.commit('populatePurchasedTrackArray', response.data)
                 }
             })
