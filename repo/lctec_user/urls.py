@@ -16,6 +16,8 @@ urlpatterns = [
     path('get-cart/', views.get_user_cart),
     path('get-device-data/', views.get_user_device),
     path('send-password-reset-link/', views.send_password_reset_link),
-    path('reset-user-password/', views.reset_password)
+    path('reset-user-password/', views.reset_password),
+    path('get-user-account-data/', views.get_user_account_data),
+
 ] 
 

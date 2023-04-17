@@ -504,7 +504,7 @@
     <div 
       @click.self="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
       class="persist-mini-music-player-container" 
-      :style="{ display: $route.name !== 'Music' ? 'block' : 'none' }">
+      :style="{ display: ($route.name !== 'Music' && $route.name !== 'MyAccount' && $route.name !== 'LogIn') ? 'block' : 'none' }">
       <!-- img container -->
       <div class="persist-mini-track-cover-art-and-controllers-container">
         <!-- track img -->
@@ -756,6 +756,7 @@
   @import '../src/assets/styles/my-modal.css';
   @import '../src/assets/styles/my-forgotpassword.css';
   @import '../src/assets/styles/404notfound.css';
+  @import '../src/assets/styles/my-account.css';
 
 </style>
 
@@ -917,7 +918,6 @@ export default {
           if (!this.$store.state.currentAudioElement || !this.$store.state.currentAudioElement.duration() || !this.$store.state.slideBarRect) {
             return;
           }
-            // this.$store.state.slideBar = this.$refs.slideBar
             this.showMainMusicPlayer == true ? this.$store.state.slideBar = this.$refs.mainPersistentSlideBar : this.$store.state.slideBar = this.$refs.slideBar
 
             this.$store.state.slideBarRect = this.$store.state.slideBar.getBoundingClientRect()

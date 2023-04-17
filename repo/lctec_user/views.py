@@ -11,6 +11,7 @@ from flps_app.models import Flp
 from django.contrib.auth import get_user_model
 from tracks_app.serializers import TrackSerializer
 from flps_app.serializers import FlpSerializer
+from lctec_user.serializers import *
 from django.core.mail import EmailMessage
 # converts html template to a string message for emails
 from django.template.loader import render_to_string
@@ -30,6 +31,19 @@ user = get_user_model()
 EMAIL_ON = False
 URL = 'http://localhost:8080'
 
+
+
+# get user account data
+@api_view(['GET'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_account_data(request):
+    print('\nhello?')
+    current_user = user.objects.get(pk=request.user.pk)
+    print('\n' + str(current_user) + '\n')
+
+    user_serializer = GetUserSerializer(current_user)
+    return Response(user_serializer.data, status=status.HTTP_200_OK)
 
 # reset password
 @api_view(['POST'])

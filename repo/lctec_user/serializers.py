@@ -7,3 +7,18 @@ from django.contrib.auth.password_validation import validate_password
 
 # return authenticated user as well as user's cart data
 User = get_user_model()
+
+
+class GetUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lctec_User 
+        # configure which fields we want to use in frontend. Data is a tuple
+        # will be shown in API at DOMAIN/api/v1/latest-tracks/
+        fields = (
+            "id",
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "favorite_color"
+        )

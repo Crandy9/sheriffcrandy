@@ -153,7 +153,6 @@ export default {
 
                         // get user's cart data
                         axios
-                            // .get(process.env.VUE_APP_GET_CART_URL, {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
                             .get(process.env.VUE_APP_GET_CART_URL, {headers: { 'Authorization': `Token ${sf_auth_bearer}`}})
                             .then(response => {
 
