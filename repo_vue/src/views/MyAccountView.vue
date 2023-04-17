@@ -16,5 +16,11 @@ export default {
         return {
         }
     },
+
+    mounted() {
+        document.title = 'My Account';
+
+    },
+
 }
 </script>
