@@ -107,6 +107,11 @@ const router = createRouter({
           readyForCheckout: true
         }
       },
+      {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: () => import('../views/NotFoundView.vue'),
+      }
   ]
 })
 

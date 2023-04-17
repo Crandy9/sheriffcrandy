@@ -1,0 +1,9 @@
+.not-found-container {
+    padding-top: 4rem;
+    padding-inline: 4rem;
+    margin-bottom: 12rem;
+}
+
+.not-found-title {
+    color: white;
+}

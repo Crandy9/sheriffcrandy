@@ -755,6 +755,7 @@
   @import '../src/assets/styles/my-thankyou.css';
   @import '../src/assets/styles/my-modal.css';
   @import '../src/assets/styles/my-forgotpassword.css';
+  @import '../src/assets/styles/404notfound.css';
 
 </style>
 
