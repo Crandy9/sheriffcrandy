@@ -11,9 +11,117 @@ from flps_app.models import Flp
 from django.contrib.auth import get_user_model
 from tracks_app.serializers import TrackSerializer
 from flps_app.serializers import FlpSerializer
-
+from django.core.mail import EmailMessage
+# converts html template to a string message for emails
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from django.conf import settings
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework import permissions, status
 
 user = get_user_model()
+
+
+EMAIL_ON = False
+URL = 'http://localhost:8080'
+
+
+# reset password
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def reset_password(request):
+
+    try:
+        
+        uid = force_str(urlsafe_base64_decode(request.data.get('uidb64')))
+
+        current_user = user.objects.get(pk=uid)
+
+    except (TypeError, ValueError, OverflowError, user.DoesNotExist):
+        current_user = None
+
+    # Check if the token is valid
+    if current_user is not None and default_token_generator.check_token(current_user, request.data.get('token')):
+        # Set the new password for the user
+        password = request.data.get('password')
+        current_user.set_password(password)
+        current_user.save()
+
+        template = render_to_string('../templates/changed_account_notice_email.html', {'name':current_user.first_name})
+        email = EmailMessage(
+            # email subject title default is 'subject'
+            'There was a change to your account -- アカウント情報変更のお知らせ',
+            # email template default is 'body'
+            template,
+            # this will be changed to Kaoru's new gmail 
+            settings.EMAIL_HOST_USER,
+            # recipient list
+            [current_user.email],
+        )
+        email.fail_silently=False
+        # eonly send email if this flag is true
+        if EMAIL_ON:
+            email.send()
+
+        return Response({'success': 'Password reset successful'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Invalid token or user'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# send password reset link
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def send_password_reset_link(request):
+    
+    # get the email address from the POST request
+    email = request.data.get('potential_email_address')
+    print('\nincoming email: ' + str(email) + '\n\n')
+
+    # check if the email address is valid
+    try:
+        get_user = user.objects.get(email=email)
+        print('\nget_user: ' + str(get_user) + '\n')
+
+        # creating a password reset url unique for each user
+        token_generator = PasswordResetTokenGenerator()
+        uidb64 = urlsafe_base64_encode(force_bytes(get_user.pk))
+        token = token_generator.make_token(get_user)
+        # create the password reset URL using the generated token
+        password_reset_url = f'{URL}{request.data.get("password_reset_url")}/{uidb64}/{token}/'
+
+        print('\npassword reset url: ' + str(password_reset_url) + '\n')
+
+
+        EMAIL_ON = True
+        template = render_to_string('../templates/password-reset-email.html', {'name':get_user.first_name, 'password_reset_url': password_reset_url})
+        email = EmailMessage(
+            # email subject title default is 'subject'
+            'Password reset -- パスワードのリセット',
+            # email template default is 'body'
+            template,
+            settings.EMAIL_HOST_USER,
+            # recipient list
+            [get_user.email],
+        )
+        email.fail_silently=False
+        # only send email if this flag is true
+        if EMAIL_ON:
+            email.send()
+        # just return a 200 response
+        return HttpResponse(status=200)
+    except user.DoesNotExist:
+        print('\nUser does not exist\n')
+        # handle the case where the user does not exist
+        return Response({'error': 'User does not exist'}, status=200)
+    
+    except Exception as e:
+        print('exception:', e)
+        return Response({'error': 'Unknown error occurred'}, status=500)
 
 
 # get user data
@@ -55,13 +163,13 @@ def get_cart_data(user):
 
 # checking username in form validation
 @api_view(['GET'])
-def check_username(request, username):
+def check_username(username):
     username_available = not user.objects.filter(username=username).exists()
     return Response({'available': username_available})
 
 # checking username in form validation
 @api_view(['GET'])
-def check_email(request, email):
+def check_email(email):
     email_available = not user.objects.filter(email=email).exists()
     return Response({'available': email_available})
 

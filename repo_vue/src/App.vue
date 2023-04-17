@@ -754,6 +754,8 @@
   @import '../src/assets/styles/my-checkout.css';
   @import '../src/assets/styles/my-thankyou.css';
   @import '../src/assets/styles/my-modal.css';
+  @import '../src/assets/styles/my-forgotpassword.css';
+
 </style>
 
 <!-- hamburger menu animation -->

@@ -96,6 +96,7 @@ export default {
 
     // show toast if it exists
     mounted () {
+        document.title = 'Login';
         if (this.$route.query.loginwarning) {
             toast({
                 message: this.$t('modals.redirectoToLogin'),

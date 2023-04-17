@@ -75,6 +75,16 @@ const router = createRouter({
         component: () => import('../views/ForgotPasswordView.vue'),
       },
       {
+        path: '/passwordresetlinksent',
+        name: 'PasswordResetLinkSent',
+        component: () => import('../views/PasswordResetLinkSentView.vue'),
+      },
+      {
+        path: '/resetpassword/:uidb64/:token/',
+        name: 'ResetPassword',
+        component: () => import('../views/ResetPasswordView.vue'),
+      },
+      {
         path: '/logout',
         name: 'LogOut',
         component: () => import('../views/LogOutView.vue'),
@@ -124,11 +134,11 @@ router.beforeEach((to,from,next) => {
     next({ path: '/' });
   } 
   // prevent authenticated users from accessing login/signup views. Redirect to homepage
-  if (to.matched.some(record => record.meta.requireLogout) && store.state.isAuthenticated){
+  else if (to.matched.some(record => record.meta.requireLogout) && store.state.isAuthenticated){
     next({ path: '/' });
   }
   // prevent unauthenticated users from accessing MyAccount view. Redirect to login
-  if (to.matched.some(record => record.meta.requiresAuthAccount) && !store.state.isAuthenticated){
+  else if (to.matched.some(record => record.meta.requiresAuthAccount) && !store.state.isAuthenticated){
 
     toast({
       message: this.$t('modals.pleaselogin'),
@@ -143,11 +153,9 @@ router.beforeEach((to,from,next) => {
   }
 
   // check if user is authenticated before proceeding to checkout page
-  if (to.matched.some(record => record.meta.readyForCheckout) && !store.state.isAuthenticated){
+  else if (to.matched.some(record => record.meta.readyForCheckout) && !store.state.isAuthenticated){
     next({ path: '/' });
   }
-
-
   else {
     next()
   }

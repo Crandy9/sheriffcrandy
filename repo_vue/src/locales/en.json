@@ -86,12 +86,17 @@
   },
 
   "forgotpasswordview": {
-    "forgotpasswordtitle": "Enter your email to receieve a one time password reset link",
+    "forgotpasswordtitle": "Enter your email address to reset your password",
     "email": "email",
-    "submit": "Submit",
+    "submit": "Send link",
     "errors": {
-      "emailerror": "Please enter your email address to reset your password"
-    }
+      "emailerror": "Please enter your email address to reset your password",
+      "generalerrors": "Oops! Something went wrong, please try again later."
+    },
+    "passwordresetlinksent": "Email sent",
+    "passwordresetlinksentmsg": "If the email address you entered is valid, you will receive an email shortly with instructions to reset your password. (If you do not receive the email, please make sure you entered your email address correctly or check your email spam folder.)",
+    "changepasswordtitle": "Reset password",
+    "changepasswordmsg": "Please enter a new password."
 
   },
 
@@ -188,7 +193,8 @@
     "addedtocart": "added to cart",
     "welcomeback": "Welcome back",
     "welcomeback2": "",
-    "redirectoToLogin": "Please login"
+    "redirectoToLogin": "Please login",
+    "passwordreset": "Your password was successfully reset. Please login."
 
   }
 

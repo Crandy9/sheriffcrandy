@@ -26,6 +26,7 @@ export default {
           // empty cart (or save it for the user's web token)
           this.$store.commit('clearCart')
           this.$store.commit('clearPurchasedTrackList')
+
           // add toast message
           toast({
               message: this.$t('modals.logout'),
@@ -36,7 +37,8 @@ export default {
               position: 'top-center',
               animate: { in: 'fadeIn', out: 'fadeOut' },
           })
-          this.$router.push('/')
+
+            this.$router.push('/')
         })
         .catch(error => {
         // handle error

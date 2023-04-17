@@ -82,12 +82,18 @@
     },
 
     "forgotpasswordview": {
-        "forgotpasswordtitle": "Enter your email to receieve a one time password reset link",
+        "forgotpasswordtitle": "メールアドレスを入力してパスワードをリセットします。",
         "email": "Eメール",
-        "submit": "Submit",
+        "submit": "メールを送る",
         "errors": {
-            "emailerror": "Please enter your email address to reset your password"
-        }
+            "emailerror": "メールアドレスを入力してパスワードをリセットします。",
+            "generalerrors": "何かが間違っています。後でもう一度試してください。"
+        },
+        "passwordresetlinksent": "メールを送信しました",
+        "passwordresetlinksentmsg": "入力した電子メール アドレスが有効である場合は、パスワードをリセットする手順が記載された電子メールがまもなく届きます。（メールが届かない場合は、メールアドレスを正しく入力したか、メールの迷惑メールフォルダをご確認ください)",
+        "changepasswordtitle": "パスワードをリセットする。",
+        "changepasswordmsg": "新しいパスワードをご入力ください。"
+
     },
 
     "bioview": {
@@ -182,7 +188,8 @@
             "addedtocart": "がカートに追加されました。",
             "welcomeback": "ようこそ",
             "welcomeback2": "さん",
-            "redirectoToLogin": "アクセスするには、ログインが必要です。"
+            "redirectoToLogin": "アクセスするには、ログインが必要です。",
+            "passwordreset": "パスワードの再設定に成功しました。ログインしてください。"
         }
 
   }

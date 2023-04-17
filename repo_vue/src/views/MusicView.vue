@@ -569,6 +569,7 @@ export default {
   // Vue lifecycle hook mounted() is called when this component is added to the DOM
   // so I guess on page load, getTracks() is called  
   mounted() {
+    document.title = 'Music';
 
     // if this is the first page navigated to, get the tracks from the backend
     if (!this.tracks) {

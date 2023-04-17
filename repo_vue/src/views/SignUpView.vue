@@ -152,6 +152,10 @@ export default {
         };
     },
 
+    mounted () {
+        document.title = 'Signup';
+
+    },
 
     computed: {
         isUsernameEmpty() {

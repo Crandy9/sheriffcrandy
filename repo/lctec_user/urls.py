@@ -14,6 +14,8 @@ urlpatterns = [
     # path('lctec-logout/', views.lctec_logout),
     path('lctec-logout', views.LogoutView.as_view()),
     path('get-cart/', views.get_user_cart),
-    path('get-device-data/', views.get_user_device)
+    path('get-device-data/', views.get_user_device),
+    path('send-password-reset-link/', views.send_password_reset_link),
+    path('reset-user-password/', views.reset_password)
 ] 
 
