@@ -6,10 +6,6 @@ import { toast } from 'bulma-toast'
 import HomeView from '../views/HomeView.vue'
 import FlpView from '../views/FlpView.vue'
 
-// import i18n
-import i18n from '@/i18n'
-
-
 // russian demo: https://www.youtube.com/watch?v=ZLCMv_rdlsY
 // indian demo: 
 const router = createRouter({
@@ -140,16 +136,7 @@ router.beforeEach((to,from,next) => {
   // prevent unauthenticated users from accessing MyAccount view. Redirect to login
   else if (to.matched.some(record => record.meta.requiresAuthAccount) && !store.state.isAuthenticated){
 
-    toast({
-      message: this.$t('modals.pleaselogin'),
-      type: 'is-danger',
-      dismissible: true,
-      pauseOnHover: true,
-      duration: 2000,
-      position: 'top-center',
-      animate: { in: 'fadeIn', out: 'fadeOut' },
-    })
-    next({name:'LogIn', query: {to:to.path}});
+    next({name:'LogIn', query: { loginwarning: true }}); 
   }
 
   // check if user is authenticated before proceeding to checkout page
