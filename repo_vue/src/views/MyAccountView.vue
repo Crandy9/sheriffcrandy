@@ -5,11 +5,13 @@
                 Account Details
             </h1>
         </div>
+        <!-- enable form to edit -->
+        <button :disabled="formEnabled" class="button edit-account-button" @click="toggleFormFields"> {{ $t('myaccountview.editaccount') }}</button>
         <div class="columns">
             <div class="column is-6 is-offset-3">
                 <div class="my-account-info">
                     <!-- sign up form prevent default action -->
-                    <form @submit.prevent="submitForm" v-bind:readonly="isReadOnly">
+                    <form @submit.prevent="submitForm">
                         <div class="field">
                             <!-- general errors -->
                             <div v-if="errors.generalErrors.length">
@@ -23,14 +25,11 @@
                                 <span style="color:red !important">*</span> {{ error }}
                                 </p>
                             </div>
-                            <!-- real-time username validation -->
-                            <p class="my-errors" style="color:red" v-if="!usernameAvailable && !isUsernameEmpty ">{{ $t('loginsignupview.usernamenotavail') }}</p>
-                            <p class="my-errors" style="color:green" v-else-if="usernameAvailable && !isUsernameEmpty ">{{ $t('loginsignupview.usernameavail') }}</p>
                             <!-- username -->
-                            <label class="my-label" for="">{{ $t('loginsignupview.usernameonly') }}</label>
+                            <label class="my-label" for="">{{ $t('myaccountview.usernameonly') }}</label>
                             <div class="control">
                                 <!-- v-model connects the data var defined below -->
-                                <input type="text" v-model="username" name="username" @input="checkUsername" class="input" :placeholder="$t('loginsignupview.usernameonly')">
+                                <input type="text" v-model="username" :class="{ 'readonly': !formEnabled }" :readonly="!formEnabled" name="username" class="input" :placeholder="$t('myaccountview.usernameonly')">
                             </div>
                             <!-- email errors-->
                             <div v-if="errors.emailErrors.length">
@@ -38,50 +37,83 @@
                                 <span style="color:red !important">*</span> {{ error }}
                                 </p>
                             </div>
-                            <!-- real-time email validation -->
-                            <p class="my-errors" style="color:red" v-if="!emailAvailable && !isEmailEmpty">{{ $t('loginsignupview.emailnotavail') }}</p>
-                            <p class="my-errors" style="color:green" v-else-if="emailAvailable && !isEmailEmpty">{{ $t('loginsignupview.emailavail') }}</p>
                             <!-- email -->
-                            <label class="my-label" for="">{{ $t('loginsignupview.emailonly') }}</label>
+                            <label class="my-label" for="">{{ $t('myaccountview.emailonly') }}</label>
                             <div class="control">
-                                <input type="text" v-model="email" name="email" @input="checkEmail" class="input" :placeholder="$t('loginsignupview.emailonly')">
+                                <input type="text" v-model="email" :class="{ 'readonly': !formEnabled }" :readonly="!formEnabled" name="email" class="input" :placeholder="$t('myaccountview.emailonly')">
                             </div>
                             <!-- not required fields -->
                             <!-- first_name -->
-                            <label class="my-label" for="">{{ $t('loginsignupview.firstnamelabel') }}</label>
+                            <label class="my-label" for="">{{ $t('myaccountview.firstnamelabel') }}</label>
                             <div class="control">
-                                <input type="text" class="input" :placeholder="$t('loginsignupview.firstnamelabel')" v-model="first_name">
+                                <input type="text" class="input" :class="{ 'readonly': !formEnabled }" :readonly="!formEnabled" :placeholder="$t('myaccountview.firstnamelabel')" v-model="first_name">
                             </div>
                             <!-- lastname -->
-                            <label class="my-label" for="">{{ $t('loginsignupview.lastnamelabel') }}</label>
+                            <label class="my-label" for="">{{ $t('myaccountview.lastnamelabel') }}</label>
                             <div class="control">
-                                <input type="text" class="input" :placeholder="$t('loginsignupview.lastnameplaceholder')" v-model="last_name">
+                                <input type="text" class="input" :class="{ 'readonly': !formEnabled }" :readonly="!formEnabled" :placeholder="$t('myaccountview.lastnameplaceholder')" v-model="last_name">
                             </div>
                             <!-- fav color -->
-                            <label class="my-label" for="">{{ $t('loginsignupview.favoritecolor') }}</label>
+                            <label class="my-label" for="">{{ $t('myaccountview.favoritecolor') }}</label>
                             <div class="control">
-                                <input type="text" class="input" :placeholder="$t('loginsignupview.favoritecolorplaceholder')" v-model="favorite_color">
+                                <input type="text" class="input" :class="{ 'readonly': !formEnabled }" :readonly="!formEnabled" :placeholder="$t('myaccountview.favoritecolorplaceholder')" v-model="favorite_color">
                             </div>
-                            <!-- submit form -->
-                            <div class="field">
-                                <div class="control">
-                                    <button class="button login-signup-button">{{ $t('loginsignupview.createaccountbutton') }}</button>
+                            <div class="my-account-button-container">
+                                <!-- submit form -->
+                                <div class="field">
+                                    <div class="control">
+                                        <button :disabled="!formEnabled" class="button update-account-button">{{ $t('myaccountview.updateaccount') }}</button>
+                                    </div>
+                                </div>
+                                <!-- delete account button -->
+                                <div class="field">
+                                    <div class="control">
+                                        <button @click.prevent="showDeleteModal = !showDeleteModal" class="button delete-account-button">{{ $t('myaccountview.deleteaccount') }}</button>
+                                    </div>
                                 </div>
                             </div>
-                            <p v-if="$store.state.language === 'en'" class="signup-login-reroute">
-                                {{ $t('loginsignupview.login1') }} <a style="color:aqua !important; text-decoration:underline;" href="/login">{{ $t('loginsignupview.login2') }}</a>
-                            </p>
-                            <p v-else-if="$store.state.language === 'ja'" >
-                                <a class="signup-login-reroute" style="text-decoration:underline;" href="/login">{{ $t('loginsignupview.login1') }}</a>
-                            </p>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-
     </div>
+
+    <!-- modal -->
+    <Transition>
+    <div v-if="showDeleteModal" id="my-modal-id" class="modal" v-bind:class="{'is-active':showDeleteModal}">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">{{ $t('myaccountview.areyousureyouwanttodelete') }}</p>
+                <!-- close button -->
+                <button @click="showDeleteModal = false" class="delete" aria-label="close"></button>
+            </header>
+            <footer class="modal-card-foot">
+            <div>
+                <!-- delete account -->
+                <button @click='deleteUserAccount(), showDeleteModal = false' class="button delete-account-button">{{ $t('myaccountview.deleteaccount') }}</button>
+                <!-- cancel -->
+                <button @click="showDeleteModal = false" class="button delete-account-final-cancel">{{ $t('myaccountview.canceldeleteaccount') }}</button>
+            </div>
+            </footer>
+        </div>
+    </div>
+    </Transition>
+    <!-- end modal -->
 </template>
+
+
+<style scoped>
+/* CSS styles for the read-only appearance */
+.readonly {
+    background-color: #f8f8f8; /* Use desired background color for read-only fields */
+    color: #777;
+}
+
+</style>
+
+
 
 <script>
 import axios from 'axios'
@@ -109,7 +141,8 @@ export default {
                 usernameErrors: [],
                 emailErrors: []
             },
-            isReadOnly: true
+            formEnabled : false,
+            showDeleteModal: false
         }
     },
 
@@ -120,61 +153,99 @@ export default {
 
     methods: {
 
-        // edit account info
-        toggleReadOnly() {
-            this.isReadOnly = !this.isReadOnly;
-        },
-        // dynamically check username validity
-        checkUsername() {
-            // clear the timeout if it is still running
-            if (this.timer) {
-                clearTimeout(this.timer);
-                this.timerRunning = false;
-            }
-            if (this.username.trim().length > 0) {
-                this.timer = setTimeout(() => {
-                    this.timerRunning = true;
-                    try {
-                        axios.get(process.env.VUE_APP_CHECK_USERNAME_API_URL + `${this.username}`)
-                        .then(response => {
-                            const data = response.data;
-                            this.usernameAvailable = data.available;
-                            this.timerRunning = false;
-                        })
-                        .catch(error => {
-                            console.log(error);
-                        })
-                    }
-                    catch(error) {
-                        console.log(error)
-                        }   
-                }, this.api_post_wait_duration)
-            }
-        } ,
+        // submit account update info 
+        submitForm() {
+            // reset errors
+            this.errors.generalErrors = []
+            this.errors.usernameErrors = []
+            this.errors.emailErrors = []
 
-        checkEmail() {
-            // clear the timeout if it is still running
-            if (this.timer) {
-                clearTimeout(this.timer);
+
+            // client side validation
+            // USERNAME
+            // if username is empty
+            if (this.username === '') {
+                this.errors.usernameErrors.push(this.$t('loginsignupview.usernamereq'))
             }
-            if (this.email.trim().length > 0) {
-                this.timer = setTimeout(() => {
-                    try {
-                        axios.get(process.env.VUE_APP_CHECK_EMAIL_API_URL + `${this.email}`)
-                        .then(response => {
-                            const data = response.data;
-                            this.emailAvailable = data.available;
+
+            // EMAIL
+            if (this.email === '') {
+                this.errors.emailErrors.push(this.$t('loginsignupview.emailreq'))
+            }
+            // check if email has @ symbol
+            if (!this.email.includes('@')) {
+                this.errors.emailErrors.push(this.$t('loginsignupview.email@symbolerror'))
+
+            }
+
+
+            // if no errors, submit the form and authenticate user
+            if (!this.errors.usernameErrors.length && !this.errors.emailErrors.length) {
+                // var to hold post data
+                // keys must be same strings as model fields in backend api
+                // values can be named whatever
+                const updateAccountData = {
+                    username: this.username,
+                    email: this.email,
+                    first_name: this.first_name,
+                    last_name: this.last_name,
+                    favorite_color: this.favorite_color,
+                }
+
+                // send post data to backend server
+                axios.post(process.env.VUE_APP_UPDATE_USER_ACCOUNT_API_URL, updateAccountData)
+                    .then(response => {
+                        this.$router.push('/myaccount')
+                        // add toast message
+                        toast({
+                            message: 'Account updated',
+                            type: 'is-success',
+                            dismissible: true,
+                            pauseOnHover: true,
+                            duration: 2000,
+                            position: 'center',
+                            animate: { in: 'fadeIn', out: 'fadeOut' },
                         })
-                        .catch(error => {
+                        this.formEnabled = false
+                    })
+                    // catch the error data, strip it down to category, and push
+                    // each error to the appropraite error array
+                    .catch(error => {
+                        if (error.response && error.response.data) {
+                            // Handle username or email 
+                            const errors = error.response.data;
+                            if (errors.username) {
+                                if (errors.username[0] == 'Username already exists.') {
+                                    this.errors.usernameErrors.push(this.$t('myaccountview.usernameexistserror'))
+                                }
+                                // Display the error message to the user or perform other error handling tasks
+                            }
+                            if (errors.email) {
+                                if (errors.email[0] == 'Email already exists.') {
+                                    this.errors.emailErrors.push(this.$t('myaccountview.emailexistserror'))
+                                }                                
+                                // Display the error message to the user or perform other error handling tasks
+                            }
+                        } else {
+                            console.log('error');
+                            // Handle other types of errors
                             console.log(error);
-                        })
-                    }
-                    catch(error) {
-                        console.log(error)
-                        }   
-                }, this.api_post_wait_duration)
+                        }
+                    });
             }
+
         },
+
+        // edit account info
+        toggleFormFields() {
+            this.formEnabled  = !this.formEnabled ;
+        },
+        // delete user account
+        deleteUserAccount() {
+            console.log('delete user account')
+        },
+
+        // get user account details and populate form
         getUserData() {
             const sf_auth_bearer = this.$store.state.sf_auth_bearer
             axios.get(process.env.VUE_APP_GET_USER_ACCOUNT_DATA_URL, {headers: { 'Authorization': `Token ${sf_auth_bearer}`}})
@@ -186,7 +257,6 @@ export default {
                 this.first_name = this.userdata.first_name
                 this.last_name = this.userdata.last_name
                 this.favorite_color = this.userdata.favorite_color
-
                 })
                 .catch(error => {
                 // handle error
@@ -195,13 +265,6 @@ export default {
         }
     },
     computed: {
-        isUsernameEmpty() {
-            return this.username.trim().length === 0;
-        },
-
-        isEmailEmpty() {
-            return this.email.trim().length === 0;
-        },
     }
 
 }
