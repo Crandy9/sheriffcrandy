@@ -6,9 +6,36 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
 # return authenticated user as well as user's cart data
-User = get_user_model()
+user = get_user_model()
 
 
+
+# for updating user account info
+class UpdateUserAccountDataSerializer(serializers.Serializer):
+    username = serializers.CharField(required=False)
+    email = serializers.EmailField(required=False)
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    favorite_color = serializers.CharField(required=False)
+
+    # automatically called during validation process
+    def validate_username(self, value):
+        request = self.context.get('request')
+        current_user = request.user
+        if user.objects.filter(username=value).exists() and current_user.username != value:
+            raise serializers.ValidationError('Username already exists.')
+        return value
+
+    def validate_email(self, value):
+        request = self.context.get('request')
+        current_user = request.user
+        if user.objects.filter(email=value).exists() and current_user.email != value:
+            raise serializers.ValidationError('Email already exists.')
+        return value
+
+
+
+# for displaying account info to user
 class GetUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lctec_User 

@@ -32,16 +32,44 @@ EMAIL_ON = False
 URL = 'http://localhost:8080'
 
 
+# update user account info
+@api_view(['POST'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def update_user_account_data(request):
+
+    print('\n\n\nWHAT THE HEEEEEE\n\n')
+
+    # get the user
+    current_user = user.objects.get(pk=request.user.pk)
+    print('\nUser being updated: ' + str(current_user) + '\n')
+    # Deserialize incoming data
+    # serializer = UpdateUserAccountDataSerializer(data=request.data)
+    serializer = UpdateUserAccountDataSerializer(data=request.data, context={'request': request})
+
+    if serializer.is_valid():
+        # Update user fields
+        current_user.username = serializer.validated_data.get('username', current_user.username)
+        current_user.email = serializer.validated_data.get('email', current_user.email)
+        current_user.first_name = serializer.validated_data.get('first_name', current_user.first_name)
+        current_user.last_name = serializer.validated_data.get('last_name', current_user.last_name)
+        current_user.favorite_color = serializer.validated_data.get('favorite_color', current_user.favorite_color)
+
+        current_user.save()
+        return Response(status=status.HTTP_200_OK)
+    else:
+        print('\nserializer is not valid')
+        print('serializer errors: ' + str(serializer.errors) +  '\n')
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # get user account data
 @api_view(['GET'])
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def get_user_account_data(request):
-    print('\nhello?')
-    current_user = user.objects.get(pk=request.user.pk)
-    print('\n' + str(current_user) + '\n')
 
+    current_user = user.objects.get(pk=request.user.pk)
     user_serializer = GetUserSerializer(current_user)
     return Response(user_serializer.data, status=status.HTTP_200_OK)
 
@@ -176,14 +204,15 @@ def get_cart_data(user):
     return cart_data
 
 # checking username in form validation
+# need to include the request or else there will be an error
 @api_view(['GET'])
-def check_username(username):
+def check_username(request, username):
     username_available = not user.objects.filter(username=username).exists()
     return Response({'available': username_available})
 
 # checking username in form validation
 @api_view(['GET'])
-def check_email(email):
+def check_email(request, email):
     email_available = not user.objects.filter(email=email).exists()
     return Response({'available': email_available})
 

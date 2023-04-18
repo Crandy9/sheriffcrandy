@@ -2,13 +2,97 @@
     MY ACCOUNT VIEW STYLING
 */
 
+
+.my-account-info {
+    padding-inline: 2rem;
+}
 .my-account-container {
     margin-bottom: 12rem;
 }
 
 .my-account-header {
+    padding-top: 2rem;
     text-align: center;
+    padding-bottom: 2rem;
 }
+
 .my-account-title {
+    font-size: 20px;
     color: white;
+    text-decoration: underline;
+}
+
+
+.edit-account-button {
+    align-items: center;
+    margin-left: 3rem;
+    margin-bottom: 1rem;
+    background-color: rgb(119, 51, 128);
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+}
+
+.edit-account-button:hover {
+    color: rgb(255, 255, 255);
+}
+
+.edit-account-button[disabled] {
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    opacity: 0.6;
+}
+
+.my-account-button-container {
+    padding-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+@media screen and (max-width: 1024px) {
+    .my-account-button-container {
+        gap: 1rem;
+    }
+}
+
+.update-account-button {
+    background-color: rgb(0, 14, 209);
+    color: white;
+    font-size: 14px;
+
+}
+
+.update-account-button[disabled] {
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    opacity: 0.6;
+}
+
+.update-account-button:hover{
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    opacity: 0.6;
+}
+
+.update-account-button:focus{
+    background-color: rgb(0, 14, 209);
+    color: white;
+    opacity: 0.6;
+}
+
+.delete-account-button:focus {
+    color: rgb(255, 255, 255) !important;
+}
+
+
+
+.delete-account-button:hover {
+    color: rgb(255, 255, 255) !important;
+    background-color: rgb(255, 32, 32);
+}
+
+.delete-account-button {
+    background-color: rgb(202, 0, 0);
+    color: white;
+    font-size: 14px;
 }
