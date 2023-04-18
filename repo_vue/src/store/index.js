@@ -877,33 +877,33 @@ export default createStore({
 
       // set locale and region
       // get the ip address
-      fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(response => {
-        state.clientIp = response.ip;
-      }).catch(error => console.log("GET IP API Error: " + error));
+      // fetch('https://api.ipify.org?format=json')
+      // .then(response => response.json())
+      // .then(response => {
+      //   state.clientIp = response.ip;
+      // }).catch(error => console.log("GET IP API Error: " + error));
       
       // get data
-     fetch('http://ip-api.com/json/' + state.clientIp + '?fields=status,message,country,countryCode')
-      .then(response => response.json())
-      .then(response => {
-        // set initial region/language values based on IP address location
-        if (state.initialLocaleSet == false) {
-          if (response.country === 'Japan') {
+    //  fetch('http://ip-api.com/json/' + state.clientIp + '?fields=status,message,country,countryCode')
+    //   .then(response => response.json())
+    //   .then(response => {
+    //     // set initial region/language values based on IP address location
+    //     if (state.initialLocaleSet == false) {
+    //       if (response.country === 'Japan') {
 
-          }
-          else if (response.country === 'United States') {
+    //       }
+    //       else if (response.country === 'United States') {
 
-          }
-          // default
-          else {
+    //       }
+    //       // default
+    //       else {
 
-          }
-          state.initialLocaleSet = true
-        }
-        else {
-        }
-      }).catch(error => console.log("GeoData API Error: " + error));
+    //       }
+    //       state.initialLocaleSet = true
+    //     }
+    //     else {
+    //     }
+    //   }).catch(error => console.log("GeoData API Error: " + error));
 
 
       // check if user has a web token (logged in)
