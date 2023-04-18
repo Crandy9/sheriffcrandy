@@ -63,7 +63,7 @@
     "firstnameplaceholder": "John (not required)",
     "lastnamelabel": "Last Name (not required)",
     "lastnameplaceholder": "Smith (not required)",
-    "favoritecolor": "favorite color :) (not required)",
+    "favoritecolor": "Favorite color :) (not required)",
     "favoritecolorplaceholder": "turquoise (not required)",
     "createaccountbutton": "Create Account",
     "login1": "Already have an account?",
@@ -75,14 +75,50 @@
     "passwordsdontmatch": "Passwords do not match",
     "passwordtoosimilartousername": "Password is too similar to username",
     "passwordtoosimilartoemail": "Password is too similar to email",
-    "emailexistserror": "This username already exists. Please choose a different username.",
+    "emailexistserror": "This email address already exists. Please use a different email address.",
     "emailnotavail": "email not available",
     "emailavail": "email available!",
-    "usernameexistserror": "This email address already exists. Please use a different email address.",
+    "usernameexistserror": "This username already exists. Please choose a different username.",
     "usernamenotavail": "username not available",
     "usernameavail": "username available!",
     "generror": "Oops! Something went wrong on our end! We are working diligently to fix the error. Please try again later. I apologize for the inconvenience.",
     "email@symbolerror": "Please enter a valid email address"
+  },
+
+  "myaccountview": {
+
+    "errors": {
+      "usernameemailerrors": "Please enter your username or email address to login.",
+      "invalidusernamepassword": "username and/or password is invalid",
+      "generalerrors": "Oops! Something went wrong, please try again later."
+
+
+    },
+
+    "username": "Username/Email Address",
+    "usernameonly": "Username",
+    "emailonly": "Email Address",
+    "firstnamelabel": "First name",
+    "firstnameplaceholder": "John",
+    "lastnamelabel": "Last Name",
+    "lastnameplaceholder": "Smith",
+    "favoritecolor": "Favorite color",
+    "favoritecolorplaceholder": "turquoise",
+    "usernamereq": "Username is required",
+    "emailreq": "Email is required. Please enter a valid email address",
+    "emailexistserror": "This email address already exists. Please use a different email address.",
+    "emailnotavail": "email not available",
+    "emailavail": "email available!",
+    "usernameexistserror": "This username already exists. Please choose a different username.",
+    "usernamenotavail": "username not available",
+    "usernameavail": "username available!",
+    "generror": "Oops! Something went wrong on our end! We are working diligently to fix the error. Please try again later. I apologize for the inconvenience.",
+    "email@symbolerror": "Please enter a valid email address",
+    "updateaccount": "Update Account",
+    "deleteaccount": "Delete Account",
+    "areyousureyouwanttodelete": "Are you sure you want to delete your account? This action cannot be undone.",
+    "canceldeleteaccount": "Cancel",
+    "editaccount": "Edit account information"
   },
 
   "forgotpasswordview": {

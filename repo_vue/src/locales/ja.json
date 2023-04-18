@@ -71,14 +71,49 @@
         "passwordsdontmatch": "パスワードが一致しない",
         "passwordtoosimilartousername": "パスワードがユーザー名と似すぎている",
         "passwordtoosimilartoemail": "パスワードがメールと似すぎている",
-        "emailexistserror": "このユーザーネームはすでに存在します。別のユーザー名を選択してください。",
+        "emailexistserror": "このメールアドレスはすでに存在しています。別のメールアドレスを使用してください。",
         "emailnotavail": "Eメールが利用できません",
         "emailavail": "Eメールが利用できます！",
-        "usernameexistserror": "このメールアドレスはすでに存在しています。別のメールアドレスを使用してください。",
+        "usernameexistserror": "このユーザー名はすでに存在します。別のユーザー名を選択してください。",
         "usernamenotavail": "ユーザー名が利用できません",
         "usernameavail": "ユーザー名が利用できます！",
         "generror": "おっと! 私たちの側で何かが間違っていた! 私たちはエラーを修正するために熱心に働いています。後ほど再度お試しください。ご迷惑をおかけして申し訳ありません。",
         "email@symbolerror": "有効なEメールアドレスを入力してください"
+    },
+
+    "myaccountview": {
+
+        "errors": {
+            "usernameemailerrors": "ユーザー名またはメールアドレスを入力してログインしてください。",
+            "invalidusernamepassword": "ユーザー名またはパスワードが無効です。",
+            "generalerrors": "何かが間違っています。後でもう一度試してください。"
+        },
+
+        "username": "ユーザー名またはメールアドレス",
+        "usernameonly": "ユーザー名",
+        "emailonly": "メールアドレス",
+        "firstnamelabel": "名前",
+        "firstnameplaceholder": "名前",
+        "lastnamelabel": "苗字",
+        "lastnameplaceholder": "苗字",
+        "favoritecolor": "好きな色",
+        "favoritecolorplaceholder": "好きな色",
+        "usernamereq": "ユーザー名が必要です",
+        "emailreq": "Eメールが必須です",
+        "emailexistserror": "このメールアドレスはすでに存在しています。別のメールアドレスを使用してください。",
+        "emailnotavail": "Eメールが利用できません",
+        "emailavail": "Eメールが利用できます！",
+        "usernameexistserror": "このユーザー名はすでに存在します。別のユーザー名を選択してください。",
+        "usernamenotavail": "ユーザー名が利用できません",
+        "usernameavail": "ユーザー名が利用できます！",
+        "generror": "おっと! 私たちの側で何かが間違っていた! 私たちはエラーを修正するために熱心に働いています。後ほど再度お試しください。ご迷惑をおかけして申し訳ありません。",
+        "email@symbolerror": "有効なEメールアドレスを入力してください",
+        "updateaccount": "アカウントを更新する。",
+        "deleteaccount": "アカウント削除",
+        "areyousureyouwanttodelete": "本当にアカウントを削除しますか？この操作は元に戻せません。",
+        "canceldeleteaccount": "キャンセル",
+        "editaccount": "アカウント情報を編集する"
+
     },
 
     "forgotpasswordview": {
