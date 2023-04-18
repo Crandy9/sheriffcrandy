@@ -8,8 +8,6 @@ from tracks_app.models import Track
 # custom user manager
 class Lctec_CustomUserManager(BaseUserManager):
 
-
-
     # called when creating user through drf terminal and frontend
     # only pass in req params, all other unrequired params like
     # first/lastname, favorite color, etc. will be held in **extra_fields param
