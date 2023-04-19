@@ -504,7 +504,7 @@
     <div 
       @click.self="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
       class="persist-mini-music-player-container" 
-      :style="{ display: ($route.name !== 'Music' && $route.name !== 'MyAccount' && $route.name !== 'LogIn') ? 'block' : 'none' }">
+      :style="{ display: (hiddenRoutes.includes($route.name)) ? 'none' : 'block'}">
       <!-- img container -->
       <div class="persist-mini-track-cover-art-and-controllers-container">
         <!-- track img -->
@@ -781,8 +781,20 @@ export default {
       // music stuff
       tracks: [],
       showMainMusicPlayer: false,
+      // array to hold routes that should not display the music player
+      hiddenRoutes: ['Music', 
+                    'MyAccount', 
+                    'LogIn', 
+                    'SignUp', 
+                    'Cart', 
+                    'ThankYou', 
+                    'NotFound',
+                    'ForgotPassword',
+                    'PasswordResetLinkSent',
+                    'ResetPassword']
     }
   },
+
   // initialize the store. First method that is called when app is loaded/page refreshed
   beforeCreate() {
 
