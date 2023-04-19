@@ -34,7 +34,7 @@
           </h3>
         </div>
       </div>
-      <!-- skip, play/pause, repeat, shuffle controllers -->
+      <!-- MUSIC PLAYER CONTROLLERS -->
       <div class="music-player-controls-wrapper">
         <div class="music-player-controls">
           <!-- repeat controller -->
@@ -72,8 +72,8 @@
         <div class="slide-bar" ref="slideBar" id="slideBar" 
           @mousedown="sliderMoveDesktop"
           @touchstart="sliderMoveMobile"
-          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
-          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          @mouseover="($store.state.isSlidebarHovering = true), updateSlideBarBackground"
+          @mouseleave="($store.state.isSlidebarHovering = false), updateSlideBarBackground">
           <div 
             class="slider" 
             ref="slider" 
@@ -1134,7 +1134,7 @@ export default {
           document.title = 'Music'
         })
         .catch(error => {
-          console.log("ERROR BOYY: " + error)
+          console.log(error)
         })
 
       // stop loading bar after api data is fetched
