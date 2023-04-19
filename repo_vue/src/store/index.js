@@ -949,15 +949,11 @@ export default createStore({
     // set language
     setLanguage(state, language) {
       state.language = language;
-      console.log('language changed')
-      console.log('new language:' + state.language)
       localStorage.setItem("language", language)
     },
     // set region
     setRegion(state, region) {
       state.region = region;
-      console.log('region changed')
-      console.log('new region:' + state.region)
       localStorage.setItem("region", region)
     },
 
