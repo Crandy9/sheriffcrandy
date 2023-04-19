@@ -24,6 +24,8 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework import permissions, status
+from django.middleware.csrf import get_token
+from django.http import JsonResponse
 
 user = get_user_model()
 
@@ -32,17 +34,34 @@ EMAIL_ON = False
 URL = 'http://localhost:8080'
 
 
+
+# delete user account
+@api_view(['POST'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def delete_user_account_data(request):
+
+    # use first to prevent exception from being raised
+    try:
+
+        user_to_be_deleted = user.objects.get(pk=request.user.pk)
+        user_to_be_deleted.delete()
+        # return no content, everything worked
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    except:
+        return Response({'error': 'Invalid token or user'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 # update user account info
 @api_view(['POST'])
 @authentication_classes([authentication.TokenAuthentication])
 @permission_classes([permissions.IsAuthenticated])
 def update_user_account_data(request):
 
-    print('\n\n\nWHAT THE HEEEEEE\n\n')
-
     # get the user
     current_user = user.objects.get(pk=request.user.pk)
-    print('\nUser being updated: ' + str(current_user) + '\n')
     # Deserialize incoming data
     # serializer = UpdateUserAccountDataSerializer(data=request.data)
     serializer = UpdateUserAccountDataSerializer(data=request.data, context={'request': request})
@@ -183,6 +202,7 @@ def get_user_cart(request):
         # get user's cart data
         cart_data = get_cart_data(request.user)
         return Response({
+            'username': request.user.username,
             'cart': cart_data
         })
 
