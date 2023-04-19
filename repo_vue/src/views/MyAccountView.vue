@@ -85,9 +85,9 @@
         <div class="modal-background"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">{{ $t('myaccountview.areyousureyouwanttodelete') }}</p>
+                <p class="modal-card-title last-chance-msg">{{ $t('myaccountview.areyousureyouwanttodelete') }}</p>
                 <!-- close button -->
-                <button @click="showDeleteModal = false" class="delete" aria-label="close"></button>
+                <button @click="showDeleteModal = false" class="delete delete-account-modal-close" aria-label="close"></button>
             </header>
             <footer class="modal-card-foot">
             <div>
@@ -195,10 +195,9 @@ export default {
                 // send post data to backend server
                 axios.post(process.env.VUE_APP_UPDATE_USER_ACCOUNT_API_URL, updateAccountData)
                     .then(response => {
-                        this.$router.push('/myaccount')
                         // add toast message
                         toast({
-                            message: 'Account updated',
+                            message: this.$t('myaccountview.accountupdated'),
                             type: 'is-success',
                             dismissible: true,
                             pauseOnHover: true,
@@ -207,6 +206,7 @@ export default {
                             animate: { in: 'fadeIn', out: 'fadeOut' },
                         })
                         this.formEnabled = false
+                        this.$router.push('/myaccount')
                     })
                     // catch the error data, strip it down to category, and push
                     // each error to the appropraite error array
@@ -240,9 +240,35 @@ export default {
         toggleFormFields() {
             this.formEnabled  = !this.formEnabled ;
         },
+
         // delete user account
         deleteUserAccount() {
-            console.log('delete user account')
+            const sf_auth_bearer = this.$store.state.sf_auth_bearer
+            axios.post(process.env.VUE_APP_DELETE_USER_ACCOUNT_DATA_URL, {headers: { 'Authorization': `Token ${sf_auth_bearer}`}})
+            .then(response => {
+                
+                axios.defaults.headers.common["Authorization"] = ""
+                localStorage.removeItem('sf_auth_bearer')
+                this.$store.commit('removeToken')
+                // empty cart (or save it for the user's web token)
+                this.$store.commit('clearCart')
+                this.$store.commit('clearPurchasedTrackList')
+                toast({
+                    message: this.$t('myaccountview.accountdeleted'),
+                    type: 'is-success',
+                    dismissible: true,
+                    pauseOnHover: true,
+                    duration: 2000,
+                    position: 'center',
+                    animate: { in: 'fadeIn', out: 'fadeOut' },
+                })
+                this.formEnabled = false
+                this.$router.push('/')
+                })
+                .catch(error => {
+                // handle error
+                console.log(error);
+            });
         },
 
         // get user account details and populate form
