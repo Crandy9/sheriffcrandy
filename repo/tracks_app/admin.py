@@ -3,4 +3,4 @@ from .models import *
 
 @admin.register(Track)
 class AdminClassName(admin.ModelAdmin):
-    readonly_fields = ['pk', 'sample','song_dur', 'downloads','date_added']
+    readonly_fields = ['pk', 'sample','song_dur', 'downloads','date_added', 'flac_track']

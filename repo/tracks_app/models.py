@@ -10,6 +10,7 @@ import os
 from PIL import Image
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
+import zipfile
 
 
 class Track(models.Model):
@@ -28,7 +29,8 @@ class Track(models.Model):
     # blank=True is for forms (like admin page)
     # null=True is for null values in DB
     # uploads to /media/tracks dir
-    track = models.FileField(upload_to='tracks', blank=True, null=True)
+    track = models.FileField(upload_to='wav_tracks', blank=True, null=True)
+    flac_track = models.FileField(upload_to='flac_tracks', blank=True, null=True)
     # sample (approx 30 seconds preview of song to prevent free downloads)
     # uploads to /media/samples dir
     sample = models.FileField(upload_to='samples', blank=True, null=True)
@@ -50,6 +52,50 @@ class Track(models.Model):
     class Meta:
         # it is a tuple so you need to add a comma so it can be iterable
         ordering = ('title',)
+
+
+    # Have user upload a wav file
+    # make a copy of it and convert it to flac for streaming
+    # when someone purchases the track or downloads it
+    # convert it back to wav.
+    # doing it this way to save data as FLAC file size is a fraction of WAV
+
+    # def save(self, *args, **kwargs):
+
+    #     if self.track:
+
+    #         print('\n\nself.track ' + str(self.track) + '\n\n')
+
+    #         print('\n\nsettings.MEDIA_ROOT ' + str(settings.MEDIA_ROOT) + '\n\n')
+    #         # Get the uploaded .wav file's path
+    #         # file_path = self.track.path
+    #         file_path = os.path.join(settings.MEDIA_ROOT, 'wav_tracks', self.track.name)
+    #         print('\n\nfile_path ' + str(file_path) + '\n\n')
+
+    #         # Create the target directory if it doesn't exist
+    #         os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    #         super(Track, self).save(*args, **kwargs)
+
+    #         # Create a copy of the file with .flac extension
+    #         flac_file_tmp_path = os.path.splitext(file_path)[0] + '.flac'
+    #         print('\n\nflac_file_tmp_path ' + str(flac_file_tmp_path) + '\n\n')
+
+    #         # Convert the uploaded .wav file to .flac using PyDub
+    #         audio = AudioSegment.from_file(file_path)
+    #         print('\n\audio ' + str(audio) + '\n\n')
+    #         audio.export(flac_file_tmp_path, format='flac')
+
+    #         # Create a flac file containing the converted .flac file
+    #         flac_file_path = os.path.join(settings.MEDIA_ROOT, 'flac_tracks', os.path.splitext(os.path.basename(file_path))[0] + '.flac')
+
+    #         # Set the self.flac_track field to the relative path of the zip file
+    #         self.flac_track = os.path.relpath(flac_file_path, settings.MEDIA_ROOT)
+
+    #         # Clean up the temporary .flac file and the original .wav file
+    #         # os.remove(flac_file_tmp_path)
+    #         # os.remove(file_path)
+
+    #     super(Track, self).save(*args, **kwargs)
 
     # string representation of object
     def __str__(self):
@@ -104,7 +150,7 @@ class Track(models.Model):
     def make_sample(self, track):
         # make a new temp path var to temporarily store the sample
         tmp_path = '/tmp/'
-        # restring song title name
+        # track dir
         song_full_path = str(track)
         song_file = song_full_path.replace('tracks/','')
         song_name = song_file.replace('.wav','')
@@ -152,11 +198,8 @@ class Track(models.Model):
 
         # finally delete the sample file in /tmp/ dir
         try:
-            print("tmp file to be removed: " + str(sample_path))
             os.remove(sample_path)
-            print("tmp file " + str(sample_path) + " removed from file system OK")
         except:
-            print("tmp file " + str(sample_path) + "removed from file system FAIL")
             return ''
 
         
