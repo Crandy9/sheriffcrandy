@@ -32,9 +32,9 @@ class Lctec_Backend(object):
         except MyUser.DoesNotExist:
             return None
 
+    # called when saving a new model obj
     def get_user(self, user_id):
 
-        print('get user function')
         try:
             return MyUser.objects.get(pk=user_id)
         except MyUser.DoesNotExist:
