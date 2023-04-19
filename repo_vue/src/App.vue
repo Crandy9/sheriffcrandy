@@ -502,7 +502,6 @@
     <!-- persistent MINI MUSIC PLAYER -->
     <!-- only shown on views other than music player -->
     <div 
-      @click.self="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()" 
       class="persist-mini-music-player-container" 
       :style="{ display: (hiddenRoutes.includes($route.name)) ? 'none' : 'block'}">
       <!-- img container -->
@@ -526,12 +525,12 @@
           <p style="color: white">Sheriff Crandy - </p>
           <p ref="titleTag" style="color: white">{{ $store.state.playlist.find(item => item.id === $store.state.currentTrackPlaying).title }}</p>
         </div>
-        <!-- exit icon -->
+        <!-- OPEN MAIN MUSIC PLAYER icon -->
         <div 
           v-if="$store.state.currentTrackPlaying"
-          class="persist-mini-exit-icon-container"
-          @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
+          class="persist-mini-exit-icon-container">
           <i 
+            @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()"
             class="persist-mini-exit-icon fas fa-chevron-down"
             :class="{ close: !showMainMusicPlayer }"></i>
         </div>
@@ -574,10 +573,10 @@
           class="persist-mini-slide-bar" 
           ref="slideBar" 
           id="persist-mini-slideBar" 
-          @mousedown="sliderMoveDesktop"
+          @mousedown.prevent="sliderMoveDesktop"
           @touchstart="sliderMoveMobile"
-          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
-          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          @mouseover="($store.state.isSlidebarHovering = true), updateSlideBarBackground"
+          @mouseleave="($store.state.isSlidebarHovering = false), updateSlideBarBackground">
           <!-- slider -->
           <div 
             class="persist-mini-slider" 
@@ -603,7 +602,7 @@
       class="main-persistent-music-play-container"
       v-bind:class="{'is-active':showMainMusicPlayer}"
       :style="showMainMusicPlayer === true ? 'height: 100%' : 'height: 0'">
-      <!-- exit icon -->
+      <!-- CLOSE PLAYER icon -->
       <div 
       class="main-persistent-exit-icon-container"
       @click.stop="showMainMusicPlayer = !showMainMusicPlayer; openPersistPlayer()">
@@ -672,8 +671,8 @@
           id="main-persistent-slide-bar-id"
           @mousedown="sliderMoveDesktop"
           @touchstart="sliderMoveMobile"
-          @mouseover="$store.state.isSlidebarHovering = true, updateSlideBarBackground"
-          @mouseleave="$store.state.isSlidebarHovering = false, updateSlideBarBackground">
+          @mouseover="($store.state.isSlidebarHovering = true), updateSlideBarBackground"
+          @mouseleave="($store.state.isSlidebarHovering = false), updateSlideBarBackground">
           <!-- slider -->
           <div 
             class="main-persistent-slider" 
