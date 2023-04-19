@@ -210,10 +210,10 @@
     }
 }
 
-/* END persistent MAIN MUSIC PLAYER */
+/* END MAIN MUSIC PLAYER */
 
 
-/* persistent MINI MUSIC PLAYER */
+/* MINI MUSIC PLAYER */
 /* for mobile */
 @media screen and (max-width: 1023px) {
 
@@ -356,7 +356,7 @@
     }
 }
 
-/* EXIT ICON FOR  */
+/* EXIT ICON FOR MINI PLAYER */
 @media screen and (min-width: 503px) and (max-width: 1023px) {
     /* exit icon */
     .persist-mini-exit-icon-container {
@@ -449,7 +449,7 @@
 }
 
 
-/* conrtollers */
+/* controllers */
 .persist-mini-music-player-controls {
     order: 3;
     margin-top: 1.5rem;
@@ -564,6 +564,13 @@
     padding-right: 5rem; 
     margin-bottom: 10rem;
 }
+/* click on a song to listen */
+.click-on-song-text {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem; 
+    font-size: 16px;
+}
 
 /* file download procedures */
 .music-guide {
@@ -585,6 +592,11 @@
 @media screen and (max-width: 1023px) {
     .main-music-section {
         padding: 1rem;
+    }
+    .click-on-song-text {
+        text-align: start;
+        padding: 1rem; 
+        font-size: 16px;
     }
     .track-cover-art-div {
         height: 35vh !important; /* Change the height to a smaller percentage value */

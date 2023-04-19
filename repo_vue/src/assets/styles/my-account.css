@@ -67,11 +67,15 @@
     color: rgb(0, 0, 0);
     opacity: 0.6;
 }
-
-.update-account-button:hover{
+.update-account-button[disabled]:hover {
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
     opacity: 0.6;
+}
+
+.update-account-button:hover{
+    background-color: rgb(0, 17, 255);
+    color: rgb(255, 255, 255);
 }
 
 .update-account-button:focus{
@@ -80,10 +84,13 @@
     opacity: 0.6;
 }
 
+.delete-account-modal-close {
+    margin-bottom: 2rem;
+}
+
 .delete-account-button:focus {
     color: rgb(255, 255, 255) !important;
 }
-
 
 
 .delete-account-button:hover {
@@ -94,5 +101,15 @@
 .delete-account-button {
     background-color: rgb(202, 0, 0);
     color: white;
+    font-size: 14px;
+}
+
+.last-chance-msg {
+    margin-top: 2rem;
+    font-size: 16px;
+    padding-inline: 3rem;
+}
+
+.delete-account-final-cancel {
     font-size: 14px;
 }
