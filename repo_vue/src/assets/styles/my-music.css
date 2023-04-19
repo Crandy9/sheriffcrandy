@@ -114,6 +114,10 @@
     user-select: none;
 }
 
+.main-persistent-slide-bar:hover {
+    height: 5px;
+}
+
 .main-persistent-slider {
     display: none;
     position: absolute;
@@ -323,7 +327,7 @@
 
     
     .persist-mini-slide-bar {
-        height: 2px !important;
+        height: 3px !important;
     }
     
     .persist-mini-slider {
@@ -332,7 +336,7 @@
         left: 0;
         right: 0;
         transform: translate(-20%, 40%);
-        width: 5px;
+        width: 4px !important;
         height: 10px;
         background-color: rgba(0, 238, 255);
         cursor: pointer;
@@ -526,6 +530,16 @@
     margin-right: 2rem;
 }
 
+.persist-mini-slide-bar:hover {
+    height: 5px;
+}
+
+.persist-mini-slide-bar:hover .persist-mini-slider {
+    height: 5px;
+    height: 12px;
+    transform: translate(-20%, 35%);
+}
+
 .persist-mini-slider {
     position: absolute;
     bottom: 0;
@@ -647,8 +661,6 @@
         margin: 0 8% !important;
     }
     .slide-bar {
-        /* margin-left: 0.5rem;
-        margin-right: 0.5rem; */
         margin-bottom: 0.5rem !important;
     }
     .slider {
@@ -774,12 +786,55 @@
 
 
 /* draw a circle around the play/pause control buttons */
-.play-controller, .pause-controller {
+.play-controller, 
+.pause-controller {
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
 }
+
+@media (hover: hover) {
+    .skip-forward-controller:active,
+    .skip-forward-controller:focus,
+    .skip-back-controller:active,
+    .skip-back-controller:focus,
+    .repeat-controller:active,
+    .repeat-controller:focus,
+    .shuffle-controller:active
+    .shuffle-controller:focus,
+    .main-persistent-skip-forward-controller:active,
+    .main-persistent-skip-forward-controller:focus,
+    .main-persistent-skip-back-controller:active,
+    .main-persistent-skip-back-controller:focus,
+    .persist-mini-skip-forward-controller:active,
+    .persist-mini-skip-forward-controller:focus,
+    .persist-mini-skip-back-controller:active,
+    .persist-mini-skip-back-controller:focus,
+    .persist-mini-repeat-controller:active, 
+    .persist-mini-repeat-controller:focus, 
+    .persist-mini-shuffle-controller:active
+    .persist-mini-shuffle-controller:focus {
+      outline: none; /* Optional: Remove outline on focus */
+      -webkit-tap-highlight-color: transparent; /* Disable tap highlight color on iOS */
+    }
+  }
+  
+  /* Prevent highlighting on click for mobile */
+  @media (hover: none) {
+    .skip-forward-controller:active,
+    .skip-back-controller:active,
+    .repeat-controller:active,
+    .shuffle-controller:active,
+    .main-persistent-skip-forward-controller:active,
+    .main-persistent-skip-back-controller:active,
+    .persist-mini-skip-forward-controller:active,
+    .persist-mini-skip-back-controller:active,
+    .persist-mini-repeat-controller:active, 
+    .persist-mini-shuffle-controller:active {
+      -webkit-tap-highlight-color: transparent; /* Disable tap highlight color on iOS */
+    }
+  }
 
 .fa-play, .fa-pause {
     font-size: 24px;
@@ -818,6 +873,10 @@
     cursor: pointer;
     margin-bottom: 0.5rem;
     user-select: none;
+}
+
+.slide-bar:hover {
+    height: 5px;
 }
 
 .slider {
@@ -972,7 +1031,13 @@
 }
 .track-dur {
     color: rgb(61, 61, 61);
-    padding-left: 0.5rem;
+    padding-left: 0.2rem;
+    font-size: 12px;
+}
+
+.fa-download  {
+    padding-left: 0.2rem;
+    padding-bottom: 0.25rem;
 }
 
 /* price buttons */
