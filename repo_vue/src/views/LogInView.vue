@@ -91,6 +91,7 @@ export default {
                 passwordErrors: [],
             },            
             showPassword: false,
+            username_from_backend: ''
         }
     },
 
@@ -156,6 +157,8 @@ export default {
                             .get(process.env.VUE_APP_GET_CART_URL, {headers: { 'Authorization': `Token ${sf_auth_bearer}`}})
                             .then(response => {
 
+                                this.username_from_backend = response.data.username
+                                // set username on welcome modal
                                 const cart_data = response.data.cart;
                                 if (cart_data.length === 0) {
                                 }
@@ -171,28 +174,29 @@ export default {
                                 }
                                 // populate purchasedTracksList
                                 this.getPurchasedTracks();
+
+                                // add toast message
+                                toast({
+                                    message: this.$t('modals.welcomeback') + ' ' + this.username_from_backend + this.$t('modals.welcomeback2') +'!',
+                                    type: 'is-success',
+                                    dismissible: true,
+                                    pauseOnHover: true,
+                                    duration: 2000,
+                                    position: 'center',
+                                    animate: { in: 'fadeIn', out: 'fadeOut' },
+                                })
+                                
+                                // check if there is a pending route to be redirected to
+                                // else go to home
+                                const toPath = this.$route.query.to || '/'
+                                // re-route to homepage
+                                this.$router.push(toPath)
                             })
                             .catch(error => {
                                 console.log('user cart data get request failed. Printing error')
                                 console.log(error)
 
                             })
-
-                        // add toast message
-                        toast({
-                            message: this.$t('modals.welcomeback') + ' ' + this.username_or_email + this.$t('modals.welcomeback2') +'!',
-                            type: 'is-success',
-                            dismissible: true,
-                            pauseOnHover: true,
-                            duration: 2000,
-                            position: 'top-center',
-                            animate: { in: 'fadeIn', out: 'fadeOut' },
-                        })
-                        // check if there is a pending route to be redirected to
-                        // else go to home
-                        const toPath = this.$route.query.to || '/'
-                        // re-route to homepage
-                        this.$router.push(toPath)
                     })
                     .catch(error => {
                         if (error.response) {
