@@ -9,7 +9,7 @@
           <span>{{$t('cartview.carttitle')}}</span>
         </h2>
       </div>
-      <table class="my-cart-items-table" v-if="cartTotalLength">
+      <table v-if="cartTotalLength" class="my-cart-items-table" >
         <tbody id="testid" class="my-cart-items">
           <!-- loop through all items in cart -->
           <tr class="my-table-row" v-for="item in cart.itemsInCart">
@@ -42,7 +42,7 @@
           </tr>
         </tbody>
       </table>
-      <p v-else style="color:white; padding: 2rem;" >{{$t('cartview.emptycart')}} :(</p>
+      <p v-else style="color:white; padding: 2rem; margin-bottom: 10rem;" >{{$t('cartview.emptycart')}} :(</p>
     </div>
     <!-- end cart body -->
     <!-- cart footer US -->
