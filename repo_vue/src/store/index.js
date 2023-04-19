@@ -213,7 +213,8 @@ export default createStore({
     isInverted: false,
     showMainMusicPlayer: false,
     // list of paid tracks
-    purchasedTracksList: []
+    purchasedTracksList: [],
+    startTime: null
 
   },
   getters: {
@@ -234,14 +235,6 @@ export default createStore({
     },
 
     // MUSIC FUNCTIONS:
-    // format playback time under slidebar
-    formatTime(state, secs) {
-
-      let minutes = Math.floor(secs / 60) % 60;
-      let seconds = Math.floor(secs % 60);
-      seconds = seconds.toString().length === 1 ? `0${seconds}` : seconds;
-      state.songProgress = `${minutes}:${seconds}`
-    },
     // update slidebar color
     updateSlideBarBackground(state, currentSlideBar) {
 
@@ -286,26 +279,39 @@ export default createStore({
         this.commit('animateSlider')
       })
     },
+
+    // format playback time under slidebar
+    formatTime(state, secs) {
+
+      let minutes = Math.floor(secs / 60) % 60;
+      let seconds = Math.floor(secs % 60);
+      seconds = seconds.toString().length === 1 ? `0${seconds}` : seconds;
+      state.songProgress = `${minutes}:${seconds}`
+
+    },
+
     // howler instance
     createHowlInstance(state , src) {
       const newHowlInstance = new Howl({
             src: [src],
             onplay: () => {
-              
+
               // Stop the timer
               clearInterval(state.songTimer);
 
               state.animationFrame = requestAnimationFrame(() => {
                 this.commit('animateSlider')
-              })         
-              // set the timer
-              state.songTimer = setInterval(() => {
-                // Update the song progress every second
-                let seekTime = state.currentAudioElement.seek();
-                // state.songProgress = this.formatTime(seekTime);
-                this.commit('formatTime',seekTime)
-              }, 1000);
+              })        
               
+              // Set a short delay before setting up the timer
+              setTimeout(() => {
+                state.songTimer = setInterval(() => {
+                  // Update the song progress every second
+                  let seekTime = state.currentAudioElement.seek();
+                  this.commit('formatTime', seekTime);
+                }, 1000);
+              }, 50);
+
             },
             onpause: () => {
               // Stop the timer
@@ -501,6 +507,8 @@ export default createStore({
     // SKIP FORWARD CONTROLLER
     skipForwardController(state) {
 
+      state.songProgress = '0:00'
+
       // set the currentPlayList as either shuffle or normal
       let currentPlayList = []
       let currentLastTrack = null
@@ -623,7 +631,7 @@ export default createStore({
 
     // SKIP PREVIOUS CONTROLLER
     skipPreviousController(state) {
-      
+
       // set the currentPlayList as either shuffle or normal
       let currentPlayList = []
       let currentLastTrack = null
