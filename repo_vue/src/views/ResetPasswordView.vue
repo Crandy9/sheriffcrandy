@@ -1,5 +1,5 @@
 <template>
-    <section class="my-login-signup-section">
+    <section class="my-reset-password-section">
         <div class="page-sign-up">
             <div class="columns">
                 <div class="column is-6 is-offset-3">
