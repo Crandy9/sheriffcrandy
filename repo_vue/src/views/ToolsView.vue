@@ -5,8 +5,31 @@
                 {{$t('toolsview.toolsiuse')}}
             </h3>
         </div>
-        <h4 class="is-size-3 has-text-centered">
-        </h4>
+        <ul class="my-tools-unordered-list">
+            <li class="list-item">
+                <div class="tool-list-title">
+                    DAW: FL Studio Producer Edition
+                </div>
+            </li>
+            <li class="list-item">
+                <div class="tool-list-title">
+                    Yamaha CLP-645B Clarinova
+                </div>
+                <img class="my-tools-img yamaha-img" src="@/assets/images/yamaha_clp_645b.jpg" alt="">
+            </li>
+            <li class="list-item">
+                <div class="tool-list-title">
+                    Beyerdynamic DT770 PRO Headset - 80 OHM
+                </div>
+                <img class="my-tools-img headphones-img" src="@/assets/images/dt_770_pro.png" alt="">
+            </li>
+            <li class="list-item">
+                <div class="tool-list-title">
+                    Alesis v49 Midi Controller
+                </div>
+                <img class="my-tools-img alesis-img" src="@/assets/images/alesis_v49.png" alt="">
+            </li>
+        </ul>
     </section>
 </template>
 

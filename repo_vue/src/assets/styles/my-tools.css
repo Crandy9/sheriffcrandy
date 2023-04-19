@@ -4,16 +4,51 @@
 
 /* push footer to bottom of page */
 .tools-section {
-    padding-bottom: 25rem;
+    padding-bottom: 6rem;
 }
 
 .tools-title-div {
     padding: 2rem;
+}
 
+@media  screen and (max-width: 1024px) {
+
+    .tools-title-div {
+        padding: 2rem !important;
+    }
+    .tools-title-div {
+        padding: 2rem !important;
+    }
+    .tools-title-div {
+        padding: 1rem;
+    }
+    .tool-list-title {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    .my-tools-img {
+        width: 60% !important; 
+    }
 }
 
 .tools-title {
     text-align: center;
-    font-size: x-large;
+    font-size: 24px;
     word-wrap: break-word;
+}
+
+.my-tools-unordered-list {
+    padding-inline: 2rem;
+}
+
+.tool-list-title {
+    color: white;
+    padding-left: 1.5rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+
+.my-tools-img {
+    width: 40%; 
 }

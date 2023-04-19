@@ -105,7 +105,7 @@ export default {
                 dismissible: true,
                 pauseOnHover: true,
                 duration: 2000,
-                position: 'top-center',
+                position: 'center',
                 animate: { in: 'fadeIn', out: 'fadeOut' },
             })
         }
