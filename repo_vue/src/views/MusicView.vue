@@ -12,7 +12,7 @@
       </div>
       <div>
         <!-- show this if no songs have been playing -->
-        <h3 v-if="$store.state.currentTrackPlaying === null" style="padding: 1rem; font-size: 16px !important;" class="is-size-5 has-text-warning">
+        <h3 v-if="$store.state.currentTrackPlaying === null" class="click-on-song-text has-text-warning">
           {{$t('musicview.clicktohearsample')}}
         </h3>
       </div>
