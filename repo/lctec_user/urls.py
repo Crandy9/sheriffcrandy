@@ -18,6 +18,7 @@ urlpatterns = [
     path('send-password-reset-link/', views.send_password_reset_link),
     path('reset-user-password/', views.reset_password),
     path('get-user-account-data/', views.get_user_account_data),
-    path('update-user-account-data/', views.update_user_account_data)
+    path('update-user-account-data/', views.update_user_account_data),
+    path('delete-user-account-data/', views.delete_user_account_data)
 ] 
 
