@@ -118,7 +118,9 @@
     "deleteaccount": "Delete Account",
     "areyousureyouwanttodelete": "Are you sure you want to delete your account? This action cannot be undone.",
     "canceldeleteaccount": "Cancel",
-    "editaccount": "Edit account information"
+    "editaccount": "Edit account information",
+    "accountupdated": "Account successfully updated!",
+    "accountdeleted": "Your account was successfully deleted."
   },
 
   "forgotpasswordview": {

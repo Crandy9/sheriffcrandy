@@ -112,7 +112,9 @@
         "deleteaccount": "アカウント削除",
         "areyousureyouwanttodelete": "本当にアカウントを削除しますか？この操作は元に戻せません。",
         "canceldeleteaccount": "キャンセル",
-        "editaccount": "アカウント情報を編集する"
+        "editaccount": "アカウント情報を編集する",
+        "accountupdated": "アカウントの更新が完了しました！",
+        "accountdeleted": "アカウントを削除しました。"
 
     },
 
