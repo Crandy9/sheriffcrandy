@@ -24,12 +24,15 @@
 
 
 .edit-account-button {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    margin-left: 3rem;
+    margin-right: auto;
     margin-bottom: 1rem;
     background-color: rgb(119, 51, 128);
     color: rgb(255, 255, 255);
     font-size: 14px;
+    margin-left: 29%; /* Add this line to move the div to the left by 8rem */
 }
 
 .edit-account-button:hover {
@@ -53,6 +56,14 @@
     .my-account-button-container {
         gap: 1rem;
     }
+    .edit-account-button {
+        margin-left: auto !important;
+        margin-bottom: 1rem;
+        background-color: rgb(119, 51, 128);
+        color: rgb(255, 255, 255);
+        font-size: 14px;
+    }
+
 }
 
 .update-account-button {
