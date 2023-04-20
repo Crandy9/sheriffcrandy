@@ -849,7 +849,10 @@ export default {
 
       await axios.get(process.env.VUE_APP_GET_TRACK_ORDERS_URL, {headers: { 'Authorization': `Token ${this.$store.state.sf_auth_bearer}`}})
         .then(response => {
+
+          // this user hasn't purchased any tracks
           if (response.data.length === 0) {
+            return
           }
           else {
             this.$store.commit('populatePurchasedTrackArray', response.data)
@@ -872,6 +875,8 @@ export default {
       await axios.get(process.env.VUE_APP_TRACKS_API_URL)
         .then(response => {
           this.tracks = response.data
+
+          console.log(JSON.stringify(this.tracks))
           // set playlists
           this.populatePlaylist();
         })

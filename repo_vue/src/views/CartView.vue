@@ -22,6 +22,9 @@
                 <!-- track/flp title -->
                 <h2 class="my-item-name" v-if="item.title">{{ item.title }} ( {{$t('cartview.wavfile')}} )</h2>
                 <h2 class="my-item-name" v-else>{{ item.flp_name }} ( {{$t('cartview.zipfile')}} )</h2>
+                <p v-if="item.title" class="my-cart-item-desc">
+                  {{ item.get_track_duration }}
+                </p>
                 <div v-if="item.title" class="my-cart-item-desc">
                   Track download
                 </div>

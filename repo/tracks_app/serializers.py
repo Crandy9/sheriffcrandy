@@ -13,12 +13,14 @@ class TrackSerializer(serializers.ModelSerializer):
         # will be shown in API at DOMAIN/api/v1/latest-tracks/
         fields = (
             "id",
-            "track",
+            "opus_track",
+            "wav_track",
             "title",
             "description",
             "usd_price",
             "jpy_price",         
-            "get_track",
+            "get_opus_track",
+            "get_wav_track",
             "get_sample",
             "get_cover_art",
             "is_free",
@@ -33,10 +35,12 @@ class GetPurchasedTrackSerializer(serializers.ModelSerializer):
         # will be shown in API at DOMAIN/api/v1/latest-tracks/
         fields = (
             "id",
-            "track",
+            "opus_track",
+            "wav_track",         
             "title",
             "description",      
-            "get_track",
+            "get_opus_track",
+            "get_wav_track",
             "get_cover_art",
             "get_track_duration",
         )

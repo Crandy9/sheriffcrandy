@@ -70,7 +70,7 @@ class OrderFlpItem(models.Model):
 # Same model for tracks
 class OrderTrackItem(models.Model):
     order = models.ForeignKey(Order, related_name='track_items', on_delete=models.CASCADE)
-    track = models.ForeignKey(Track, related_name='track_items', on_delete=models.CASCADE)
+    track = models.ForeignKey(Track, related_name='track_items', on_delete=models.CASCADE, default=None)
     date_order_created = models.DateTimeField(auto_now=True)
 
     class Meta:

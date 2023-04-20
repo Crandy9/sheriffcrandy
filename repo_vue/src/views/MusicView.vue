@@ -1048,9 +1048,13 @@ export default {
       this.$store.state.downloadType = 'fromMusicView'; 
       var index = this.tracks.findIndex(x => x.id === id);
       const track_obj = {
-        track: this.tracks[index].track,
+        track: this.tracks[index].wav_track,
         title: this.tracks[index].title
       }
+      console.log(this.tracks[index].wav_track)
+      console.log(this.tracks[index].title)
+
+      console.log(JSON.stringify(track_obj))
 
       this.$store.state.downloadableItems = []
       this.$store.state.downloadableItems.push(track_obj)

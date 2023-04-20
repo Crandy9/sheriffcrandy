@@ -72,7 +72,7 @@ def createZip(fileList):
 @permission_classes([permissions.IsAuthenticated])
 # process order but don't make stripe charges
 def freeDownload(request):
-
+        
     flp_dict = request.data
     track_dict = copy.deepcopy(flp_dict)
 
@@ -87,9 +87,10 @@ def freeDownload(request):
         pass
     else:
         print('\n\nProcessing free Tracks\n\n')
+        print('\n\ntrack_dict\n\n' + str(track_dict))
         # process track_dict
         track_dict_serializer = OrderTrackSerializer(data=track_dict)
-        
+        print('\n\n' + str(track_dict_serializer.is_valid()) + '\n\n')
         if track_dict_serializer.is_valid():
 
             # if there are free flps to process as well it is a multifile download
@@ -155,6 +156,9 @@ def freeDownload(request):
                 print('\n' + str(track_dict_serializer) + '\n')
                 # only return if there are no flps to process
                 return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print('\n\ntrack_dict_serializer was invalid')
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     # don't attempt to create serializer for flps if none exists
     if 'no_flps' in str(flp_dict):

@@ -51,6 +51,9 @@ SHERIFFCRANDY-
 ```
 
 
+- install ffmpeg for audio file processing in linux VPS:
+sudo apt-get install ffmpeg
+
  Django setup:
 
 - make dir on local machine where this project will be located
@@ -66,7 +69,6 @@ python3 -m venv env
 . env/bin/activate (you'll see '(env)' on the left-most side the terminal signature when activated)
 
 - Once your env is activated, install Django and other dependencies:
-
 
 pip install django (the backend framework)
 pip install django-rest-framework (creating the backend API, creates djangorestframework dir as well)
