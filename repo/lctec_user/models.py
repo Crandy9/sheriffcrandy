@@ -13,7 +13,6 @@ class Lctec_CustomUserManager(BaseUserManager):
     # first/lastname, favorite color, etc. will be held in **extra_fields param
     def create_user(self, email, username, password, **extra_fields):
         
-        print('\n\n\nCREATING USER \n\n\n')
         if not email:
             raise ValueError("Email must be provided")
         if not username:

@@ -13,7 +13,6 @@ class TracksList(APIView):
 
         tracks = Track.objects.all()
 
-        print(str(tracks))
         # convert these objects into JSON. Pass in tracks and set many=True because we have more than one obj
         serializer = TrackSerializer(tracks, many=True)
         return Response(serializer.data)

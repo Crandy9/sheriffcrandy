@@ -33,36 +33,28 @@ import zipfile
 # sample: https://stackoverflow.com/questions/12881294/django-create-a-zip-of-multiple-files-and-make-it-downloadable
 # https://www.youtube.com/watch?v=6HjHPvmwiSs
 def createZip(fileList):
-    print('\n\nflag\n\n')
     list_of_files = fileList
     tmp_path = '/tmp/'
     zip_file = zipfile.ZipFile(tmp_path + 'sheriff_crandy_downloadables.zip', 'w')
     # loop through list
     for file in list_of_files:
-        print('\nPrinting file in list:\n' + str(file) + '\n')
         # for flps
         if file.endswith('.zip'):
-            print('\nCOMPRESSING FLP FILE\n')
             # get the filename only
             fdir, fname = os.path.split(file)
-            print('\FLP FILE NAME fname: ' + str(fname))
             try:
                 zip_file.write(str(file), str(fname), compress_type= zipfile.ZIP_DEFLATED)
-                print('\n\nSUCCESSFULLY WROTE FLP FILE\n\n')
             except:
-                 print('\n\nCOULDNT WRITE FLP FILE\n\n')
+                 return
 
         # for tracks
         if file.endswith('.wav'):
-            print('\nCOMPRESSING WAV FILE\n')
             # get the filename only
             fdir, fname = os.path.split(file)
-            print('\nWAV FILE NAME fname: ' + str(fname))
             try:
                 zip_file.write(str(file), str(fname), compress_type= zipfile.ZIP_DEFLATED)
-                print('\n\nSUCCESSFULLY WROTE TRACK FILE\n\n')
             except:
-                print('\n\nCOULDNT WRITE TRACK FILE\n\n')
+                return
     zip_file.close()
     return (tmp_path + 'sheriff_crandy_downloadables.zip')
 
@@ -83,24 +75,18 @@ def freeDownload(request):
     
     # don't attempt to create serializer for tracks if none exists
     if 'no_tracks' in str(track_dict):
-        print('\n\nNo free tracks to process\n\n')
         pass
     else:
-        print('\n\nProcessing free Tracks\n\n')
-        print('\n\ntrack_dict\n\n' + str(track_dict))
         # process track_dict
         track_dict_serializer = OrderTrackSerializer(data=track_dict)
-        print('\n\n' + str(track_dict_serializer.is_valid()) + '\n\n')
         if track_dict_serializer.is_valid():
 
             # if there are free flps to process as well it is a multifile download
             try:
                 if not 'no_flps' in str(flp_dict):
-                    print('\n free flps need to be processed as well \n')
                     pass
                 # else if there are only free tracks to process, create the Stripe charge and save the serializer
                 else:
-                    print('\nfree tracks only download \n')
                     
                     # create a list of tracks to return to frontend
                     freedownloadTracksList = []
@@ -125,47 +111,34 @@ def freeDownload(request):
 
                             # returns the absolute path of the zipfile
                             zip = createZip(freeTracksForZip)
-                            print('\nzip file path:\n' + str(zip) + '\n')
                             # open this zip file and read it
                             with open(zip, 'rb') as f:
                                 file_data = f.read()
                             response = HttpResponse(file_data, content_type='application/zip, application/octet-stream')
                             response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
-                            print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                             # saving OrderFlpSerializer
                             track_dict_serializer.save(user=request.user, free_download=True)
                             os.remove(zip)
                         except:
-                            print('\n\nIn freeDownload method, multiple free tracks only. Failed to open zip file as attachment response to axios frontend\n\n')
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
 
                         return response
 
                     else:
                         # only return here if there are no flps to process
-                        print('\nReturning single free track wav file\n')
                         track_dict_serializer.save(user=request.user, free_download=True)
                         return Response(trackDownloadSerializer.data, status=status.HTTP_201_CREATED)
 
             except Exception:
-                print('something went wrong with track serializer.save')
-                print('here are the track errors')
-                print(str(track_dict_serializer.errors))
-                print(track_dict_serializer.errors)
-                print('here is the track track_dict_serializer')
-                print('\n' + str(track_dict_serializer) + '\n')
                 # only return if there are no flps to process
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            print('\n\ntrack_dict_serializer was invalid')
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     # don't attempt to create serializer for flps if none exists
     if 'no_flps' in str(flp_dict):
-        print('\n\nNo free flps to process\n\n')
         pass
     else:
-        print('\n\nProcessing free Flps\n\n')
         # process flp_dict
         flp_dict_serializer = OrderFlpSerializer(data=flp_dict)
 
@@ -173,7 +146,6 @@ def freeDownload(request):
             # if there are tracks and flps to process, process them
             try:
                 if not 'no_tracks' in str(track_dict):
-                    print('\nFree tracks and free flps processed together\n')
                     freeDownloadedFlpsList = []
                     freedownloadTracksList = []
                     # increment both model items
@@ -188,7 +160,6 @@ def freeDownload(request):
                         freedownloadTracksList.append(my_track.pk)
                         my_track.save()
                     # pass zip file containing all free downloaded items
-                    print('\nReturning zip file containing multiple free flps and tracks \n')
                     try:
                         tracksAndFlpsForZip = []
                         for item in freeDownloadedFlpsList:
@@ -199,25 +170,20 @@ def freeDownload(request):
                             tracksAndFlpsForZip.append(item.flp_zip.path)
                         # returns the absolute path of the zipfile
                         zip = createZip(tracksAndFlpsForZip)
-                        print('\nzip file path:\n' + str(zip) + '\n')
                         # open this zip file and read it
                         with open(zip, 'rb') as f:
                             file_data = f.read()
                         response = HttpResponse(file_data, content_type='application/zip, application/octet-stream')
                         response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
-                        print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                         # saving OrderFlpSerializer
                         flp_dict_serializer.save(user=request.user, free_download=True)
                         track_dict_serializer.save(user=request.user, free_download=True)
                         os.remove(zip)
                     except:
-                        print('\n\nIn freeDownload method, multiple free tracks and free flps. Failed to open zip file as attachment response to axios frontend\n\n')
                         response = HttpResponseNotFound('<h1>File not exist</h1>')
-                    print('\n\nreturning zip file as attachment response to axios frontend\n\n')
 
                     return response
                 else:
-                    print('\nfree flps only\n')
                     
                     # create a list of tracks to return to frontend
                     freeDownloadedFlpsList = []
@@ -241,34 +207,23 @@ def freeDownload(request):
 
                             # returns the absolute path of the zipfile
                             zip = createZip(freeFlpsForZip)
-                            print('\nzip file path:\n' + str(zip) + '\n')
                             # open this zip file and read it
                             with open(zip, 'rb') as f:
                                 file_data = f.read()
                             response = HttpResponse(file_data, content_type='application/zip, application/octet-stream')
                             response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
-                            print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                             # saving OrderFlpSerializer
                             flp_dict_serializer.save(user=request.user, free_download=True)
                             os.remove(zip)
                         except:
-                            print('\n\nIn freeDownload method, multiple free flps only. Failed to open zip file as attachment response to axios frontend\n\n')
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
-                        print('\n\nreturning zip file as attachment response to axios frontend\n\n')
 
                         return response
                     else:
                         # pass this to frontend if everything was ok
                         flp_dict_serializer.save(user=request.user, free_download=True)
-                        print('\rReturn a free single flp zip file\n')
                         return Response(flpDownloadSerializer.data, status=status.HTTP_201_CREATED)
             except Exception:
-                print('something went wrong with flp_dict_serializer.save')
-                print('here are the track errors')
-                print(str(flp_dict_serializer.errors))
-                print(flp_dict_serializer.errors)
-                print('here is the track flp_dict_serializer')
-                print('\n' + str(flp_dict_serializer) + '\n')
                 return Response(status=status.HTTP_400_BAD_REQUEST)
     
         # if something is wrong with flp_dict_serializer
@@ -288,16 +243,11 @@ def checkout(request):
     # track_amountStripeWillCharge = 0
     TOTAL_USD_PAID = float(str(request.data.pop('usd_paid_amount')).strip(' "'))
     TOTAL_JPY_PAID = int(str(request.data.pop('jpy_paid_amount')).strip(' "'))
-    print('TOTAL_USD_PAID: ' + str(TOTAL_USD_PAID) + ' ' + str(type(TOTAL_USD_PAID)))
-    print('TOTAL_JPY_PAID: ' + str(TOTAL_JPY_PAID) + ' ' + str(type(TOTAL_JPY_PAID)))
-
     # check if this is a usd or jpy purchase
     if TOTAL_JPY_PAID > 1:
         isUsd = False
-        print('this is a jpy purchase')
     else:
         isUsd = True
-        print('this is a usd purchase')
 
     flp_dict = request.data
     track_dict = copy.deepcopy(flp_dict)
@@ -307,14 +257,10 @@ def checkout(request):
     flp_dict.pop('track_items') 
     track_dict.pop('flp_items') 
     
-    print(str(flp_dict))
-    print(str(track_dict))
     # don't attempt to create serializer for tracks if none exists
     if 'no_tracks' in str(track_dict):
-        print('\n\nNo purchased tracks to process\n\n')
         pass
     else:
-        print('\n\nProcessing purchased Tracks\n\n')
         # process track_dict
         track_dict_serializer = OrderTrackSerializer(data=track_dict)
         
@@ -323,11 +269,9 @@ def checkout(request):
             # if there are flps to process, don't create stripe charge or return any data yet
             try:
                 if not 'no_flps' in str(flp_dict):
-                    print('\npurchased flps need to be processed as well \n')
                     pass
                 # else if there are only tracks to process, create the Stripe charge and save the serializer
                 else:
-                    print('\nthere are no purchased flps to process \n')
                     stripe.api_key = settings.STRIPE_SK
                     charge = stripe.Charge.create(
                         # if it's usd, stripe takes amount in cents, otherwise leave it whole number for JPY
@@ -354,58 +298,39 @@ def checkout(request):
 
                     # check for multiple files
                     if len(purchasedTracksList) > 1:
-                        print('\nlen(purchasedTracksList) > 1 is true\n')
-                        print('\npurchasedTracksList:\n' + str(purchasedTracksList))
                         try:
-                            print('\nIn try block\n')
                             purchasedTracksForZip = []
                             for item in tracksForDownload:
-                                print('\nIn for loop iterating over purchasedTracksList\n')
                                 # gets the absolute path
                                 purchasedTracksForZip.append(item.track.path)
-                            print('\nout of for loop\n')
-                            print('\nattempting to zip files. Calling createZip method\n')
                             # returns the absolute path of the zipfile
                             zip = createZip(purchasedTracksForZip)
-                            print('\nzip file path:\n' + str(zip) + '\n')
                             # open this zip file and read it
                             with open(zip, 'rb') as f:
                                 file_data = f.read()
                             response = HttpResponse(file_data, content_type='application/zip, application/octet-stream')
                             response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
-                            print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                             # saving track_dict_serializer
                             track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                            
                             os.remove(zip)
                         except:
-                            print('\n\nIn checkout method, multiple tracks (paid only, or free and paid) only. Failed to open zip file as attachment response to axios frontend\n\n')
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
-                        print('\n\nreturning zip file as attachment response to axios frontend\n\n')
 
                         return response
                     else:
                         # saving track_dict_serializer
                         track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)      
                         # only return here if there are no flps to process
-                        print('\nReturning a single wav track file\n')
                         return Response(trackDownloadSerializer.data, status=status.HTTP_201_CREATED)
 
             except Exception:
-                print('something went wrong with track serializer.save')
-                print('here are the track errors')
-                print(str(track_dict_serializer.errors))
-                print(track_dict_serializer.errors)
-                print('here is the track track_dict_serializer')
-                print('\n' + str(track_dict_serializer) + '\n')
                 # only return if there are no flps to process
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
     # don't attempt to create serializer for flps if none exists
     if 'no_flps' in str(flp_dict):
-        print('\n\nNo flps to process\n\n')
         pass
     else:
-        print('\n\nProcessing Flps\n\n')
         # process flp_dict
         flp_dict_serializer = OrderFlpSerializer(data=flp_dict)
     
@@ -414,7 +339,6 @@ def checkout(request):
             # if there are tracks and flps to process, process them
             try:
                 if not 'no_tracks' in str(track_dict):
-                    print('\nPaid tracks to be processed along with flps\n')
                     stripe.api_key = settings.STRIPE_SK
                     charge = stripe.Charge.create(
                         # if it's usd, stripe takes amount in cents, otherwise leave it whole number for JPY
@@ -426,66 +350,50 @@ def checkout(request):
                         source=flp_dict_serializer.validated_data['stripe_token']
                     )
 
-                    print('Stripe Charge completed')
                     purchasedTracksList = []
                     purchasedFlpList = []
                     # increment both model items
                     for item in flp_dict_serializer.validated_data['flp_items']:
-                        print('\nin flp for loop: ' + str(item) + '\n')
                         my_flp = Flp.objects.get(flp_name=item.get('flp').flp_name)
                         my_flp.downloads += 1
                         purchasedFlpList.append(my_flp.pk)
                         my_flp.save()
                     # grab a list of all flps and serialize them
                     flpsForDownload = Flp.objects.filter(pk__in=purchasedFlpList)
-                    print('\nlist of flps to be zipped\n')
-                    print('\n' + str(flpsForDownload) + '\n')
 
                     for item in track_dict_serializer.validated_data['track_items']:
-                        print('\nin track for loop: ' + str(item) + '\n')
                         my_track = Track.objects.get(title=item.get('track').title)
                         my_track.downloads += 1
                         purchasedTracksList.append(my_track.pk)
                         my_track.save()
                     # grab a list of all flps and serialize them
                     tracksForDownload = Track.objects.filter(pk__in=purchasedTracksList)
-                    print('\nlist of tracks to be zipped\n')
-                    print('\n' + str(tracksForDownload) + '\n')
 
                     # Return ZIP files of paid flp/track files
-                    print('\nReturning zip file containing multple paid flp and track files\n')
                     try:
                         purchasedTracksAndFlpsForZip = []
                         for mytracks in tracksForDownload:
-                            print('\nin tracks loop\n' + str(mytracks) + '\n')
                             # gets the absolute path
                             purchasedTracksAndFlpsForZip.append(mytracks.track.path)
                         for myflps in flpsForDownload:
-                            print('\nin flps loop\n' + str(myflps) + '\n')
                             # gets the absolute path
                             purchasedTracksAndFlpsForZip.append(myflps.flp_zip.path)
-                        print('\n\nCompleted list of purchased flps and tracks' + str(purchasedTracksAndFlpsForZip) + '\n\n')
                         # returns the absolute path of the zipfile
                         zip = createZip(purchasedTracksAndFlpsForZip)
-                        print('\nzip file path:\n' + str(zip) + '\n')
                         # open this zip file and read it
                         with open(zip, 'rb') as f:
                             file_data = f.read()
                         response = HttpResponse(file_data, content_type='application/zip, application/octet-stream')
                         response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
-                        print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                         # save both serializers but only give one order the total
                         flp_dict_serializer.save(user=request.user)
                         track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                         
                         os.remove(zip)
                     except:
-                        print('\n\nFailed to open zip file as attachment response to axios frontend\n\n')
                         response = HttpResponseNotFound('<h1>File not exist</h1>')
-                    print('\n\nreturning zip file as attachment response to axios frontend\n\n')
                     return response
                 
                 else:
-                    print('\nThis charge contains flps only\n')
                     stripe.api_key = settings.STRIPE_SK
                     charge = stripe.Charge.create(
                         # if it's usd, stripe takes amount in cents, otherwise leave it whole number for JPY
@@ -510,7 +418,6 @@ def checkout(request):
                     flpDownloadSerializer = FlpSerializer(flpsForDownload, many=True)
 
                     # pass this to frontend if everything was ok
-                    print('\nflp data processed\n')
                     if len(purchasedFlpsList) > 1:
                         try:
                             purchasedFlpsForZip = []
@@ -519,34 +426,23 @@ def checkout(request):
                                 purchasedFlpsForZip.append(item.flp_zip.path)
                             # returns the absolute path of the zipfile
                             zip = createZip(purchasedFlpsForZip)
-                            print('\nzip file path:\n' + str(zip) + '\n')
                             # open this zip file and read it
                             with open(zip, 'rb') as f:
                                 file_data = f.read()
                             response = HttpResponse(file_data, content_type='application/zip, application/octet-stream')
                             response['Content-Disposition'] = 'attachment; filename=sheriff_crandy_downloadables.zip'
-                            print('\n\nsuccessfully opened zip and set response content_type and content-disposition\n\n')
                             # save both serializers
                             # saving OrderFlpSerializer create function
                             flp_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                      
                             os.remove(zip)
                         except:
-                            print('\n\nFailed to open zip file as attachment response to axios frontend\n\n')
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
-                        print('\n\nreturning zip file as attachment response to axios frontend\n\n')
                         return response
 
                     else:
-                        print('\nReturning zip file containing a single paid flp file\n')
                         flp_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                      
                         return Response(flpDownloadSerializer.data, status=status.HTTP_201_CREATED)
             except Exception:
-                print('something went wrong with flp_dict_serializer.save')
-                print('here are the track errors')
-                print(str(flp_dict_serializer.errors))
-                print(flp_dict_serializer.errors)
-                print('here is the track track_dict_serializer')
-                print('\n' + str(flp_dict_serializer) + '\n')
                 return Response(status=status.HTTP_400_BAD_REQUEST)
     
         # if something is wrong with flp_dict_serializer

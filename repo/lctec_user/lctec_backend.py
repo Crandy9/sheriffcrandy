@@ -9,7 +9,6 @@ MyUser = get_user_model()
 class Lctec_Backend(object):
 
     def authenticate(self, request, username=None, password=None, **kwargs):
-        print("\n\nbackend accessed for login\n\n")
         try:
             # Try to fetch the user by searching the username or email field
             user = MyUser.objects.get(Q(username=username)|Q(email=username))
@@ -19,13 +18,9 @@ class Lctec_Backend(object):
                 # create token for this user:
                 # first try to get this token (if the user's token was deleted somehow)
                 try:
-                    print('\nattempting to fetch token\n')
                     token = user.auth_token
                 except:
-                    print('\ntoken not found. Creating a new token for this user\n')
                     token = Token.objects.create(user=user)
-                    print('token data type: '+str(type(token)))
-                    print(token.key)
                 
 
                 return user

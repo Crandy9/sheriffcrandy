@@ -77,8 +77,6 @@ def update_user_account_data(request):
         current_user.save()
         return Response(status=status.HTTP_200_OK)
     else:
-        print('\nserializer is not valid')
-        print('serializer errors: ' + str(serializer.errors) +  '\n')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -141,12 +139,10 @@ def send_password_reset_link(request):
     
     # get the email address from the POST request
     email = request.data.get('potential_email_address')
-    print('\nincoming email: ' + str(email) + '\n\n')
 
     # check if the email address is valid
     try:
         get_user = user.objects.get(email=email)
-        print('\nget_user: ' + str(get_user) + '\n')
 
         # creating a password reset url unique for each user
         token_generator = PasswordResetTokenGenerator()
@@ -155,7 +151,6 @@ def send_password_reset_link(request):
         # create the password reset URL using the generated token
         password_reset_url = f'{URL}{request.data.get("password_reset_url")}/{uidb64}/{token}/'
 
-        print('\npassword reset url: ' + str(password_reset_url) + '\n')
 
 
         EMAIL_ON = True
@@ -176,12 +171,10 @@ def send_password_reset_link(request):
         # just return a 200 response
         return HttpResponse(status=200)
     except user.DoesNotExist:
-        print('\nUser does not exist\n')
         # handle the case where the user does not exist
         return Response({'error': 'User does not exist'}, status=200)
     
     except Exception as e:
-        print('exception:', e)
         return Response({'error': 'Unknown error occurred'}, status=500)
 
 
@@ -189,7 +182,6 @@ def send_password_reset_link(request):
 @api_view(['GET'])
 def get_user_device(request):
     user_agent = request.META.get('HTTP_USER_AGENT', None)    
-    print('\nuser_agent: ' + str(user_agent) + '\n')
     # do something with user_ip
     return Response({'message': 'success'})
 

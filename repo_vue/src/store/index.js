@@ -359,7 +359,7 @@ export default createStore({
                 // set currentSrc to be either a sample or the full length song
                 // if this current source is a purchased track or free, show full song details
                 if(state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-                  state.currentSrc = getSrc.get_opus_track
+                  state.currentSrc = getSrc.get_track
                   state.songLength = getSrc.get_track_duration
                 }
                 else {
@@ -409,7 +409,7 @@ export default createStore({
         // set currentSrc to be either a sample or the full length song
         // check if this song was purchased by user
         if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-          state.currentSrc = getSrc.get_opus_track
+          state.currentSrc = getSrc.get_track
           state.songLength = getSrc.get_track_duration
         }
         else {
@@ -454,7 +454,7 @@ export default createStore({
       // set currentSrc to be either a sample or the full length song
       // if this current source is a purchased track or free, show full song details
       if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-        state.currentSrc = getSrc.get_opus_track
+        state.currentSrc = getSrc.get_track
         state.songLength = getSrc.get_track_duration
       }
       else {
@@ -524,7 +524,7 @@ export default createStore({
         // set currentSrc to be either a sample or the full length song
         // if this current source is a purchased track or free, show full song details
         if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-          state.currentSrc = getSrc.get_opus_track
+          state.currentSrc = getSrc.get_track
           state.songLength = getSrc.get_track_duration
         }
         else {
@@ -554,7 +554,7 @@ export default createStore({
         // set currentSrc to be either a sample or the full length song
         // if this current source is a purchased track or free, show full song details
         if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-          state.currentSrc = getSrc.get_opus_track
+          state.currentSrc = getSrc.get_track
           state.songLength = getSrc.get_track_duration
         }
         else {
@@ -601,7 +601,7 @@ export default createStore({
         // set currentSrc to be either a sample or the full length song
         // if this current source is a purchased track or free, show full song details
         if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-          state.currentSrc = getSrc.get_opus_track
+          state.currentSrc = getSrc.get_track
           state.songLength = getSrc.get_track_duration
         }
         else {
@@ -668,7 +668,7 @@ export default createStore({
         // set currentSrc to be either a sample or the full length song
         // if this current source is a purchased track or free, show full song details
         if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-          state.currentSrc = getSrc.get_opus_track
+          state.currentSrc = getSrc.get_track
           state.songLength = getSrc.get_track_duration
         }
         else {
@@ -706,7 +706,7 @@ export default createStore({
           // set currentSrc to be either a sample or the full length song
           // if this current source is a purchased track or free, show full song details
           if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-            state.currentSrc = getSrc.get_opus_track
+            state.currentSrc = getSrc.get_track
             state.songLength = getSrc.get_track_duration
           }
           else {
@@ -747,7 +747,7 @@ export default createStore({
           // set currentSrc to be either a sample or the full length song
           // if this current source is a purchased track or free, show full song details
           if (state.purchasedTracksList.find((t) => t.id === getSrc.id) || getSrc.is_free) {
-            state.currentSrc = getSrc.get_opus_track
+            state.currentSrc = getSrc.get_track
             state.songLength = getSrc.get_track_duration
           }
           else {

@@ -32,11 +32,11 @@ class Track(models.Model):
     # blank=True is for forms (like admin page)
     # null=True is for null values in DB
     # uploads to /media/tracks dir
-    wav_track = models.FileField(upload_to='wav_tracks', blank=True, null=True)
+    track = models.FileField(upload_to='tracks', blank=True, null=True)
     opus_track = models.FileField(upload_to='opus_tracks', blank=True, null=True)
     # sample (approx 30 seconds preview of song to prevent free downloads)
     # uploads to /media/samples dir
-    sample = models.FileField(upload_to='samples/', blank=True, null=True)
+    sample = models.FileField(upload_to='samples', blank=True, null=True)
     # thumbail for audio track art
     # uploads to /media/cover_art dir
     # cover_art = models.ImageField(upload_to='cover_art', blank=True, null=True)
@@ -57,83 +57,8 @@ class Track(models.Model):
         ordering = ('title',)
 
 
-    # Have user upload a wav file
-    # make a copy of it and convert it to opus for streaming
-    # when someone purchases the track or downloads it
-    # convert it back to wav.
-    # doing it this way to save data as Opus file size is a fraction of WAV
-    def save(self, *args, **kwargs):
-
-        if self.wav_track:
-
-            if self.opus_track:
-                return
-            else:
-
-                # Get the uploaded .wav file's path 
-                #  prints out: /media/file.wav (missing required 'wav_tracks' directory)
-                wav_file_path = self.wav_track.path
-                print('\n\nwav_file_path ' + str(os.path) + '\n\n')
-
-                # get the wav file
-                wav_file_name = os.path.basename(wav_file_path)
-                print('\n\nwav_file_name ' + str(wav_file_name) + '\n\n')
-
-                wav_file_dir = os.path.join(settings.MEDIA_ROOT, 'wav_tracks')
-                print('\n\nwav_file_dir ' + str(wav_file_dir) + '\n\n')
-
-                opus_file_dir = os.path.join(settings.MEDIA_ROOT, 'opus_tracks')
-                print('\n\nopus_file_dir ' + str(opus_file_dir) + '\n\n')
 
 
-                # Create the wav and opus directories if they do not exist
-                os.makedirs(wav_file_dir, exist_ok=True)
-                os.makedirs(opus_file_dir, exist_ok=True)
-                super(Track, self).save(*args, **kwargs)
-
-                # create a full path of the original wav file
-                og_wav_file_full_path = os.path.join(wav_file_dir, wav_file_name)
-                print('\n\og_wav_file_full_path ' + str(og_wav_file_full_path) + '\n\n')
-
-
-                # Make a tmp file directory for the copy wav file
-                tmp_wav_copy_path = os.path.join(wav_file_dir, 'copy_' + wav_file_name)
-                print('\n\tmp_wav_copy_path ' + str(tmp_wav_copy_path) + '\n\n')
-
-
-                # copy the wav file
-                shutil.copy(og_wav_file_full_path, tmp_wav_copy_path)
-
-                # Convert the wav copy to opus
-                opus_file_name = os.path.splitext(wav_file_name)[0] + '.opus'
-                print('\n\nopus_file_name ' + str(opus_file_name) + '\n\n')
-
-                opus_file_path = os.path.join(opus_file_dir, opus_file_name)
-                print('\n\nopus_file_path ' + str(tmp_wav_copy_path) + '\n\n')
-
-                '''
-                ffmpeg: cli executable
-                -i: input file
-                '-c:a': codec:audio. Specify audio codec
-                'libopus': .opus audio codec format
-                '''
-                command = ['ffmpeg', '-i', tmp_wav_copy_path, '-c:a', 'libopus', opus_file_path]
-                result = subprocess.run(command, capture_output=True, text=True)
-
-                # Print the output of the subprocess
-                print(result.stdout)
-                print(result.stderr)
-                # Delete the wav copy
-                os.remove(tmp_wav_copy_path)
-
-                # Set the opus track file field
-                self.opus_track.name = os.path.join('opus_tracks', opus_file_name)
-                print('\n\nopus_file_path ' + str(tmp_wav_copy_path) + '\n\n')
-
-        super(Track, self).save(*args, **kwargs)
-
-
-    # string representation of object in Admin page
     def __str__(self):
         if self.is_free is True:
             return '(free) ' + self.title + ' - Downloads: ' + str(self.downloads)
@@ -145,28 +70,20 @@ class Track(models.Model):
         return f'/{self.slug}/'
 
     # get all static files (images, audio tracks, etc) for frontend
-    def get_wav_track(self):
-        if self.wav_track:
-            return settings.env('DOMAIN') + self.wav_track.url
+    def get_track(self):
+        if self.track:
+            return settings.env('DOMAIN') + self.track.url
         return ''
     
-    def get_opus_track(self):
-        if self.opus_track:
-            return settings.env('DOMAIN') + self.opus_track.url
-        return ''
-
     def get_sample(self):
         # if this sample is already created
         if self.sample:
             return settings.env('DOMAIN') + self.sample.url
         # else if the song is uploaded but the sample hasn't been created, create it and save it to DB
         else:
-            if self.wav_track:
-                print('\n\nself.wav_track: ' + str(self.wav_track) + '\n\n')
-                self.sample = self.make_sample(self.wav_track)
-                print('\n\nself.sample: ' + str(self.sample) + '\n\n')
+            if self.track:
+                self.sample = self.make_sample(self.track)
                 self.save()
-                print('\n\nself.sample.url: ' + str(self.sample.url) + '\n\n')
                 return settings.env('DOMAIN') + self.sample.url
         # else if the track isn't created, return an empty string
         return ''
@@ -183,24 +100,25 @@ class Track(models.Model):
         if self.song_dur:
             return self.song_dur
         else:
-            if self.wav_track:
-                self.song_dur = self.track_duration(self.wav_track)
+            if self.track:
+                self.song_dur = self.track_duration(self.track)
                 self.save()
                 return self.song_dur
         return ''
-    
+
+
     # generate the 30 second splice sample
     # audio file product model check out pydub https://github.com/jiaaro/pydub
     # also used https://hvitis.dev/how-to-convert-audio-files-with-python-and-django
-    def make_sample(self, wav_track):
+    def make_sample(self, track):
         # make a new temp path var to temporarily store the sample
         tmp_path = '/tmp/'
         # track dir
-        song_full_path = str(wav_track)
+        song_full_path = str(track)
         song_file = song_full_path.replace('tracks/','')
         song_name = song_file.replace('.wav','')
 
-        full_song = AudioSegment.from_wav(wav_track)
+        full_song = AudioSegment.from_wav(track)
 
         # 50 seconds (in miliseconds)
         if full_song.duration_seconds > 50:
@@ -219,10 +137,8 @@ class Track(models.Model):
         # export to /tmp path
         try:
             faded_sample.export(sample_path, format="mp3")
-            print("export to tmp dir OK")
         # couldn't export file
         except:
-            print("export to tmp dir FAILED")
             return ''
 
         # now open that sample as a file object so Django can read it
@@ -231,10 +147,8 @@ class Track(models.Model):
                     file=open(sample_path, 'rb'),
                     name=Path(sample_path)
                 )
-            print("tmp file opened OK")
         # TODO when file couldn't be opened
         except:
-            print("tmp file opened FAIL")
             return ''
         # don't know if I need these lines
         converted_sample.name = Path(sample_path).name
@@ -247,13 +161,12 @@ class Track(models.Model):
         except:
             return ''
         
-        print('n\nconverted_sample: ' + str(converted_sample) + '\n\n')
 
-        
         return converted_sample
     
-    def track_duration(self, wav_track):
-        full_song = AudioSegment.from_wav(wav_track)
+
+    def track_duration(self, track):
+        full_song = AudioSegment.from_wav(track)
         song_length = full_song.duration_seconds
 
         # convert song length to human-readable
