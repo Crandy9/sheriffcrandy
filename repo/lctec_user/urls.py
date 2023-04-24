@@ -19,6 +19,8 @@ urlpatterns = [
     path('reset-user-password/', views.reset_password),
     path('get-user-account-data/', views.get_user_account_data),
     path('update-user-account-data/', views.update_user_account_data),
-    path('delete-user-account-data/', views.delete_user_account_data)
+    path('delete-user-account-data/', views.delete_user_account_data),
+    path('get-user-pfp/', views.get_user_pfp),
+    path('save-user-pfp/', views.save_user_pfp)
 ] 
 
