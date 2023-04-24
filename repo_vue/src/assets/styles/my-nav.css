@@ -39,6 +39,36 @@
     display: none;
 }
 
+/* burger is replaced by user's pfp if logged in */
+.show-pfp {
+
+    z-index: 9999;
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    border: 2px solid rgb(0, 238, 255); 
+    height: 50px;
+    width: 50px;
+    border-radius: 9999px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    text-align: center;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+/* pfp for mobile */
+@media screen and (max-width: 1024px) {
+    
+    .show-pfp {
+        top: 1.5rem;
+        right: 2rem;
+    }
+}
+
 .my-burger {
     z-index: 9999;
     position: absolute !important;

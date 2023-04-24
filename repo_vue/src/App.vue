@@ -20,14 +20,27 @@
           <!-- cart item count -->
           <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
         </a>
-        <a 
+        <!-- if user is logged in, show pfp, not hamburger menu -->
+        <a v-if="$store.state.profile_pic_background_img && $store.state.isAuthenticated == true"
+            @click="hamburgerClicked = !hamburgerClicked"
+            role="button" 
+            class="show-pfp" 
+            aria-label="menu" 
+            aria-expanded="false" 
+            data-target="my-navbar-menu" 
+            v-bind:class="{'is-active':hamburgerClicked}"
+            :style="{ backgroundImage: `url(${$store.state.profile_pic_background_img})` }">
+
+        </a>
+        <a v-else
             @click="hamburgerClicked = !hamburgerClicked"
             role="button" 
             class="my-burger" 
             aria-label="menu" 
             aria-expanded="false" 
             data-target="my-navbar-menu" 
-            v-bind:class="{'is-active':hamburgerClicked}">
+            v-bind:class="{'is-active':hamburgerClicked}"
+            >
             <!-- top stroke of hamburger button -->
             <span aria-hidden="true"></span>
             <!-- middle stroke. Uncomment for three stroke icon, leave as is for two stroke -->
@@ -876,7 +889,6 @@ export default {
         .then(response => {
           this.tracks = response.data
 
-          console.log(JSON.stringify(this.tracks))
           // set playlists
           this.populatePlaylist();
         })
