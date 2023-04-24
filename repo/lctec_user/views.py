@@ -26,6 +26,12 @@ from django.contrib.auth.tokens import default_token_generator
 from rest_framework import permissions, status
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
+# for saving profilepic
+from PIL import Image
+from django.core.files import File
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
 
 user = get_user_model()
 
@@ -33,6 +39,69 @@ user = get_user_model()
 EMAIL_ON = False
 URL = 'http://localhost:8080'
 
+
+
+
+
+# save user pfp on signup. I tried to save this in my create_user method but the 
+# image file was not available in the extra_fields param for some reason
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def save_user_pfp(request):
+
+    # Retrieve user information from request data
+    username = request.data.get('username', None)
+
+    print('\n\nuser' + str(username))
+
+    # Retrieve the user based on email or username
+    try:
+        current_user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    current_user = user.objects.get(pk=request.user.pk)
+
+    # get the img file
+    profile_pic = request.FILES.get('profile_pic', None)
+    print('\n\nprofile pic from frontend: '+str(profile_pic))
+
+    if profile_pic:
+        print('\n\n Image exists')
+        
+        profile_pic.file.seek(0)
+        # Open the uploaded image file
+        image = Image.open(BytesIO(profile_pic.read()))
+        print('\n\nimage : '+str(image))
+
+        # Convert RGBA to RGB mode if it exists
+        if image.mode == 'RGBA':
+            image = image.convert('RGB')
+
+        pfp_name = current_user.username + '_pfp'
+        print('\n\npfp_name: '+str(pfp_name))
+
+        buffer = BytesIO()
+        image.save(buffer, format='JPEG')
+        image_file = InMemoryUploadedFile(
+            buffer, None, pfp_name + '.jpg', 'image/jpeg',
+            buffer.getbuffer().nbytes, None
+        )
+        current_user.profile_pic.save(pfp_name + '.jpg', image_file)
+
+    else:
+        print('\n\n Image does not exist')    
+    
+    return Response(status=status.HTTP_200_OK)
+
+# get user pfp on login
+@api_view(['GET'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_pfp(request):
+    current_user = user.objects.get(pk=request.user.pk)
+    user_pfp_serializer = GetUserPfpSerializer(current_user)
+    return Response(user_pfp_serializer.data, status=status.HTTP_200_OK)
 
 
 # delete user account
@@ -53,7 +122,6 @@ def delete_user_account_data(request):
         return Response({'error': 'Invalid token or user'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 # update user account info
 @api_view(['POST'])
 @authentication_classes([authentication.TokenAuthentication])
@@ -67,7 +135,39 @@ def update_user_account_data(request):
     serializer = UpdateUserAccountDataSerializer(data=request.data, context={'request': request})
 
     if serializer.is_valid():
+
+        # get the img file
+        profile_pic = request.FILES.get('profile_pic', None)
+        print('\n\nprofile pic from frontend: '+str(profile_pic))
+
+        if profile_pic:
+            print('\n\n Image exists')
+            
+            profile_pic.file.seek(0)
+            # Open the uploaded image file
+            image = Image.open(BytesIO(profile_pic.read()))
+            print('\n\nimage : '+str(image))
+
+            # Convert RGBA to RGB mode if it exists
+            if image.mode == 'RGBA':
+                image = image.convert('RGB')
+
+            pfp_name = current_user.username + '_pfp'
+            print('\n\npfp_name: '+str(pfp_name))
+
+            buffer = BytesIO()
+            image.save(buffer, format='JPEG')
+            image_file = InMemoryUploadedFile(
+                buffer, None, pfp_name + '.jpg', 'image/jpeg',
+                buffer.getbuffer().nbytes, None
+            )
+            current_user.profile_pic.save(pfp_name + '.jpg', image_file)
+
+        else:
+            print('\n\n Image does not exist')
+        # save the rest of the text fields
         # Update user fields
+        # validated_data is a dictionary that holds validated data ready to be saved to db
         current_user.username = serializer.validated_data.get('username', current_user.username)
         current_user.email = serializer.validated_data.get('email', current_user.email)
         current_user.first_name = serializer.validated_data.get('first_name', current_user.first_name)
