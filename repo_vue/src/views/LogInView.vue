@@ -197,6 +197,20 @@ export default {
                                 console.log(error)
 
                             })
+                        
+                        // get user pfp if it exists
+                        axios
+                        .get(process.env.VUE_APP_GET_USER_PFP, {headers: { 'Authorization': `Token ${sf_auth_bearer}`}})
+                        .then(response => {
+                            
+                            const userdata = response.data
+                            this.$store.state.profile_pic_background_img = userdata.get_profile_pic
+
+                        })
+                        .catch(error => {
+                            console.log('could not get users profile pic')
+                            console.log(error)
+                        })
                     })
                     .catch(error => {
                         if (error.response) {
