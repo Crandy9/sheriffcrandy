@@ -214,7 +214,10 @@ export default createStore({
     showMainMusicPlayer: false,
     // list of paid tracks
     purchasedTracksList: [],
-    startTime: null
+    startTime: null,
+
+    // user profile pic
+    profile_pic_background_img: null
 
   },
   getters: {
