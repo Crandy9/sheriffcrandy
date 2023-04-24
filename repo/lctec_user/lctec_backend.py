@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
-MyUser = get_user_model()
+lctec_user = get_user_model()
 
 # called when making api attempts to authenticate users and create auth tokens
 class Lctec_Backend(object):
@@ -11,7 +11,7 @@ class Lctec_Backend(object):
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
             # Try to fetch the user by searching the username or email field
-            user = MyUser.objects.get(Q(username=username)|Q(email=username))
+            user = lctec_user.objects.get(Q(username=username)|Q(email=username))
             # if password was correct, authenticate using token auth
             if user.check_password(password):
 
@@ -24,14 +24,15 @@ class Lctec_Backend(object):
                 
 
                 return user
-        except MyUser.DoesNotExist:
+        except lctec_user.DoesNotExist:
             return None
 
     # called when saving a new model obj
     def get_user(self, user_id):
 
         try:
-            return MyUser.objects.get(pk=user_id)
-        except MyUser.DoesNotExist:
+            print('\n\ncurrent user: ' + str(lctec_user.objects.get(pk=user_id)))
+            return lctec_user.objects.get(pk=user_id)
+        except lctec_user.DoesNotExist:
             return None
         
