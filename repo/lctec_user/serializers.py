@@ -47,5 +47,16 @@ class GetUserSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
-            "favorite_color"
+            "favorite_color",
+            "get_profile_pic"
+        )
+
+# get user's pfp
+class GetUserPfpSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = Lctec_User 
+        # configure which fields we want to use in frontend. Data is a tuple
+        # will be shown in API at DOMAIN/api/v1/latest-tracks/
+        fields = (
+            "get_profile_pic",
         )
