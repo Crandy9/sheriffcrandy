@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 # import tracks and flp models for cart model
 from flps_app.models import Flp
 from tracks_app.models import Track
+from sheriff_crandy_project import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 # custom user manager
 class Lctec_CustomUserManager(BaseUserManager):
@@ -51,6 +53,7 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
     # non-req'd fields
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='pfps', blank=True, null=True)
     favorite_color = models.CharField(max_length=20, blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
@@ -81,6 +84,14 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
     @staticmethod
     def has_module_perms(app_label, **kwargs):
         return True
+    
+    # get user profile pic
+    def get_profile_pic(self):
+        if self.profile_pic:
+            print('\n\nin get_profile_pic method\n\n')
+            print('\n\nprofile pic url: ' + str(settings.env('DOMAIN')) + str(self.profile_pic.url))
+            return settings.env('DOMAIN') + self.profile_pic.url
+        return ''
 
 
 # set custom user model
