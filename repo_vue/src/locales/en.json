@@ -120,7 +120,8 @@
     "canceldeleteaccount": "Cancel",
     "editaccount": "Edit account information",
     "accountupdated": "Account successfully updated!",
-    "accountdeleted": "Your account was successfully deleted."
+    "accountdeleted": "Your account was successfully deleted.",
+    "uploadpfp": "Upload Profile Photo"
   },
 
   "forgotpasswordview": {
