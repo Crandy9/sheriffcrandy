@@ -360,9 +360,9 @@ export default {
                 axios.defaults.headers.common["Authorization"] = ""
                 localStorage.removeItem('sf_auth_bearer')
                 this.$store.commit('removeToken')
-                // empty cart (or save it for the user's web token)
                 this.$store.commit('clearCart')
                 this.$store.commit('clearPurchasedTrackList')
+                this.$store.state.profile_pic_background_img = ''
                 toast({
                     message: this.$t('myaccountview.accountdeleted'),
                     type: 'is-success',
