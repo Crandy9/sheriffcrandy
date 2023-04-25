@@ -895,31 +895,31 @@ export default {
 
       if (this.name === '') {
           this.paymentProcessing = false;
-          this.errors.nameErrors.push('The name field is missing!')
+          this.errors.nameErrors.push(this.$t('myaccountview.namefieldmissing'))
       }
       if (this.email === '') {
           this.paymentProcessing = false;
-          this.errors.emailErrors.push('The email field is missing!')
+          this.errors.emailErrors.push(this.$t('myaccountview.emailreq'))
       }
       if (this.phone === '') {
           this.paymentProcessing = false;
-          this.errors.phoneErrors.push('The phone field is missing!')
+          this.errors.phoneErrors.push(this.$t('myaccountview.phonefieldmissing'))
       }
       if (this.address1 === '') {
           this.paymentProcessing = false;
-          this.errors.address1Errors.push('The address field is missing!')
+          this.errors.address1Errors.push(this.$t('myaccountview.addressfieldmissing'))
       }
       if (this.statePref === '') {
           this.paymentProcessing = false; 
-          this.errors.statePrefErrors.push('The state field is missing!')
+          this.errors.statePrefErrors.push(this.$t('myaccountview.statefieldmissing'))
       }        
       if (this.country === '') {
           this.paymentProcessing = false;
-          this.errors.countryErrors.push('The country field is missing!')
+          this.errors.countryErrors.push(this.$t('myaccountview.countryfieldmissing'))
       }
       if (this.zipcode === '') {
           this.paymentProcessing = false;
-          this.errors.zipcodeErrors.push('The zip code field is missing!')
+          this.errors.zipcodeErrors.push(this.$t('myaccountview.zipcodefieldmissing'))
       }
 
       // if there are no form validation errors, process payment
@@ -942,7 +942,7 @@ export default {
               if (result.error) {
                   this.$store.commit('setIsLoading', false)
                   this.paymentProcessing = false
-                  this.errors.generalErrors.push('Something went wrong with Stripe. Please try again')
+                  this.errors.generalErrors.push(this.$t('cartview.stripeerror'))
                   console.log(result.error.message)
               } 
               // if there are no stripe processing errors
@@ -1006,7 +1006,7 @@ export default {
       .catch(error => {
         console.log(error)
         this.paymentProcessing = false;
-        this.errors.generalErrors.push('Something went wrong. Please try again later')
+        this.errors.generalErrors.push(this.$t('myaccountview.generror'))
       })
 
       this.$store.commit('setIsLoading', false)
@@ -1051,10 +1051,6 @@ export default {
         track: this.tracks[index].track,
         title: this.tracks[index].title
       }
-      console.log(this.tracks[index].track)
-      console.log(this.tracks[index].title)
-
-      console.log(JSON.stringify(track_obj))
 
       this.$store.state.downloadableItems = []
       this.$store.state.downloadableItems.push(track_obj)
@@ -1091,7 +1087,7 @@ export default {
       .catch(error => {
         console.log(error)
         this.paymentProcessing = false;
-        this.errors.generalErrors.push('Something went wrong. Please try again later')
+        this.errors.generalErrors.push(this.$t('myaccountview.generror'))
       })
       this.$store.commit('setIsLoading', false)
 
