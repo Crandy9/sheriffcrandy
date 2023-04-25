@@ -1,9 +1,7 @@
 # to talk to Stripe API
-from django import views
 from django.http import HttpResponse, HttpResponseNotFound
 import stripe
 from django.conf import settings
-# get custom users
 
 # drf imports
 from rest_framework import status, authentication, permissions
@@ -24,9 +22,16 @@ from tracks_app.models import *
 
 # import copy module to allow creating two dicts one for tracks and one for flps
 import copy
-
 # import modules to zip up multiple files
 import zipfile
+# send thank you email to user after purchase
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
+# can turn emails off for testing
+EMAIL_ON = True
+URL = 'http://localhost:8080'
+
 
 
 # zip up mulitple files
@@ -315,11 +320,48 @@ def checkout(request):
                             os.remove(zip)
                         except:
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
-
+                            return response
+                        
+                        music_url = f'{URL}/music'
+                        template = render_to_string('../templates/thankyou.html', {'name':request.user.first_name, 'music_url': music_url})
+                        # send thankyou email to user
+                        email = EmailMessage(
+                            # email subject title default is 'subject'
+                            'Thank you! -- ありがとうございます！',
+                            # email template default is 'body'
+                            template,
+                            settings.EMAIL_HOST_USER,
+                            # recipient list
+                            [request.user.email],
+                        )
+                        email.fail_silently=False
+                        # eonly send email if this flag is true
+                        if EMAIL_ON:
+                            email.send()
                         return response
                     else:
                         # saving track_dict_serializer
-                        track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)      
+                        track_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID) 
+
+                        music_url = f'{URL}/music'
+                        template = render_to_string('../templates/thankyou.html', {'name':request.user.first_name, 'music_url': music_url})
+                        # send thankyou email to user
+                        print('\n\nsending email\n')
+
+                        email = EmailMessage(
+                            # email subject title default is 'subject'
+                            'Thank you! -- ありがとうございます！',
+                            # email template default is 'body'
+                            template,
+                            settings.EMAIL_HOST_USER,
+                            # recipient list
+                            [request.user.email],
+                        )
+                        email.fail_silently=False
+                        # eonly send email if this flag is true
+                        if EMAIL_ON:
+                            email.send()            
+
                         # only return here if there are no flps to process
                         return Response(trackDownloadSerializer.data, status=status.HTTP_201_CREATED)
 
@@ -391,6 +433,25 @@ def checkout(request):
                         os.remove(zip)
                     except:
                         response = HttpResponseNotFound('<h1>File not exist</h1>')
+                        return response
+
+                    music_url = f'{URL}/music'
+                    template = render_to_string('../templates/thankyou.html', {'name':request.user.first_name, 'music_url': music_url})
+                    # send thankyou email to user
+                    email = EmailMessage(
+                        # email subject title default is 'subject'
+                        'Thank you! -- ありがとうございます！',
+                        # email template default is 'body'
+                        template,
+                        settings.EMAIL_HOST_USER,
+                        # recipient list
+                        [request.user.email],
+                    )
+                    email.fail_silently=False
+                    # eonly send email if this flag is true
+                    if EMAIL_ON:
+                        email.send()            
+                                        
                     return response
                 
                 else:
@@ -437,10 +498,47 @@ def checkout(request):
                             os.remove(zip)
                         except:
                             response = HttpResponseNotFound('<h1>File not exist</h1>')
+                            return response
+
+                        music_url = f'{URL}/music'
+                        template = render_to_string('../templates/thankyou.html', {'name':request.user.first_name, 'music_url': music_url})
+                        # send thankyou email to user
+                        email = EmailMessage(
+                            # email subject title default is 'subject'
+                            'Thank you! -- ありがとうございます！',
+                            # email template default is 'body'
+                            template,
+                            settings.EMAIL_HOST_USER,
+                            # recipient list
+                            [request.user.email],
+                        )
+                        email.fail_silently=False
+                        # eonly send email if this flag is true
+                        if EMAIL_ON:
+                            email.send()            
+                                                           
                         return response
 
                     else:
-                        flp_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID)                      
+                        flp_dict_serializer.save(user=request.user, usd_paid_amount=TOTAL_USD_PAID, jpy_paid_amount=TOTAL_JPY_PAID) 
+
+                        music_url = f'{URL}/music'
+                        template = render_to_string('../templates/thankyou.html', {'name':request.user.first_name, 'music_url': music_url})
+                        # send thankyou email to user
+                        email = EmailMessage(
+                            # email subject title default is 'subject'
+                            'Thank you! -- ありがとうございます！',
+                            # email template default is 'body'
+                            template,
+                            settings.EMAIL_HOST_USER,
+                            # recipient list
+                            [request.user.email],
+                        )
+                        email.fail_silently=False
+                        # eonly send email if this flag is true
+                        if EMAIL_ON:
+                            email.send()            
+                                                                           
                         return Response(flpDownloadSerializer.data, status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
