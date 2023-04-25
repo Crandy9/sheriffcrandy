@@ -31,6 +31,7 @@
                                     class="my-account-upload-pfp">
                                     <div class="my-account-pfp-placeholder">
                                         {{ $t('myaccountview.uploadpfp') }}
+                                        <i class="fas fa-camera"></i>
                                     </div>
                                 </div>
                                 <div v-else
@@ -183,11 +184,18 @@ export default {
         // set profile pic and resize it for backend
         handleFileUpload(event) {
 
+            this.errors.generalErrors = []
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif']; // List of allowed image MIME types
+
             const file = event.target.files[0];
-            console.log('File size: ' + file.size);
+
+            if (!allowedImageTypes.includes(file.type)) {
+                this.errors.generalErrors.push(this.$t('loginsignupview.invalidimagefile'))
+                return
+            }
+            this.errors.generalErrors = []
 
             if (file.size <= 2621440) {
-                console.log('Img is within size limits, resizing not reqd.');
                 const imgURL = URL.createObjectURL(file);
                 this.$store.state.profile_pic_background_img = imgURL;
                 this.profile_pic_file = file
@@ -232,7 +240,6 @@ export default {
 
                         const resizedFile = new File([blob], file.name);
                         this.profile_pic_file = resizedFile;
-                        console.log('Resized File size: ' + resizedFile.size );
 
                     }, file.type);
 
@@ -246,6 +253,7 @@ export default {
         // trigger filechooser without ugly default HTML filechooser button
         openFileInput() {
             this.$refs.fileInput.click();
+            this.formEnabled = true
         },
 
         // submit account update info 
@@ -380,7 +388,6 @@ export default {
             .then(response => {
                 this.userdata = response.data
 
-                console.log(JSON.stringify(this.userdata.get_profile_pic))
                 // populate the fields
                 this.username = this.userdata.username
                 this.email = this.userdata.email
@@ -391,7 +398,6 @@ export default {
                 })
                 .catch(error => {
                 // handle error
-                console.log(error);
             });
         }
     },

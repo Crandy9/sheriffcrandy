@@ -22,6 +22,7 @@
                                     class="my-account-upload-pfp">
                                     <div class="my-account-pfp-placeholder">
                                         {{ $t('myaccountview.uploadpfp') }}
+                                        <i class="fas fa-camera"></i>
                                     </div>
                                 </div>
                                 <div v-else
@@ -192,11 +193,18 @@ export default {
         // set profile pic and resize it for backend
         handleFileUpload(event) {
 
+            // check MIME type
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif']; // List of allowed image MIME types
+
             const file = event.target.files[0];
-            console.log('File size: ' + file.size);
+
+            if (!allowedImageTypes.includes(file.type)) {
+                this.errors.generalErrors.push(this.$t('loginsignupview.invalidimagefile'))
+                return
+            }
+            this.errors.generalErrors = []
 
             if (file.size <= 2621440) {
-                console.log('Img is within size limits, resizing not reqd.');
                 const imgURL = URL.createObjectURL(file);
                 this.$store.state.profile_pic_background_img = imgURL;
                 this.profile_pic_file = file
@@ -241,7 +249,6 @@ export default {
 
                         const resizedFile = new File([blob], file.name);
                         this.profile_pic_file = resizedFile;
-                        console.log('Resized File size: ' + resizedFile.size );
 
                     }, file.type);
 
@@ -309,7 +316,7 @@ export default {
             }
         },
 
-        async submitForm() {
+        submitForm() {
             // reset errors
             this.errors.generalErrors = []
             this.errors.usernameErrors = []
@@ -367,46 +374,25 @@ export default {
                 // keys must be same strings as model fields in backend api
                 // values can be named whatever
                 const signUpFormData = {
-                    username: this.username,
                     email: this.email,
+                    username: this.username,
+                    password: this.password,
                     first_name: this.first_name,
                     last_name: this.last_name,
+                    profile_pic: this.profile_pic_file,
                     favorite_color: this.favorite_color,
-                    password: this.password,
                 }
 
                 // send post data to backend server
                 axios
-                    .post(process.env.VUE_APP_CREATE_USERS_API_URL, signUpFormData)
-                    .then(response => {
-                        // now save the profile pic
-                        const savepfp = {
-                            profile_pic: this.profile_pic_file,
-                            username: this.username
-                        }
-                        axios.post(process.env.VUE_APP_SAVE_USER_PFP, savepfp, 
-                            // header needed to send text and file data
-                            {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                            }).then(response => {
-                                // if account was created, re-route to login 
-                            })
-                            // catch the error data, strip it down to category, and push
-                            // each error to the appropraite error array
-                            .catch(error => {
-                                if (error.response && error.response.data) {
-                                    console.log(error.response);
-                                    console.log(error.response.data);
-
-
-                                } else {
-                                    console.log('error');
-                                    // Handle other types of errors
-                                    console.log(error);
-                                }
-                            });
+                    .post(process.env.VUE_APP_CUSTOM_CREATE_USER, signUpFormData,
+                    
+                     // header needed to send text and file data
+                     {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                    }
+                    }).then(response => {
                         // add toast message
                         toast({
                             message: this.$t('modals.accountcreated'),
@@ -435,12 +421,10 @@ export default {
                                 if (property === 'username') {
                                     this.errors.usernameErrors.push(this.$t('loginsignupview.usernameexistserror'))
                                 }
-                                console.log(property)
                                 // check if username is already taken
                                 if (property === 'email') {
                                     this.errors.emailErrors.push(this.$t('loginsignupview.emailexistserror'))
                                 }
-                                console.log(property)
                             }
 
                         } else if (error.message) {
