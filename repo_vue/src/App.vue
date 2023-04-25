@@ -21,7 +21,7 @@
           <span v-if="cartTotalLength >= 1" >({{ cartTotalLength }})</span>
         </a>
         <!-- if user is logged in, show pfp, not hamburger menu -->
-        <a v-if="$store.state.profile_pic_background_img && $store.state.isAuthenticated == true"
+        <a v-if="$store.state.profile_pic_background_img !== '' && $store.state.isAuthenticated == true"
             @click="hamburgerClicked = !hamburgerClicked"
             role="button" 
             class="show-pfp" 
