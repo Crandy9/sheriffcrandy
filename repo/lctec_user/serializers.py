@@ -10,6 +10,33 @@ user = get_user_model()
 
 
 
+# creating users. Needed to accomodate profile pic uploads
+class CustomUserCreateSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = user
+        fields = ('email', 
+                  'username', 
+                  'password', 
+                  'first_name',
+                  'last_name',
+                  'profile_pic',
+                  'favorite_color')
+        extra_kwargs = {'password': {'write_only': True}}
+    
+    def create(self, validated_data):
+        profile_pic = validated_data.pop('profile_pic', None)
+        print('\n\nthis should be None')
+        print('\n\n' + str(profile_pic))
+        current_user = self.Meta.model(**validated_data)
+        print('\n\ncurrent_user')
+        print('\n\n' + str(current_user))
+        current_user.profile_pic = profile_pic
+        current_user.save()  # Save user instance after adding profile_pic
+        return current_user
+
+
+
 # for updating user account info
 class UpdateUserAccountDataSerializer(serializers.Serializer):
     username = serializers.CharField(required=False)

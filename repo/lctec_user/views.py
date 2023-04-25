@@ -31,6 +31,7 @@ from PIL import Image
 from django.core.files import File
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from rest_framework.permissions import AllowAny
 
 
 user = get_user_model()
@@ -45,54 +46,59 @@ URL = 'http://localhost:8080'
 
 # save user pfp on signup. I tried to save this in my create_user method but the 
 # image file was not available in the extra_fields param for some reason
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
-def save_user_pfp(request):
+# SaveUserProfilePicture API view
+# SaveUserProfilePicture API view
+class SaveCustomBasicUser(APIView):
+    permission_classes = [AllowAny]
 
-    # Retrieve user information from request data
-    username = request.data.get('username', None)
+    def post(self, request, *args, **kwargs):
+        serializer = CustomUserCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            profile_pic = request.FILES.get('profile_pic', None)        
+            print('\n\nprofile_pic:' + str(profile_pic) + '\n\n') 
+            if profile_pic:
+                print('\n\profile_pic is real!\n\n')
+                print('\n\n' + str(profile_pic) + '\n\n')               
+                profile_pic.file.seek(0)
+                image = Image.open(BytesIO(profile_pic.read()))
+                if image.mode == 'RGBA':
+                    image = image.convert('RGB')
+                pfp_name = serializer.validated_data['username'] + '_pfp'
+                buffer = BytesIO()
+                image.save(buffer, format='JPEG')
+                image_file = InMemoryUploadedFile(
+                    buffer, None, pfp_name + '.jpg', 'image/jpeg',
+                    buffer.getbuffer().nbytes, None
+                )
+                # Call create_user method of custom user manager to create user instance
+                user = Lctec_CustomUserManager().create_user(
+                    email=serializer.validated_data['email'],
+                    username=serializer.validated_data['username'],
+                    password=serializer.validated_data['password'],
+                    profile_pic=image_file,
+                    first_name=serializer.validated_data['first_name'],
+                    last_name=serializer.validated_data['last_name'],
+                    favorite_color=serializer.validated_data['favorite_color']
+                )
+                return Response(status=status.HTTP_200_OK)
+            else:
 
-    print('\n\nuser' + str(username))
+                # save user without profile pic
+                user = Lctec_CustomUserManager().create_user(
+                    email=serializer.validated_data['email'],
+                    username=serializer.validated_data['username'],
+                    password=serializer.validated_data['password'],
+                    profile_pic=None,
+                    first_name=serializer.validated_data['first_name'],
+                    last_name=serializer.validated_data['last_name'],
+                    favorite_color=serializer.validated_data['favorite_color']
+                )
+                return Response(status=status.HTTP_200_OK)
+        else:
+            print('\n\nserializer is invalid\n\n')
+            print('\n\n' + str(serializer.errors) + '\n\n')
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Retrieve the user based on email or username
-    try:
-        current_user = User.objects.get(username=username)
-    except User.DoesNotExist:
-        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
-    current_user = user.objects.get(pk=request.user.pk)
-
-    # get the img file
-    profile_pic = request.FILES.get('profile_pic', None)
-    print('\n\nprofile pic from frontend: '+str(profile_pic))
-
-    if profile_pic:
-        print('\n\n Image exists')
-        
-        profile_pic.file.seek(0)
-        # Open the uploaded image file
-        image = Image.open(BytesIO(profile_pic.read()))
-        print('\n\nimage : '+str(image))
-
-        # Convert RGBA to RGB mode if it exists
-        if image.mode == 'RGBA':
-            image = image.convert('RGB')
-
-        pfp_name = current_user.username + '_pfp'
-        print('\n\npfp_name: '+str(pfp_name))
-
-        buffer = BytesIO()
-        image.save(buffer, format='JPEG')
-        image_file = InMemoryUploadedFile(
-            buffer, None, pfp_name + '.jpg', 'image/jpeg',
-            buffer.getbuffer().nbytes, None
-        )
-        current_user.profile_pic.save(pfp_name + '.jpg', image_file)
-
-    else:
-        print('\n\n Image does not exist')    
-    
-    return Response(status=status.HTTP_200_OK)
 
 # get user pfp on login
 @api_view(['GET'])
@@ -217,7 +223,7 @@ def reset_password(request):
             'There was a change to your account -- アカウント情報変更のお知らせ',
             # email template default is 'body'
             template,
-            # this will be changed to Kaoru's new gmail 
+             
             settings.EMAIL_HOST_USER,
             # recipient list
             [current_user.email],

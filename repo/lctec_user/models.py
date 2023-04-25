@@ -6,21 +6,24 @@ from flps_app.models import Flp
 from tracks_app.models import Track
 from sheriff_crandy_project import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
+    
+
 
 # custom user manager
 class Lctec_CustomUserManager(BaseUserManager):
+
 
     # called when creating user through drf terminal and frontend
     # only pass in req params, all other unrequired params like
     # first/lastname, favorite color, etc. will be held in **extra_fields param
     def create_user(self, email, username, password, **extra_fields):
-        
+
         if not email:
             raise ValueError("Email must be provided")
         if not username:
             raise ValueError("Username must be provided")
 
-        user = self.model(
+        user = Lctec_User(
             email = self.normalize_email(email),
             username = username,
             **extra_fields
@@ -28,6 +31,7 @@ class Lctec_CustomUserManager(BaseUserManager):
 
         user.set_password(password)
         user.save(using=self._db)
+
         return user
 
     # called when creating superuser through terminal and presumably drf
@@ -40,7 +44,7 @@ class Lctec_CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         return self.create_user(email, username, password, **extra_fields)
-    
+
 
 # Custom User Model; define fields you want to be included in User Model, can be updated changed later
 class Lctec_User(AbstractBaseUser, PermissionsMixin):
@@ -71,7 +75,7 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'username'
     # used by python manage.py createsuperuser and presumably drf for token authentication
     # should not contain the USERNAME_FIELD or password as these fields will always be prompted for.
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'email', 'favorite_color']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
     def __str__(self):
         # return self.email
@@ -94,9 +98,11 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
         return ''
 
 
+
 # set custom user model
 from django.contrib.auth import get_user_model
 User = get_user_model()
+
 
 # user's cart
 class Cart(models.Model):
