@@ -78,7 +78,8 @@
         "usernamenotavail": "ユーザー名が利用できません",
         "usernameavail": "ユーザー名が利用できます！",
         "generror": "おっと! 私たちの側で何かが間違っていた! 私たちはエラーを修正するために熱心に働いています。後ほど再度お試しください。ご迷惑をおかけして申し訳ありません。",
-        "email@symbolerror": "有効なEメールアドレスを入力してください"
+        "email@symbolerror": "有効なEメールアドレスを入力してください",
+        "invalidimagefile": "無効なファイルです。有効な画像ファイル（.png, .jpg, .jpeg, .gif）を選択してください"
     },
 
     "myaccountview": {
@@ -115,8 +116,13 @@
         "editaccount": "アカウント情報を編集する",
         "accountupdated": "アカウントの更新が完了しました！",
         "accountdeleted": "アカウントを削除しました。",
-        "uploadpfp": "プロフィール写真のアップロード"
-
+        "uploadpfp": "プロフィール写真のアップロード",
+        "namefieldmissing": "お名前を入力してください",
+        "phonefieldmissing": "電話番号を入力してください",
+        "addressfieldmissing": "ご住所を入力してください",
+        "statefieldmissing": "州または都道府県を入力してください。",
+        "countryfieldmissing": "国を入力してください",
+        "zipcodefieldmissing": "郵便番号を入力してください。"
     },
 
     "forgotpasswordview": {
@@ -160,7 +166,8 @@
         "buynow?": "今すぐ買う?",
         "buynow": "今すぐ買う",
         "doyouwannabuy?part1": "を今すぐ購入しますか、それともカートに追加してショッピングを続けますか?",
-        "doyouwannabuy?part2": ""
+        "doyouwannabuy?part2": "",
+        "stripeerror": "Stripeで何か問題が発生しました。後でもう一度試してください。"
     },
 
     "toolsview": {

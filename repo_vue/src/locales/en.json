@@ -82,7 +82,8 @@
     "usernamenotavail": "username not available",
     "usernameavail": "username available!",
     "generror": "Oops! Something went wrong on our end! We are working diligently to fix the error. Please try again later. I apologize for the inconvenience.",
-    "email@symbolerror": "Please enter a valid email address"
+    "email@symbolerror": "Please enter a valid email address",
+    "invalidimagefile": "Invalid file. Please choose a valid image file (.png, .jpg, .jpeg, .gif)"
   },
 
   "myaccountview": {
@@ -121,7 +122,13 @@
     "editaccount": "Edit account information",
     "accountupdated": "Account successfully updated!",
     "accountdeleted": "Your account was successfully deleted.",
-    "uploadpfp": "Upload Profile Photo"
+    "uploadpfp": "Upload Profile Photo",
+    "namefieldmissing": "Please enter your name",
+    "phonefieldmissing": "Please enter your phone number",
+    "addressfieldmissing": "Please enter your address",
+    "statefieldmissing": "Please enter your state/prefecture",
+    "countryfieldmissing": "Please enter your country",
+    "zipcodefieldmissing": "Please enter your zip code or postal code."
   },
 
   "forgotpasswordview": {
@@ -165,7 +172,8 @@
     "buynow?": "Buy now?",
     "buynow": "Buy now",
     "doyouwannabuy?part1": "Do you want to purchase ",
-    "doyouwannabuy?part2": " now or add it to your cart and continue shopping?"
+    "doyouwannabuy?part2": " now or add it to your cart and continue shopping?",
+    "stripeerror": "Something went wrong with Stripe. Please try again later."
   },
 
 
