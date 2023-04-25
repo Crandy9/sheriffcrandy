@@ -197,8 +197,8 @@
                   class="icon gab" 
                   rel="noopener" 
                   target="_blank" 
-                  title="https://tv.gab.com/channel/linden123"
-                  href="https://tv.gab.com/channel/linden123">
+                  title="https://tv.gab.com/channel/sheriffcrandy"
+                  href="https://tv.gab.com/channel/sheriffcrandy">
                   <!-- viewbox 
                   min-x (horizontal axis), 
                   min-y (vertical axis),
@@ -452,8 +452,8 @@
                   class="icon gab" 
                   rel="noopener" 
                   target="_blank" 
-                  title="https://tv.gab.com/channel/linden123"
-                  href="https://tv.gab.com/channel/linden123">
+                  title="https://tv.gab.com/channel/sheriffcrandy"
+                  href="https://tv.gab.com/channel/sheriffcrandy">
                   <!-- viewbox 
                   min-x (horizontal axis), 
                   min-y (vertical axis),
@@ -824,12 +824,14 @@ export default {
     else {
       axios.defaults.headers.common['Authorization'] = ''
     }
+
   },
 
   mounted() {
 
     if (this.$store.state.isAuthenticated == true) {
       this.getPurchasedTracks();
+      this.getpfp();
     }
 
     this.getTracks();
@@ -857,6 +859,23 @@ export default {
 
   // methods 
   methods: {
+
+    getpfp() {
+        
+      const token = this.$store.state.sf_auth_bearer
+      // get user pfp if it exists
+      axios
+      .get(process.env.VUE_APP_GET_USER_PFP, {headers: { 'Authorization': `Token ${token}`}})
+      .then(response => {
+          
+          const userdata = response.data
+          this.$store.state.profile_pic_background_img = userdata.get_profile_pic
+
+      })
+      .catch(error => {
+          console.log(error)
+      })
+    },
 
     async getPurchasedTracks() {
 
