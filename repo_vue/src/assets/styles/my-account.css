@@ -52,6 +52,38 @@
     gap: 2rem;
 }
 
+
+/* profile pic */
+
+.my-account-pfp-container {
+    padding-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.my-account-upload-pfp {
+    background-color: white;
+    border: 2px solid rgb(0, 238, 255); 
+    height: 132px;
+    width: 132px;
+    border-radius: 9999px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    text-align: center;
+}
+
+.my-account-pfp-placeholder {
+    word-wrap: break-word;
+    color: black;
+    margin-top: 2.6rem;
+    padding-inline: 0.5rem;
+    font-size: 14px;
+    font-weight: bold;
+}
 @media screen and (max-width: 1024px) {
 
     .my-account-pfp-container {
@@ -59,9 +91,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
     }
 
     .my-account-upload-pfp {
+        background-color: white;
         border: 2px solid rgb(0, 238, 255); 
         height: 132px;
         width: 132px;
@@ -78,6 +113,7 @@
         margin-top: 2.6rem;
         padding-inline: 0.5rem;
         font-size: 14px;
+        font-weight: bold;
     }
 
     .my-account-button-container {
