@@ -43,10 +43,6 @@ export default {
             this.$router.push('/')
         })
         .catch(error => {
-        // handle error
-        console.log(error);
-        console.log("log out didn't work")
-        console.log('axios post logout url')
 
         });
     }

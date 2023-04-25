@@ -101,12 +101,10 @@ export default {
                         
                         else if (error.message) {
                             this.errors.generalErrors.push(this.$t('forgotpasswordview.errors.generalerrors'))
-                            console.log("Didn't work bic boii: " + JSON.stringify(error.response.data))
                         }
                     })
             }
             else {
-                console.log('form is invalid')
             }
             this.$store.commit('setIsLoading', false);
         }

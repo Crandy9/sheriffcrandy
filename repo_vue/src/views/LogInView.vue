@@ -193,7 +193,6 @@ export default {
                                 this.$router.push(toPath)
                             })
                             .catch(error => {
-                                console.log('user cart data get request failed. Printing error')
                                 console.log(error)
 
                             })
@@ -208,7 +207,6 @@ export default {
 
                         })
                         .catch(error => {
-                            console.log('could not get users profile pic')
                             console.log(error)
                         })
                     })
@@ -219,7 +217,6 @@ export default {
                         
                         else if (error.message) {
                             this.errors.generalErrors.push(this.$t('loginsignupview.errors.generalerrors'))
-                            console.log("Didn't work bic boii: " + JSON.stringify(error.response.data))
                         }
                     })
             }
