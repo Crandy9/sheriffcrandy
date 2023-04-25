@@ -217,7 +217,7 @@ export default createStore({
     startTime: null,
 
     // user profile pic
-    profile_pic_background_img: null
+    profile_pic_background_img: ''
 
   },
   getters: {
@@ -790,6 +790,12 @@ export default createStore({
     },
     // POPULATE SHUFFLE Playlist
     populateShufflePlaylist(state) {
+
+      // if there is only one song in the playlist, can't shuffle. return
+      if (state.playlist.length <= 1) {
+        this.commit('toggleShuffle')
+        return
+      }
 
       // check if no song has played yet, and the user is spamming the shuffle button
       if (!state.currentTrackPlaying && state.shuffleArray.length !== 0) {
