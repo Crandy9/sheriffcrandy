@@ -83,8 +83,9 @@ class Track(models.Model):
         else:
             if self.track:
                 self.sample = self.make_sample(self.track)
-                self.save()
-                return settings.env('DOMAIN') + self.sample.url
+                if self.sample and self.sample.file:
+                    self.save()
+                    return settings.env('DOMAIN') + self.sample.url
         # else if the track isn't created, return an empty string
         return ''
 
