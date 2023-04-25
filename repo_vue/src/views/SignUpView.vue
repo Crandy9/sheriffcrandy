@@ -171,6 +171,7 @@ export default {
             },
             showPassword: false,
             showReEnterPassword: false,
+            profile_pic_file: null
         };
     },
 
@@ -202,6 +203,7 @@ export default {
                 this.errors.generalErrors.push(this.$t('loginsignupview.invalidimagefile'))
                 return
             }
+
             this.errors.generalErrors = []
 
             if (file.size <= 2621440) {
