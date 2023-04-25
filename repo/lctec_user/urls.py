@@ -8,6 +8,7 @@ from lctec_user import views
 
 
 urlpatterns = [
+    path('create-basic-user/', views.SaveCustomBasicUser.as_view()),
     # for username validation, allow a string to be input as a param
     path('check-username/<str:username>/', views.check_username),
     path('check-email/<str:email>/', views.check_email),
@@ -21,6 +22,5 @@ urlpatterns = [
     path('update-user-account-data/', views.update_user_account_data),
     path('delete-user-account-data/', views.delete_user_account_data),
     path('get-user-pfp/', views.get_user_pfp),
-    path('save-user-pfp/', views.save_user_pfp)
 ] 
 
