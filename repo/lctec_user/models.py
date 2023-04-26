@@ -77,6 +77,9 @@ class Lctec_User(AbstractBaseUser, PermissionsMixin):
     # should not contain the USERNAME_FIELD or password as these fields will always be prompted for.
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
 
+    class Meta:
+        db_table = 'users'
+
     def __str__(self):
         # return self.email
         return self.username
@@ -112,3 +115,6 @@ class Cart(models.Model):
     flp_cart_quantity = models.IntegerField(default = 0, null=True, blank=True)
     track_cart_quantity = models.IntegerField(default = 0, null=True, blank=True)
     total_cart_quantity = models.IntegerField(default = 0, null=True, blank=True)
+
+    class Meta:
+        db_table = 'user_cart'

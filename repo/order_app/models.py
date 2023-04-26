@@ -28,9 +28,9 @@ class Order(models.Model):
     stripe_token = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta: 
+        db_table = 'orders'
         verbose_name = "Stripe Order (for FLPs and tracks)"
         verbose_name_plural = "Stripe Orders (for FLPs and tracks)"
-        ordering = ['-date_order_created',]
 
     def __str__(self):
 
@@ -56,6 +56,7 @@ class OrderFlpItem(models.Model):
 
     # for readability in admin site
     class Meta:
+        db_table = 'flp_orders'
         verbose_name = "FLP Orders"
         verbose_name_plural = "FLP Orders"
 
@@ -74,6 +75,7 @@ class OrderTrackItem(models.Model):
     date_order_created = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'track_orders'
         verbose_name = "Track Orders"
         verbose_name_plural = "Track Orders"
 

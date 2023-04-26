@@ -53,8 +53,7 @@ class Track(models.Model):
 
     # order Tracks by title in the backend
     class Meta:
-        # it is a tuple so you need to add a comma so it can be iterable
-        ordering = ('title',)
+        db_table = 'tracks'
 
 
 

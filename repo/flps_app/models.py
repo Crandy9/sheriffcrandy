@@ -21,9 +21,8 @@ class Flp(models.Model):
     flp_is_free = models.BooleanField(default=False, blank=True, null=True)
     downloads = models.IntegerField(default=0, blank=True)
 
-
     class Meta:
-        ordering = ('flp_name',)
+        db_table = 'flps'
 
     def __str__(self):
         if self.flp_is_free is True:
