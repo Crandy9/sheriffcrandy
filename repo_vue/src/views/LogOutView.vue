@@ -29,17 +29,6 @@ export default {
             // remove  pfp
             this.$store.state.profile_pic_background_img = null
 
-            // add toast message
-            toast({
-                message: this.$t('modals.logout'),
-                type: 'is-success',
-                dismissible: true,
-                pauseOnHover: true,
-                duration: 2000,
-                position: 'center',
-                animate: { in: 'fadeIn', out: 'fadeOut' },
-            })
-
             this.$router.push('/')
         })
         .catch(error => {
