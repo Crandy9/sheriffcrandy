@@ -79,8 +79,8 @@ import axios from 'axios'
 import { toast } from 'bulma-toast'
 
 export default {
-    name: 'LogIn',
 
+    name: 'LogIn',
     data() {
         return {
             username_or_email: '',
@@ -90,13 +90,13 @@ export default {
                 usernameOrEmailErrors: [],
                 passwordErrors: [],
             },            
-            showPassword: false,
-            username_from_backend: ''
+            showPassword: false
         }
     },
 
     // show toast if it exists
     mounted () {
+
         document.title = 'Login';
         if (this.$route.query.loginwarning) {
             toast({
@@ -157,8 +157,6 @@ export default {
                             .get(process.env.VUE_APP_GET_CART_URL, {headers: { 'Authorization': `Token ${sf_auth_bearer}`}})
                             .then(response => {
 
-                                this.username_from_backend = response.data.username
-                                // set username on welcome modal
                                 const cart_data = response.data.cart;
                                 if (cart_data.length === 0) {
                                 }
@@ -175,17 +173,6 @@ export default {
                                 // populate purchasedTracksList
                                 this.getPurchasedTracks();
 
-                                // add toast message
-                                toast({
-                                    message: this.$t('modals.welcomeback') + ' ' + this.username_from_backend + this.$t('modals.welcomeback2') +'!',
-                                    type: 'is-success',
-                                    dismissible: true,
-                                    pauseOnHover: true,
-                                    duration: 2000,
-                                    position: 'center',
-                                    animate: { in: 'fadeIn', out: 'fadeOut' },
-                                })
-                                
                                 // check if there is a pending route to be redirected to
                                 // else go to home
                                 const toPath = this.$route.query.to || '/'
