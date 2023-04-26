@@ -68,7 +68,7 @@ python3 -m venv env
 
 . env/bin/activate (you'll see '(env)' on the left-most side the terminal signature when activated)
 
-- Once your env is activated, install Django and other dependencies:
+- Once your env is activated, install Django and other dependencies (see requirements.txt):
 
 pip install django (the backend framework)
 pip install django-rest-framework (creating the backend API, creates djangorestframework dir as well)
