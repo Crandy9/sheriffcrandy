@@ -171,7 +171,7 @@ export default createStore({
     // smooth slider animation
     animationFrame: null,
     // should hold the song's length in minute:seconds 00:00
-    songLength: '- -',
+    songLength: '--:--',
     songProgress: '0:00',
     // percentage used to animate the slider along the slide bar
     progress: 0,
